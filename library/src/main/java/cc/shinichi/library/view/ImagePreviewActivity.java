@@ -13,8 +13,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import cc.shinichi.library.R;
@@ -41,8 +41,9 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 	public static final String TAG = "ImagePreview";
 
 	private Context context;
-	public static final String IMAGE_INFO = "IMAGE_INFO";
-	public static final String CURRENT_ITEM = "CURRENT_ITEM";
+	public static final String IMAGE_INFO = "IMAGE_INFO";// 图片集合
+	public static final String CURRENT_ITEM = "CURRENT_ITEM";// 默认显示的索引
+	public static final String DOWNLOAD_FOLDER_NAME = "DOWNLOAD_FOLDER_NAME";// 下载保存的文件夹名（根目录）
 
 	private ImagePreviewAdapter imagePreviewAdapter;
 	private GalleryViewPager viewPager;
@@ -51,8 +52,9 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 	private TextView tv_show_origin;
 
 	private List<ImageInfo> imageInfoList;
-	private String currentItemOriginPathUrl = "";// 当前显示的原图链接
-	private int currentItem;// 当前显示的图片索引
+    private int currentItem;// 当前显示的图片索引
+    private String currentItemOriginPathUrl = "";// 当前显示的原图链接
+	private String downloadFolderName = "";// 保存的文件夹名
 	private HandlerUtils.HandlerHolder handlerHolder;
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +74,11 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 		Intent intent = getIntent();
 		imageInfoList = (List<ImageInfo>) intent.getSerializableExtra(IMAGE_INFO);
 		currentItem = intent.getIntExtra(CURRENT_ITEM, 0);
+		downloadFolderName = intent.getStringExtra(DOWNLOAD_FOLDER_NAME);
 		currentItemOriginPathUrl = imageInfoList.get(currentItem).getOriginUrl();
-		chechCache(currentItemOriginPathUrl, currentItem);
+
+		// 检查缓存是否存在
+		checkCache(currentItemOriginPathUrl);
 
 		if (imageInfoList.size() > 1) {
 			tv_indicator.setVisibility(View.VISIBLE);
@@ -92,7 +97,8 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 			@Override public void onPageSelected(int position) {
 				currentItem = position;
 				currentItemOriginPathUrl = imageInfoList.get(position).getOriginUrl();
-				chechCache(currentItemOriginPathUrl, currentItem);
+				// 检查缓存是否存在
+				checkCache(currentItemOriginPathUrl);
 				// 更新进度指示器
 				tv_indicator.setText(
 					String.format(getString(R.string.indicator), currentItem + 1 + " ", " " + imageInfoList.size()));
@@ -107,9 +113,9 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 					if (ActivityCompat.shouldShowRequestPermissionRationale(ImagePreviewActivity.this,
 						Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 						// 拒绝权限
-						ToastUtil.getInstance()._short(context, "您拒绝了权限，下载失败！");
+                        ToastUtil.getInstance()._short(context, "您拒绝了存储权限，下载失败！");
 					} else {
-						//申请权限，字符串数组内是一个或多个要申请的权限，1是申请权限结果的返回参数，在onRequestPermissionsResult可以得知申请结果
+						//申请权限
 						ActivityCompat.requestPermissions(ImagePreviewActivity.this,
 							new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE, }, 1);
 					}
@@ -128,7 +134,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 				if (grantResults[i] == PERMISSION_GRANTED) {
 					downloadCurrentImg();
 				} else {
-					ToastUtil.getInstance()._short(context, "您拒绝了权限，下载失败！");
+					ToastUtil.getInstance()._short(context, "您拒绝了存储权限，下载失败！");
 				}
 			}
 		}
@@ -140,12 +146,14 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 	 * @param context 上下文
 	 * @param imageInfo 图片列表
 	 * @param index 点击的图片的索引
+	 * @param folderName 下载图片保存的文件夹名（默认保存到存储根目录）
 	 */
-	public static void activityStart(Context context, List<ImageInfo> imageInfo, int index) {
+	public static void activityStart(Context context, List<ImageInfo> imageInfo, int index, String folderName) {
 		Intent intent = new Intent(context, ImagePreviewActivity.class);
 		Bundle bundle = new Bundle();
 		bundle.putSerializable(ImagePreviewActivity.IMAGE_INFO, (Serializable) imageInfo);
 		bundle.putInt(ImagePreviewActivity.CURRENT_ITEM, index);
+		bundle.putString(ImagePreviewActivity.DOWNLOAD_FOLDER_NAME, folderName);
 		intent.putExtras(bundle);
 		context.startActivity(intent);
 	}
@@ -154,7 +162,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 	 * 下载当前图片到SD卡
 	 */
 	private void downloadCurrentImg() {
-		String path = Environment.getExternalStorageDirectory() + "/shinichi/";
+		String path = Environment.getExternalStorageDirectory() + "/" + downloadFolderName + "/";
 		DownloadPictureUtil.downloadPicture(context, currentItemOriginPathUrl, path,
 			System.currentTimeMillis() + ".jpeg");
 	}
@@ -171,7 +179,6 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 			tv_show_origin.setText("0 %");
 
 			Glide.with(this).load(path).downloadOnly(new ProgressTarget<String, File>(path, null) {
-
 				@Override public void onProgress(String url, long bytesRead, long expectedLength) {
 					int progress = (int) ((float) bytesRead * 100 / (float) expectedLength);
 					Print.d(TAG, "OnProgress--->" + progress);
@@ -222,7 +229,6 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 			int progress = bundle.getInt("progress");
 			if (currentItem == getRealIndexWithPath(url)) {
 				visible();
-				//number_progress.setProgress(progress);
 				tv_show_origin.setText(progress + " %");
 				Print.d(TAG, "handler == 2 progress == " + progress);
 			}
@@ -244,21 +250,14 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 		return 0;
 	}
 
-	private void chechCache(final String url_, int position) {
-		Print.d(TAG, "chechCache position--->" + position);
-		Print.d(TAG, "chechCache url_--->" + url_);
+	private void checkCache(final String url_) {
 		gone();
 		new Thread(new Runnable() {
 			@Override public void run() {
-				String url = url_;
-				File cacheFile = ImageLoader.getGlideCacheFile(context, url);
+				File cacheFile = ImageLoader.getGlideCacheFile(context, url_);
 				if (cacheFile != null && cacheFile.exists()) {
-					int index = getRealIndexWithPath(url);
-					Print.d(TAG, "getQiNiuImageInfo 有缓存 index = " + index);
 					gone();
-					cacheFile = null;
 				} else {
-					Print.d(TAG, "getQiNiuImageInfo 没有缓存");
 					visible();
 				}
 			}
