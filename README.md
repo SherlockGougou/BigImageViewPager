@@ -2,11 +2,7 @@
 大图查看器，内存优化，手势放大，查看原图等
 
 # 截图
-![截图](https://github.com/SherlockGougou/BigImageViewPager/blob/master/image/B22E45A8B8FDBA385C61B22F816891FA.png)
-![截图](https://github.com/SherlockGougou/BigImageViewPager/blob/master/image/2730A5D943CE5A1DC7964DF51C2F25A1.png)
-![截图](https://github.com/SherlockGougou/BigImageViewPager/blob/master/image/0BAE50B648C74F3D117FC4B13FCEBFC9.png)
-![截图](https://github.com/SherlockGougou/BigImageViewPager/blob/master/image/A662C02669BA6EA203269761836D8E70.png)
-![截图](https://github.com/SherlockGougou/BigImageViewPager/blob/master/image/299B668C1F52D972490DA1F738AD9C0D.png)
+![截图](https://github.com/SherlockGougou/BigImageViewPager/blob/master/image/%E6%88%AA%E5%9B%BE.jpg)
 
 # 功能
 - 支持多张图片滑动浏览，支持手势放大、双击放大。
