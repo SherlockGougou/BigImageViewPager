@@ -3,7 +3,6 @@ package cc.shinichi.library.glide.engine;
 import android.graphics.drawable.Drawable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.request.target.Target;
 
 public abstract class ProgressTarget<T, Z> extends WrappingTarget<Z>
@@ -25,15 +24,6 @@ public abstract class ProgressTarget<T, Z> extends WrappingTarget<Z>
 		this.model = model;
 	}
 
-	/**
-	 * Convert a model into an Url string that is used to match up the OkHttp requests. For explicit
-	 * {@link com.bumptech.glide.load.model.GlideUrl GlideUrl} loads this needs to return
-	 * {@link com.bumptech.glide.load.model.GlideUrl#toStringUrl toStringUrl}. For custom models do the same as your
-	 * {@link com.bumptech.glide.load.model.stream.BaseGlideUrlLoader BaseGlideUrlLoader} does.
-	 *
-	 * @param model return the representation of the given model, DO NOT use {@link #getModel()} inside this method.
-	 * @return a stable Url representation of the model, otherwise the progress reporting won't work
-	 */
 	protected String toUrlString(T model) {
 		return String.valueOf(model);
 	}
