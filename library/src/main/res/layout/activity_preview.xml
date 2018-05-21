@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    >
+
+  <cc.shinichi.library.byakugallery.GalleryViewPager
+      android:id="@+id/viewPager"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      />
+
+  <TextView
+      android:id="@+id/tv_indicator"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentTop="true"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="40dp"
+      android:background="@drawable/gray_circle_bg"
+      android:paddingLeft="10dp"
+      android:paddingRight="10dp"
+      android:text="1 / 4"
+      android:textColor="#ffffff"
+      android:textSize="16sp"
+      />
+
+  <FrameLayout
+      android:id="@+id/fm_image"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_centerHorizontal="true"
+      android:layout_marginBottom="20dp"
+      >
+
+    <TextView
+        android:id="@+id/tv_show_origin"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:background="@drawable/gray_square_circle_bg_white_stroke"
+        android:gravity="center"
+        android:paddingBottom="5dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="5dp"
+        android:text="查看原图"
+        android:textColor="#ffffff"
+        />
+  </FrameLayout>
+
+  <ImageView
+      android:id="@+id/img_download"
+      android:layout_width="35dp"
+      android:layout_height="35dp"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentRight="true"
+      android:layout_gravity="bottom|right"
+      android:layout_marginBottom="20dp"
+      android:layout_marginRight="20dp"
+      android:background="@drawable/gray_square_circle_bg"
+      android:padding="6dp"
+      android:src="@drawable/icon_download"
+      android:visibility="visible"
+      />
+</RelativeLayout>

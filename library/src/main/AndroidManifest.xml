@@ -1,0 +1,22 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="cc.shinichi.library">
+
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+  <application>
+    <activity
+        android:name=".view.ImagePreviewActivity"
+        android:theme="@style/Theme.ImagePreview"/>
+
+    <!-- glide 声明自定义的module -->
+    <meta-data
+        android:name="cc.shinichi.library.glide.engine.OkHttpProgressGlideModule"
+        android:value="GlideModule"/>
+    <meta-data
+        android:name="com.bumptech.glide.integration.okhttp.OkHttpGlideModule"
+        android:value="GlideModule"
+        tools:node="remove"/>
+  </application>
+</manifest>
