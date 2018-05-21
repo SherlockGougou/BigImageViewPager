@@ -23,7 +23,7 @@ allprojects {
 Step 2. Add the dependency
 ```
 dependencies {
-	  implementation 'com.github.SherlockGougou:BigImageViewPager:-SNAPSHOT'
+	  implementation 'com.github.SherlockGougou:BigImageViewPager:v0.0.1'
 }
 ```
 
