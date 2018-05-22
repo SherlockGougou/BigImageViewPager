@@ -3,10 +3,10 @@ package cc.shinichi.bigimageviewpager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.tool.ToastUtil;
-import cc.shinichi.library.view.ImagePreviewActivity;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +46,15 @@ public class MainActivity extends AppCompatActivity {
 
 		findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
-				ImagePreviewActivity.activityStart(MainActivity.this, imageInfoList, 0, "BigImageViewDownload");
+				ImagePreview
+					.getInstance()
+					.setContext(MainActivity.this)
+					.setIndex(5)
+					.setImageInfoList(imageInfoList)
+					.setShowDownButton(false)
+					.setShowOriginButton(false)
+					.setFolderName("BigImageViewDownload")
+					.start();
 			}
 		});
 
