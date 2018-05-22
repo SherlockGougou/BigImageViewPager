@@ -1,18 +1,20 @@
 # BigImageViewPager
-大图查看器，内存优化，手势放大，查看原图等
+一个图片浏览器，支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。
 
 # 截图
-![截图](https://github.com/SherlockGougou/BigImageViewPager/blob/master/image/%E6%88%AA%E5%9B%BE.jpg)
+![截图.jpg](https://upload-images.jianshu.io/upload_images/1710902-55e84221177f0ddd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 # 功能
-- 支持多张图片滑动浏览，支持手势放大、双击放大。
+- 支持多张图片（网络图片）滑动浏览，支持手势放大、双击放大。
 - 支持下载，支持自定义下载目录文件夹名称。
+- 查看原图支持加载进度条显示
 - 支持超大图、超长图，sample中测试的大图尺寸分别是：2280 * 22116、5760 * 3840。
 - 采用区块加载，不用担心OOM的风险。
 
 # 用法
-Step 1. Add the JitPack repository to your build file
-Add it in your root build.gradle at the end of repositories:
+#### 添加依赖
+Step 1. Add it in your root build.gradle at the end of repositories:
 ```
 allprojects {
 		repositories {
@@ -24,14 +26,43 @@ allprojects {
 Step 2. Add the dependency
 ```
 dependencies {
-	  implementation 'com.github.SherlockGougou:BigImageViewPager:v0.0.1'
+	  implementation 'com.github.SherlockGougou:BigImageViewPager:v0.0.2'
 }
 ```
+#### 调用方式
+生成图片源：
+```
+ImageInfo imageInfo;
+		final List<ImageInfo> imageInfoList = new ArrayList<>();
+		for (int i = 0; i < images.length; i++) {
+			imageInfo = new ImageInfo();
+			imageInfo.setOriginUrl(images[i]);// 原图
+			imageInfo.setThumbnailUrl(images[i].concat("-1200"));// 缩略图，实际使用中，根据需求传入缩略图路径
+			imageInfoList.add(imageInfo);
+			imageInfo = null;
+		}
+```
+链式调用，多种配置
+```
+ImagePreview
+			.getInstance()
+			.setContext(MainActivity.this)// 上下文
+			.setIndex(0)// 默认显示的索引
+			.setImageInfoList(imageInfoList)// 图片集合
+			.setShowDownButton(true)// 是否显示下载按钮
+			.setShowOriginButton(true)// 是否显示原图按钮
+			.setFolderName("BigImageViewDownload")// 下载到的文件夹名字
+			.start();// 调用完成，开始跳转
+```
+
+# TODO
+- 增加本地图片浏览功能
+- 自定义主题
 
 # 致谢
 [diegocarloslima/ByakuGallery](https://github.com/diegocarloslima/ByakuGallery)
 
-# QQ 交流群：
+# Bug反馈、增加需求，加 QQ 交流群：
 ![欢迎关注“大话微信”公众号](http://upload-images.jianshu.io/upload_images/1956769-2f49dcb0dc5195b6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ### 欢迎加入“大话安卓”技术交流群，一起分享，共同进步##
