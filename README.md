@@ -1,5 +1,5 @@
-# BigImageViewPager
-一个图片浏览器，支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。
+### BigImage + ImageView + ViewPager = BigImageViewPager
+一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。
 
 # 截图
 ![截图.jpg](https://upload-images.jianshu.io/upload_images/1710902-55e84221177f0ddd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
