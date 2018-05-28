@@ -8,9 +8,9 @@ import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.request.target.Target;
 import java.io.File;
 
-/*
+/**
  * @author 工藤
- * @emil gougou@16fan.com
+ * @email gougou@16fan.com
  * com.fan16.cn.loader.glide.engine
  * create at 2018/5/17  13:39
  * description:SimpleFileTarget

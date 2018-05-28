@@ -4,9 +4,9 @@ import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 
-/*
+/**
  * @author 工藤
- * @emil gougou@16fan.com
+ * @email gougou@16fan.com
  * com.fan16.cn.util
  * create at 2018/5/4  16:50
  * description:媒体扫描

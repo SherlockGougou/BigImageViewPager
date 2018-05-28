@@ -5,9 +5,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
-/*
+/**
  * @author 工藤
- * @emil gougou@16fan.com
+ * @email gougou@16fan.com
  * cc.shinichi.library.tool
  * create at 2018/5/21  16:31
  * description:

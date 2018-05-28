@@ -19,7 +19,6 @@ import android.widget.TextView;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
-import cc.shinichi.library.byakugallery.GalleryViewPager;
 import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.glide.engine.ProgressTarget;
 import cc.shinichi.library.tool.DownloadPictureUtil;
@@ -48,7 +47,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 	private boolean isShowOriginButton;
 
 	private ImagePreviewAdapter imagePreviewAdapter;
-	private GalleryViewPager viewPager;
+	private HackyViewPager viewPager;
 	private TextView tv_indicator;
 	private FrameLayout fm_image;
 	private TextView tv_show_origin;
@@ -260,6 +259,11 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 				}
 			}
 		}
+	}
+
+	@Override protected void onDestroy() {
+		super.onDestroy();
+		ImagePreview.getInstance().reset();
 	}
 
 	private void gone() {

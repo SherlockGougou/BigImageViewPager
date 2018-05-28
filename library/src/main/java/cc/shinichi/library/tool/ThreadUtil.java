@@ -2,9 +2,9 @@ package cc.shinichi.library.tool;
 
 import android.os.Looper;
 
-/*
+/**
  * @author 工藤
- * @emil gougou@16fan.com
+ * @email gougou@16fan.com
  * cc.shinichi.library.tool
  * create at 2018/5/21  15:28
  * description:

@@ -11,9 +11,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
-/*
+/**
  * @author 工藤
- * @emil gougou@16fan.com
+ * @email gougou@16fan.com
  * cc.shinichi.library.tool
  * create at 2018/5/21  15:24
  * description:文件工具类

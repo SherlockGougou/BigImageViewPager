@@ -7,7 +7,7 @@
     android:background="#000000"
     >
 
-  <cc.shinichi.library.byakugallery.GalleryViewPager
+  <cc.shinichi.library.view.HackyViewPager
       android:id="@+id/viewPager"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
