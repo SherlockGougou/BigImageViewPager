@@ -66,7 +66,7 @@ MODE_SCALE_TO_MAX_TO_MIN = 1002;// 二级放大，最大与最小：第一次双
 MODE_SCALE_TO_MEDIUM_TO_MIN = 1003;// 二级放大，中等与最小：第一次双击放大到中等，用户可铜过双指放大到最大。再次双击，缩小到最小。
 ```
 # DEMO体验
-![DEMO 扫码体验](https://upload-images.jianshu.io/upload_images/1710902-47d9a4367e092924.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![DEMO 扫码体验](https://upload-images.jianshu.io/upload_images/1710902-4ee521fac5f6f0da.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 # TODO
