@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 		for (int i = 0; i < images.length; i++) {
 			imageInfo = new ImageInfo();
 			imageInfo.setOriginUrl(images[i]);// 原图
-			imageInfo.setThumbnailUrl(images[i].concat("-1200"));// 缩略图，实际使用中，根据需求传入缩略图路径
+			imageInfo.setThumbnailUrl(images[i].concat("-1200"));// 缩略图，实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样，并隐藏查看原图按钮即可。
 			imageInfoList.add(imageInfo);
 			imageInfo = null;
 		}
@@ -51,12 +51,12 @@ public class MainActivity extends AppCompatActivity {
 					.setContext(MainActivity.this)
 					.setIndex(5)
 					.setImageInfoList(imageInfoList)
-					.setShowDownButton(false)
-					.setShowOriginButton(false)
+					.setShowDownButton(true)
+					.setShowOriginButton(true)
 					.setFolderName("BigImageViewDownload")
 					.setScaleLevel(1, 3, 8)
 					.setScaleMode(ImagePreview.MODE_SCALE_TO_MEDIUM_TO_MAX_TO_MIN)
-					.setZoomTransitionDuration(300)
+					.setZoomTransitionDuration(500)
 					.start();
 			}
 		});
