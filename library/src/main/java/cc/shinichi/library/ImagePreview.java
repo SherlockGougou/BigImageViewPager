@@ -31,10 +31,8 @@ public class ImagePreview {
 	private float minScale = 1.0f;// 最小缩放倍数
 	private float mediumScale = 3.0f;// 中等缩放倍数
 	private float maxScale = 5.0f;// 最大缩放倍数
-	private int scaleMode = 1001;
 
 	private int zoomTransitionDuration = 200;// 动画持续时间 单位毫秒 ms
-	private int loadFailDrawableId = 0;// 加载失败时的图片
 
 	public static ImagePreview getInstance() {
 		return InnerClass.instance;
@@ -101,13 +99,14 @@ public class ImagePreview {
 		return this;
 	}
 
+	@Deprecated
 	public ImagePreview setScaleMode(int scaleMode) {
-		if (scaleMode != MODE_SCALE_TO_MAX_TO_MIN
-			&& scaleMode != MODE_SCALE_TO_MEDIUM_TO_MAX_TO_MIN
-			&& scaleMode != MODE_SCALE_TO_MEDIUM_TO_MIN) {
-			throw new IllegalArgumentException("only can use one of( MODE_SCALE_TO_MAX_TO_MIN、MODE_SCALE_TO_MEDIUM_TO_MAX_TO_MIN、MODE_SCALE_TO_MEDIUM_TO_MIN )");
-		}
-		this.scaleMode = scaleMode;
+		//if (scaleMode != MODE_SCALE_TO_MAX_TO_MIN
+		//	&& scaleMode != MODE_SCALE_TO_MEDIUM_TO_MAX_TO_MIN
+		//	&& scaleMode != MODE_SCALE_TO_MEDIUM_TO_MIN) {
+		//	throw new IllegalArgumentException("only can use one of( MODE_SCALE_TO_MAX_TO_MIN、MODE_SCALE_TO_MEDIUM_TO_MAX_TO_MIN、MODE_SCALE_TO_MEDIUM_TO_MIN )");
+		//}
+		//this.scaleMode = scaleMode;
 		return this;
 	}
 
@@ -132,10 +131,6 @@ public class ImagePreview {
 
 	public float getMaxScale() {
 		return maxScale;
-	}
-
-	public int getScaleMode() {
-		return scaleMode;
 	}
 
 	public int getZoomTransitionDuration() {

@@ -1,26 +1,23 @@
 package cc.shinichi.library.view;
 
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
-import android.util.DisplayMetrics;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ProgressBar;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
-import cc.shinichi.library.byakugallery.TileBitmapDrawable;
 import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.glide.engine.SimpleFileTarget;
 import cc.shinichi.library.tool.Print;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
-import com.github.chrisbanes.photoview.PhotoView;
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -29,38 +26,31 @@ import java.util.Map;
 public class ImagePreviewAdapter extends PagerAdapter {
 
 	private static final String TAG = "ImagePreview";
-	private ImagePreviewActivity activity;
+	private Activity activity;
 	private List<ImageInfo> imageInfo;
-	private HashMap<String, PhotoView> detachImageViewHashMap = new HashMap<>();
-	private int phoneWid = 0;
+	private HashMap<String, SubsamplingScaleImageView> imageHashMap = new HashMap<>();
 
-	public ImagePreviewAdapter(ImagePreviewActivity activity, @NonNull List<ImageInfo> imageInfo) {
+	public ImagePreviewAdapter(Activity activity, @NonNull List<ImageInfo> imageInfo) {
 		super();
 		this.imageInfo = imageInfo;
 		this.activity = activity;
-
-		WindowManager windowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
-		DisplayMetrics metric = new DisplayMetrics();
-		windowManager.getDefaultDisplay().getMetrics(metric);
-		this.phoneWid = metric.widthPixels;
 	}
 
-	private void closePage() {
+	public void closePage() {
 		try {
-			if (detachImageViewHashMap != null && detachImageViewHashMap.size() > 0) {
-				for (Object o : detachImageViewHashMap.entrySet()) {
+			if (imageHashMap != null && imageHashMap.size() > 0) {
+				for (Object o : imageHashMap.entrySet()) {
 					Map.Entry entry = (Map.Entry) o;
 					if (entry != null && entry.getValue() != null) {
-						((PhotoView) entry.getValue()).setImageDrawable(null);
-						Glide.clear((PhotoView) entry.getValue());
+						((SubsamplingScaleImageView) entry.getValue()).recycle();
+						Glide.clear((SubsamplingScaleImageView) entry.getValue());
 					}
 				}
-				detachImageViewHashMap.clear();
+				imageHashMap.clear();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		activity.finish();
 	}
 
 	@Override public int getCount() {
@@ -71,13 +61,13 @@ public class ImagePreviewAdapter extends PagerAdapter {
 	 * 加载原图
 	 */
 	public void loadOrigin(final String originUrl) {
-		if (detachImageViewHashMap.get(originUrl) != null) {
-			final PhotoView imageView = detachImageViewHashMap.get(originUrl);
+		if (imageHashMap.get(originUrl) != null) {
+			final SubsamplingScaleImageView imageView = imageHashMap.get(originUrl);
 
 			Glide.with(activity).load(originUrl).downloadOnly(new SimpleFileTarget() {
 				@Override public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
 					super.onResourceReady(resource, glideAnimation);
-					TileBitmapDrawable.attachTileBitmapDrawable(imageView, resource.getAbsolutePath(), null, null);
+					imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
 				}
 			});
 		} else {
@@ -88,79 +78,32 @@ public class ImagePreviewAdapter extends PagerAdapter {
 	@NonNull @Override public Object instantiateItem(@NonNull ViewGroup container, final int position) {
 		View convertView = View.inflate(activity, R.layout.item_photoview, null);
 		final ProgressBar progressBar = convertView.findViewById(R.id.progress_view);
-		final PhotoView touchImageView = convertView.findViewById(R.id.photo_view);
-
-		touchImageView.setZoomTransitionDuration(ImagePreview.getInstance().getZoomTransitionDuration());
-		touchImageView.setScaleLevels(ImagePreview.getInstance().getMinScale(),
-			ImagePreview.getInstance().getMediumScale(),
-			ImagePreview.getInstance().getMaxScale());
-		touchImageView.setOnDoubleTapListener(new GestureDetector.OnDoubleTapListener() {
-			@Override public boolean onSingleTapConfirmed(MotionEvent e) {
-				closePage();
-				return false;
-			}
-
-			@Override public boolean onDoubleTap(MotionEvent e) {
-				int mode = ImagePreview.getInstance().getScaleMode();
-				switch (mode) {
-					case ImagePreview.MODE_SCALE_TO_MAX_TO_MIN:
-						if (touchImageView.getScale() < touchImageView.getMaximumScale()) {
-							touchImageView.setScale(touchImageView.getMaximumScale(), e.getX(), e.getY(), true);
-						} else {
-							touchImageView.setScale(touchImageView.getMinimumScale(), e.getX(), e.getY(), true);
-						}
-						break;
-					case ImagePreview.MODE_SCALE_TO_MEDIUM_TO_MAX_TO_MIN:
-						if (touchImageView.getScale() < touchImageView.getMediumScale()) {
-							touchImageView.setScale(touchImageView.getMediumScale(), e.getX(), e.getY(), true);
-						} else if (touchImageView.getScale() >= touchImageView.getMediumScale()
-							&& touchImageView.getScale() < touchImageView.getMaximumScale()) {
-							touchImageView.setScale(touchImageView.getMaximumScale(), e.getX(), e.getY(), true);
-						} else {
-							touchImageView.setScale(touchImageView.getMinimumScale(), e.getX(), e.getY(), true);
-						}
-						break;
-					case ImagePreview.MODE_SCALE_TO_MEDIUM_TO_MIN:
-						if (touchImageView.getScale() < touchImageView.getMediumScale()) {
-							touchImageView.setScale(touchImageView.getMediumScale(), e.getX(), e.getY(), true);
-						} else {
-							touchImageView.setScale(touchImageView.getMinimumScale(), e.getX(), e.getY(), true);
-						}
-						break;
-					default:
-						if (touchImageView.getScale() < touchImageView.getMediumScale()) {
-							touchImageView.setScale(touchImageView.getMediumScale(), e.getX(), e.getY(), true);
-						} else if (touchImageView.getScale() >= touchImageView.getMediumScale()
-							&& touchImageView.getScale() < touchImageView.getMaximumScale()) {
-							touchImageView.setScale(touchImageView.getMaximumScale(), e.getX(), e.getY(), true);
-						} else {
-							touchImageView.setScale(touchImageView.getMinimumScale(), e.getX(), e.getY(), true);
-						}
-						break;
-				}
-				return true;
-			}
-
-			@Override public boolean onDoubleTapEvent(MotionEvent e) {
-				return false;
-			}
-		});
+		final SubsamplingScaleImageView imageView = convertView.findViewById(R.id.photo_view);
+        imageView.setDoubleTapZoomDuration(ImagePreview.getInstance().getZoomTransitionDuration());
+        imageView.setMinScale(ImagePreview.getInstance().getMinScale());
+        imageView.setMaxScale(ImagePreview.getInstance().getMaxScale());
+        imageView.setDoubleTapZoomScale(ImagePreview.getInstance().getMediumScale());
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                activity.finish();
+            }
+        });
 
 		final ImageInfo info = this.imageInfo.get(position);
 		final String originPathUrl = info.getOriginUrl();
 		final String thumbPathUrl = info.getThumbnailUrl();
 
-		if (detachImageViewHashMap.containsKey(originPathUrl)) {
-			detachImageViewHashMap.remove(originPathUrl);
+		if (imageHashMap.containsKey(originPathUrl)) {
+			imageHashMap.remove(originPathUrl);
 		}
-		detachImageViewHashMap.put(originPathUrl, touchImageView);
+		imageHashMap.put(originPathUrl, imageView);
 
 		File cacheFile = ImageLoader.getGlideCacheFile(activity, originPathUrl);
 		if (cacheFile != null && cacheFile.exists()) {
 			Glide.with(activity).load(cacheFile).downloadOnly(new SimpleFileTarget() {
 				@Override public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
 					super.onResourceReady(resource, glideAnimation);
-					TileBitmapDrawable.attachTileBitmapDrawable(touchImageView, resource.getAbsolutePath(), null, null);
+                    imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
 					progressBar.setVisibility(View.GONE);
 				}
 			});
@@ -183,14 +126,14 @@ public class ImagePreviewAdapter extends PagerAdapter {
 						}
 
 						@Override public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
-							TileBitmapDrawable.attachTileBitmapDrawable(touchImageView, resource.getAbsolutePath(), null, null);
+                            imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
 							progressBar.setVisibility(View.GONE);
 						}
 					});
 				}
 
 				@Override public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
-					TileBitmapDrawable.attachTileBitmapDrawable(touchImageView, resource.getAbsolutePath(), null, null);
+                    imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
 					progressBar.setVisibility(View.GONE);
 				}
 			});

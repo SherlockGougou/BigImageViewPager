@@ -263,6 +263,9 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 
 	@Override protected void onDestroy() {
 		super.onDestroy();
+		if (imagePreviewAdapter != null) {
+			imagePreviewAdapter.closePage();
+		}
 		ImagePreview.getInstance().reset();
 	}
 
