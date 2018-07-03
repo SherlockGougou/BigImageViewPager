@@ -27,7 +27,7 @@ allprojects {
 Step 2. Add the dependency
 ```
 dependencies {
-	  implementation 'com.github.SherlockGougou:BigImageViewPager:v0.0.5'
+	  implementation 'com.github.SherlockGougou:BigImageViewPager:v0.0.6'
 }
 ```
 #### 调用方式
@@ -54,30 +54,16 @@ ImageInfo imageInfo;
 					.setShowOriginButton(true)// 是否显示查看原图按钮
 					.setFolderName("BigImageViewDownload")// 设置下载到的文件夹名（保存到根目录）
 					.setScaleLevel(1, 3, 8)// 设置三级放大倍数，分别是最小、中等、最大倍数。
-					.setScaleMode(ImagePreview.MODE_SCALE_TO_MEDIUM_TO_MAX_TO_MIN)// 设置缩放模式，详细描述见下方。
 					.setZoomTransitionDuration(500)// 设置缩放的动画时长
 					.start();// 开始跳转
-```
-
-# 缩放模式详解
-```
-MODE_SCALE_TO_MEDIUM_TO_MAX_TO_MIN = 1001;// 三级放大：第一次双击放大到中等，再次双击，放大到最大，再次双击，缩小到最小。
-MODE_SCALE_TO_MAX_TO_MIN = 1002;// 二级放大，最大与最小：第一次双击放大到最大，再次双击缩小到最小。
-MODE_SCALE_TO_MEDIUM_TO_MIN = 1003;// 二级放大，中等与最小：第一次双击放大到中等，用户可铜过双指放大到最大。再次双击，缩小到最小。
 ```
 # DEMO体验
 ![DEMO 扫码体验](https://upload-images.jianshu.io/upload_images/1710902-4ee521fac5f6f0da.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
-# TODO
-- 增加本地图片浏览功能
-- 自定义主题
 
 # GitHub源码
 https://github.com/SherlockGougou/BigImageViewPager
-
-# 致谢
-[diegocarloslima/ByakuGallery](https://github.com/diegocarloslima/ByakuGallery)
 
 # Bug反馈、增加需求，加 QQ 交流群：
 ### 欢迎加入“大话安卓”技术交流群，一起分享，共同进步##
