@@ -27,7 +27,7 @@ allprojects {
 Step 2. Add the dependency
 ```
 dependencies {
-	  implementation 'com.github.SherlockGougou:BigImageViewPager:v0.0.6'
+	  implementation 'com.github.SherlockGougou:BigImageViewPager:v1.0.0'
 }
 ```
 #### 调用方式
