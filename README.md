@@ -1,5 +1,5 @@
 ### BigImage + ImageView + ViewPager = BigImageViewPager
-一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。
+一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用 davemorrissey 开源的 subsampling-scale-image-view 区块复用加载，优化内存占用，有效避免OOM。
 
 # 截图
 ![截图.jpg](https://upload-images.jianshu.io/upload_images/1710902-55e84221177f0ddd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -64,6 +64,15 @@ ImageInfo imageInfo;
 
 # GitHub源码
 https://github.com/SherlockGougou/BigImageViewPager
+
+
+
+# 致谢
+
+本框架核心是开源作者 [davemorrissey](https://github.com/davemorrissey) 的 [subsampling-scale-image-view](https://github.com/davemorrissey/subsampling-scale-image-view)，在此感谢他的付出！
+对原作感兴趣的，可以去研究学习 ---> [传送门点我](https://github.com/davemorrissey/subsampling-scale-image-view)
+
+
 
 # Bug反馈、增加需求，加 QQ 交流群：
 ### 欢迎加入“大话安卓”技术交流群，一起分享，共同进步##
