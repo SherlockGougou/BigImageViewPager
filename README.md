@@ -66,6 +66,9 @@ ImageInfo imageInfo;
 https://github.com/SherlockGougou/BigImageViewPager
 
 
+# TODO LIST
+- 目前仅支持glide 3.x，后期会对4.x进行支持。
+
 
 # 致谢
 
