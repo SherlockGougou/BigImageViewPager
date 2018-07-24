@@ -58,7 +58,7 @@ ImageInfo imageInfo;
 					.start();// 开始跳转
 ```
 # DEMO体验
-![DEMO 扫码体验](https://upload-images.jianshu.io/upload_images/1710902-4ee521fac5f6f0da.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![DEMO 扫码体验](https://upload-images.jianshu.io/upload_images/1710902-b4e2ea2bb1425fa1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 
