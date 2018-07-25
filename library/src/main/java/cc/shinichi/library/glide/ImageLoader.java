@@ -2,11 +2,12 @@ package cc.shinichi.library.glide;
 
 import android.app.Activity;
 import android.content.Context;
-import cc.shinichi.library.glide.cache.OriginalKey;
+import cc.shinichi.library.glide.cache.DataCacheKey;
 import cc.shinichi.library.glide.cache.SafeKeyGenerator;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.disklrucache.DiskLruCache;
 import com.bumptech.glide.load.engine.cache.DiskCache;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.signature.EmptySignature;
 import java.io.File;
 
@@ -25,9 +26,9 @@ public class ImageLoader {
    */
   public static File getGlideCacheFile(Context context, String url) {
     try {
-      OriginalKey originalKey = new OriginalKey(url, EmptySignature.obtain());
+      DataCacheKey dataCacheKey = new DataCacheKey(new GlideUrl(url), EmptySignature.obtain());
       SafeKeyGenerator safeKeyGenerator = new SafeKeyGenerator();
-      String safeKey = safeKeyGenerator.getSafeKey(originalKey);
+      String safeKey = safeKeyGenerator.getSafeKey(dataCacheKey);
       File file = new File(context.getCacheDir(), DiskCache.Factory.DEFAULT_DISK_CACHE_DIR);
       DiskLruCache diskLruCache =
           DiskLruCache.open(file, 1, 1, DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE);

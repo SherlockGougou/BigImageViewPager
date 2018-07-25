@@ -3,11 +3,13 @@ package cc.shinichi.library.view;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -20,15 +22,15 @@ import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
-import cc.shinichi.library.glide.engine.ProgressTarget;
+import cc.shinichi.library.glide.sunfusheng.progress.GlideApp;
+import cc.shinichi.library.glide.sunfusheng.progress.OnProgressListener;
+import cc.shinichi.library.glide.sunfusheng.progress.ProgressManager;
 import cc.shinichi.library.tool.DownloadPictureUtil;
 import cc.shinichi.library.tool.HandlerUtils;
 import cc.shinichi.library.tool.Print;
 import cc.shinichi.library.tool.ToastUtil;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SizeReadyCallback;
-import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import java.io.File;
 import java.util.List;
 
@@ -142,44 +144,35 @@ public class ImagePreviewActivity extends AppCompatActivity
       visible();
       tv_show_origin.setText("0 %");
 
-      Glide.with(this).load(path).downloadOnly(new ProgressTarget<String, File>(path, null) {
-        @Override public void onProgress(String url, long bytesRead, long expectedLength) {
-          int progress = (int) ((float) bytesRead * 100 / (float) expectedLength);
-          Print.d(TAG, "OnProgress--->" + progress);
+      GlideApp.with(context).load(path).into(new SimpleTarget<Drawable>() {
+        @Override public void onResourceReady(@NonNull Drawable resource,
+            @Nullable Transition<? super Drawable> transition) {
 
-          if (bytesRead == expectedLength) {// 加载完成
-            Message message = handlerHolder.obtainMessage();
-            Bundle bundle = new Bundle();
-            bundle.putString("url", url);
-            message.what = 1;
-            message.obj = bundle;
-            handlerHolder.sendMessage(message);
-          } else {// 加载中
-            Message message = handlerHolder.obtainMessage();
-            Bundle bundle = new Bundle();
-            bundle.putString("url", url);
-            bundle.putInt("progress", progress);
-            message.what = 2;
-            message.obj = bundle;
-            handlerHolder.sendMessage(message);
-          }
-        }
-
-        @Override
-        public void onResourceReady(File resource, GlideAnimation<? super File> animation) {
-          super.onResourceReady(resource, animation);
-          Message message = handlerHolder.obtainMessage();
-          Bundle bundle = new Bundle();
-          bundle.putString("url", path);
-          message.what = 1;
-          message.obj = bundle;
-          handlerHolder.sendMessage(message);
-        }
-
-        @Override public void getSize(SizeReadyCallback cb) {
-          cb.onSizeReady(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
         }
       });
+
+      ProgressManager.addListener(path, new OnProgressListener() {
+        @Override
+        public void onProgress(String url, boolean isComplete, int percentage, long bytesRead,
+            long totalBytes) {
+              if (isComplete) {// 加载完成
+                Message message = handlerHolder.obtainMessage();
+                Bundle bundle = new Bundle();
+                bundle.putString("url", url);
+                message.what = 1;
+                message.obj = bundle;
+                handlerHolder.sendMessage(message);
+              } else {// 加载中
+                Message message = handlerHolder.obtainMessage();
+                Bundle bundle = new Bundle();
+                bundle.putString("url", url);
+                bundle.putInt("progress", percentage);
+                message.what = 2;
+                message.obj = bundle;
+                handlerHolder.sendMessage(message);
+              }
+            }
+        });
     } else if (msg.what == 1) {// 加载完成
       Print.d(TAG, "handler == 1");
       Bundle bundle = (Bundle) msg.obj;

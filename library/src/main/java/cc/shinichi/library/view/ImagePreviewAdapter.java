@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +13,10 @@ import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
-import cc.shinichi.library.glide.engine.SimpleFileTarget;
+import cc.shinichi.library.glide.sunfusheng.progress.GlideApp;
 import cc.shinichi.library.tool.Print;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import java.io.File;
@@ -43,7 +44,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
           Map.Entry entry = (Map.Entry) o;
           if (entry != null && entry.getValue() != null) {
             ((SubsamplingScaleImageView) entry.getValue()).recycle();
-            Glide.clear((SubsamplingScaleImageView) entry.getValue());
+            GlideApp.with(activity).clear((SubsamplingScaleImageView) entry.getValue());
           }
         }
         imageHashMap.clear();
@@ -63,14 +64,10 @@ public class ImagePreviewAdapter extends PagerAdapter {
   public void loadOrigin(final String originUrl) {
     if (imageHashMap.get(originUrl) != null) {
       final SubsamplingScaleImageView imageView = imageHashMap.get(originUrl);
-
-      Glide.with(activity).load(originUrl).downloadOnly(new SimpleFileTarget() {
-        @Override
-        public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
-          super.onResourceReady(resource, glideAnimation);
-          imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
-        }
-      });
+      File cacheFile = ImageLoader.getGlideCacheFile(activity, originUrl);
+      if (cacheFile != null && cacheFile.exists()) {
+        imageView.setImage(ImageSource.uri(Uri.fromFile(new File(cacheFile.getAbsolutePath()))));
+      }
     } else {
       notifyDataSetChanged();
     }
@@ -102,47 +99,30 @@ public class ImagePreviewAdapter extends PagerAdapter {
 
     File cacheFile = ImageLoader.getGlideCacheFile(activity, originPathUrl);
     if (cacheFile != null && cacheFile.exists()) {
-      Glide.with(activity).load(cacheFile).downloadOnly(new SimpleFileTarget() {
-        @Override
-        public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
-          super.onResourceReady(resource, glideAnimation);
-          imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
-          progressBar.setVisibility(View.GONE);
-        }
-      });
+      imageView.setImage(ImageSource.uri(Uri.fromFile(new File(cacheFile.getAbsolutePath()))));
+      progressBar.setVisibility(View.GONE);
     } else {
       // 加载缩略图
       Print.d(TAG, "thumbPathUrl == " + thumbPathUrl);
-      Glide.with(activity).load(thumbPathUrl).downloadOnly(new SimpleFileTarget() {
-        @Override public void onLoadStarted(Drawable placeholder) {
+
+      SimpleTarget<File> target = new SimpleTarget<File>() {
+        @Override public void onLoadStarted(@Nullable Drawable placeholder) {
           super.onLoadStarted(placeholder);
           progressBar.setVisibility(View.VISIBLE);
         }
 
-        @Override public void onLoadFailed(Exception e, Drawable errorDrawable) {
-          super.onLoadFailed(e, errorDrawable);
-          // 不知为何会有时候加载失败，几率挺高，在此处重新加载一次。
-          Glide.with(activity).load(thumbPathUrl).downloadOnly(new SimpleFileTarget() {
-            @Override public void onLoadFailed(Exception e, Drawable errorDrawable) {
-              super.onLoadFailed(e, errorDrawable);
-              progressBar.setVisibility(View.GONE);
-            }
-
-            @Override public void onResourceReady(File resource,
-                GlideAnimation<? super File> glideAnimation) {
-              imageView.setImage(
-                  ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
-              progressBar.setVisibility(View.GONE);
-            }
-          });
+        @Override public void onLoadFailed(@Nullable Drawable errorDrawable) {
+          super.onLoadFailed(errorDrawable);
+          progressBar.setVisibility(View.GONE);
         }
 
-        @Override
-        public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
+        @Override public void onResourceReady(@NonNull File resource,
+            @Nullable Transition<? super File> transition) {
           imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
           progressBar.setVisibility(View.GONE);
         }
-      });
+      };
+      GlideApp.with(activity).downloadOnly().load(thumbPathUrl).into(target);
     }
     container.addView(convertView);
     return convertView;
