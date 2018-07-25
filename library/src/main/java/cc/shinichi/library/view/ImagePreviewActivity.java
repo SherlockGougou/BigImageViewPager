@@ -177,8 +177,8 @@ public class ImagePreviewActivity extends AppCompatActivity
       Print.d(TAG, "handler == 1");
       Bundle bundle = (Bundle) msg.obj;
       String url = bundle.getString("url");
+      gone();
       if (currentItem == getRealIndexWithPath(url)) {
-        gone();
         imagePreviewAdapter.loadOrigin(url);
       }
     } else if (msg.what == 2) {// 加载中
@@ -208,18 +208,14 @@ public class ImagePreviewActivity extends AppCompatActivity
     return 0;
   }
 
-  private void checkCache(final String url_) {
+  private void checkCache(String url_) {
     gone();
-    new Thread(new Runnable() {
-      @Override public void run() {
-        File cacheFile = ImageLoader.getGlideCacheFile(context, url_);
-        if (cacheFile != null && cacheFile.exists()) {
-          gone();
-        } else {
-          visible();
-        }
-      }
-    }).start();
+    File cacheFile = ImageLoader.getGlideCacheFile(context, url_);
+    if (cacheFile != null && cacheFile.exists()) {
+      gone();
+    } else {
+      visible();
+    }
   }
 
   @Override public void onClick(View v) {

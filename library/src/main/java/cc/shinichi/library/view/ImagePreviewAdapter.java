@@ -15,6 +15,7 @@ import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.glide.sunfusheng.progress.GlideApp;
 import cc.shinichi.library.tool.Print;
+import cc.shinichi.library.tool.ToastUtil;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.davemorrissey.labs.subscaleview.ImageSource;
@@ -44,7 +45,6 @@ public class ImagePreviewAdapter extends PagerAdapter {
           Map.Entry entry = (Map.Entry) o;
           if (entry != null && entry.getValue() != null) {
             ((SubsamplingScaleImageView) entry.getValue()).recycle();
-            GlideApp.with(activity).clear((SubsamplingScaleImageView) entry.getValue());
           }
         }
         imageHashMap.clear();
@@ -114,6 +114,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
         @Override public void onLoadFailed(@Nullable Drawable errorDrawable) {
           super.onLoadFailed(errorDrawable);
           progressBar.setVisibility(View.GONE);
+          ToastUtil.getInstance()._short(activity, "加载失败");
         }
 
         @Override public void onResourceReady(@NonNull File resource,
