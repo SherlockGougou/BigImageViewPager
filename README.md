@@ -30,22 +30,18 @@ allprojects {
 Step 2. Add the dependency
 ```
 dependencies {
-	  implementation 'com.github.SherlockGougou:BigImageViewPager:v1.1.1'
+// 此处显示的均是最新版本号：
+	implementation 'com.github.SherlockGougou:BigImageViewPager:v1.1.1'// glide 4.x 请依赖这个
+	implementation 'com.github.SherlockGougou:BigImageViewPager:v3_1.0.0'// glide 3.x 请依赖这个
 }
 ```
 
 # 注意：
-由于本框架内置了glide 4.x，且由于4.x的api变更较大，无法与glide 3.x共存，故，本框架以后的更新将仅支持glide 4.x，若您app内部使用了glide 3.x，将无法使用v1.0.0以上的版本，但您可以使用v1.0.0，即：
-
-```
-dependencies {
-      implementation 'com.github.SherlockGougou:BigImageViewPager:v1.0.0'
-}
-```
+由于glide4.x的api变更较大，无法与glide3.x共存，故，本框架后期将维护两个版本的不同分支。
 
 
 #### 调用方式
-生成图片源：
+根据需求生成图片源：
 ```
 ImageInfo imageInfo;
 		final List<ImageInfo> imageInfoList = new ArrayList<>();
