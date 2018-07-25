@@ -114,7 +114,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
         @Override public void onLoadFailed(@Nullable Drawable errorDrawable) {
           super.onLoadFailed(errorDrawable);
           progressBar.setVisibility(View.GONE);
-          ToastUtil.getInstance()._short(activity, "加载失败");
+          notifyDataSetChanged();
         }
 
         @Override public void onResourceReady(@NonNull File resource,
