@@ -25,7 +25,7 @@
       android:paddingRight="10dp"
       android:text="1 / 4"
       android:textColor="#ffffff"
-      android:textSize="16sp"
+      android:textSize="14sp"
       />
 
   <FrameLayout
@@ -58,9 +58,11 @@
       android:layout_width="35dp"
       android:layout_height="35dp"
       android:layout_alignParentBottom="true"
+      android:layout_alignParentEnd="true"
       android:layout_alignParentRight="true"
       android:layout_gravity="bottom|right"
       android:layout_marginBottom="20dp"
+      android:layout_marginEnd="20dp"
       android:layout_marginRight="20dp"
       android:background="@drawable/gray_square_circle_bg"
       android:padding="6dp"

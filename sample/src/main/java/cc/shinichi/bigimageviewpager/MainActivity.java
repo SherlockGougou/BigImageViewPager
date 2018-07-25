@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
 					.setShowOriginButton(true)
 					.setFolderName("BigImageViewDownload")
 					.setScaleLevel(1, 3, 8)
-					.setScaleMode(ImagePreview.MODE_SCALE_TO_MEDIUM_TO_MAX_TO_MIN)
 					.setZoomTransitionDuration(500)
 					.start();
 			}

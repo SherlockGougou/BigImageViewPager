@@ -10,10 +10,10 @@ import android.os.Looper;
  * description:
  */
 public class ThreadUtil {
-	public ThreadUtil() {
-	}
+  public ThreadUtil() {
+  }
 
-	public static boolean checkMainThread() {
-		return Looper.myLooper() != null && Looper.myLooper() == Looper.getMainLooper();
-	}
+  public static boolean checkMainThread() {
+    return Looper.myLooper() != null && Looper.myLooper() == Looper.getMainLooper();
+  }
 }

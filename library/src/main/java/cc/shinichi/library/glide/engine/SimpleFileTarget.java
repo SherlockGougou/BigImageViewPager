@@ -17,49 +17,50 @@ import java.io.File;
  */
 public class SimpleFileTarget implements Target<File> {
 
-	private static final String TAG = "SimpleFileTarget";
+  private static final String TAG = "SimpleFileTarget";
 
-	@Override public void onLoadStarted(Drawable placeholder) {
-		Print.d(TAG, "onLoadStarted");
-	}
+  @Override public void onLoadStarted(Drawable placeholder) {
+    Print.d(TAG, "onLoadStarted");
+  }
 
-	@Override public void onLoadFailed(Exception e, Drawable errorDrawable) {
-		if (e != null) {
-			Print.d(TAG, "onLoadFailed e--->" + e.toString());
-		} else {
-			Print.d(TAG, "onLoadFailed");
-		}
-	}
+  @Override public void onLoadFailed(Exception e, Drawable errorDrawable) {
+    if (e != null) {
+      Print.d(TAG, "onLoadFailed e--->" + e.toString());
+    } else {
+      Print.d(TAG, "onLoadFailed");
+    }
+  }
 
-	@Override public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
-		Print.d(TAG, "onResourceReady " + resource.getAbsolutePath());
-	}
+  @Override
+  public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
+    Print.d(TAG, "onResourceReady " + resource.getAbsolutePath());
+  }
 
-	@Override public void onLoadCleared(Drawable placeholder) {
+  @Override public void onLoadCleared(Drawable placeholder) {
 
-	}
+  }
 
-	@Override public void getSize(SizeReadyCallback cb) {
-		cb.onSizeReady(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
-	}
+  @Override public void getSize(SizeReadyCallback cb) {
+    cb.onSizeReady(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+  }
 
-	@Override public void setRequest(Request request) {
+  @Override public Request getRequest() {
+    return null;
+  }
 
-	}
+  @Override public void setRequest(Request request) {
 
-	@Override public Request getRequest() {
-		return null;
-	}
+  }
 
-	@Override public void onStart() {
+  @Override public void onStart() {
 
-	}
+  }
 
-	@Override public void onStop() {
+  @Override public void onStop() {
 
-	}
+  }
 
-	@Override public void onDestroy() {
+  @Override public void onDestroy() {
 
-	}
+  }
 }
