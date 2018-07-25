@@ -1,8 +1,11 @@
 ### BigImage + ImageView + ViewPager = BigImageViewPager
-一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用 davemorrissey 开源的 subsampling-scale-image-view 区块复用加载，优化内存占用，有效避免OOM。
+一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。
 
 # 截图
-![截图.jpg](https://upload-images.jianshu.io/upload_images/1710902-55e84221177f0ddd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![截图1.jpg](https://upload-images.jianshu.io/upload_images/1710902-11827e4c9c08fc86.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![截图2.jpg](https://upload-images.jianshu.io/upload_images/1710902-213bed170b37f027.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 
 # 功能
@@ -27,9 +30,20 @@ allprojects {
 Step 2. Add the dependency
 ```
 dependencies {
-	  implementation 'com.github.SherlockGougou:BigImageViewPager:v1.0.0'
+	  implementation 'com.github.SherlockGougou:BigImageViewPager:v1.1.1'
 }
 ```
+
+# 注意：
+由于本框架内置了glide 4.x，且由于4.x的api变更较大，无法与glide 3.x共存，故，本框架以后的更新将仅支持glide 4.x，若您app内部使用了glide 3.x，将无法使用v1.0.0以上的版本，但您可以使用v1.0.0，即：
+
+```
+dependencies {
+      implementation 'com.github.SherlockGougou:BigImageViewPager:v1.0.0'
+}
+```
+
+
 #### 调用方式
 生成图片源：
 ```
@@ -65,16 +79,10 @@ ImageInfo imageInfo;
 # GitHub源码
 https://github.com/SherlockGougou/BigImageViewPager
 
-
-# TODO LIST
-- 目前仅支持glide 3.x，后期会对4.x进行支持。
-
-
 # 致谢
-
-本框架核心是开源作者 [davemorrissey](https://github.com/davemorrissey) 的 [subsampling-scale-image-view](https://github.com/davemorrissey/subsampling-scale-image-view)，在此感谢他的付出！
+- 本框架核心是开源作者 [davemorrissey](https://github.com/davemorrissey) 的 [subsampling-scale-image-view](https://github.com/davemorrissey/subsampling-scale-image-view)，在此感谢他的付出！
 对原作感兴趣的，可以去研究学习 ---> [传送门点我](https://github.com/davemorrissey/subsampling-scale-image-view)
-
+- okhttp 进度监听部分代码，借鉴使用了[GlideImageView](https://github.com/sunfusheng/GlideImageView)，在此对其表示感谢，喜欢其作品的可以移步去查看学习
 
 
 # Bug反馈、增加需求，加 QQ 交流群：
