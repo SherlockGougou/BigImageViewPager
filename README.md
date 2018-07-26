@@ -16,8 +16,11 @@
 - 查看原图支持加载进度条显示
 - 支持超大图、超长图，sample中测试的大图尺寸分别是：2280 * 22116、5760 * 3840。
 - 采用区块加载，不用担心OOM的风险。
+
+#更新日志
 - v0.0.5新增：可设置缩放比例、缩放动画时间。
 - v1.2.0新增：可设置多种加载策略（仅普清、仅原图、手动模式、网络自适应）
+- v1.2.1修复可能与app冲突的部分
 
 # 用法
 #### 添加依赖
@@ -33,14 +36,14 @@ allprojects {
 Step 2. 在你主module的build.gradle中添加依赖：
 
 # 此处显示的是本框架的最新版本号：
-# glide4.x : v4_1.2.0
-# glide3.x : v3_1.2.0
+# glide4.x : v4_1.2.1
+# glide3.x : v3_1.2.1
 
 ```
 dependencies {
 
   // 如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
-	implementation 'com.github.SherlockGougou:BigImageViewPager:v4_1.2.0'
+	implementation 'com.github.SherlockGougou:BigImageViewPager:v4_1.2.1'
 
 	// 由于本框架使用了glide和okhttp3，所以请依赖以下框架，如果您app中已经依赖某一个的话，可以略过那一个，但要保证以下这些库的版本号一致：
   implementation 'com.github.bumptech.glide:glide:4.7.1'
@@ -51,7 +54,7 @@ dependencies {
 
 
 	// 如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-	implementation 'com.github.SherlockGougou:BigImageViewPager:v3_1.2.0'
+	implementation 'com.github.SherlockGougou:BigImageViewPager:v3_1.2.1'
 }
 ```
 Step 3. 在您的主module里，添加自定义GlideModule，例如：
@@ -192,6 +195,7 @@ ImageInfo imageInfo;
 
 # DEMO体验
 ![扫码下载demo](https://upload-images.jianshu.io/upload_images/1710902-e70250a3d6bb0cf7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 # 目前存在的问题：
 - glide在加载图片时，有几率会失败，目前方案是失败后，进行重试。具体可看这个issues：[Glide trying to load from assets directory instead of internet](https://github.com/bumptech/glide/issues/2894)
