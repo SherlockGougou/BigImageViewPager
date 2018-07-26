@@ -22,13 +22,13 @@ import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
-import cc.shinichi.library.glide.sunfusheng.progress.GlideApp;
 import cc.shinichi.library.glide.sunfusheng.progress.OnProgressListener;
 import cc.shinichi.library.glide.sunfusheng.progress.ProgressManager;
 import cc.shinichi.library.tool.DownloadPictureUtil;
 import cc.shinichi.library.tool.HandlerUtils;
 import cc.shinichi.library.tool.Print;
 import cc.shinichi.library.tool.ToastUtil;
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import java.io.File;
@@ -69,10 +69,10 @@ public class ImagePreviewActivity extends AppCompatActivity
     currentItem = ImagePreview.getInstance().getIndex();
     downloadFolderName = ImagePreview.getInstance().getFolderName();
     isShowDownButton = ImagePreview.getInstance().isShowDownButton();
-    isShowOriginButton = ImagePreview.getInstance().isShowOriginButton();
 
     currentItemOriginPathUrl = imageInfoList.get(currentItem).getOriginUrl();
 
+    isShowOriginButton = ImagePreview.getInstance().isShowOriginButton(currentItem);
     if (isShowOriginButton) {
       // 检查缓存是否存在
       checkCache(currentItemOriginPathUrl);
@@ -112,6 +112,8 @@ public class ImagePreviewActivity extends AppCompatActivity
       @Override public void onPageSelected(int position) {
         currentItem = position;
         currentItemOriginPathUrl = imageInfoList.get(position).getOriginUrl();
+
+        isShowOriginButton = ImagePreview.getInstance().isShowOriginButton(currentItem);
         if (isShowOriginButton) {
           // 检查缓存是否存在
           checkCache(currentItemOriginPathUrl);
@@ -144,7 +146,7 @@ public class ImagePreviewActivity extends AppCompatActivity
       visible();
       tv_show_origin.setText("0 %");
 
-      GlideApp.with(context).load(path).into(new SimpleTarget<Drawable>() {
+      Glide.with(context).load(path).into(new SimpleTarget<Drawable>() {
         @Override public void onResourceReady(@NonNull Drawable resource,
             @Nullable Transition<? super Drawable> transition) {
 

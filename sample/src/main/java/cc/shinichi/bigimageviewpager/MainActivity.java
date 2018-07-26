@@ -36,23 +36,59 @@ public class MainActivity extends AppCompatActivity {
 
 		ImageInfo imageInfo;
 		final List<ImageInfo> imageInfoList = new ArrayList<>();
-		for (int i = 0; i < images.length; i++) {
+		for (String image : images) {
 			imageInfo = new ImageInfo();
-			imageInfo.setOriginUrl(images[i]);// 原图
-			imageInfo.setThumbnailUrl(images[i].concat("-1200"));// 缩略图，实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样，并隐藏查看原图按钮即可。
+			imageInfo.setOriginUrl(image);// 原图
+			imageInfo.setThumbnailUrl(
+					image.concat("-1200"));// 缩略图，实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样，并隐藏查看原图按钮即可。
 			imageInfoList.add(imageInfo);
 			imageInfo = null;
 		}
 
-		findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+		// 仅加载普清
+		findViewById(R.id.buttonThumb).setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
 				ImagePreview
 					.getInstance()
 					.setContext(MainActivity.this)
-					.setIndex(5)
+					.setIndex(0)
 					.setImageInfoList(imageInfoList)
 					.setShowDownButton(true)
-					.setShowOriginButton(true)
+					.setLoadStrategy(ImagePreview.LoadStrategy.AlwaysThumb)
+					.setFolderName("BigImageViewDownload")
+					.setScaleLevel(1, 3, 8)
+					.setZoomTransitionDuration(300)
+					.start();
+			}
+		});
+
+		// 仅加载原图
+		findViewById(R.id.buttonOrigin).setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) {
+				ImagePreview
+					.getInstance()
+					.setContext(MainActivity.this)
+					.setIndex(1)
+					.setImageInfoList(imageInfoList)
+					.setShowDownButton(true)
+					.setLoadStrategy(ImagePreview.LoadStrategy.AlwaysOrigin)
+					.setFolderName("BigImageViewDownload")
+					.setScaleLevel(1, 3, 8)
+					.setZoomTransitionDuration(300)
+					.start();
+			}
+		});
+
+		// 手动模式：默认普清，手动高清
+		findViewById(R.id.buttonDefault).setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) {
+				ImagePreview
+					.getInstance()
+					.setContext(MainActivity.this)
+					.setIndex(2)
+					.setImageInfoList(imageInfoList)
+					.setShowDownButton(true)
+					.setLoadStrategy(ImagePreview.LoadStrategy.Default)
 					.setFolderName("BigImageViewDownload")
 					.setScaleLevel(1, 3, 8)
 					.setZoomTransitionDuration(500)
@@ -60,10 +96,27 @@ public class MainActivity extends AppCompatActivity {
 			}
 		});
 
-		findViewById(R.id.button_clean).setOnClickListener(new View.OnClickListener() {
+		// 网络自适应（WiFi原图，流量普清）
+		findViewById(R.id.buttonAuto).setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) {
+				ImagePreview
+					.getInstance()
+					.setContext(MainActivity.this)
+					.setIndex(3)
+					.setImageInfoList(imageInfoList)
+					.setShowDownButton(true)
+					.setLoadStrategy(ImagePreview.LoadStrategy.NetworkAuto)
+					.setFolderName("BigImageViewDownload")
+					.setScaleLevel(1, 3, 5)
+					.setZoomTransitionDuration(300)
+					.start();
+			}
+		});
+
+		findViewById(R.id.buttonClean).setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
 				ImageLoader.cleanDiskCache(MainActivity.this);
-				ToastUtil.getInstance()._short(MainActivity.this, "clean cache complete!");
+				ToastUtil.getInstance()._short(MainActivity.this, "磁盘缓存已成功清除");
 			}
 		});
 	}

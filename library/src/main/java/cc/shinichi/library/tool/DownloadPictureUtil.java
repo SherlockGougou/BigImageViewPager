@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import cc.shinichi.library.glide.sunfusheng.progress.GlideApp;
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import java.io.File;
@@ -44,6 +44,6 @@ public class DownloadPictureUtil {
             }
       }
     };
-    GlideApp.with(context).downloadOnly().load(url).into(target);
+    Glide.with(context).downloadOnly().load(url).into(target);
   }
 }

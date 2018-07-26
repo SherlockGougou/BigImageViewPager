@@ -13,9 +13,9 @@ import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
-import cc.shinichi.library.glide.sunfusheng.progress.GlideApp;
+import cc.shinichi.library.tool.NetworkUtil;
 import cc.shinichi.library.tool.Print;
-import cc.shinichi.library.tool.ToastUtil;
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.davemorrissey.labs.subscaleview.ImageSource;
@@ -31,6 +31,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
   private Activity activity;
   private List<ImageInfo> imageInfo;
   private HashMap<String, SubsamplingScaleImageView> imageHashMap = new HashMap<>();
+  private String finalLoadUrl = "";// 最终加载的图片url
 
   public ImagePreviewAdapter(Activity activity, @NonNull List<ImageInfo> imageInfo) {
     super();
@@ -92,20 +93,38 @@ public class ImagePreviewAdapter extends PagerAdapter {
     final String originPathUrl = info.getOriginUrl();
     final String thumbPathUrl = info.getThumbnailUrl();
 
+    finalLoadUrl = thumbPathUrl;
+    ImagePreview.LoadStrategy loadStrategy = ImagePreview.getInstance().getLoadStrategy();
+
     if (imageHashMap.containsKey(originPathUrl)) {
       imageHashMap.remove(originPathUrl);
     }
     imageHashMap.put(originPathUrl, imageView);
 
+    // 判断原图缓存是否存在，存在的话，直接显示原图缓存，优先保证清晰。
     File cacheFile = ImageLoader.getGlideCacheFile(activity, originPathUrl);
     if (cacheFile != null && cacheFile.exists()) {
       imageView.setImage(ImageSource.uri(Uri.fromFile(new File(cacheFile.getAbsolutePath()))));
       progressBar.setVisibility(View.GONE);
     } else {
-      // 加载缩略图
-      Print.d(TAG, "thumbPathUrl == " + thumbPathUrl);
+      // 根据当前加载策略判断，需要加载的url是哪一个
+      if (loadStrategy == ImagePreview.LoadStrategy.Default) {
+        finalLoadUrl = thumbPathUrl;
+      } else if (loadStrategy == ImagePreview.LoadStrategy.AlwaysOrigin) {
+        finalLoadUrl = originPathUrl;
+      } else if (loadStrategy == ImagePreview.LoadStrategy.AlwaysThumb) {
+        finalLoadUrl = thumbPathUrl;
+      } else if (loadStrategy == ImagePreview.LoadStrategy.NetworkAuto) {
+        if (NetworkUtil.isWiFi()) {
+          finalLoadUrl = originPathUrl;
+        } else {
+          finalLoadUrl = thumbPathUrl;
+        }
+      }
+      finalLoadUrl = finalLoadUrl.trim();
+      Print.d(TAG, "finalLoadUrl == " + finalLoadUrl);
 
-      SimpleTarget<File> target = new SimpleTarget<File>() {
+      Glide.with(activity).downloadOnly().load(finalLoadUrl).into(new SimpleTarget<File>() {
         @Override public void onLoadStarted(@Nullable Drawable placeholder) {
           super.onLoadStarted(placeholder);
           progressBar.setVisibility(View.VISIBLE);
@@ -113,7 +132,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
 
         @Override public void onLoadFailed(@Nullable Drawable errorDrawable) {
           super.onLoadFailed(errorDrawable);
-          progressBar.setVisibility(View.GONE);
+          // glide会有时加载失败，这不是本框架的问题，具体看：https://github.com/bumptech/glide/issues/2894
           notifyDataSetChanged();
         }
 
@@ -122,8 +141,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
           imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
           progressBar.setVisibility(View.GONE);
         }
-      };
-      GlideApp.with(activity).downloadOnly().load(thumbPathUrl).into(target);
+      });
     }
     container.addView(convertView);
     return convertView;

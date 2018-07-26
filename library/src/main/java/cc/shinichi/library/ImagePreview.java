@@ -24,14 +24,37 @@ public class ImagePreview {
   private Context context;
   private List<ImageInfo> imageInfoList;// 图片数据集合
   private int index = 0;// 默认显示第几个
-  private boolean isShowDownButton = true;// 是否显示下载按钮
-  private boolean isShowOriginButton = true;// 是否显示查看原图按钮
   private String folderName = "ImagePreview";// 下载到的文件夹名（根目录中）
   private float minScale = 1.0f;// 最小缩放倍数
   private float mediumScale = 3.0f;// 中等缩放倍数
   private float maxScale = 5.0f;// 最大缩放倍数
 
+  private boolean isShowDownButton = true;// 是否显示下载按钮
   private int zoomTransitionDuration = 200;// 动画持续时间 单位毫秒 ms
+
+  private LoadStrategy loadStrategy = LoadStrategy.Default;// 加载策略
+
+  public enum LoadStrategy {
+    /**
+     * 仅加载原图；会强制隐藏查看原图按钮
+     */
+    AlwaysOrigin,
+
+    /**
+     * 仅加载普清；会强制隐藏查看原图按钮
+     */
+    AlwaysThumb,
+
+    /**
+     * 根据网络自适应加载，WiFi原图，流量普清；会强制隐藏查看原图按钮
+     */
+    NetworkAuto,
+
+    /**
+     * 手动模式：默认普清，点击按钮再加载原图；会根据原图、缩略图url是否一样来判断是否显示查看原图按钮
+     */
+    Default
+  }
 
   public static ImagePreview getInstance() {
     return InnerClass.instance;
@@ -73,12 +96,34 @@ public class ImagePreview {
     return this;
   }
 
-  public boolean isShowOriginButton() {
-    return isShowOriginButton;
+  public boolean isShowOriginButton(int index) {
+    // 根据不同加载策略，自行判断是否显示查看原图按钮
+    String originUrl = getImageInfoList().get(index).getOriginUrl();
+    String thumbUrl = getImageInfoList().get(index).getThumbnailUrl();
+    if (originUrl.equalsIgnoreCase(thumbUrl)) {// 原图、缩略图url一样，不显示查看原图按钮
+      return false;
+    }
+    if (loadStrategy == LoadStrategy.Default) {
+      return true;// 手动模式时，根据是否有原图缓存来决定是否显示查看原图按钮
+    } else if (loadStrategy == LoadStrategy.NetworkAuto) {
+      return false;// 强制隐藏查看原图按钮
+    } else if (loadStrategy == LoadStrategy.AlwaysThumb) {
+      return false;// 强制隐藏查看原图按钮
+    } else if (loadStrategy == LoadStrategy.AlwaysOrigin) {
+      return false;// 强制隐藏查看原图按钮
+    } else {
+      return false;
+    }
   }
 
+  /**
+   * 不再有效，是否显示查看原图按钮，取决于加载策略，LoadStrategy，会自行判断是否显示。
+   * @param showOriginButton
+   * @return
+   */
+  @Deprecated
   public ImagePreview setShowOriginButton(boolean showOriginButton) {
-    isShowOriginButton = showOriginButton;
+    //isShowOriginButton = showOriginButton;
     return this;
   }
 
@@ -94,6 +139,11 @@ public class ImagePreview {
     return this;
   }
 
+  /**
+   * 当前版本不再支持本设置，双击会在最小和中等缩放值之间进行切换，可手动放大到最大。
+   * @param scaleMode
+   * @return
+   */
   @Deprecated
   public ImagePreview setScaleMode(int scaleMode) {
     //if (scaleMode != MODE_SCALE_TO_MAX_TO_MIN
@@ -140,11 +190,20 @@ public class ImagePreview {
     return this;
   }
 
+  public ImagePreview setLoadStrategy(LoadStrategy loadStrategy) {
+    this.loadStrategy = loadStrategy;
+    return this;
+  }
+
+  public LoadStrategy getLoadStrategy() {
+    return loadStrategy;
+  }
+
   public void reset() {
     imageInfoList = null;
     index = 0;
     isShowDownButton = true;
-    isShowOriginButton = true;
+    loadStrategy = LoadStrategy.Default;
     folderName = "ImagePreview";
   }
 
