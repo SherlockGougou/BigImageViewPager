@@ -67,10 +67,10 @@ public class ImagePreviewActivity extends AppCompatActivity
     currentItem = ImagePreview.getInstance().getIndex();
     downloadFolderName = ImagePreview.getInstance().getFolderName();
     isShowDownButton = ImagePreview.getInstance().isShowDownButton();
-    isShowOriginButton = ImagePreview.getInstance().isShowOriginButton();
 
     currentItemOriginPathUrl = imageInfoList.get(currentItem).getOriginUrl();
 
+    isShowOriginButton = ImagePreview.getInstance().isShowOriginButton(currentItem);
     if (isShowOriginButton) {
       // 检查缓存是否存在
       checkCache(currentItemOriginPathUrl);
@@ -110,6 +110,8 @@ public class ImagePreviewActivity extends AppCompatActivity
       @Override public void onPageSelected(int position) {
         currentItem = position;
         currentItemOriginPathUrl = imageInfoList.get(position).getOriginUrl();
+
+        isShowOriginButton = ImagePreview.getInstance().isShowOriginButton(currentItem);
         if (isShowOriginButton) {
           // 检查缓存是否存在
           checkCache(currentItemOriginPathUrl);

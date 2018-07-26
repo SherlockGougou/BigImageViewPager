@@ -13,6 +13,7 @@ import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.glide.engine.SimpleFileTarget;
+import cc.shinichi.library.tool.NetworkUtil;
 import cc.shinichi.library.tool.Print;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -29,6 +30,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
   private Activity activity;
   private List<ImageInfo> imageInfo;
   private HashMap<String, SubsamplingScaleImageView> imageHashMap = new HashMap<>();
+  private String finalLoadUrl = "";// 最终加载的图片url
 
   public ImagePreviewAdapter(Activity activity, @NonNull List<ImageInfo> imageInfo) {
     super();
@@ -95,6 +97,9 @@ public class ImagePreviewAdapter extends PagerAdapter {
     final String originPathUrl = info.getOriginUrl();
     final String thumbPathUrl = info.getThumbnailUrl();
 
+    finalLoadUrl = thumbPathUrl;
+    ImagePreview.LoadStrategy loadStrategy = ImagePreview.getInstance().getLoadStrategy();
+
     if (imageHashMap.containsKey(originPathUrl)) {
       imageHashMap.remove(originPathUrl);
     }
@@ -111,9 +116,24 @@ public class ImagePreviewAdapter extends PagerAdapter {
         }
       });
     } else {
-      // 加载缩略图
-      Print.d(TAG, "thumbPathUrl == " + thumbPathUrl);
-      Glide.with(activity).load(thumbPathUrl).downloadOnly(new SimpleFileTarget() {
+      // 根据当前加载策略判断，需要加载的url是哪一个
+      if (loadStrategy == ImagePreview.LoadStrategy.Default) {
+        finalLoadUrl = thumbPathUrl;
+      } else if (loadStrategy == ImagePreview.LoadStrategy.AlwaysOrigin) {
+        finalLoadUrl = originPathUrl;
+      } else if (loadStrategy == ImagePreview.LoadStrategy.AlwaysThumb) {
+        finalLoadUrl = thumbPathUrl;
+      } else if (loadStrategy == ImagePreview.LoadStrategy.NetworkAuto) {
+        if (NetworkUtil.isWiFi()) {
+          finalLoadUrl = originPathUrl;
+        } else {
+          finalLoadUrl = thumbPathUrl;
+        }
+      }
+      finalLoadUrl = finalLoadUrl.trim();
+      Print.d(TAG, "finalLoadUrl == " + finalLoadUrl);
+
+      Glide.with(activity).load(finalLoadUrl).downloadOnly(new SimpleFileTarget() {
         @Override public void onLoadStarted(Drawable placeholder) {
           super.onLoadStarted(placeholder);
           progressBar.setVisibility(View.VISIBLE);
@@ -121,8 +141,8 @@ public class ImagePreviewAdapter extends PagerAdapter {
 
         @Override public void onLoadFailed(Exception e, Drawable errorDrawable) {
           super.onLoadFailed(e, errorDrawable);
-          // 不知为何会有时候加载失败，几率挺高，在此处重新加载一次。
-          Glide.with(activity).load(thumbPathUrl).downloadOnly(new SimpleFileTarget() {
+          // glide会有时加载失败，这不是本框架的问题，具体看：https://github.com/bumptech/glide/issues/2894
+          Glide.with(activity).load(finalLoadUrl).downloadOnly(new SimpleFileTarget() {
             @Override public void onLoadFailed(Exception e, Drawable errorDrawable) {
               super.onLoadFailed(e, errorDrawable);
               progressBar.setVisibility(View.GONE);
