@@ -191,7 +191,7 @@ ImageInfo imageInfo;
 
 
 # DEMO体验
-![DEMO 扫码体验](https://upload-images.jianshu.io/upload_images/1710902-b4e2ea2bb1425fa1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![扫码下载demo](https://upload-images.jianshu.io/upload_images/1710902-e70250a3d6bb0cf7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 # 目前存在的问题：
 - glide在加载图片时，有几率会失败，目前方案是失败后，进行重试。具体可看这个issues：[Glide trying to load from assets directory instead of internet](https://github.com/bumptech/glide/issues/2894)
