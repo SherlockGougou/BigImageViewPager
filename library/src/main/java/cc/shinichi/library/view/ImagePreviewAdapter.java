@@ -124,7 +124,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
       } else if (loadStrategy == ImagePreview.LoadStrategy.AlwaysThumb) {
         finalLoadUrl = thumbPathUrl;
       } else if (loadStrategy == ImagePreview.LoadStrategy.NetworkAuto) {
-        if (NetworkUtil.isWiFi()) {
+        if (NetworkUtil.isWiFi(activity)) {
           finalLoadUrl = originPathUrl;
         } else {
           finalLoadUrl = thumbPathUrl;
