@@ -72,34 +72,4 @@ public class FileUtil {
     }
     return result;
   }
-
-  /**
-   * 获取缓存路径 不存在自动创建
-   *
-   * @param uniqueName 独一无二的文件夹名(如：img_cache_glide)
-   */
-  public static File getDiskCacheDir(Context context, String uniqueName) {
-    String cachePath;
-    File file;
-    try {
-      if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
-          || !Environment.isExternalStorageRemovable()) {
-        if (context.getExternalCacheDir() != null) {
-          cachePath = context.getExternalCacheDir().toString();
-        } else {
-          cachePath = context.getCacheDir().toString();
-        }
-      } else {
-        cachePath = context.getCacheDir().toString();
-      }
-      file = new File(cachePath + File.separator + uniqueName);
-      if (!file.exists()) {
-        file.mkdirs();
-      }
-      return file;
-    } catch (Exception e) {
-      e.printStackTrace();
-      return null;
-    }
-  }
 }
