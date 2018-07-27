@@ -5,6 +5,8 @@
 
 # gif查看不流畅，可扫描底部二维码进行安装体验
 ![Gif](https://upload-images.jianshu.io/upload_images/1710902-3d57165ed0785475.gif)
+# gif地址：[https://upload-images.jianshu.io/upload_images/1710902-3d57165ed0785475.gif](https://upload-images.jianshu.io/upload_images/1710902-3d57165ed0785475.gif)
+
 
 ![v1.2.0增加多种加载策略设置](https://upload-images.jianshu.io/upload_images/1710902-0a66fe87b5b8e20b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
