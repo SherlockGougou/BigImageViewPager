@@ -2,7 +2,7 @@
 一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。
 
 # 截图
-![Gif](https://upload-images.jianshu.io/upload_images/1710902-3d57165ed0785475.gif?imageMogr2/auto-orient/strip)
+![Gif](https://upload-images.jianshu.io/upload_images/1710902-3d57165ed0785475.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/499)
 
 ![v1.2.0增加多种加载策略设置](https://upload-images.jianshu.io/upload_images/1710902-0a66fe87b5b8e20b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -19,7 +19,7 @@
 - 支持超大图、超长图，sample中测试的大图尺寸分别是：2280 * 22116、5760 * 3840。
 - 采用区块加载，不用担心OOM的风险。
 
-#更新日志
+# 更新日志
 - v0.0.5新增：可设置缩放比例、缩放动画时间。
 - v1.2.0新增：可设置多种加载策略（仅普清、仅原图、手动模式、网络自适应）
 - v1.2.1修复可能与app冲突的部分
