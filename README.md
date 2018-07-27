@@ -2,6 +2,8 @@
 一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。
 
 # 截图
+![Gif](https://upload-images.jianshu.io/upload_images/1710902-3d57165ed0785475.gif?imageMogr2/auto-orient/strip)
+
 ![v1.2.0增加多种加载策略设置](https://upload-images.jianshu.io/upload_images/1710902-0a66fe87b5b8e20b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ![截图1.jpg](https://upload-images.jianshu.io/upload_images/1710902-11827e4c9c08fc86.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -21,6 +23,7 @@
 - v0.0.5新增：可设置缩放比例、缩放动画时间。
 - v1.2.0新增：可设置多种加载策略（仅普清、仅原图、手动模式、网络自适应）
 - v1.2.1修复可能与app冲突的部分
+- v1.2.2新增：长图（宽高比大于等于3的图）默认宽度放大到手机屏幕的宽度
 
 # 用法
 #### 添加依赖
@@ -36,14 +39,15 @@ allprojects {
 Step 2. 在你主module的build.gradle中添加依赖：
 
 # 此处显示的是本框架的最新版本号：
-# glide4.x : v4_1.2.1
-# glide3.x : v3_1.2.1
+# glide4.x : v4_1.2.2
+# glide3.x : v3_1.2.2
 
 ```
 dependencies {
 
   // 如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
-	implementation 'com.github.SherlockGougou:BigImageViewPager:v4_1.2.1'
+	implementation 'com.github.SherlockGougou:BigImageViewPager:v4_1.2.2'
+  implementation 'com.android.support:appcompat-v7:27.1.1'
 
 	// 由于本框架使用了glide和okhttp3，所以请依赖以下框架，如果您app中已经依赖某一个的话，可以略过那一个，但要保证以下这些库的版本号一致：
   implementation 'com.github.bumptech.glide:glide:4.7.1'
@@ -54,10 +58,11 @@ dependencies {
 
 
 	// 如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-	implementation 'com.github.SherlockGougou:BigImageViewPager:v3_1.2.1'
+	implementation 'com.github.SherlockGougou:BigImageViewPager:v3_1.2.2'
+  implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```
-Step 3. 在您的主module里，添加自定义GlideModule，例如：
+Step 3. 在您的主module里，添加自定义AppGlideModule，例如：
 
 ```
 @GlideModule

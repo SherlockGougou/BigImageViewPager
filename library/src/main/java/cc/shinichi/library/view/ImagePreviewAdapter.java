@@ -13,6 +13,7 @@ import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
+import cc.shinichi.library.tool.ImageUtil;
 import cc.shinichi.library.tool.NetworkUtil;
 import cc.shinichi.library.tool.Print;
 import com.bumptech.glide.Glide;
@@ -67,6 +68,13 @@ public class ImagePreviewAdapter extends PagerAdapter {
       final SubsamplingScaleImageView imageView = imageHashMap.get(originUrl);
       File cacheFile = ImageLoader.getGlideCacheFile(activity, originUrl);
       if (cacheFile != null && cacheFile.exists()) {
+        String imagePath = cacheFile.getAbsolutePath();
+        boolean isLongImage = ImageUtil.isLongImage(imagePath);
+        Print.d(TAG, "isLongImage = " + isLongImage);
+        if (isLongImage) {
+          imageView.setOrientation(ImageUtil.getOrientation(imagePath));
+          imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_START);
+        }
         imageView.setImage(ImageSource.uri(Uri.fromFile(new File(cacheFile.getAbsolutePath()))));
       }
     } else {
@@ -79,10 +87,14 @@ public class ImagePreviewAdapter extends PagerAdapter {
     View convertView = View.inflate(activity, R.layout.item_photoview, null);
     final ProgressBar progressBar = convertView.findViewById(R.id.progress_view);
     final SubsamplingScaleImageView imageView = convertView.findViewById(R.id.photo_view);
+
+    imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE);
+    imageView.setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER);
     imageView.setDoubleTapZoomDuration(ImagePreview.getInstance().getZoomTransitionDuration());
     imageView.setMinScale(ImagePreview.getInstance().getMinScale());
     imageView.setMaxScale(ImagePreview.getInstance().getMaxScale());
     imageView.setDoubleTapZoomScale(ImagePreview.getInstance().getMediumScale());
+
     imageView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         activity.finish();
@@ -104,6 +116,13 @@ public class ImagePreviewAdapter extends PagerAdapter {
     // 判断原图缓存是否存在，存在的话，直接显示原图缓存，优先保证清晰。
     File cacheFile = ImageLoader.getGlideCacheFile(activity, originPathUrl);
     if (cacheFile != null && cacheFile.exists()) {
+      String imagePath = cacheFile.getAbsolutePath();
+      boolean isLongImage = ImageUtil.isLongImage(imagePath);
+      Print.d(TAG, "isLongImage = " + isLongImage);
+      if (isLongImage) {
+        imageView.setOrientation(ImageUtil.getOrientation(imagePath));
+        imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_START);
+      }
       imageView.setImage(ImageSource.uri(Uri.fromFile(new File(cacheFile.getAbsolutePath()))));
       progressBar.setVisibility(View.GONE);
     } else {
@@ -123,8 +142,9 @@ public class ImagePreviewAdapter extends PagerAdapter {
       }
       finalLoadUrl = finalLoadUrl.trim();
       Print.d(TAG, "finalLoadUrl == " + finalLoadUrl);
+      final String url = finalLoadUrl;
 
-      Glide.with(activity).downloadOnly().load(finalLoadUrl).into(new SimpleTarget<File>() {
+      Glide.with(activity).downloadOnly().load(url).into(new SimpleTarget<File>() {
         @Override public void onLoadStarted(@Nullable Drawable placeholder) {
           super.onLoadStarted(placeholder);
           progressBar.setVisibility(View.VISIBLE);
@@ -133,11 +153,42 @@ public class ImagePreviewAdapter extends PagerAdapter {
         @Override public void onLoadFailed(@Nullable Drawable errorDrawable) {
           super.onLoadFailed(errorDrawable);
           // glide会有时加载失败，这不是本框架的问题，具体看：https://github.com/bumptech/glide/issues/2894
-          notifyDataSetChanged();
+          Glide.with(activity).downloadOnly().load(url).into(new SimpleTarget<File>() {
+            @Override public void onLoadStarted(@Nullable Drawable placeholder) {
+              super.onLoadStarted(placeholder);
+              progressBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override public void onLoadFailed(@Nullable Drawable errorDrawable) {
+              super.onLoadFailed(errorDrawable);
+              // glide会有时加载失败，这不是本框架的问题，具体看：https://github.com/bumptech/glide/issues/2894
+
+            }
+
+            @Override public void onResourceReady(@NonNull File resource,
+                @Nullable Transition<? super File> transition) {
+              String imagePath = resource.getAbsolutePath();
+              boolean isLongImage = ImageUtil.isLongImage(imagePath);
+              Print.d(TAG, "isLongImage = " + isLongImage);
+              if (isLongImage) {
+                imageView.setOrientation(ImageUtil.getOrientation(imagePath));
+                imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_START);
+              }
+              imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
+              progressBar.setVisibility(View.GONE);
+            }
+          });
         }
 
         @Override public void onResourceReady(@NonNull File resource,
             @Nullable Transition<? super File> transition) {
+          String imagePath = resource.getAbsolutePath();
+          boolean isLongImage = ImageUtil.isLongImage(imagePath);
+          Print.d(TAG, "isLongImage = " + isLongImage);
+          if (isLongImage) {
+            imageView.setOrientation(ImageUtil.getOrientation(imagePath));
+            imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_START);
+          }
           imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
           progressBar.setVisibility(View.GONE);
         }
