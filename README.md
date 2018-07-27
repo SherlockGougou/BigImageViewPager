@@ -2,7 +2,9 @@
 一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。
 
 # 截图
-![Gif](https://upload-images.jianshu.io/upload_images/1710902-3d57165ed0785475.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/499)
+
+# gif查看不流畅，可扫描底部二维码进行安装体验
+![Gif](https://upload-images.jianshu.io/upload_images/1710902-3d57165ed0785475.gif)
 
 ![v1.2.0增加多种加载策略设置](https://upload-images.jianshu.io/upload_images/1710902-0a66fe87b5b8e20b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -92,7 +94,7 @@ ImageInfo imageInfo;
 		for (int i = 0; i < images.length; i++) {
 			imageInfo = new ImageInfo();
 			imageInfo.setOriginUrl(images[i]);// 原图
-			imageInfo.setThumbnailUrl(images[i].concat("-1200"));// 缩略图，实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样，并隐藏查看原图按钮即可。
+			imageInfo.setThumbnailUrl(images[i].concat("-1200"));// 缩略图，实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样，查看原图按钮会自动隐藏。
 			imageInfoList.add(imageInfo);
 			imageInfo = null;
 		}
@@ -199,7 +201,8 @@ ImageInfo imageInfo;
 
 
 # DEMO体验
-![扫码下载demo](https://upload-images.jianshu.io/upload_images/1710902-e70250a3d6bb0cf7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![扫码下载demo](https://upload-images.jianshu.io/upload_images/1710902-0073c2f34a714fe2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 
 # 目前存在的问题：
