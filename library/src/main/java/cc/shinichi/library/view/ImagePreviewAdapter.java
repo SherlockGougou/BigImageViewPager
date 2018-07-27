@@ -13,6 +13,7 @@ import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.glide.engine.SimpleFileTarget;
+import cc.shinichi.library.tool.ImageUtil;
 import cc.shinichi.library.tool.NetworkUtil;
 import cc.shinichi.library.tool.Print;
 import com.bumptech.glide.Glide;
@@ -70,6 +71,13 @@ public class ImagePreviewAdapter extends PagerAdapter {
         @Override
         public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
           super.onResourceReady(resource, glideAnimation);
+          String imagePath = resource.getAbsolutePath();
+          boolean isLongImage = ImageUtil.isLongImage(imagePath);
+          Print.d(TAG, "isLongImage = " + isLongImage);
+          if (isLongImage) {
+            imageView.setOrientation(ImageUtil.getOrientation(imagePath));
+            imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_START);
+          }
           imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
         }
       });
@@ -111,6 +119,13 @@ public class ImagePreviewAdapter extends PagerAdapter {
         @Override
         public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
           super.onResourceReady(resource, glideAnimation);
+          String imagePath = resource.getAbsolutePath();
+          boolean isLongImage = ImageUtil.isLongImage(imagePath);
+          Print.d(TAG, "isLongImage = " + isLongImage);
+          if (isLongImage) {
+            imageView.setOrientation(ImageUtil.getOrientation(imagePath));
+            imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_START);
+          }
           imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
           progressBar.setVisibility(View.GONE);
         }
@@ -150,6 +165,13 @@ public class ImagePreviewAdapter extends PagerAdapter {
 
             @Override public void onResourceReady(File resource,
                 GlideAnimation<? super File> glideAnimation) {
+              String imagePath = resource.getAbsolutePath();
+              boolean isLongImage = ImageUtil.isLongImage(imagePath);
+              Print.d(TAG, "isLongImage = " + isLongImage);
+              if (isLongImage) {
+                imageView.setOrientation(ImageUtil.getOrientation(imagePath));
+                imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_START);
+              }
               imageView.setImage(
                   ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
               progressBar.setVisibility(View.GONE);
@@ -159,6 +181,13 @@ public class ImagePreviewAdapter extends PagerAdapter {
 
         @Override
         public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
+          String imagePath = resource.getAbsolutePath();
+          boolean isLongImage = ImageUtil.isLongImage(imagePath);
+          Print.d(TAG, "isLongImage = " + isLongImage);
+          if (isLongImage) {
+            imageView.setOrientation(ImageUtil.getOrientation(imagePath));
+            imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_START);
+          }
           imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
           progressBar.setVisibility(View.GONE);
         }
