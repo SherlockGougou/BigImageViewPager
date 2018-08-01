@@ -28,6 +28,7 @@
 - v1.2.0新增：可设置多种加载策略（仅普清、仅原图、手动模式、网络自适应）
 - v1.2.1修复可能与app冲突的部分
 - v1.2.2新增：长图（宽高比大于等于3的图）默认宽度放大到手机屏幕的宽度
+- v1.2.3：优化内存泄漏；简单优化进场退场动画。
 
 # 用法
 #### 添加依赖
@@ -43,14 +44,14 @@ allprojects {
 Step 2. 在你主module的build.gradle中添加依赖：
 
 # 此处显示的是本框架的最新版本号：
-# glide4.x : v4_1.2.2
-# glide3.x : v3_1.2.2
+# glide4.x : v4_1.2.3
+# glide3.x : v3_1.2.3
 
 ```
 dependencies {
 
   // 如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
-	implementation 'com.github.SherlockGougou:BigImageViewPager:v4_1.2.2'
+	implementation 'com.github.SherlockGougou:BigImageViewPager:v4_1.2.3'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 
 	// 由于本框架使用了glide和okhttp3，所以请依赖以下框架，如果您app中已经依赖某一个的话，可以略过那一个，但要保证以下这些库的版本号一致：
@@ -62,7 +63,7 @@ dependencies {
 
 
 	// 如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-	implementation 'com.github.SherlockGougou:BigImageViewPager:v3_1.2.2'
+	implementation 'com.github.SherlockGougou:BigImageViewPager:v3_1.2.3'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```

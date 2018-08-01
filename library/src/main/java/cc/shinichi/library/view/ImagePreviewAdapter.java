@@ -63,19 +63,35 @@ public class ImagePreviewAdapter extends PagerAdapter {
   /**
    * 加载原图
    */
-  public void loadOrigin(final String originUrl) {
-    if (imageHashMap.get(originUrl) != null) {
-      final SubsamplingScaleImageView imageView = imageHashMap.get(originUrl);
-      File cacheFile = ImageLoader.getGlideCacheFile(activity, originUrl);
+  public void loadOrigin(final ImageInfo imageInfo) {
+    if (imageHashMap.get(imageInfo.getOriginUrl()) != null) {
+      final SubsamplingScaleImageView imageView = imageHashMap.get(imageInfo.getOriginUrl());
+      File cacheFile = ImageLoader.getGlideCacheFile(activity, imageInfo.getOriginUrl());
       if (cacheFile != null && cacheFile.exists()) {
+        String thumbnailUrl = imageInfo.getThumbnailUrl();
+        File smallCacheFile = ImageLoader.getGlideCacheFile(activity, thumbnailUrl);
+        ImageSource small = null;
+        if (smallCacheFile != null && smallCacheFile.exists()) {
+          String smallImagePath = smallCacheFile.getAbsolutePath();
+          small = ImageSource.bitmap(ImageUtil.getImageBitmap(smallImagePath, ImageUtil.getBitmapDegree(smallImagePath)));
+          int widSmall = ImageUtil.getWidthHeight(smallImagePath)[0];
+          int heiSmall = ImageUtil.getWidthHeight(smallImagePath)[1];
+          small.dimensions(widSmall, heiSmall);
+        }
+
         String imagePath = cacheFile.getAbsolutePath();
+        ImageSource origin = ImageSource.uri(imagePath);
+        int widOrigin = ImageUtil.getWidthHeight(imagePath)[0];
+        int heiOrigin = ImageUtil.getWidthHeight(imagePath)[1];
+        origin.dimensions(widOrigin, heiOrigin);
+
         boolean isLongImage = ImageUtil.isLongImage(imagePath);
         Print.d(TAG, "isLongImage = " + isLongImage);
         if (isLongImage) {
           imageView.setOrientation(ImageUtil.getOrientation(imagePath));
           imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_START);
         }
-        imageView.setImage(ImageSource.uri(Uri.fromFile(new File(cacheFile.getAbsolutePath()))));
+        imageView.setImage(origin, small);
       }
     } else {
       notifyDataSetChanged();
@@ -84,6 +100,9 @@ public class ImagePreviewAdapter extends PagerAdapter {
 
   @NonNull @Override
   public Object instantiateItem(@NonNull ViewGroup container, final int position) {
+    if (activity == null) {
+      return container;
+    }
     View convertView = View.inflate(activity, R.layout.item_photoview, null);
     final ProgressBar progressBar = convertView.findViewById(R.id.progress_view);
     final SubsamplingScaleImageView imageView = convertView.findViewById(R.id.photo_view);

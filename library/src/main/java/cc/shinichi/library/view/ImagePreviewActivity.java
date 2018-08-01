@@ -1,7 +1,9 @@
 package cc.shinichi.library.view;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -58,6 +60,16 @@ public class ImagePreviewActivity extends AppCompatActivity
 
   private String currentItemOriginPathUrl = "";// 当前显示的原图链接
   private HandlerUtils.HandlerHolder handlerHolder;
+
+  public static void activityStart(Context context) {
+    if (context == null) {
+      return;
+    }
+    Intent intent = new Intent();
+    intent.setClass(context, ImagePreviewActivity.class);
+    context.startActivity(intent);
+    ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+  }
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -139,6 +151,11 @@ public class ImagePreviewActivity extends AppCompatActivity
     finish();
   }
 
+  @Override public void finish() {
+    super.finish();
+    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+  }
+
   @Override public boolean handleMessage(Message msg) {
     if (msg.what == 0) {// 点击查看原图按钮，开始加载原图
       final String path = imageInfoList.get(currentItem).getOriginUrl();
@@ -181,7 +198,7 @@ public class ImagePreviewActivity extends AppCompatActivity
       String url = bundle.getString("url");
       gone();
       if (currentItem == getRealIndexWithPath(url)) {
-        imagePreviewAdapter.loadOrigin(url);
+        imagePreviewAdapter.loadOrigin(imageInfoList.get(currentItem));
       }
     } else if (msg.what == 2) {// 加载中
       Bundle bundle = (Bundle) msg.obj;

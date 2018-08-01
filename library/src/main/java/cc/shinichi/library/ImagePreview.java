@@ -1,7 +1,6 @@
 package cc.shinichi.library;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import cc.shinichi.library.bean.ImageInfo;
@@ -60,10 +59,6 @@ public class ImagePreview {
     return InnerClass.instance;
   }
 
-  public Context getContext() {
-    return context;
-  }
-
   public ImagePreview setContext(@NonNull Context context) {
     this.context = context;
     return this;
@@ -118,8 +113,6 @@ public class ImagePreview {
 
   /**
    * 不再有效，是否显示查看原图按钮，取决于加载策略，LoadStrategy，会自行判断是否显示。
-   * @param showOriginButton
-   * @return
    */
   @Deprecated
   public ImagePreview setShowOriginButton(boolean showOriginButton) {
@@ -141,8 +134,6 @@ public class ImagePreview {
 
   /**
    * 当前版本不再支持本设置，双击会在最小和中等缩放值之间进行切换，可手动放大到最大。
-   * @param scaleMode
-   * @return
    */
   @Deprecated
   public ImagePreview setScaleMode(int scaleMode) {
@@ -205,6 +196,7 @@ public class ImagePreview {
     isShowDownButton = true;
     loadStrategy = LoadStrategy.Default;
     folderName = "ImagePreview";
+    context = null;
   }
 
   public void start() {
@@ -218,12 +210,10 @@ public class ImagePreview {
     if (this.index >= imageInfoList.size()) {
       throw new IllegalArgumentException("index out of range!");
     }
-    Intent intent = new Intent();
-    intent.setClass(context, ImagePreviewActivity.class);
-    context.startActivity(intent);
+    ImagePreviewActivity.activityStart(context);
   }
 
-  public static class InnerClass {
+  private static class InnerClass {
     private static ImagePreview instance = new ImagePreview();
   }
 }
