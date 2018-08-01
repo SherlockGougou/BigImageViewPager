@@ -29,7 +29,7 @@ public class ToastUtil {
     HANDLER.post(new Runnable() {
       @Override public void run() {
         if (toast == null) {
-          toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
+          toast = Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_SHORT);
           toast.show();
         } else {
           toast.setText(text);
@@ -43,7 +43,7 @@ public class ToastUtil {
     HANDLER.post(new Runnable() {
       @Override public void run() {
         if (toast == null) {
-          toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
+          toast = Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_LONG);
           toast.show();
         } else {
           toast.setText(text);
