@@ -6,7 +6,7 @@ import android.view.View;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
-import cc.shinichi.library.tool.ToastUtil;
+import cc.shinichi.sherlockutillibrary.utility.ui.ToastUtil;
 import java.util.ArrayList;
 import java.util.List;
 
