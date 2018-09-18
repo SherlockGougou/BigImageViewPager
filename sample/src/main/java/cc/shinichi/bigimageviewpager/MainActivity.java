@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 						.setFolderName("BigImageViewDownload")
 						.setScaleLevel(1, 3, 8)
 						.setZoomTransitionDuration(300)
+						.setShowCloseButton(false)
 						.start();
 			}
 		});
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
 						.setFolderName("BigImageViewDownload")
 						.setScaleLevel(1, 3, 8)
 						.setZoomTransitionDuration(300)
+						.setShowCloseButton(true)
 						.start();
 			}
 		});
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
 						.setFolderName("BigImageViewDownload")
 						.setScaleLevel(1, 3, 8)
 						.setZoomTransitionDuration(500)
+						.setShowCloseButton(true)
 						.start();
 			}
 		});
@@ -109,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
 						.setFolderName("BigImageViewDownload")
 						.setScaleLevel(1, 3, 5)
 						.setZoomTransitionDuration(300)
+						.setShowCloseButton(true)
 						.start();
 			}
 		});

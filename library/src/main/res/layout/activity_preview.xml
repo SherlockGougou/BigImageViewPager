@@ -23,9 +23,9 @@
       android:background="@drawable/gray_circle_bg"
       android:paddingLeft="10dp"
       android:paddingRight="10dp"
-      android:text="1 / 4"
+      android:text="1/4"
       android:textColor="#ffffff"
-      android:textSize="14sp"
+      android:textSize="15sp"
       />
 
   <FrameLayout
@@ -54,6 +54,22 @@
   </FrameLayout>
 
   <ImageView
+      android:id="@+id/imgCloseButton"
+      android:layout_width="35dp"
+      android:layout_height="35dp"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentStart="true"
+      android:layout_gravity="bottom|left"
+      android:layout_marginBottom="20dp"
+      android:layout_marginLeft="20dp"
+      android:layout_marginStart="20dp"
+      android:background="@drawable/gray_square_circle_bg"
+      android:padding="3dp"
+      android:src="@drawable/ic_action_close"
+      />
+
+  <ImageView
       android:id="@+id/img_download"
       android:layout_width="35dp"
       android:layout_height="35dp"
@@ -65,8 +81,7 @@
       android:layout_marginEnd="20dp"
       android:layout_marginRight="20dp"
       android:background="@drawable/gray_square_circle_bg"
-      android:padding="6dp"
-      android:src="@drawable/icon_download"
-      android:visibility="gone"
+      android:padding="3dp"
+      android:src="@drawable/icon_download_new"
       />
 </RelativeLayout>

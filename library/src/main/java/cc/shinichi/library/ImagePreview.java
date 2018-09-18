@@ -28,6 +28,7 @@ public class ImagePreview {
   private float mediumScale = 3.0f;// 中等缩放倍数
   private float maxScale = 5.0f;// 最大缩放倍数
 
+  private boolean isShowCloseButton = true;// 是否显示关闭页面按钮
   private boolean isShowDownButton = true;// 是否显示下载按钮
   private int zoomTransitionDuration = 200;// 动画持续时间 单位毫秒 ms
 
@@ -88,6 +89,15 @@ public class ImagePreview {
 
   public ImagePreview setShowDownButton(boolean showDownButton) {
     isShowDownButton = showDownButton;
+    return this;
+  }
+
+  public boolean isShowCloseButton() {
+    return isShowCloseButton;
+  }
+
+  public ImagePreview setShowCloseButton(boolean showCloseButton) {
+    isShowCloseButton = showCloseButton;
     return this;
   }
 
@@ -194,6 +204,7 @@ public class ImagePreview {
     imageInfoList = null;
     index = 0;
     isShowDownButton = true;
+    isShowCloseButton = false;
     loadStrategy = LoadStrategy.Default;
     folderName = "ImagePreview";
     context = null;
