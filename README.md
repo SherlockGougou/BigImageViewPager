@@ -29,6 +29,7 @@
 - v1.2.1修复可能与app冲突的部分
 - v1.2.2新增：长图（宽高比大于等于3的图）默认宽度放大到手机屏幕的宽度
 - v1.2.3：优化内存泄漏；简单优化进场退场动画。
+- v1.2.5新增：是否显示关闭页面按钮，21以上透明化状态栏。
 
 # 用法
 #### 添加依赖
@@ -44,14 +45,14 @@ allprojects {
 Step 2. 在你主module的build.gradle中添加依赖：
 
 # 此处显示的是本框架的最新版本号：
-# glide4.x : v4_1.2.4
-# glide3.x : v3_1.2.4
+# glide4.x : v4_1.2.5
+# glide3.x : v3_1.2.5
 
 ```
 dependencies {
 
   // 如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：(support包版本需要大于27)
-	implementation 'com.github.SherlockGougou:BigImageViewPager:v4_1.2.4'
+	implementation 'com.github.SherlockGougou:BigImageViewPager:v4_1.2.5'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 
 	// 由于本框架使用了glide和okhttp3，所以请依赖以下框架，如果您app中已经依赖某一个的话，可以略过那一个，但要保证以下这些库的版本号一致：
@@ -63,7 +64,7 @@ dependencies {
 
 
 	// 如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：(support包版本需要大于27)
-	implementation 'com.github.SherlockGougou:BigImageViewPager:v3_1.2.4'
+	implementation 'com.github.SherlockGougou:BigImageViewPager:v3_1.2.5'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```
@@ -96,8 +97,11 @@ ImageInfo imageInfo;
 		final List<ImageInfo> imageInfoList = new ArrayList<>();
 		for (int i = 0; i < images.length; i++) {
 			imageInfo = new ImageInfo();
-			imageInfo.setOriginUrl(images[i]);// 原图
-			imageInfo.setThumbnailUrl(images[i].concat("-1200"));// 缩略图，实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样，查看原图按钮会自动隐藏。
+			// 原图图片链接
+			imageInfo.setOriginUrl(images[i]);
+			// 缩略图图片链接，实际使用中，请根据需求传入缩略图路径，此处拼接上"-1200"意思是裁剪到1200像素。
+			// 如果没有缩略图url，可以将两项设置为一样，查看原图按钮会自动隐藏。
+			imageInfo.setThumbnailUrl(images[i].concat("-1200"));
 			imageInfoList.add(imageInfo);
 			imageInfo = null;
 		}
@@ -118,6 +122,7 @@ ImageInfo imageInfo;
 					.setFolderName("BigImageViewDownload")// 保存图片到SD卡根目录的文件夹名称
 					.setScaleLevel(1, 3, 8)// 最小、中等、最大的缩放比例
 					.setZoomTransitionDuration(300)// 缩放的动画时长
+					.setShowCloseButton(true)// 是否在查看大图页面显示关闭页面按钮（在左下角)
 					.start();
 			}
 		});
@@ -135,6 +140,7 @@ ImageInfo imageInfo;
 					.setFolderName("BigImageViewDownload")
 					.setScaleLevel(1, 3, 8)
 					.setZoomTransitionDuration(300)
+					.setShowCloseButton(true)
 					.start();
 			}
 		});
@@ -152,6 +158,7 @@ ImageInfo imageInfo;
 					.setFolderName("BigImageViewDownload")
 					.setScaleLevel(1, 3, 8)
 					.setZoomTransitionDuration(500)
+					.setShowCloseButton(true)
 					.start();
 			}
 		});
@@ -169,6 +176,7 @@ ImageInfo imageInfo;
 					.setFolderName("BigImageViewDownload")
 					.setScaleLevel(1, 3, 5)
 					.setZoomTransitionDuration(300)
+					.setShowCloseButton(true)
 					.start();
 			}
 		});
@@ -206,6 +214,8 @@ ImageInfo imageInfo;
 # DEMO体验
 ![扫码下载demo](https://upload-images.jianshu.io/upload_images/1710902-0073c2f34a714fe2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+# 注意！！！
+本框架V4版本依赖的glide为最新版本，低版本的未进行测试，请尽量保持和本框架一致的glide版本号！
 
 
 # 目前存在的问题：
