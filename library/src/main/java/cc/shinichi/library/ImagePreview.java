@@ -32,6 +32,9 @@ public class ImagePreview {
   private boolean isShowDownButton = true;// 是否显示下载按钮
   private int zoomTransitionDuration = 200;// 动画持续时间 单位毫秒 ms
 
+  private boolean isEnableDragClose = false;// 是否启用下拉关闭，默认不启用
+  private boolean isEnableClickClose = true;// 是否启用点击关闭，默认启用
+
   private LoadStrategy loadStrategy = LoadStrategy.Default;// 加载策略
 
   public enum LoadStrategy {
@@ -200,11 +203,31 @@ public class ImagePreview {
     return loadStrategy;
   }
 
+  public boolean isEnableDragClose() {
+    return isEnableDragClose;
+  }
+
+  public ImagePreview setEnableDragClose(boolean enableDragClose) {
+    isEnableDragClose = enableDragClose;
+    return this;
+  }
+
+  public boolean isEnableClickClose() {
+    return isEnableClickClose;
+  }
+
+  public ImagePreview setEnableClickClose(boolean enableClickClose) {
+    isEnableClickClose = enableClickClose;
+    return this;
+  }
+
   public void reset() {
     imageInfoList = null;
     index = 0;
     isShowDownButton = true;
     isShowCloseButton = false;
+    isEnableDragClose = false;
+    isEnableClickClose = true;
     loadStrategy = LoadStrategy.Default;
     folderName = "ImagePreview";
     context = null;

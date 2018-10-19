@@ -1,25 +1,30 @@
 package cc.shinichi.library.view;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
+import android.util.DisplayMetrics;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.glide.engine.SimpleFileTarget;
+import cc.shinichi.library.view.helper.FingerDragHelper;
+import cc.shinichi.library.view.helper.ImageSource;
+import cc.shinichi.library.view.helper.SubsamplingScaleImageViewDragClose;
 import cc.shinichi.sherlockutillibrary.utility.common.NetworkUtil;
 import cc.shinichi.sherlockutillibrary.utility.common.Print;
 import cc.shinichi.sherlockutillibrary.utility.image.ImageUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
-import com.davemorrissey.labs.subscaleview.ImageSource;
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -30,13 +35,18 @@ public class ImagePreviewAdapter extends PagerAdapter {
   private static final String TAG = "ImagePreview";
   private Activity activity;
   private List<ImageInfo> imageInfo;
-  private HashMap<String, SubsamplingScaleImageView> imageHashMap = new HashMap<>();
+  private HashMap<String, SubsamplingScaleImageViewDragClose> imageHashMap = new HashMap<>();
   private String finalLoadUrl = "";// 最终加载的图片url
+  private int phoneHeight = 0;
 
   public ImagePreviewAdapter(Activity activity, @NonNull List<ImageInfo> imageInfo) {
     super();
     this.imageInfo = imageInfo;
     this.activity = activity;
+    WindowManager windowManager = (WindowManager) activity.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+    DisplayMetrics metric = new DisplayMetrics();
+    windowManager.getDefaultDisplay().getMetrics(metric);
+    this.phoneHeight = metric.heightPixels;
   }
 
   public void closePage() {
@@ -45,8 +55,8 @@ public class ImagePreviewAdapter extends PagerAdapter {
         for (Object o : imageHashMap.entrySet()) {
           Map.Entry entry = (Map.Entry) o;
           if (entry != null && entry.getValue() != null) {
-            ((SubsamplingScaleImageView) entry.getValue()).recycle();
-            Glide.clear((SubsamplingScaleImageView) entry.getValue());
+            ((SubsamplingScaleImageViewDragClose) entry.getValue()).recycle();
+            Glide.clear((SubsamplingScaleImageViewDragClose) entry.getValue());
           }
         }
         imageHashMap.clear();
@@ -65,7 +75,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
    */
   public void loadOrigin(final ImageInfo imageInfo) {
     if (imageHashMap.get(imageInfo.getOriginUrl()) != null) {
-      final SubsamplingScaleImageView imageView = imageHashMap.get(imageInfo.getOriginUrl());
+      final SubsamplingScaleImageViewDragClose imageView = imageHashMap.get(imageInfo.getOriginUrl());
       File cacheFile = ImageLoader.getGlideCacheFile(activity, imageInfo.getOriginUrl());
       if (cacheFile != null && cacheFile.exists()) {
         String thumbnailUrl = imageInfo.getThumbnailUrl();
@@ -89,7 +99,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
         Print.d(TAG, "isLongImage = " + isLongImage);
         if (isLongImage) {
           imageView.setOrientation(ImageUtil.getOrientation(imagePath));
-          imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_START);
+          imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_START);
         }
         imageView.setImage(origin, small);
       }
@@ -102,16 +112,38 @@ public class ImagePreviewAdapter extends PagerAdapter {
   public Object instantiateItem(@NonNull ViewGroup container, final int position) {
     View convertView = View.inflate(activity, R.layout.item_photoview, null);
     final ProgressBar progressBar = convertView.findViewById(R.id.progress_view);
-    final SubsamplingScaleImageView imageView = convertView.findViewById(R.id.photo_view);
+    final SubsamplingScaleImageViewDragClose imageView = convertView.findViewById(R.id.photo_view);
+    final FingerDragHelper fingerDragHelper = convertView.findViewById(R.id.fingerDragHelper);
+
     imageView.setDoubleTapZoomDuration(ImagePreview.getInstance().getZoomTransitionDuration());
     imageView.setMinScale(ImagePreview.getInstance().getMinScale());
     imageView.setMaxScale(ImagePreview.getInstance().getMaxScale());
     imageView.setDoubleTapZoomScale(ImagePreview.getInstance().getMediumScale());
-    imageView.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        activity.finish();
-      }
-    });
+
+    if (ImagePreview.getInstance().isEnableClickClose()) {
+      imageView.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          activity.finish();
+        }
+      });
+    }
+
+    if (ImagePreview.getInstance().isEnableDragClose()) {
+      fingerDragHelper.setOnAlphaChangeListener(new FingerDragHelper.onAlphaChangedListener() {
+        @Override public void onTranslationYChanged(MotionEvent event, float translationY) {
+          float yAbs = Math.abs(translationY);
+          float percent = yAbs / phoneHeight;
+          float number = 1.0F - percent;
+
+          if (activity instanceof ImagePreviewActivity) {
+            ((ImagePreviewActivity) activity).setAlpha(number);
+          }
+
+          imageView.setScaleX(number);
+          imageView.setScaleY(number);
+        }
+      });
+    }
 
     final ImageInfo info = this.imageInfo.get(position);
     final String originPathUrl = info.getOriginUrl();
@@ -136,7 +168,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
           Print.d(TAG, "isLongImage = " + isLongImage);
           if (isLongImage) {
             imageView.setOrientation(ImageUtil.getOrientation(imagePath));
-            imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_START);
+            imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_START);
           }
           imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
           progressBar.setVisibility(View.GONE);
@@ -182,7 +214,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
               Print.d(TAG, "isLongImage = " + isLongImage);
               if (isLongImage) {
                 imageView.setOrientation(ImageUtil.getOrientation(imagePath));
-                imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_START);
+                imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_START);
               }
               imageView.setImage(
                   ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
@@ -198,7 +230,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
           Print.d(TAG, "isLongImage = " + isLongImage);
           if (isLongImage) {
             imageView.setOrientation(ImageUtil.getOrientation(imagePath));
-            imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_START);
+            imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_START);
           }
           imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
           progressBar.setVisibility(View.GONE);

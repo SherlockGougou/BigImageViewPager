@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
 						.setScaleLevel(1, 3, 8)
 						.setZoomTransitionDuration(300)
 						.setShowCloseButton(false)
+					.setEnableDragClose(true)
+					.setEnableClickClose(true)
 						.start();
 			}
 		});
@@ -77,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
 						.setScaleLevel(1, 3, 8)
 						.setZoomTransitionDuration(300)
 						.setShowCloseButton(true)
+					.setEnableDragClose(true)
+					.setEnableClickClose(false)
 						.start();
 			}
 		});
@@ -95,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
 						.setScaleLevel(1, 3, 8)
 						.setZoomTransitionDuration(500)
 						.setShowCloseButton(true)
+					.setEnableDragClose(false)
+					.setEnableClickClose(true)
 						.start();
 			}
 		});
@@ -113,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
 						.setScaleLevel(1, 3, 5)
 						.setZoomTransitionDuration(300)
 						.setShowCloseButton(true)
+					.setEnableDragClose(false)
+					.setEnableClickClose(false)
 						.start();
 			}
 		});

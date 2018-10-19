@@ -4,11 +4,20 @@
     android:layout_height="match_parent"
     >
 
-  <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-      android:id="@+id/photo_view"
+  <cc.shinichi.library.view.helper.FingerDragHelper
+      android:id="@+id/fingerDragHelper"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      />
+      android:gravity="center"
+      android:orientation="vertical"
+      >
+
+    <cc.shinichi.library.view.helper.SubsamplingScaleImageViewDragClose
+        android:id="@+id/photo_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+  </cc.shinichi.library.view.helper.FingerDragHelper>
 
   <ProgressBar
       android:id="@+id/progress_view"
