@@ -95,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
 					.setScaleLevel(1, 3, 8)
 					.setZoomTransitionDuration(500)
 					.setShowCloseButton(true)
+					.setEnableClickClose(false)
+					.setEnableDragClose(true)
 					.start();
 			}
 		});

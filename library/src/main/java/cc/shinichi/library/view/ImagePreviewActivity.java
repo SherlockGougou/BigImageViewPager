@@ -63,6 +63,16 @@ public class ImagePreviewActivity extends AppCompatActivity
   private TextView tv_show_origin;
   private ImageView img_download;
   private ImageView imgCloseButton;
+  private View rootView;
+
+  // 指示器显示状态
+  private boolean indicatorStatus = false;
+  // 原图按钮显示状态
+  private boolean originalStatus = false;
+  // 下载按钮显示状态
+  private boolean downloadButtonStatus = false;
+  // 关闭按钮显示状态
+  private boolean closeButtonStatus = false;
 
   private String currentItemOriginPathUrl = "";// 当前显示的原图链接
   private HandlerUtils.HandlerHolder handlerHolder;
@@ -112,6 +122,7 @@ public class ImagePreviewActivity extends AppCompatActivity
       checkCache(currentItemOriginPathUrl);
     }
 
+    rootView = findViewById(R.id.rootView);
     viewPager = findViewById(R.id.viewPager);
     tv_indicator = findViewById(R.id.tv_indicator);
     fm_image = findViewById(R.id.fm_image);
@@ -128,20 +139,26 @@ public class ImagePreviewActivity extends AppCompatActivity
 
     if (imageInfoList.size() > 1) {
       tv_indicator.setVisibility(View.VISIBLE);
+      indicatorStatus = true;
     } else {
       tv_indicator.setVisibility(View.GONE);
+      indicatorStatus = false;
     }
 
     if (isShowDownButton) {
       img_download.setVisibility(View.VISIBLE);
+      downloadButtonStatus = true;
     } else {
       img_download.setVisibility(View.GONE);
+      downloadButtonStatus = false;
     }
 
     if (isShowCloseButton) {
       imgCloseButton.setVisibility(View.VISIBLE);
+      closeButtonStatus = true;
     } else {
       imgCloseButton.setVisibility(View.GONE);
+      closeButtonStatus = false;
     }
 
     // 更新进度指示器
@@ -184,6 +201,39 @@ public class ImagePreviewActivity extends AppCompatActivity
   @Override public void finish() {
     super.finish();
     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+  }
+
+
+  public int convertPercentToBlackAlphaColor(float percent) {
+    percent = Math.min(1, Math.max(0, percent));
+    int intAlpha = (int) (percent * 255);
+    String stringAlpha = Integer.toHexString(intAlpha).toLowerCase();
+    String color = "#" + (stringAlpha.length() < 2 ? "0" : "") + stringAlpha + "000000";
+    return Color.parseColor(color);
+  }
+
+  public void setAlpha(float alpha) {
+    int colorId = convertPercentToBlackAlphaColor(alpha);
+    rootView.setBackgroundColor(colorId);
+    if (alpha >= 1) {
+      if (indicatorStatus) {
+        tv_indicator.setVisibility(View.VISIBLE);
+      }
+      if (originalStatus) {
+        fm_image.setVisibility(View.VISIBLE);
+      }
+      if (downloadButtonStatus) {
+        img_download.setVisibility(View.VISIBLE);
+      }
+      if (closeButtonStatus) {
+        imgCloseButton.setVisibility(View.VISIBLE);
+      }
+    } else {
+      tv_indicator.setVisibility(View.GONE);
+      fm_image.setVisibility(View.GONE);
+      img_download.setVisibility(View.GONE);
+      imgCloseButton.setVisibility(View.GONE);
+    }
   }
 
   @Override public boolean handleMessage(Message msg) {
@@ -242,8 +292,10 @@ public class ImagePreviewActivity extends AppCompatActivity
     } else if (msg.what == 3) {
       tv_show_origin.setText("查看原图");
       fm_image.setVisibility(View.GONE);
+      originalStatus = false;
     } else if (msg.what == 4) {
       fm_image.setVisibility(View.VISIBLE);
+      originalStatus = true;
     }
     return true;
   }
