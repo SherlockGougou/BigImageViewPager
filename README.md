@@ -12,13 +12,14 @@
 - v1.2.5新增：是否显示关闭页面按钮，21以上透明化状态栏
 - v1.2.6新增：可选择 点击关闭、上拉/下拉关闭
 - v1.2.7更新glide版本为4.8.0，更新demo
+- v1.2.8修复某些手机toast不显示的问题，更改保存图片的名称为原始名称
 
 # 截图
 
 # gif查看不流畅，可扫描底部二维码进行安装体验
 ![v1.2.6新增可下拉/上拉关闭](https://upload-images.jianshu.io/upload_images/1710902-08b5d2e3e9696f9f.gif?imageMogr2/auto-orient/strip)
 
-![Screenshot_2018-10-25-11-50-59-477.png](https://upload-images.jianshu.io/upload_images/1710902-69e8e55ddbeb76cf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Screenshot_2018-10-25-11-50-59-477.png](https://upload-images.jianshu.io/upload_images/1710902-152b7d3068c6454f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ![Screenshot_2018-10-19-18-01-52-162副本.jpg](https://upload-images.jianshu.io/upload_images/1710902-84fb4fb928a5001d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -46,8 +47,8 @@ Step 2. 在你主module的build.gradle中添加依赖：
 
 # 此处显示的是本框架的最新版本号：
 [![](https://jitpack.io/v/SherlockGougou/BigImageViewPager.svg)](https://jitpack.io/#SherlockGougou/BigImageViewPager)
-#### 对于glide4.x : 使用v4_1.2.7
-#### 对于glide3.x : 使用v3_1.2.7
+#### 对于glide4.x : 使用v4_1.2.8
+#### 对于glide3.x : 使用v3_1.2.8
 
 ```
 dependencies {
@@ -55,7 +56,7 @@ dependencies {
   // 针对glide v4 版本：如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
 
   // 主库，必须添加！
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_1.2.7'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_1.2.8'
   // v7支持库，必须添加！
   implementation 'com.android.support:appcompat-v7:27.1.1'
   // 由于本框架使用了glide和okhttp3，所以还请增加依赖以下框架，必须添加！
@@ -67,7 +68,7 @@ dependencies {
 ============================分割线==================================
 
   // 针对glide v3 版本：如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_1.2.7'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_1.2.8'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```
@@ -254,3 +255,19 @@ https://github.com/SherlockGougou/BigImageViewPager
 
 ![欢迎加入“大话安卓”技术交流群，互相学习提升](https://upload-images.jianshu.io/upload_images/1710902-5cdeb8c1f58dd425.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+# License
+```
+Copyright SherlockGougou
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
