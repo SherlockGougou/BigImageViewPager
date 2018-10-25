@@ -1,35 +1,35 @@
 ### BigImage + ImageView + ViewPager = BigImageViewPager
-一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。
 
-# 截图
-
-# gif查看不流畅，可扫描底部二维码进行安装体验
-![Gif](https://upload-images.jianshu.io/upload_images/1710902-3d57165ed0785475.gif)
-# gif地址：[https://upload-images.jianshu.io/upload_images/1710902-3d57165ed0785475.gif](https://upload-images.jianshu.io/upload_images/1710902-3d57165ed0785475.gif)
-
-
-![v1.2.0增加多种加载策略设置](https://upload-images.jianshu.io/upload_images/1710902-0a66fe87b5b8e20b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-![截图1.jpg](https://upload-images.jianshu.io/upload_images/1710902-11827e4c9c08fc86.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-![截图2.jpg](https://upload-images.jianshu.io/upload_images/1710902-213bed170b37f027.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-
-
-# 功能
-- 支持多张图片（网络图片）滑动浏览，支持手势放大、双击放大。
-- 支持下载，支持自定义下载目录文件夹名称。
-- 查看原图支持加载进度条显示
-- 支持超大图、超长图，sample中测试的大图尺寸分别是：2280 * 22116、5760 * 3840。
-- 采用区块加载，不用担心OOM的风险。
+一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM，
+#### 注意：支持网络图片、本地图片。
 
 # 更新日志
 - v0.0.5新增：可设置缩放比例、缩放动画时间。
 - v1.2.0新增：可设置多种加载策略（仅普清、仅原图、手动模式、网络自适应）
 - v1.2.1修复可能与app冲突的部分
 - v1.2.2新增：长图（宽高比大于等于3的图）默认宽度放大到手机屏幕的宽度
-- v1.2.3：优化内存泄漏；简单优化进场退场动画。
-- v1.2.5新增：是否显示关闭页面按钮，21以上透明化状态栏。
+- v1.2.3优化内存泄漏问题，优化查看原图时更新闪烁问题，简单优化进场退场动画
+- v1.2.5新增：是否显示关闭页面按钮，21以上透明化状态栏
+- v1.2.6新增：可选择 点击关闭、上拉/下拉关闭
+- v1.2.7更新glide版本为4.8.0，更新demo
+
+# 截图
+
+# gif查看不流畅，可扫描底部二维码进行安装体验
+![v1.2.6新增可下拉/上拉关闭](https://upload-images.jianshu.io/upload_images/1710902-08b5d2e3e9696f9f.gif?imageMogr2/auto-orient/strip)
+
+![Screenshot_2018-10-25-11-50-59-477.png](https://upload-images.jianshu.io/upload_images/1710902-69e8e55ddbeb76cf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![Screenshot_2018-10-19-18-01-52-162副本.jpg](https://upload-images.jianshu.io/upload_images/1710902-84fb4fb928a5001d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+# 功能
+- 支持多张图片（网络图片、本地图片均支持）滑动浏览，支持手势放大、双击放大、下拉关闭。
+- 支持下载，支持自定义下载目录文件夹名称。
+- 查看原图支持加载进度条显示
+- 支持超大图、超长图，sample中测试的大图尺寸分别是：2280 * 22116、5760 * 3840。
+- 采用区块加载，不用担心OOM的风险。
+
 
 # 用法
 #### 添加依赖
@@ -45,26 +45,29 @@ allprojects {
 Step 2. 在你主module的build.gradle中添加依赖：
 
 # 此处显示的是本框架的最新版本号：
-# glide4.x : v4_1.2.5
-# glide3.x : v3_1.2.5
+[![](https://jitpack.io/v/SherlockGougou/BigImageViewPager.svg)](https://jitpack.io/#SherlockGougou/BigImageViewPager)
+#### 对于glide4.x : 使用v4_1.2.7
+#### 对于glide3.x : 使用v3_1.2.7
 
 ```
 dependencies {
 
-  // 如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：(support包版本需要大于27)
-	implementation 'com.github.SherlockGougou:BigImageViewPager:v4_1.2.5'
+  // 针对glide v4 版本：如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
+
+  // 主库，必须添加！
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_1.2.7'
+  // v7支持库，必须添加！
   implementation 'com.android.support:appcompat-v7:27.1.1'
+  // 由于本框架使用了glide和okhttp3，所以还请增加依赖以下框架，必须添加！
+  // 如果您app中已经依赖某一个的话，可以略过那一个，但要保证以下这些库的版本号一致：
+  implementation 'com.github.bumptech.glide:glide:4.8.0'
+  annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+  implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
 
-	// 由于本框架使用了glide和okhttp3，所以请依赖以下框架，如果您app中已经依赖某一个的话，可以略过那一个，但要保证以下这些库的版本号一致：
-  implementation 'com.github.bumptech.glide:glide:4.7.1'
-  implementation 'com.github.bumptech.glide:annotations:4.7.1'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
-  implementation "com.github.bumptech.glide:okhttp3-integration:4.7.1"
+============================分割线==================================
 
-
-
-	// 如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：(support包版本需要大于27)
-	implementation 'com.github.SherlockGougou:BigImageViewPager:v3_1.2.5'
+  // 针对glide v3 版本：如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_1.2.7'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```
@@ -93,18 +96,30 @@ Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project�
 
 根据需求生成图片源：
 ```
-ImageInfo imageInfo;
+		// 网络图片：
+		ImageInfo imageInfo;
 		final List<ImageInfo> imageInfoList = new ArrayList<>();
-		for (int i = 0; i < images.length; i++) {
+		for (String image : images) {
 			imageInfo = new ImageInfo();
-			// 原图图片链接
-			imageInfo.setOriginUrl(images[i]);
-			// 缩略图图片链接，实际使用中，请根据需求传入缩略图路径，此处拼接上"-1200"意思是裁剪到1200像素。
-			// 如果没有缩略图url，可以将两项设置为一样，查看原图按钮会自动隐藏。
-			imageInfo.setThumbnailUrl(images[i].concat("-1200"));
+			// 原图地址
+			imageInfo.setOriginUrl(image);
+			// 缩略图，实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样。
+			imageInfo.setThumbnailUrl(image.concat("-1200"));
 			imageInfoList.add(imageInfo);
 			imageInfo = null;
 		}
+
+		// 本地图片：将原图和缩略图地址传一样的即可。
+		//ImageInfo imageInfo;
+		//final List<ImageInfo> imageInfoList = new ArrayList<>();
+		//for (String image : images) {
+		//	imageInfo = new ImageInfo();
+		//	imageInfo.setOriginUrl(image);
+		//	imageInfo.setThumbnailUrl(image);
+		//	imageInfoList.add(imageInfo);
+		//	imageInfo = null;
+		//}
+
 ```
 
 链式调用，多种配置
@@ -114,15 +129,17 @@ ImageInfo imageInfo;
 			@Override public void onClick(View v) {
 				ImagePreview
 					.getInstance()
-					.setContext(MainActivity.this)
-					.setIndex(0)// 默认索引，从0开始
+					.setContext(MainActivity.this)// 上下文
+					.setIndex(0)// 从第一张图片开始，索引从0开始哦
 					.setImageInfoList(imageInfoList)// 图片源
 					.setShowDownButton(true)// 是否显示下载按钮
-					.setLoadStrategy(ImagePreview.LoadStrategy.AlwaysThumb)// 加载策略，具体看下面介绍
-					.setFolderName("BigImageViewDownload")// 保存图片到SD卡根目录的文件夹名称
-					.setScaleLevel(1, 3, 8)// 最小、中等、最大的缩放比例
-					.setZoomTransitionDuration(300)// 缩放的动画时长
-					.setShowCloseButton(true)// 是否在查看大图页面显示关闭页面按钮（在左下角)
+					.setLoadStrategy(ImagePreview.LoadStrategy.AlwaysThumb)// 加载策略，见下面介绍
+					.setFolderName("BigImageViewDownload")// 保存的文件夹名称，SD卡根目录
+					.setScaleLevel(1, 3, 8)// 设置三级缩放级别
+					.setZoomTransitionDuration(300)// 缩放动画时长
+					.setShowCloseButton(false)// 是否显示关闭页面按钮，在页面左下角
+					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭，默认不启用
+					.setEnableClickClose(true)// 是否启用点击图片关闭，默认启用
 					.start();
 			}
 		});
@@ -133,7 +150,7 @@ ImageInfo imageInfo;
 				ImagePreview
 					.getInstance()
 					.setContext(MainActivity.this)
-					.setIndex(1)
+					.setIndex(0)
 					.setImageInfoList(imageInfoList)
 					.setShowDownButton(true)
 					.setLoadStrategy(ImagePreview.LoadStrategy.AlwaysOrigin)
@@ -141,6 +158,8 @@ ImageInfo imageInfo;
 					.setScaleLevel(1, 3, 8)
 					.setZoomTransitionDuration(300)
 					.setShowCloseButton(true)
+					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭，默认不启用
+					.setEnableClickClose(true)// 是否启用点击图片关闭，默认启用
 					.start();
 			}
 		});
@@ -151,7 +170,7 @@ ImageInfo imageInfo;
 				ImagePreview
 					.getInstance()
 					.setContext(MainActivity.this)
-					.setIndex(2)
+					.setIndex(0)
 					.setImageInfoList(imageInfoList)
 					.setShowDownButton(true)
 					.setLoadStrategy(ImagePreview.LoadStrategy.Default)
@@ -159,6 +178,8 @@ ImageInfo imageInfo;
 					.setScaleLevel(1, 3, 8)
 					.setZoomTransitionDuration(500)
 					.setShowCloseButton(true)
+					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭，默认不启用
+					.setEnableClickClose(true)// 是否启用点击图片关闭，默认启用
 					.start();
 			}
 		});
@@ -169,7 +190,7 @@ ImageInfo imageInfo;
 				ImagePreview
 					.getInstance()
 					.setContext(MainActivity.this)
-					.setIndex(3)
+					.setIndex(0)
 					.setImageInfoList(imageInfoList)
 					.setShowDownButton(true)
 					.setLoadStrategy(ImagePreview.LoadStrategy.NetworkAuto)
@@ -177,6 +198,8 @@ ImageInfo imageInfo;
 					.setScaleLevel(1, 3, 5)
 					.setZoomTransitionDuration(300)
 					.setShowCloseButton(true)
+					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭，默认不启用
+					.setEnableClickClose(true)// 是否启用点击图片关闭，默认启用
 					.start();
 			}
 		});
@@ -214,12 +237,8 @@ ImageInfo imageInfo;
 # DEMO体验
 ![扫码下载demo](https://upload-images.jianshu.io/upload_images/1710902-0073c2f34a714fe2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-# 注意！！！
-本框架V4版本依赖的glide为最新版本，低版本的未进行测试，请尽量保持和本框架一致的glide版本号！
 
 
-# 目前存在的问题：
-- glide在加载图片时，有几率会失败，目前方案是失败后，进行重试。具体可看这个issues：[Glide trying to load from assets directory instead of internet](https://github.com/bumptech/glide/issues/2894)
 
 # GitHub源码
 https://github.com/SherlockGougou/BigImageViewPager
@@ -235,22 +254,3 @@ https://github.com/SherlockGougou/BigImageViewPager
 
 ![欢迎加入“大话安卓”技术交流群，互相学习提升](https://upload-images.jianshu.io/upload_images/1710902-5cdeb8c1f58dd425.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-# LICENSE
-
-   ```                              Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-
-```
