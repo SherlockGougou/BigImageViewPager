@@ -33,8 +33,6 @@ import cc.shinichi.library.glide.sunfusheng.progress.OnProgressListener;
 import cc.shinichi.library.glide.sunfusheng.progress.ProgressManager;
 import cc.shinichi.library.tool.DownloadPictureUtil;
 import cc.shinichi.sherlockutillibrary.utility.common.HandlerUtils;
-import cc.shinichi.sherlockutillibrary.utility.common.Print;
-import cc.shinichi.sherlockutillibrary.utility.file.FileUtil;
 import cc.shinichi.sherlockutillibrary.utility.ui.ToastUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -248,12 +246,10 @@ public class ImagePreviewActivity extends AppCompatActivity
   @Override public boolean handleMessage(Message msg) {
     if (msg.what == 0) {// 点击查看原图按钮，开始加载原图
       final String path = imageInfoList.get(currentItem).getOriginUrl();
-      Print.d(TAG, "handler == 0 path = " + path);
       visible();
       tv_show_origin.setText("0 %");
 
       if (checkCache(path)) {
-        Print.d(TAG, "缓存存在");
         Message message = handlerHolder.obtainMessage();
         Bundle bundle = new Bundle();
         bundle.putString("url", path);
@@ -261,14 +257,11 @@ public class ImagePreviewActivity extends AppCompatActivity
         message.obj = bundle;
         handlerHolder.sendMessage(message);
         return true;
-      } else {
-        Print.d(TAG, "缓存不存在");
       }
 
       Glide.with(context).load(path).into(new SimpleTarget<Drawable>() {
         @Override public void onResourceReady(@NonNull Drawable resource,
             @Nullable Transition<? super Drawable> transition) {
-          Print.d(TAG, "glide 下载完成 " + path);
         }
       });
 
@@ -276,7 +269,6 @@ public class ImagePreviewActivity extends AppCompatActivity
         @Override
         public void onProgress(String url, boolean isComplete, int percentage, long bytesRead,
             long totalBytes) {
-          Print.d(TAG, "onProgress == " + percentage);
               if (isComplete) {// 加载完成
                 Message message = handlerHolder.obtainMessage();
                 Bundle bundle = new Bundle();
@@ -296,7 +288,6 @@ public class ImagePreviewActivity extends AppCompatActivity
             }
         });
     } else if (msg.what == 1) {// 加载完成
-      Print.d(TAG, "handler == 1");
       Bundle bundle = (Bundle) msg.obj;
       String url = bundle.getString("url");
       gone();
@@ -310,7 +301,6 @@ public class ImagePreviewActivity extends AppCompatActivity
       if (currentItem == getRealIndexWithPath(url)) {
         visible();
         tv_show_origin.setText(progress + " %");
-        Print.d(TAG, "handler == 2 progress == " + progress);
       }
     } else if (msg.what == 3) {
       tv_show_origin.setText("查看原图");

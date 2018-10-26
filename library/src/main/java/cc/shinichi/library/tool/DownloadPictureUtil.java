@@ -24,14 +24,12 @@ public class DownloadPictureUtil {
   public static void downloadPicture(final Context context, final String url, final String path,
       final String name) {
     MyToast.getInstance()._short(context, "开始下载...");
-    Print.d("DownloadPictureUtil", "开始下载");
 
     SimpleTarget<File> target = new SimpleTarget<File>() {
 
       @Override public void onLoadFailed(@Nullable Drawable errorDrawable) {
         super.onLoadFailed(errorDrawable);
         MyToast.getInstance()._short(context, "保存失败");
-        Print.d("DownloadPictureUtil", "保存失败");
       }
 
       @Override public void onResourceReady(@NonNull File resource,
@@ -39,7 +37,6 @@ public class DownloadPictureUtil {
             boolean result = FileUtil.copyFile(resource, path, name);
             if (result) {
               MyToast.getInstance()._short(context, "成功保存到 ".concat(path).concat(name));
-              Print.d("DownloadPictureUtil", "成功保存到 ".concat(path).concat(name));
               new SingleMediaScanner(context, path.concat(name), new SingleMediaScanner.ScanListener() {
                 @Override public void onScanFinish() {
                   // scanning...
@@ -47,7 +44,6 @@ public class DownloadPictureUtil {
               });
             } else {
               MyToast.getInstance()._short(context, "保存失败");
-              Print.d("DownloadPictureUtil", "保存失败");
             }
       }
     };

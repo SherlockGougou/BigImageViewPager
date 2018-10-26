@@ -50,11 +50,6 @@ public class MainActivity extends AppCompatActivity {
 		ImageInfo imageInfo;
 		final List<ImageInfo> imageInfoList = new ArrayList<>();
 
-		imageInfo = new ImageInfo();
-		imageInfo.setThumbnailUrl("http://119.23.24.187/businesssys_api/branches/v1.0.3/public/uploads/thumb690/20181026/1233eb7f56c2c6317077fdfdb9db6982.png");
-		imageInfo.setOriginUrl("http://119.23.24.187/businesssys_api/branches/v1.0.3/public/uploads/thumb1024/20181026/7eed7b6f7095683e40b44c3c02624039.png");
-		imageInfoList.add(imageInfo);
-
 		for (String image : images) {
 			imageInfo = new ImageInfo();
 			// 原图地址
@@ -62,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
 			// 缩略图，实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样。
 			imageInfo.setThumbnailUrl(image.concat("-1200"));
 			imageInfoList.add(imageInfo);
-			imageInfo = null;
 		}
 
 		// 本地图片：将原图和缩略图地址传一样的即可。
@@ -75,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
 		//	imageInfoList.add(imageInfo);
 		//	imageInfo = null;
 		//}
-
 
 		// 仅加载普清
 		findViewById(R.id.buttonThumb).setOnClickListener(new View.OnClickListener() {
