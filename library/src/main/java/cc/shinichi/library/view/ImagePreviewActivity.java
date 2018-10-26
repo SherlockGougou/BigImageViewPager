@@ -30,7 +30,6 @@ import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.glide.engine.ProgressTarget;
 import cc.shinichi.library.tool.DownloadPictureUtil;
 import cc.shinichi.sherlockutillibrary.utility.common.HandlerUtils;
-import cc.shinichi.sherlockutillibrary.utility.common.Print;
 import cc.shinichi.sherlockutillibrary.utility.ui.ToastUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -244,14 +243,22 @@ public class ImagePreviewActivity extends AppCompatActivity
   @Override public boolean handleMessage(Message msg) {
     if (msg.what == 0) {// 点击查看原图按钮，开始加载原图
       final String path = imageInfoList.get(currentItem).getOriginUrl();
-      Print.d(TAG, "handler == 0 path = " + path);
       visible();
       tv_show_origin.setText("0 %");
+
+      if (checkCache(path)) {
+        Message message = handlerHolder.obtainMessage();
+        Bundle bundle = new Bundle();
+        bundle.putString("url", path);
+        message.what = 1;
+        message.obj = bundle;
+        handlerHolder.sendMessage(message);
+        return true;
+      }
 
       Glide.with(this).load(path).downloadOnly(new ProgressTarget<String, File>(path, null) {
         @Override public void onProgress(String url, long bytesRead, long expectedLength) {
           int progress = (int) ((float) bytesRead * 100 / (float) expectedLength);
-          Print.d(TAG, "OnProgress--->" + progress);
 
           if (bytesRead == expectedLength) {// 加载完成
             Message message = handlerHolder.obtainMessage();
@@ -287,7 +294,6 @@ public class ImagePreviewActivity extends AppCompatActivity
         }
       });
     } else if (msg.what == 1) {// 加载完成
-      Print.d(TAG, "handler == 1");
       Bundle bundle = (Bundle) msg.obj;
       String url = bundle.getString("url");
       if (currentItem == getRealIndexWithPath(url)) {
@@ -301,7 +307,6 @@ public class ImagePreviewActivity extends AppCompatActivity
       if (currentItem == getRealIndexWithPath(url)) {
         visible();
         tv_show_origin.setText(progress + " %");
-        Print.d(TAG, "handler == 2 progress == " + progress);
       }
     } else if (msg.what == 3) {
       tv_show_origin.setText("查看原图");
@@ -323,18 +328,16 @@ public class ImagePreviewActivity extends AppCompatActivity
     return 0;
   }
 
-  private void checkCache(final String url_) {
+  private boolean checkCache(final String url_) {
     gone();
-    new Thread(new Runnable() {
-      @Override public void run() {
-        File cacheFile = ImageLoader.getGlideCacheFile(context, url_);
-        if (cacheFile != null && cacheFile.exists()) {
-          gone();
-        } else {
-          visible();
-        }
-      }
-    }).start();
+    File cacheFile = ImageLoader.getGlideCacheFile(context, url_);
+    if (cacheFile != null && cacheFile.exists()) {
+      gone();
+      return true;
+    } else {
+      visible();
+      return false;
+    }
   }
 
   @Override public void onClick(View v) {
