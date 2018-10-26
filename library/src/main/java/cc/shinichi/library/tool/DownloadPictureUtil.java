@@ -40,7 +40,7 @@ public class DownloadPictureUtil {
             if (result) {
               MyToast.getInstance()._short(context, "成功保存到 ".concat(path).concat(name));
               Print.d("DownloadPictureUtil", "成功保存到 ".concat(path).concat(name));
-              new SingleMediaScanner(context, path, new SingleMediaScanner.ScanListener() {
+              new SingleMediaScanner(context, path.concat(name), new SingleMediaScanner.ScanListener() {
                 @Override public void onScanFinish() {
                   // scanning...
                 }

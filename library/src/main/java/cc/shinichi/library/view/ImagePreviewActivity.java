@@ -252,10 +252,23 @@ public class ImagePreviewActivity extends AppCompatActivity
       visible();
       tv_show_origin.setText("0 %");
 
+      if (checkCache(path)) {
+        Print.d(TAG, "缓存存在");
+        Message message = handlerHolder.obtainMessage();
+        Bundle bundle = new Bundle();
+        bundle.putString("url", path);
+        message.what = 1;
+        message.obj = bundle;
+        handlerHolder.sendMessage(message);
+        return true;
+      } else {
+        Print.d(TAG, "缓存不存在");
+      }
+
       Glide.with(context).load(path).into(new SimpleTarget<Drawable>() {
         @Override public void onResourceReady(@NonNull Drawable resource,
             @Nullable Transition<? super Drawable> transition) {
-
+          Print.d(TAG, "glide 下载完成 " + path);
         }
       });
 
@@ -263,6 +276,7 @@ public class ImagePreviewActivity extends AppCompatActivity
         @Override
         public void onProgress(String url, boolean isComplete, int percentage, long bytesRead,
             long totalBytes) {
+          Print.d(TAG, "onProgress == " + percentage);
               if (isComplete) {// 加载完成
                 Message message = handlerHolder.obtainMessage();
                 Bundle bundle = new Bundle();
@@ -318,13 +332,15 @@ public class ImagePreviewActivity extends AppCompatActivity
     return 0;
   }
 
-  private void checkCache(String url_) {
+  private boolean checkCache(String url_) {
     gone();
     File cacheFile = ImageLoader.getGlideCacheFile(context, url_);
     if (cacheFile != null && cacheFile.exists()) {
       gone();
+      return true;
     } else {
       visible();
+      return false;
     }
   }
 

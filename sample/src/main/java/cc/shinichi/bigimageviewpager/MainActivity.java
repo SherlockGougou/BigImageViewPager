@@ -49,6 +49,12 @@ public class MainActivity extends AppCompatActivity {
 		// 网络图片：
 		ImageInfo imageInfo;
 		final List<ImageInfo> imageInfoList = new ArrayList<>();
+
+		imageInfo = new ImageInfo();
+		imageInfo.setThumbnailUrl("http://119.23.24.187/businesssys_api/branches/v1.0.3/public/uploads/thumb690/20181026/1233eb7f56c2c6317077fdfdb9db6982.png");
+		imageInfo.setOriginUrl("http://119.23.24.187/businesssys_api/branches/v1.0.3/public/uploads/thumb1024/20181026/7eed7b6f7095683e40b44c3c02624039.png");
+		imageInfoList.add(imageInfo);
+
 		for (String image : images) {
 			imageInfo = new ImageInfo();
 			// 原图地址
