@@ -8,7 +8,7 @@ import android.widget.CompoundButton;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
-import cc.shinichi.sherlockutillibrary.utility.ui.ToastUtil;
+import cc.shinichi.library.tool.MyToast;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 		findViewById(R.id.buttonClean).setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
 				ImageLoader.cleanDiskCache(MainActivity.this);
-				ToastUtil.getInstance()._short(MainActivity.this, "磁盘缓存已成功清除");
+				MyToast.getInstance()._short(MainActivity.this, "磁盘缓存已成功清除");
 			}
 		});
 	}
