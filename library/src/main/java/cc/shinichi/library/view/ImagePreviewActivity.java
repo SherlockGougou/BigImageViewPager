@@ -30,6 +30,7 @@ import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.glide.engine.ProgressTarget;
 import cc.shinichi.library.tool.DownloadPictureUtil;
 import cc.shinichi.sherlockutillibrary.utility.common.HandlerUtils;
+import cc.shinichi.sherlockutillibrary.utility.file.FileUtil;
 import cc.shinichi.sherlockutillibrary.utility.ui.ToastUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -189,13 +190,7 @@ public class ImagePreviewActivity extends AppCompatActivity
   private void downloadCurrentImg() {
     String path = Environment.getExternalStorageDirectory() + "/" + downloadFolderName + "/";
     String name = currentItemOriginPathUrl.substring(currentItemOriginPathUrl.lastIndexOf("/") + 1, currentItemOriginPathUrl.length());
-    if (TextUtils.isEmpty(name)) {
-      name = System.currentTimeMillis() + ".jpeg";
-    }
-    File file = new File(path + name);
-    if (file.exists()) {
-      file.deleteOnExit();
-    }
+    FileUtil.createFileByDeleteOldFile(path + name);
     DownloadPictureUtil.downloadPicture(context, currentItemOriginPathUrl, path, name);
   }
 
