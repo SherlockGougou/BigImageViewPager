@@ -14,6 +14,7 @@
 - v1.2.7更新glide版本为4.8.0，更新demo
 - v1.2.8修复某些手机toast不显示的问题，更改保存图片的名称为原始名称
 - v1.2.9修复下载后相册看不到的问题，修复某些情况下的进度显示问题
+- v1.3.0修复某些情况下载失败的问题，感谢某位不愿透露姓名的兄dei～帮忙查看解决问题
 
 # 截图
 
@@ -48,8 +49,8 @@ Step 2. 在你主module的build.gradle中添加依赖：
 
 # 此处显示的是本框架的最新版本号：
 [![](https://jitpack.io/v/SherlockGougou/BigImageViewPager.svg)](https://jitpack.io/#SherlockGougou/BigImageViewPager)
-#### 对于glide4.x : 使用v4_1.2.9
-#### 对于glide3.x : 使用v3_1.2.9
+#### 对于glide4.x : 使用v4_1.3.0
+#### 对于glide3.x : 使用v3_1.3.0
 
 ```
 dependencies {
@@ -57,7 +58,7 @@ dependencies {
   // 针对glide v4 版本：如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
 
   // 主库，必须添加！
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_1.2.9'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_1.3.0'
   // v7支持库，必须添加！
   implementation 'com.android.support:appcompat-v7:27.1.1'
   // 由于本框架使用了glide和okhttp3，所以还请增加依赖以下框架，必须添加！
@@ -69,11 +70,11 @@ dependencies {
 ============================分割线==================================
 
   // 针对glide v3 版本：如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_1.2.9'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_1.3.0'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```
-Step 3. 在您的主module里，添加自定义AppGlideModule（如果是glide 3.x版本，不需要做这一步），例如：
+Step 3. 在您的主module里，添加自定义AppGlideModule（注意！！！如果您用的是glide 3.x版本，不需要做这一步，上一步的依赖后就完事儿了）例如：
 
 ```
 @GlideModule
