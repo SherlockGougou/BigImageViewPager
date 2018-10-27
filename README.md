@@ -73,7 +73,7 @@ dependencies {
   implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```
-Step 3. 在您的主module里，添加自定义AppGlideModule，例如：
+Step 3. 在您的主module里，添加自定义AppGlideModule（如果是glide 3.x版本，不需要做这一步），例如：
 
 ```
 @GlideModule
