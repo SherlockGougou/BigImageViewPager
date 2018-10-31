@@ -83,9 +83,15 @@ public class MainActivity extends AppCompatActivity {
 					.setFolderName("BigImageViewDownload")// 保存的文件夹名称，SD卡根目录
 					.setScaleLevel(1, 3, 8)// 设置三级缩放级别
 					.setZoomTransitionDuration(300)// 缩放动画时长
-					.setShowCloseButton(false)// 是否显示关闭页面按钮，在页面左下角
+
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭，默认不启用
 					.setEnableClickClose(true)// 是否启用点击图片关闭，默认启用
+
+					.setShowCloseButton(true)// 是否显示关闭页面按钮，在页面左下角
+					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源
+
+					.setShowIndicator(false)// 设置是否显示顶部的指示器（1/9）
+					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源
 					.start();
 			}
 		});
@@ -103,9 +109,15 @@ public class MainActivity extends AppCompatActivity {
 					.setFolderName("BigImageViewDownload")
 					.setScaleLevel(1, 3, 8)
 					.setZoomTransitionDuration(300)
-					.setShowCloseButton(true)
+
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭，默认不启用
 					.setEnableClickClose(true)// 是否启用点击图片关闭，默认启用
+
+					.setShowCloseButton(true)// 是否显示关闭页面按钮，在页面左下角
+					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源
+
+					.setShowIndicator(true)// 设置是否显示顶部的指示器（1/9）
+					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源
 					.start();
 			}
 		});
@@ -123,9 +135,15 @@ public class MainActivity extends AppCompatActivity {
 					.setFolderName("BigImageViewDownload")
 					.setScaleLevel(1, 3, 8)
 					.setZoomTransitionDuration(500)
-					.setShowCloseButton(true)
+
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭，默认不启用
 					.setEnableClickClose(true)// 是否启用点击图片关闭，默认启用
+
+					.setShowCloseButton(true)// 是否显示关闭页面按钮，在页面左下角
+					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源
+
+					.setShowIndicator(false)// 设置是否显示顶部的指示器（1/9）
+					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源
 					.start();
 			}
 		});
@@ -143,9 +161,15 @@ public class MainActivity extends AppCompatActivity {
 					.setFolderName("BigImageViewDownload")
 					.setScaleLevel(1, 3, 5)
 					.setZoomTransitionDuration(300)
-					.setShowCloseButton(true)
+
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭，默认不启用
 					.setEnableClickClose(true)// 是否启用点击图片关闭，默认启用
+
+					.setShowCloseButton(false)// 是否显示关闭页面按钮，在页面左下角
+					//.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源
+
+					.setShowIndicator(true)// 设置是否显示顶部的指示器（1/9）
+					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源
 					.start();
 			}
 		});
