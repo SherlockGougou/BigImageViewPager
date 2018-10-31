@@ -1,6 +1,7 @@
 package cc.shinichi.library;
 
 import android.content.Context;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import cc.shinichi.library.bean.ImageInfo;
@@ -28,6 +29,7 @@ public class ImagePreview {
   private float mediumScale = 3.0f;// 中等缩放倍数
   private float maxScale = 5.0f;// 最大缩放倍数
 
+  private boolean isShowIndicator = true;// 是否显示图片指示器（1/9）
   private boolean isShowCloseButton = true;// 是否显示关闭页面按钮
   private boolean isShowDownButton = true;// 是否显示下载按钮
   private int zoomTransitionDuration = 200;// 动画持续时间 单位毫秒 ms
@@ -36,6 +38,9 @@ public class ImagePreview {
   private boolean isEnableClickClose = true;// 是否启用点击关闭，默认启用
 
   private LoadStrategy loadStrategy = LoadStrategy.Default;// 加载策略
+
+  private int closeIconResId = R.drawable.ic_action_close;
+  private int downIconResId = R.drawable.icon_download_new;
 
   public enum LoadStrategy {
     /**
@@ -221,6 +226,39 @@ public class ImagePreview {
     return this;
   }
 
+  public int getCloseIconResId() {
+    if (closeIconResId < 0) {
+      closeIconResId = R.drawable.ic_action_close;
+    }
+    return closeIconResId;
+  }
+
+  public ImagePreview setCloseIconResId(@DrawableRes int closeIconResId) {
+    this.closeIconResId = closeIconResId;
+    return this;
+  }
+
+  public int getDownIconResId() {
+    if (downIconResId < 0) {
+      downIconResId = R.drawable.icon_download_new;
+    }
+    return downIconResId;
+  }
+
+  public ImagePreview setDownIconResId(@DrawableRes int downIconResId) {
+    this.downIconResId = downIconResId;
+    return this;
+  }
+
+  public boolean isShowIndicator() {
+    return isShowIndicator;
+  }
+
+  public ImagePreview setShowIndicator(boolean showIndicator) {
+    isShowIndicator = showIndicator;
+    return this;
+  }
+
   public void reset() {
     imageInfoList = null;
     index = 0;
@@ -228,6 +266,11 @@ public class ImagePreview {
     isShowCloseButton = false;
     isEnableDragClose = false;
     isEnableClickClose = true;
+    isShowIndicator = true;
+
+    closeIconResId = R.drawable.ic_action_close;
+    downIconResId = R.drawable.icon_download_new;
+
     loadStrategy = LoadStrategy.Default;
     folderName = "ImagePreview";
     context = null;

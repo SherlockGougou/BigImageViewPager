@@ -16,7 +16,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -54,6 +53,7 @@ public class ImagePreviewActivity extends AppCompatActivity
   private boolean isShowDownButton;
   private boolean isShowCloseButton;
   private boolean isShowOriginButton;
+  private boolean isShowIndicator;
 
   private ImagePreviewAdapter imagePreviewAdapter;
   private HackyViewPager viewPager;
@@ -112,6 +112,7 @@ public class ImagePreviewActivity extends AppCompatActivity
     downloadFolderName = ImagePreview.getInstance().getFolderName();
     isShowDownButton = ImagePreview.getInstance().isShowDownButton();
     isShowCloseButton = ImagePreview.getInstance().isShowCloseButton();
+    isShowIndicator = ImagePreview.getInstance().isShowIndicator();
 
     currentItemOriginPathUrl = imageInfoList.get(currentItem).getOriginUrl();
 
@@ -129,6 +130,9 @@ public class ImagePreviewActivity extends AppCompatActivity
     img_download = findViewById(R.id.img_download);
     imgCloseButton = findViewById(R.id.imgCloseButton);
 
+    img_download.setImageResource(ImagePreview.getInstance().getDownIconResId());
+    imgCloseButton.setImageResource(ImagePreview.getInstance().getCloseIconResId());
+
     // 关闭页面按钮
     imgCloseButton.setOnClickListener(this);
     // 查看与原图按钮
@@ -136,12 +140,17 @@ public class ImagePreviewActivity extends AppCompatActivity
     // 下载图片按钮
     img_download.setOnClickListener(this);
 
-    if (imageInfoList.size() > 1) {
-      tv_indicator.setVisibility(View.VISIBLE);
-      indicatorStatus = true;
-    } else {
+    if (!isShowIndicator) {
       tv_indicator.setVisibility(View.GONE);
       indicatorStatus = false;
+    } else {
+      if (imageInfoList.size() > 1) {
+        tv_indicator.setVisibility(View.VISIBLE);
+        indicatorStatus = true;
+      } else {
+        tv_indicator.setVisibility(View.GONE);
+        indicatorStatus = false;
+      }
     }
 
     if (isShowDownButton) {
