@@ -18,7 +18,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -143,7 +142,7 @@ public class ImagePreviewActivity extends AppCompatActivity
     // 下载图片按钮
     img_download.setOnClickListener(this);
 
-    if (!ImagePreview.getInstance().isShowIndicator()) {
+    if (!isShowIndicator) {
       tv_indicator.setVisibility(View.GONE);
       indicatorStatus = false;
     } else {

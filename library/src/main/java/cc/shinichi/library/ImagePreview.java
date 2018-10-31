@@ -1,7 +1,7 @@
 package cc.shinichi.library;
 
 import android.content.Context;
-import android.support.annotation.IdRes;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import cc.shinichi.library.bean.ImageInfo;
@@ -233,7 +233,7 @@ public class ImagePreview {
     return closeIconResId;
   }
 
-  public ImagePreview setCloseIconResId(int closeIconResId) {
+  public ImagePreview setCloseIconResId(@DrawableRes int closeIconResId) {
     this.closeIconResId = closeIconResId;
     return this;
   }
@@ -245,7 +245,7 @@ public class ImagePreview {
     return downIconResId;
   }
 
-  public ImagePreview setDownIconResId(int downIconResId) {
+  public ImagePreview setDownIconResId(@DrawableRes int downIconResId) {
     this.downIconResId = downIconResId;
     return this;
   }
@@ -266,6 +266,11 @@ public class ImagePreview {
     isShowCloseButton = false;
     isEnableDragClose = false;
     isEnableClickClose = true;
+    isShowIndicator = true;
+
+    closeIconResId = R.drawable.ic_action_close;
+    downIconResId = R.drawable.icon_download_new;
+
     loadStrategy = LoadStrategy.Default;
     folderName = "ImagePreview";
     context = null;
