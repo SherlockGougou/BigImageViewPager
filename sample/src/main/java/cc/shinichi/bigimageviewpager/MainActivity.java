@@ -15,6 +15,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
 	String[] images = {
+		"https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg",// 这张是https图片
 		"http://img3.16fan.com/live/origin/201805/21/E421b24c08446.jpg",
 		"http://img3.16fan.com/live/origin/201805/21/4D7B35fdf082e.jpg",
 		"http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg", //  5760 * 3840
