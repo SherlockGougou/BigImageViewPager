@@ -13,9 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
+import cc.shinichi.library.glide.FileTarget;
 import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.view.helper.FingerDragHelper;
 import cc.shinichi.library.view.helper.ImageSource;
@@ -23,8 +25,14 @@ import cc.shinichi.library.view.helper.SubsamplingScaleImageViewDragClose;
 import cc.shinichi.sherlockutillibrary.utility.common.NetworkUtil;
 import cc.shinichi.sherlockutillibrary.utility.common.Print;
 import cc.shinichi.sherlockutillibrary.utility.image.ImageUtil;
+import cc.shinichi.sherlockutillibrary.utility.ui.ToastUtil;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestFutureTarget;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 import java.io.File;
 import java.util.HashMap;
@@ -193,29 +201,56 @@ public class ImagePreviewAdapter extends PagerAdapter {
       Print.d(TAG, "finalLoadUrl == " + finalLoadUrl);
       final String url = finalLoadUrl;
 
-      Glide.with(activity).downloadOnly().load(url).into(new SimpleTarget<File>() {
-        @Override public void onLoadStarted(@Nullable Drawable placeholder) {
-          super.onLoadStarted(placeholder);
-          progressBar.setVisibility(View.VISIBLE);
-        }
+      Glide.with(activity).downloadOnly().load(url).addListener(new RequestListener<File>() {
+        @Override public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<File> target,
+            boolean isFirstResource) {
 
-        @Override public void onLoadFailed(@Nullable Drawable errorDrawable) {
-          super.onLoadFailed(errorDrawable);
-          // glide会有时加载失败，这不是本框架的问题，具体看：https://github.com/bumptech/glide/issues/2894
-          Glide.with(activity).downloadOnly().load(url).into(new SimpleTarget<File>() {
-            @Override public void onLoadStarted(@Nullable Drawable placeholder) {
-              super.onLoadStarted(placeholder);
-              progressBar.setVisibility(View.VISIBLE);
+          Glide.with(activity).downloadOnly().load(url).addListener(new RequestListener<File>() {
+            @Override public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<File> target,
+                boolean isFirstResource) {
+
+              Glide.with(activity).downloadOnly().load(url).addListener(new RequestListener<File>() {
+                @Override public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<File> target,
+                    boolean isFirstResource) {
+
+                  progressBar.setVisibility(View.GONE);
+                  String errorMsg = "加载失败";
+                  if (e != null) {
+                    errorMsg = errorMsg.concat(":\n").concat(e.getMessage());
+                  }
+                  if (errorMsg.length() > 200) {
+                    errorMsg = errorMsg.substring(0, 199);
+                  }
+                  ToastUtil.getInstance()._short(activity.getApplicationContext(), errorMsg);
+                  return true;
+                }
+
+                @Override
+                public boolean onResourceReady(File resource, Object model, Target<File> target, DataSource dataSource,
+                    boolean isFirstResource) {
+                  String imagePath = resource.getAbsolutePath();
+                  boolean isLongImage = ImageUtil.isLongImage(imagePath);
+                  Print.d(TAG, "isLongImage = " + isLongImage);
+                  if (isLongImage) {
+                    imageView.setOrientation(ImageUtil.getOrientation(imagePath));
+                    imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_START);
+                  }
+                  imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
+                  progressBar.setVisibility(View.GONE);
+                  return true;
+                }
+              }).into(new FileTarget() {
+                @Override public void onLoadStarted(@Nullable Drawable placeholder) {
+                  super.onLoadStarted(placeholder);
+                  progressBar.setVisibility(View.VISIBLE);
+                }
+              });
+              return true;
             }
 
-            @Override public void onLoadFailed(@Nullable Drawable errorDrawable) {
-              super.onLoadFailed(errorDrawable);
-              // glide会有时加载失败，这不是本框架的问题，具体看：https://github.com/bumptech/glide/issues/2894
-
-            }
-
-            @Override public void onResourceReady(@NonNull File resource,
-                @Nullable Transition<? super File> transition) {
+            @Override
+            public boolean onResourceReady(File resource, Object model, Target<File> target, DataSource dataSource,
+                boolean isFirstResource) {
               String imagePath = resource.getAbsolutePath();
               boolean isLongImage = ImageUtil.isLongImage(imagePath);
               Print.d(TAG, "isLongImage = " + isLongImage);
@@ -225,12 +260,20 @@ public class ImagePreviewAdapter extends PagerAdapter {
               }
               imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
               progressBar.setVisibility(View.GONE);
+              return true;
+            }
+          }).into(new FileTarget() {
+            @Override public void onLoadStarted(@Nullable Drawable placeholder) {
+              super.onLoadStarted(placeholder);
+              progressBar.setVisibility(View.VISIBLE);
             }
           });
+          return true;
         }
 
-        @Override public void onResourceReady(@NonNull File resource,
-            @Nullable Transition<? super File> transition) {
+        @Override
+        public boolean onResourceReady(File resource, Object model, Target<File> target, DataSource dataSource,
+            boolean isFirstResource) {
           String imagePath = resource.getAbsolutePath();
           boolean isLongImage = ImageUtil.isLongImage(imagePath);
           Print.d(TAG, "isLongImage = " + isLongImage);
@@ -240,6 +283,12 @@ public class ImagePreviewAdapter extends PagerAdapter {
           }
           imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
           progressBar.setVisibility(View.GONE);
+          return true;
+        }
+      }).into(new FileTarget() {
+        @Override public void onLoadStarted(@Nullable Drawable placeholder) {
+          super.onLoadStarted(placeholder);
+          progressBar.setVisibility(View.VISIBLE);
         }
       });
     }

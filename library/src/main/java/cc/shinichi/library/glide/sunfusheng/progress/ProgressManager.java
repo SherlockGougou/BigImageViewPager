@@ -1,10 +1,12 @@
 package cc.shinichi.library.glide.sunfusheng.progress;
 
 import android.text.TextUtils;
+import cc.shinichi.library.glide.SSLSocketClient;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -50,6 +52,9 @@ public class ProgressManager {
         })
             .sslSocketFactory(SSLSocketClient.getSSLSocketFactory())
             .hostnameVerifier(SSLSocketClient.getHostnameVerifier());
+        builder.connectTimeout(30, TimeUnit.SECONDS);
+        builder.writeTimeout(30, TimeUnit.SECONDS);
+        builder.readTimeout(30, TimeUnit.SECONDS);
         return builder.build();
     }
 

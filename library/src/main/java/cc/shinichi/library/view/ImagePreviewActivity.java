@@ -27,6 +27,7 @@ import android.widget.TextView;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
+import cc.shinichi.library.glide.FileTarget;
 import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.glide.sunfusheng.progress.OnProgressListener;
 import cc.shinichi.library.glide.sunfusheng.progress.ProgressManager;
@@ -263,9 +264,9 @@ public class ImagePreviewActivity extends AppCompatActivity
         return true;
       }
 
-      Glide.with(context).load(path).into(new SimpleTarget<Drawable>() {
-        @Override public void onResourceReady(@NonNull Drawable resource,
-            @Nullable Transition<? super Drawable> transition) {
+      Glide.with(context).downloadOnly().load(path).into(new FileTarget() {
+        @Override public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+          super.onResourceReady(resource, transition);
         }
       });
 
@@ -326,9 +327,9 @@ public class ImagePreviewActivity extends AppCompatActivity
     return 0;
   }
 
-  private boolean checkCache(String url_) {
+  private boolean checkCache(String url) {
     gone();
-    File cacheFile = ImageLoader.getGlideCacheFile(context, url_);
+    File cacheFile = ImageLoader.getGlideCacheFile(context, url);
     if (cacheFile != null && cacheFile.exists()) {
       gone();
       return true;
