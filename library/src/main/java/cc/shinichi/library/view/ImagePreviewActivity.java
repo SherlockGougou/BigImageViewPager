@@ -332,9 +332,9 @@ public class ImagePreviewActivity extends AppCompatActivity
     return 0;
   }
 
-  private boolean checkCache(final String url_) {
+  private boolean checkCache(final String url) {
     gone();
-    File cacheFile = ImageLoader.getGlideCacheFile(context, url_);
+    File cacheFile = ImageLoader.getGlideCacheFile(context, url);
     if (cacheFile != null && cacheFile.exists()) {
       gone();
       return true;

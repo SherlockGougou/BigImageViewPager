@@ -91,6 +91,11 @@ public class MainActivity extends AppCompatActivity {
 			imageInfoList.add(imageInfo);
 		}
 
+		imageInfo = new ImageInfo();
+		imageInfo.setOriginUrl("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");// 这张是https图片
+		imageInfo.setThumbnailUrl("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");// 这张是https图片
+		imageInfoList.add(0, imageInfo);
+
 		// 本地图片：将原图和缩略图地址传一样的即可。
 		//ImageInfo imageInfo;
 		//final List<ImageInfo> imageInfoList = new ArrayList<>();

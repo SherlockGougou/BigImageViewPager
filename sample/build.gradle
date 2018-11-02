@@ -30,5 +30,6 @@ dependencies {
   implementation "com.android.support:appcompat-v7:${supportLibVersion}"
 
   // library
-  implementation project(':library')
+//  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_2.0.0'
+    implementation project(':library')
 }

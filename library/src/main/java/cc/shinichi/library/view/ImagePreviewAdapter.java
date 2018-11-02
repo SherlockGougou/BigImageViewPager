@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
@@ -23,6 +24,7 @@ import cc.shinichi.library.view.helper.SubsamplingScaleImageViewDragClose;
 import cc.shinichi.sherlockutillibrary.utility.common.NetworkUtil;
 import cc.shinichi.sherlockutillibrary.utility.common.Print;
 import cc.shinichi.sherlockutillibrary.utility.image.ImageUtil;
+import cc.shinichi.sherlockutillibrary.utility.ui.ToastUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import java.io.File;
@@ -192,7 +194,8 @@ public class ImagePreviewAdapter extends PagerAdapter {
       finalLoadUrl = finalLoadUrl.trim();
       Print.d(TAG, "finalLoadUrl == " + finalLoadUrl);
 
-      Glide.with(activity).load(finalLoadUrl).downloadOnly(new SimpleFileTarget() {
+      final String url = finalLoadUrl;
+      Glide.with(activity).load(url).downloadOnly(new SimpleFileTarget() {
         @Override public void onLoadStarted(Drawable placeholder) {
           super.onLoadStarted(placeholder);
           progressBar.setVisibility(View.VISIBLE);
@@ -201,10 +204,40 @@ public class ImagePreviewAdapter extends PagerAdapter {
         @Override public void onLoadFailed(Exception e, Drawable errorDrawable) {
           super.onLoadFailed(e, errorDrawable);
           // glide会有时加载失败，这不是本框架的问题，具体看：https://github.com/bumptech/glide/issues/2894
-          Glide.with(activity).load(finalLoadUrl).downloadOnly(new SimpleFileTarget() {
+
+          Glide.with(activity).load(url).downloadOnly(new SimpleFileTarget() {
             @Override public void onLoadFailed(Exception e, Drawable errorDrawable) {
               super.onLoadFailed(e, errorDrawable);
-              progressBar.setVisibility(View.GONE);
+
+              Glide.with(activity).load(url).downloadOnly(new SimpleFileTarget() {
+                @Override public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                  super.onLoadFailed(e, errorDrawable);
+
+                  progressBar.setVisibility(View.GONE);
+                  String errorMsg = "加载失败";
+                  if (e != null) {
+                    errorMsg = errorMsg.concat(":\n").concat(e.toString());
+                  }
+                  if (errorMsg.length() > 200) {
+                    errorMsg = errorMsg.substring(0, 199);
+                  }
+                  ToastUtil.getInstance()._short(activity.getApplicationContext(), errorMsg);
+                }
+
+                @Override public void onResourceReady(File resource,
+                    GlideAnimation<? super File> glideAnimation) {
+                  String imagePath = resource.getAbsolutePath();
+                  boolean isLongImage = ImageUtil.isLongImage(imagePath);
+                  Print.d(TAG, "isLongImage = " + isLongImage);
+                  if (isLongImage) {
+                    imageView.setOrientation(ImageUtil.getOrientation(imagePath));
+                    imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_START);
+                  }
+                  imageView.setImage(
+                      ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
+                  progressBar.setVisibility(View.GONE);
+                }
+              });
             }
 
             @Override public void onResourceReady(File resource,

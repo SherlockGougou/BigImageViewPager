@@ -13,11 +13,11 @@
 
     <!-- glide 声明自定义的module -->
     <meta-data
-        android:name="cc.shinichi.library.glide.engine.OkHttpProgressGlideModule"
+        tools:node="remove"
+        android:name="com.bumptech.glide.integration.okhttp.OkHttpGlideModule"
         android:value="GlideModule"/>
     <meta-data
-        android:name="com.bumptech.glide.integration.okhttp.OkHttpGlideModule"
-        android:value="GlideModule"
-        tools:node="remove"/>
+        android:name="cc.shinichi.library.glide.engine.OkHttpProgressGlideModule"
+        android:value="GlideModule"/>
   </application>
 </manifest>

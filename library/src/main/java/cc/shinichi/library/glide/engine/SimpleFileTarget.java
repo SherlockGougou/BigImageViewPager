@@ -20,20 +20,16 @@ public class SimpleFileTarget implements Target<File> {
   private static final String TAG = "SimpleFileTarget";
 
   @Override public void onLoadStarted(Drawable placeholder) {
-    Print.d(TAG, "onLoadStarted");
+
   }
 
   @Override public void onLoadFailed(Exception e, Drawable errorDrawable) {
-    if (e != null) {
-      Print.d(TAG, "onLoadFailed e--->" + e.toString());
-    } else {
-      Print.d(TAG, "onLoadFailed");
-    }
+
   }
 
   @Override
   public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
-    Print.d(TAG, "onResourceReady " + resource.getAbsolutePath());
+
   }
 
   @Override public void onLoadCleared(Drawable placeholder) {
