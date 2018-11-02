@@ -15,20 +15,22 @@
 - v1.2.8修复某些手机toast不显示的问题，更改保存图片的名称为原始名称
 - v1.2.9修复下载后相册看不到的问题，修复某些情况下的进度显示问题
 - v1.3.0修复某些情况下载失败的问题，感谢某位不愿透露姓名的兄dei～帮忙查看解决问题
+- v2.0.0发布，支持更多自定义功能，具体看截图和demo
+- v2.0.1发布，支持https图片的加载
 
 # 截图
 
 # gif查看不流畅，可扫描底部二维码进行安装体验
 ![v1.2.6新增可下拉/上拉关闭](https://upload-images.jianshu.io/upload_images/1710902-08b5d2e3e9696f9f.gif?imageMogr2/auto-orient/strip)
 
-![Screenshot_2018-10-25-11-50-59-477.png](https://upload-images.jianshu.io/upload_images/1710902-152b7d3068c6454f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![支持多种自定义](https://upload-images.jianshu.io/upload_images/1710902-780b5eac45d5a43d.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ![Screenshot_2018-10-19-18-01-52-162副本.jpg](https://upload-images.jianshu.io/upload_images/1710902-84fb4fb928a5001d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-
 # 功能
 - 支持多张图片（网络图片、本地图片均支持）滑动浏览，支持手势放大、双击放大、下拉关闭。
-- 支持下载，支持自定义下载目录文件夹名称。
+- 支持下载，支持自定义下载目录文件夹名称
+- 支持自定义各种按钮的图标和是否显示
 - 查看原图支持加载进度条显示
 - 支持超大图、超长图，sample中测试的大图尺寸分别是：2280 * 22116、5760 * 3840。
 - 采用区块加载，不用担心OOM的风险。
@@ -48,9 +50,8 @@ allprojects {
 Step 2. 在你主module的build.gradle中添加依赖：
 
 # 此处显示的是本框架的最新版本号：
-[![](https://jitpack.io/v/SherlockGougou/BigImageViewPager.svg)](https://jitpack.io/#SherlockGougou/BigImageViewPager)
-#### 对于glide4.x : 使用v4_1.3.0
-#### 对于glide3.x : 使用v3_1.3.0
+#### 对于glide4.x : 使用v4_2.0.1
+#### 对于glide3.x : 使用v3_2.0.1
 
 ```
 dependencies {
@@ -58,7 +59,7 @@ dependencies {
   // 针对glide v4 版本：如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
 
   // 主库，必须添加！
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_1.3.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_2.0.1'
   // v7支持库，必须添加！
   implementation 'com.android.support:appcompat-v7:27.1.1'
   // 由于本框架使用了glide和okhttp3，所以还请增加依赖以下框架，必须添加！
@@ -70,7 +71,7 @@ dependencies {
 ============================分割线==================================
 
   // 针对glide v3 版本：如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_1.3.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_2.0.1'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```
@@ -127,6 +128,7 @@ Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project�
 
 链式调用，多种配置
 ```
+
 		// 仅加载普清
 		findViewById(R.id.buttonThumb).setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
@@ -135,14 +137,21 @@ Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project�
 					.setContext(MainActivity.this)// 上下文
 					.setIndex(0)// 从第一张图片开始，索引从0开始哦
 					.setImageInfoList(imageInfoList)// 图片源
-					.setShowDownButton(true)// 是否显示下载按钮
 					.setLoadStrategy(ImagePreview.LoadStrategy.AlwaysThumb)// 加载策略，见下面介绍
 					.setFolderName("BigImageViewDownload")// 保存的文件夹名称，SD卡根目录
 					.setScaleLevel(1, 3, 8)// 设置三级缩放级别
 					.setZoomTransitionDuration(300)// 缩放动画时长
-					.setShowCloseButton(false)// 是否显示关闭页面按钮，在页面左下角
-					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭，默认不启用
-					.setEnableClickClose(true)// 是否启用点击图片关闭，默认启用
+
+					.setEnableClickClose(enableClickClose)// 是否启用点击图片关闭。默认启用
+					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
+
+					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
+					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源
+
+					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
+					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源
+
+					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
 					.start();
 			}
 		});
@@ -160,9 +169,17 @@ Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project�
 					.setFolderName("BigImageViewDownload")
 					.setScaleLevel(1, 3, 8)
 					.setZoomTransitionDuration(300)
-					.setShowCloseButton(true)
-					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭，默认不启用
-					.setEnableClickClose(true)// 是否启用点击图片关闭，默认启用
+
+					.setEnableClickClose(enableClickClose)// 是否启用点击图片关闭。默认启用
+					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
+
+					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
+					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源
+
+					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
+					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源
+
+					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
 					.start();
 			}
 		});
@@ -180,9 +197,17 @@ Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project�
 					.setFolderName("BigImageViewDownload")
 					.setScaleLevel(1, 3, 8)
 					.setZoomTransitionDuration(500)
-					.setShowCloseButton(true)
-					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭，默认不启用
-					.setEnableClickClose(true)// 是否启用点击图片关闭，默认启用
+
+					.setEnableClickClose(enableClickClose)// 是否启用点击图片关闭。默认启用
+					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
+
+					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
+					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源
+
+					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
+					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源
+
+					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
 					.start();
 			}
 		});
@@ -200,9 +225,17 @@ Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project�
 					.setFolderName("BigImageViewDownload")
 					.setScaleLevel(1, 3, 5)
 					.setZoomTransitionDuration(300)
-					.setShowCloseButton(true)
-					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭，默认不启用
-					.setEnableClickClose(true)// 是否启用点击图片关闭，默认启用
+
+					.setEnableClickClose(enableClickClose)// 是否启用点击图片关闭。默认启用
+					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
+
+					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
+					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源
+
+					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
+					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源
+
+					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
 					.start();
 			}
 		});
@@ -257,19 +290,3 @@ https://github.com/SherlockGougou/BigImageViewPager
 
 ![欢迎加入“大话安卓”技术交流群，互相学习提升](https://upload-images.jianshu.io/upload_images/1710902-5cdeb8c1f58dd425.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-# License
-```
-Copyright 2018 SherlockGougou
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-```
