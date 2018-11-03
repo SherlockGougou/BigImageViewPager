@@ -16,7 +16,7 @@
 - v1.2.9修复下载后相册看不到的问题，修复某些情况下的进度显示问题
 - v1.3.0修复某些情况下载失败的问题，感谢某位不愿透露姓名的兄dei～帮忙查看解决问题
 - v2.0.0发布，支持更多自定义功能，具体看截图和demo
-- v2.0.1发布，支持https图片的加载
+- v2.1.0发布，从本版本开始，v3、v4版本均支持https图片的加载
 
 # 截图
 
@@ -25,7 +25,7 @@
 
 ![支持多种自定义](https://upload-images.jianshu.io/upload_images/1710902-780b5eac45d5a43d.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-![Screenshot_2018-10-19-18-01-52-162副本.jpg](https://upload-images.jianshu.io/upload_images/1710902-84fb4fb928a5001d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![主要功能概览](https://upload-images.jianshu.io/upload_images/1710902-2c4cae8d0ddaef1f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 # 功能
 - 支持多张图片（网络图片、本地图片均支持）滑动浏览，支持手势放大、双击放大、下拉关闭。
@@ -50,8 +50,8 @@ allprojects {
 Step 2. 在你主module的build.gradle中添加依赖：
 
 # 此处显示的是本框架的最新版本号：
-#### 对于glide4.x : 使用v4_2.0.1
-#### 对于glide3.x : 使用v3_2.0.1
+#### 对于glide4.x : 使用v4_2.1.0
+#### 对于glide3.x : 使用v3_2.1.0
 
 ```
 dependencies {
@@ -59,7 +59,7 @@ dependencies {
   // 针对glide v4 版本：如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
 
   // 主库，必须添加！
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_2.0.1'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_2.1.0'
   // v7支持库，必须添加！
   implementation 'com.android.support:appcompat-v7:27.1.1'
   // 由于本框架使用了glide和okhttp3，所以还请增加依赖以下框架，必须添加！
@@ -71,7 +71,7 @@ dependencies {
 ============================分割线==================================
 
   // 针对glide v3 版本：如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_2.0.1'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_2.1.0'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```
@@ -101,25 +101,28 @@ Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project�
 根据需求生成图片源：
 ```
 		// 网络图片：
+		String[] images = {"url","url","url","url"};
 		ImageInfo imageInfo;
 		final List<ImageInfo> imageInfoList = new ArrayList<>();
 		for (String image : images) {
 			imageInfo = new ImageInfo();
-			// 原图地址
+			// 原图地址（必填）
 			imageInfo.setOriginUrl(image);
-			// 缩略图，实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样。
+			// 缩略图地址（必填）
+			// __如果没有缩略图url，可以将两项设置为一样。（注意：此处作为演示用，加了-1200，你们不要这么做）__
 			imageInfo.setThumbnailUrl(image.concat("-1200"));
 			imageInfoList.add(imageInfo);
 			imageInfo = null;
 		}
 
 		// 本地图片：将原图和缩略图地址传一样的即可。
+		//String[] paths = {"path","path","path","path"};
 		//ImageInfo imageInfo;
 		//final List<ImageInfo> imageInfoList = new ArrayList<>();
-		//for (String image : images) {
+		//for (String path : paths) {
 		//	imageInfo = new ImageInfo();
-		//	imageInfo.setOriginUrl(image);
-		//	imageInfo.setThumbnailUrl(image);
+		//	imageInfo.setOriginUrl(path);
+		//	imageInfo.setThumbnailUrl(path);
 		//	imageInfoList.add(imageInfo);
 		//	imageInfo = null;
 		//}
