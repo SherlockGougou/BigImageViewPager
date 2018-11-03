@@ -36,5 +36,6 @@ dependencies {
 
   // glide
   implementation 'com.github.bumptech.glide:glide:3.8.0'
-  implementation 'com.github.bumptech.glide:okhttp3-integration:1.5.0'
+  // okhttp3
+  implementation 'com.squareup.okhttp3:okhttp:3.11.0'
 }

@@ -19,13 +19,15 @@ import javax.net.ssl.X509TrustManager;
 public class SSLSocketClient {
 
     public static SSLSocketFactory getSSLSocketFactory() {
+        SSLSocketFactory sslSocketFactory = null;
         try {
             SSLContext sslContext = SSLContext.getInstance("SSL");
             sslContext.init(null, getTrustManager(), new SecureRandom());
-            return sslContext.getSocketFactory();
+            sslSocketFactory = sslContext.getSocketFactory();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+        return sslSocketFactory;
     }
 
     private static TrustManager[] getTrustManager() {
@@ -38,7 +40,7 @@ public class SSLSocketClient {
                 }
 
                 @Override public X509Certificate[] getAcceptedIssuers() {
-                    return new X509Certificate[0];
+                    return new X509Certificate[]{};
                 }
             }
         };

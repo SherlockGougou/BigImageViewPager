@@ -212,6 +212,9 @@ public class ImagePreviewAdapter extends PagerAdapter {
               Glide.with(activity).load(url).downloadOnly(new SimpleFileTarget() {
                 @Override public void onLoadFailed(Exception e, Drawable errorDrawable) {
                   super.onLoadFailed(e, errorDrawable);
+                  if (e != null) {
+                    Print.d(TAG, "error == " + e.toString());
+                  }
 
                   progressBar.setVisibility(View.GONE);
                   String errorMsg = "加载失败";

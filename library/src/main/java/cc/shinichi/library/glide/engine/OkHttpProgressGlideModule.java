@@ -6,7 +6,6 @@ import android.os.Looper;
 import cc.shinichi.library.glide.SSLSocketClient;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
-import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.cache.DiskCache;
 import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
@@ -71,7 +70,8 @@ public class OkHttpProgressGlideModule implements GlideModule {
 
     @Override public void registerComponents(Context context, Glide glide) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.hostnameVerifier(SSLSocketClient.getHostnameVerifier())
+        builder
+            .hostnameVerifier(SSLSocketClient.getHostnameVerifier())
             .sslSocketFactory(SSLSocketClient.getSSLSocketFactory())
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import cc.shinichi.library.glide.cache.OriginalKey;
 import cc.shinichi.library.glide.cache.SafeKeyGenerator;
+import cc.shinichi.sherlockutillibrary.utility.core.ThreadManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.disklrucache.DiskLruCache;
 import com.bumptech.glide.load.engine.cache.DiskCache;
@@ -46,10 +47,10 @@ public class ImageLoader {
   }
 
   public static void cleanDiskCache(final Context context) {
-    new Thread(new Runnable() {
+    ThreadManager.getFile().execute(new Runnable() {
       @Override public void run() {
         Glide.get(context.getApplicationContext()).clearDiskCache();
       }
-    }).start();
+    });
   }
 }
