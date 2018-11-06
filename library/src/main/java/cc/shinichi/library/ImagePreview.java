@@ -1,6 +1,8 @@
 package cc.shinichi.library;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -279,6 +281,18 @@ public class ImagePreview {
   public void start() {
     if (context == null) {
       throw new IllegalArgumentException("You must call 'setContext(Context context)' first!");
+    }
+    if (!(context instanceof Activity)) {
+      throw new IllegalArgumentException("context must be a Activity!");
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+      if (((Activity) context).isFinishing() || ((Activity) context).isDestroyed()) {
+        return;
+      }
+    } else {
+      if (((Activity) context).isFinishing()) {
+        return;
+      }
     }
     if (imageInfoList == null || imageInfoList.size() == 0) {
       throw new IllegalArgumentException(
