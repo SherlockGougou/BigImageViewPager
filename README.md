@@ -17,6 +17,7 @@
 - v1.3.0修复某些情况下载失败的问题，感谢某位不愿透露姓名的兄dei～帮忙查看解决问题
 - v2.0.0发布，支持更多自定义功能，具体看截图和demo
 - v2.1.0发布，从本版本开始，v3、v4版本均支持https图片的加载
+- v2.1.2修复图片显示方向可能错误的问题
 
 # 截图
 
@@ -50,8 +51,8 @@ allprojects {
 Step 2. 在你主module的build.gradle中添加依赖：
 
 # 此处显示的是本框架的最新版本号：
-#### 对于glide4.x : 使用v4_2.1.0
-#### 对于glide3.x : 使用v3_2.1.0
+#### 对于glide4.x : 使用v4_2.1.2
+#### 对于glide3.x : 使用v3_2.1.2
 
 ```
 dependencies {
@@ -59,7 +60,7 @@ dependencies {
   // 针对glide v4 版本：如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
 
   // 主库，必须添加！
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_2.1.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_2.1.2'
   // v7支持库，必须添加！
   implementation 'com.android.support:appcompat-v7:27.1.1'
   // 由于本框架使用了glide和okhttp3，所以还请增加依赖以下框架，必须添加！
@@ -71,7 +72,7 @@ dependencies {
 ============================分割线==================================
 
   // 针对glide v3 版本：如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_2.1.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_2.1.2'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```
