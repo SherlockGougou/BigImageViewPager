@@ -34,6 +34,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -106,7 +107,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
         boolean isLongImage = ImageUtil.isLongImage(imagePath);
         Print.d(TAG, "isLongImage = " + isLongImage);
         if (isLongImage) {
-          imageView.setOrientation(ImageUtil.getOrientation(imagePath));
+          imageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
           imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_START);
         }
         imageView.setImage(origin, small);
@@ -177,7 +178,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
       boolean isLongImage = ImageUtil.isLongImage(imagePath);
       Print.d(TAG, "isLongImage = " + isLongImage);
       if (isLongImage) {
-        imageView.setOrientation(ImageUtil.getOrientation(imagePath));
+        imageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
         imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_START);
       }
       imageView.setImage(ImageSource.uri(Uri.fromFile(new File(cacheFile.getAbsolutePath()))));
@@ -232,7 +233,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
                   boolean isLongImage = ImageUtil.isLongImage(imagePath);
                   Print.d(TAG, "isLongImage = " + isLongImage);
                   if (isLongImage) {
-                    imageView.setOrientation(ImageUtil.getOrientation(imagePath));
+                    imageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
                     imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_START);
                   }
                   imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
@@ -255,7 +256,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
               boolean isLongImage = ImageUtil.isLongImage(imagePath);
               Print.d(TAG, "isLongImage = " + isLongImage);
               if (isLongImage) {
-                imageView.setOrientation(ImageUtil.getOrientation(imagePath));
+                imageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
                 imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_START);
               }
               imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
@@ -278,7 +279,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
           boolean isLongImage = ImageUtil.isLongImage(imagePath);
           Print.d(TAG, "isLongImage = " + isLongImage);
           if (isLongImage) {
-            imageView.setOrientation(ImageUtil.getOrientation(imagePath));
+            imageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
             imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_START);
           }
           imageView.setImage(ImageSource.uri(Uri.fromFile(new File(resource.getAbsolutePath()))));
