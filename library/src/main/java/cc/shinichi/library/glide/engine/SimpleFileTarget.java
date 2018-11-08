@@ -1,7 +1,6 @@
 package cc.shinichi.library.glide.engine;
 
 import android.graphics.drawable.Drawable;
-import cc.shinichi.sherlockutillibrary.utility.common.Print;
 import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SizeReadyCallback;

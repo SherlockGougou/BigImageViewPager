@@ -53,30 +53,35 @@ public class MainActivity extends AppCompatActivity {
 				enableClickClose = isChecked;
 			}
 		});
+		switchClickClose.setChecked(true);
 
 		switchDragClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				enableDragClose = isChecked;
 			}
 		});
+		switchDragClose.setChecked(true);
 
 		switchShowIndicator.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				showIndicator = isChecked;
 			}
 		});
+		switchShowIndicator.setChecked(true);
 
 		switchShowCloseButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				showCloseButton = isChecked;
 			}
 		});
+		switchShowCloseButton.setChecked(false);
 
 		switchShowDownButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				showDownButton = isChecked;
 			}
 		});
+		switchShowDownButton.setChecked(true);
 
 		// 网络图片：
 		ImageInfo imageInfo;
@@ -107,6 +112,16 @@ public class MainActivity extends AppCompatActivity {
 		//	imageInfo = null;
 		//}
 
+		// 最简单的调用
+		findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) {
+				// 仅需一行代码
+				// 默认配置为：显示顶部进度指示器、显示右侧下载按钮、隐藏左侧关闭按钮、开启点击图片关闭、关闭下拉图片关闭、加载方式为手动模式
+				// 一行代码即可实现大部分需求，如需定制，可参考下面代码
+				ImagePreview.getInstance().setContext(MainActivity.this).setImageInfoList(imageInfoList).start();
+			}
+		});
+
 		// 仅加载普清
 		findViewById(R.id.buttonThumb).setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
@@ -124,10 +139,10 @@ public class MainActivity extends AppCompatActivity {
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
 
 					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
-					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源
+					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
 
 					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
-					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源
+					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
 
 					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
 					.start();
@@ -152,10 +167,10 @@ public class MainActivity extends AppCompatActivity {
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
 
 					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
-					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源
+					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
 
 					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
-					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源
+					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
 
 					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
 					.start();
@@ -180,10 +195,10 @@ public class MainActivity extends AppCompatActivity {
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
 
 					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
-					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源
+					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
 
 					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
-					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源
+					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
 
 					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
 					.start();
@@ -208,10 +223,10 @@ public class MainActivity extends AppCompatActivity {
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
 
 					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
-					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源
+					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
 
 					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
-					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源
+					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
 
 					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
 					.start();

@@ -384,10 +384,10 @@ public class ImagePreviewActivity extends AppCompatActivity
 
   @Override protected void onDestroy() {
     super.onDestroy();
+    ImagePreview.getInstance().reset();
     if (imagePreviewAdapter != null) {
       imagePreviewAdapter.closePage();
     }
-    ImagePreview.getInstance().reset();
   }
 
   private void gone() {
