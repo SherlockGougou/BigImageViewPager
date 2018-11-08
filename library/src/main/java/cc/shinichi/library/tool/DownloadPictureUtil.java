@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import cc.shinichi.sherlockutillibrary.utility.common.Print;
 import cc.shinichi.sherlockutillibrary.utility.file.FileUtil;
 import cc.shinichi.sherlockutillibrary.utility.file.SingleMediaScanner;
 import com.bumptech.glide.Glide;

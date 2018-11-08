@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -36,7 +35,6 @@ import cc.shinichi.sherlockutillibrary.utility.common.HandlerUtils;
 import cc.shinichi.sherlockutillibrary.utility.file.FileUtil;
 import cc.shinichi.sherlockutillibrary.utility.ui.ToastUtil;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import java.io.File;
 import java.util.List;
@@ -379,10 +377,10 @@ public class ImagePreviewActivity extends AppCompatActivity
 
   @Override protected void onDestroy() {
     super.onDestroy();
+    ImagePreview.getInstance().reset();
     if (imagePreviewAdapter != null) {
       imagePreviewAdapter.closePage();
     }
-    ImagePreview.getInstance().reset();
   }
 
   private void gone() {

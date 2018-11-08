@@ -112,9 +112,13 @@ public class ImagePreview {
   }
 
   public boolean isShowOriginButton(int index) {
+    List<ImageInfo> imageInfoList = getImageInfoList();
+    if (null == imageInfoList || imageInfoList.size() == 0) {
+      return false;
+    }
     // 根据不同加载策略，自行判断是否显示查看原图按钮
-    String originUrl = getImageInfoList().get(index).getOriginUrl();
-    String thumbUrl = getImageInfoList().get(index).getThumbnailUrl();
+    String originUrl = imageInfoList.get(index).getOriginUrl();
+    String thumbUrl = imageInfoList.get(index).getThumbnailUrl();
     if (originUrl.equalsIgnoreCase(thumbUrl)) {// 原图、缩略图url一样，不显示查看原图按钮
       return false;
     }
@@ -264,6 +268,10 @@ public class ImagePreview {
   public void reset() {
     imageInfoList = null;
     index = 0;
+    minScale = 1.0f;
+    mediumScale = 3.0f;
+    maxScale = 5.0f;
+    zoomTransitionDuration = 200;
     isShowDownButton = true;
     isShowCloseButton = false;
     isEnableDragClose = false;
@@ -287,10 +295,12 @@ public class ImagePreview {
     }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
       if (((Activity) context).isFinishing() || ((Activity) context).isDestroyed()) {
+        reset();
         return;
       }
     } else {
       if (((Activity) context).isFinishing()) {
+        reset();
         return;
       }
     }
