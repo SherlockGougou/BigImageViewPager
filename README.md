@@ -18,13 +18,15 @@
 - v2.0.0发布，支持更多自定义功能，具体看截图和demo
 - v2.1.0发布，从本版本开始，v3、v4版本均支持https图片的加载
 - v2.1.2修复图片显示方向可能错误的问题
+- v2.1.3修复部分可能出现的闪退
 
 # 截图
 
 # gif查看不流畅，可扫描底部二维码进行安装体验
+
 ![v1.2.6新增可下拉/上拉关闭](https://upload-images.jianshu.io/upload_images/1710902-08b5d2e3e9696f9f.gif?imageMogr2/auto-orient/strip)
 
-![支持多种自定义](https://upload-images.jianshu.io/upload_images/1710902-780b5eac45d5a43d.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![QQ20181108-0.png](https://upload-images.jianshu.io/upload_images/1710902-9c9f417905c52934.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ![主要功能概览](https://upload-images.jianshu.io/upload_images/1710902-2c4cae8d0ddaef1f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -51,8 +53,8 @@ allprojects {
 Step 2. 在你主module的build.gradle中添加依赖：
 
 # 此处显示的是本框架的最新版本号：
-#### 对于glide4.x : 使用v4_2.1.2
-#### 对于glide3.x : 使用v3_2.1.2
+#### 对于glide4.x : 使用v4_2.1.3
+#### 对于glide3.x : 使用v3_2.1.3
 
 ```
 dependencies {
@@ -60,7 +62,7 @@ dependencies {
   // 针对glide v4 版本：如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
 
   // 主库，必须添加！
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_2.1.2'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_2.1.3'
   // v7支持库，必须添加！
   implementation 'com.android.support:appcompat-v7:27.1.1'
   // 由于本框架使用了glide和okhttp3，所以还请增加依赖以下框架，必须添加！
@@ -69,10 +71,10 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
 
-============================分割线==================================
+================================分割线==================================
 
   // 针对glide v3 版本：如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_2.1.2'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_2.1.3'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```
@@ -97,9 +99,9 @@ public class MyAppGlideModule extends AppGlideModule {
 Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project，等待重建完成，至此，框架添加完成。如遇到任何问题，请附带截图提issues，我会及时回复，或添加底部QQ群，进行交流。
 
 
-#### 调用方式
+## 调用方式
 
-根据需求生成图片源：
+#### 根据需求生成图片源：
 ```
 		// 网络图片：
 		String[] images = {"url","url","url","url"};
@@ -110,7 +112,7 @@ Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project�
 			// 原图地址（必填）
 			imageInfo.setOriginUrl(image);
 			// 缩略图地址（必填）
-			// __如果没有缩略图url，可以将两项设置为一样。（注意：此处作为演示用，加了-1200，你们不要这么做）__
+			// 如果没有缩略图url，可以将两项设置为一样。（注意：此处作为演示用，加了-1200，你们不要这么做）
 			imageInfo.setThumbnailUrl(image.concat("-1200"));
 			imageInfoList.add(imageInfo);
 			imageInfo = null;
@@ -130,8 +132,27 @@ Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project�
 
 ```
 
-链式调用，多种配置
+#### 最简单的调用方式：
 ```
+ImagePreview
+  .getInstance()
+  .setContext(MainActivity.this)
+  .setImageInfoList(imageInfoList)
+  .start();
+```
+
+
+##### 另有多种参数可配置：
+```
+// 最简单的调用
+		findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) {
+				// 仅需一行代码
+				// 默认配置为：显示顶部进度指示器、显示右侧下载按钮、隐藏左侧关闭按钮、开启点击图片关闭、关闭下拉图片关闭、加载方式为手动模式
+				// 一行代码即可实现大部分需求，如需定制，可参考下面代码
+				ImagePreview.getInstance().setContext(MainActivity.this).setImageInfoList(imageInfoList).start();
+			}
+		});
 
 		// 仅加载普清
 		findViewById(R.id.buttonThumb).setOnClickListener(new View.OnClickListener() {
@@ -150,10 +171,10 @@ Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project�
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
 
 					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
-					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源
+					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
 
 					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
-					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源
+					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
 
 					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
 					.start();
@@ -178,10 +199,10 @@ Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project�
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
 
 					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
-					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源
+					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
 
 					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
-					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源
+					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
 
 					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
 					.start();
@@ -206,10 +227,10 @@ Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project�
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
 
 					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
-					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源
+					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
 
 					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
-					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源
+					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
 
 					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
 					.start();
@@ -234,10 +255,10 @@ Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project�
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
 
 					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
-					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源
+					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
 
 					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
-					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源
+					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
 
 					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
 					.start();
