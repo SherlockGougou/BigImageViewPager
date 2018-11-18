@@ -19,6 +19,7 @@
 - v2.1.0发布，从本版本开始，v3、v4版本均支持https图片的加载
 - v2.1.2修复图片显示方向可能错误的问题
 - v2.1.3修复部分可能出现的闪退
+- v2.1.4修复超宽图显示错位的问题
 
 # 截图
 
@@ -53,8 +54,8 @@ allprojects {
 Step 2. 在你主module的build.gradle中添加依赖：
 
 # 此处显示的是本框架的最新版本号：
-#### 对于glide4.x : 使用v4_2.1.3
-#### 对于glide3.x : 使用v3_2.1.3
+#### 对于glide4.x : 使用v4_2.1.4
+#### 对于glide3.x : 使用v3_2.1.4
 
 ```
 dependencies {
@@ -62,7 +63,7 @@ dependencies {
   // 针对glide v4 版本：如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
 
   // 主库，必须添加！
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_2.1.3'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_2.1.4'
   // v7支持库，必须添加！
   implementation 'com.android.support:appcompat-v7:27.1.1'
   // 由于本框架使用了glide和okhttp3，所以还请增加依赖以下框架，必须添加！
@@ -74,7 +75,7 @@ dependencies {
 ================================分割线==================================
 
   // 针对glide v3 版本：如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_2.1.3'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_2.1.4'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```
@@ -170,7 +171,7 @@ ImagePreview
 					.setEnableClickClose(enableClickClose)// 是否启用点击图片关闭。默认启用
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
 
-					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
+					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认不显示
 					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
 
 					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
@@ -198,7 +199,7 @@ ImagePreview
 					.setEnableClickClose(enableClickClose)// 是否启用点击图片关闭。默认启用
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
 
-					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
+					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认不显示
 					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
 
 					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
@@ -226,7 +227,7 @@ ImagePreview
 					.setEnableClickClose(enableClickClose)// 是否启用点击图片关闭。默认启用
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
 
-					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
+					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认不显示
 					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
 
 					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
@@ -254,7 +255,7 @@ ImagePreview
 					.setEnableClickClose(enableClickClose)// 是否启用点击图片关闭。默认启用
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
 
-					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
+					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认不显示
 					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
 
 					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示

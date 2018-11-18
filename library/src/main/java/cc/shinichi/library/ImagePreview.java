@@ -32,7 +32,7 @@ public class ImagePreview {
   private float maxScale = 5.0f;// 最大缩放倍数
 
   private boolean isShowIndicator = true;// 是否显示图片指示器（1/9）
-  private boolean isShowCloseButton = true;// 是否显示关闭页面按钮
+  private boolean isShowCloseButton = false;// 是否显示关闭页面按钮
   private boolean isShowDownButton = true;// 是否显示下载按钮
   private int zoomTransitionDuration = 200;// 动画持续时间 单位毫秒 ms
 
