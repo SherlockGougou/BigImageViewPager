@@ -6,8 +6,8 @@ android {
   defaultConfig {
     minSdkVersion 14
     targetSdkVersion 27
-    versionCode 1
-    versionName "1.0"
+    versionCode 214
+    versionName "v4_2.1.4"
   }
 
   buildTypes {

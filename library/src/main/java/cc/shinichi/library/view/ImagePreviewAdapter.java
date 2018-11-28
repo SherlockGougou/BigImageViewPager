@@ -104,6 +104,8 @@ public class ImagePreviewAdapter extends PagerAdapter {
         Print.d(TAG, "isLongImage = " + isLongImage);
         if (isLongImage) {
           imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_START);
+        } else {
+          imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_CENTER_INSIDE);
         }
         imageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
         imageView.setImage(origin, small);
@@ -162,9 +164,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
     finalLoadUrl = thumbPathUrl;
     ImagePreview.LoadStrategy loadStrategy = ImagePreview.getInstance().getLoadStrategy();
 
-    if (imageHashMap.containsKey(originPathUrl)) {
-      imageHashMap.remove(originPathUrl);
-    }
+    imageHashMap.remove(originPathUrl);
     imageHashMap.put(originPathUrl, imageView);
 
     // 判断原图缓存是否存在，存在的话，直接显示原图缓存，优先保证清晰。
