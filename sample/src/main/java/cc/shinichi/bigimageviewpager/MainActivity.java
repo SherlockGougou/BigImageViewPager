@@ -96,6 +96,13 @@ public class MainActivity extends AppCompatActivity {
 			imageInfoList.add(imageInfo);
 		}
 
+        // 此图为超宽图
+        imageInfo = new ImageInfo();
+        imageInfo.setOriginUrl("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");// 这张是https图片
+        imageInfo.setThumbnailUrl("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");// 这张是https图片
+        imageInfoList.add(0, imageInfo);
+
+        // 此图为https图
 		imageInfo = new ImageInfo();
 		imageInfo.setOriginUrl("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");// 这张是https图片
 		imageInfo.setThumbnailUrl("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");// 这张是https图片
