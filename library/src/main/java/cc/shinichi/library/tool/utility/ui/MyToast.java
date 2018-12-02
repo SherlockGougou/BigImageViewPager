@@ -1,4 +1,4 @@
-package cc.shinichi.library.tool;
+package cc.shinichi.library.tool.utility.ui;
 
 import android.content.Context;
 import android.os.Handler;
