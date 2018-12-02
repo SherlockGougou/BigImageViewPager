@@ -1,7 +1,7 @@
 ### BigImage + ImageView + ViewPager = BigImageViewPager
 
 一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM，
-#### 注意：支持网络图片、本地图片。
+#### 注意：支持网络图片、本地图片、支持gif动图。
 
 # 更新日志
 - v0.0.5新增：可设置缩放比例、缩放动画时间。
@@ -20,6 +20,7 @@
 - v2.1.2修复图片显示方向可能错误的问题
 - v2.1.3修复部分可能出现的闪退
 - v2.1.4修复超宽图显示错位的问题
+- v2.2.0新增：支持gif
 
 # 截图
 
@@ -54,8 +55,8 @@ allprojects {
 Step 2. 在你主module的build.gradle中添加依赖：
 
 # 此处显示的是本框架的最新版本号：
-#### 对于glide4.x : 使用v4_2.1.4
-#### 对于glide3.x : 使用v3_2.1.4
+#### 对于glide4.x : 使用v4_2.2.0
+#### 对于glide3.x : 使用v3_2.2.0
 
 ```
 dependencies {
@@ -63,7 +64,7 @@ dependencies {
   // 针对glide v4 版本：如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
 
   // 主库，必须添加！
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_2.1.4'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_2.2.0'
   // v7支持库，必须添加！
   implementation 'com.android.support:appcompat-v7:27.1.1'
   // 由于本框架使用了glide和okhttp3，所以还请增加依赖以下框架，必须添加！
@@ -75,7 +76,7 @@ dependencies {
 ================================分割线==================================
 
   // 针对glide v3 版本：如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_2.1.4'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_2.2.0'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```

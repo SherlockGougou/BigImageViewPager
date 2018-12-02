@@ -7,12 +7,14 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.R;
 import cc.shinichi.library.view.nine.ViewHelper;
+import cc.shinichi.library.view.photoview.PhotoView;
 
 /**
  * @author 工藤
@@ -25,7 +27,8 @@ public class FingerDragHelper extends LinearLayout {
 
 	private static final String TAG = FingerDragHelper.class.getSimpleName();
 
-	private SubsamplingScaleImageViewDragClose imageViewDragClose;
+	private SubsamplingScaleImageViewDragClose imageView;
+	private PhotoView imageGif;
 
 	private float mDownY;
 	private float mTranslationY;
@@ -58,7 +61,8 @@ public class FingerDragHelper extends LinearLayout {
 
 	@Override protected void onFinishInflate() {
 		super.onFinishInflate();
-		imageViewDragClose = (SubsamplingScaleImageViewDragClose) getChildAt(0);
+		imageView = (SubsamplingScaleImageViewDragClose) getChildAt(0);
+		imageGif = (PhotoView) getChildAt(1);
 	}
 
 	@Override public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -68,12 +72,19 @@ public class FingerDragHelper extends LinearLayout {
 			case MotionEvent.ACTION_DOWN:
 				mDownY = ev.getRawY();
 			case MotionEvent.ACTION_MOVE:
-				if (null != imageViewDragClose && ImagePreview.getInstance().isEnableDragClose()) {
-					isIntercept = (imageViewDragClose.getScale() <= (imageViewDragClose.getMinScale() + 0.001F))
-						&& (imageViewDragClose.getMaxTouchCount() == 0
-						|| imageViewDragClose.getMaxTouchCount() == 1)
-						&& Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop
-						&& imageViewDragClose.atYEdge;
+				if (ImagePreview.getInstance().isEnableDragClose()) {
+					if (imageGif != null && imageGif.getVisibility() == View.VISIBLE) {
+						isIntercept = (imageGif.getScale() <= (imageGif.getMinimumScale() + 0.001F))
+							&& (imageGif.getMaxTouchCount() == 0
+							|| imageGif.getMaxTouchCount() == 1)
+							&& Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop;
+					} else if (imageView != null && imageView.getVisibility() == View.VISIBLE) {
+						isIntercept = (imageView.getScale() <= (imageView.getMinScale() + 0.001F))
+							&& (imageView.getMaxTouchCount() == 0
+							|| imageView.getMaxTouchCount() == 1)
+							&& Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop
+							&& imageView.atYEdge;
+					}
 				}
 				break;
 			default:
@@ -88,8 +99,12 @@ public class FingerDragHelper extends LinearLayout {
 			case MotionEvent.ACTION_DOWN:
 				mDownY = event.getRawY();
 			case MotionEvent.ACTION_MOVE:
-				if (null != imageViewDragClose && ImagePreview.getInstance().isEnableDragClose()) {
-					onOneFingerPanActionMove(event);
+				if (ImagePreview.getInstance().isEnableDragClose()) {
+					if (imageGif != null && imageGif.getVisibility() == View.VISIBLE) {
+						onOneFingerPanActionMove(event);
+					} else if (imageView != null && imageView.getVisibility() == View.VISIBLE) {
+						onOneFingerPanActionMove(event);
+					}
 				}
 				break;
 			case MotionEvent.ACTION_UP:

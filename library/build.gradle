@@ -6,8 +6,8 @@ android {
   defaultConfig {
     minSdkVersion 14
     targetSdkVersion 27
-    versionCode 214
-    versionName "v4_2.1.4"
+    versionCode 220
+    versionName "v4_2.2.0"
   }
 
   buildTypes {
@@ -17,8 +17,8 @@ android {
     }
   }
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_7
-    targetCompatibility JavaVersion.VERSION_1_7
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
   }
 }
 
@@ -27,13 +27,8 @@ ext.supportLibVersion = '27.1.1'
 dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
   compileOnly "com.android.support:appcompat-v7:${supportLibVersion}"
-
-  // util
-  api 'com.github.SherlockGougou:SherlockUtil:v0.0.5'
-
   // subsampling-scale-image-view
   api 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
-
   // glide
   compileOnly 'com.github.bumptech.glide:glide:4.8.0'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'

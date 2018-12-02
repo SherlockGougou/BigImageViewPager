@@ -8,7 +8,7 @@ import android.widget.CompoundButton;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
-import cc.shinichi.library.tool.MyToast;
+import cc.shinichi.library.tool.utility.ui.MyToast;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,6 +106,18 @@ public class MainActivity extends AppCompatActivity {
 		imageInfo = new ImageInfo();
 		imageInfo.setOriginUrl("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");// 这张是https图片
 		imageInfo.setThumbnailUrl("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");// 这张是https图片
+		imageInfoList.add(0, imageInfo);
+
+		// 此图为gif图
+		imageInfo = new ImageInfo();
+		imageInfo.setOriginUrl("http://s1.dwstatic.com/group1/M00/82/DB/c9d0b4c9fdba07709071784bce709c26.gif");
+		imageInfo.setThumbnailUrl("http://s1.dwstatic.com/group1/M00/82/DB/c9d0b4c9fdba07709071784bce709c26.gif");
+		imageInfoList.add(0, imageInfo);
+
+		// 此图为gif图
+		imageInfo = new ImageInfo();
+		imageInfo.setOriginUrl("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
+		imageInfo.setThumbnailUrl("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
 		imageInfoList.add(0, imageInfo);
 
 		// 本地图片：将原图和缩略图地址传一样的即可。
