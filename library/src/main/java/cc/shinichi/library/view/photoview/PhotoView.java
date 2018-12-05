@@ -257,6 +257,10 @@ public class PhotoView extends AppCompatImageView {
         attacher.setOnSingleFlingListener(onSingleFlingListener);
     }
 
+    @Override public boolean onTouchEvent(MotionEvent event) {
+        boolean handled = onTouchEventInternal(event);
+        return handled || super.onTouchEvent(event);
+    }
 
     @SuppressWarnings("deprecation")
     private boolean onTouchEventInternal(@NonNull MotionEvent event) {
