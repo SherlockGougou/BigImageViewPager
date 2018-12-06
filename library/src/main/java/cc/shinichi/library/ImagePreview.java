@@ -44,6 +44,9 @@ public class ImagePreview {
   private int closeIconResId = R.drawable.ic_action_close;
   private int downIconResId = R.drawable.icon_download_new;
 
+  // 加载失败时的占位图
+  private int errorPlaceHolder = R.drawable.load_failed;
+
   public enum LoadStrategy {
     /**
      * 仅加载原图；会强制隐藏查看原图按钮
@@ -265,6 +268,15 @@ public class ImagePreview {
     return this;
   }
 
+  public int getErrorPlaceHolder() {
+    return errorPlaceHolder;
+  }
+
+  public ImagePreview setErrorPlaceHolder(int errorPlaceHolderResId) {
+    this.errorPlaceHolder = errorPlaceHolderResId;
+    return this;
+  }
+
   public void reset() {
     imageInfoList = null;
     index = 0;
@@ -280,6 +292,7 @@ public class ImagePreview {
 
     closeIconResId = R.drawable.ic_action_close;
     downIconResId = R.drawable.icon_download_new;
+    errorPlaceHolder = R.drawable.load_failed;
 
     loadStrategy = LoadStrategy.Default;
     folderName = "ImagePreview";
