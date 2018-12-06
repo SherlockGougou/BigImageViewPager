@@ -24,7 +24,10 @@ public class MyToast {
     public void _short(final Context context, final String text) {
         HANDLER.post(new Runnable() {
             @Override public void run() {
-                toast = Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_SHORT);
+                if (toast == null) {
+                    toast = Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_SHORT);
+                }
+                toast.setText(text);
                 toast.show();
             }
         });
@@ -33,7 +36,10 @@ public class MyToast {
     public void _long(final Context context, final String text) {
         HANDLER.post(new Runnable() {
             @Override public void run() {
-                toast = Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_LONG);
+                if (toast == null) {
+                    toast = Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_LONG);
+                }
+                toast.setText(text);
                 toast.show();
             }
         });
