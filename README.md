@@ -1,7 +1,7 @@
 ### BigImage + ImageView + ViewPager = BigImageViewPager
 
-一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM，
-#### 注意：支持网络图片、本地图片、支持gif动图。
+一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。支持手势下拉退出。
+#### 注意：本框架支持网络图片、本地图片、支持gif动图。
 
 # 更新日志
 - v0.0.5新增：可设置缩放比例、缩放动画时间。
@@ -20,7 +20,8 @@
 - v2.1.2修复图片显示方向可能错误的问题
 - v2.1.3修复部分可能出现的闪退
 - v2.1.4修复超宽图显示错位的问题
-- v2.2.0新增：支持gif
+- v2.2.2新增：支持gif，支持加载失败时占位图的设置
+- v2.2.3优化小尺寸图片的显示；超宽图双击默认放大到屏幕高度
 
 # 截图
 
@@ -43,7 +44,7 @@
 
 # 用法
 #### 添加依赖
-Step 1. 在你project层级的build.gradle中，添加仓库地址:
+##### Step 1. 在你project层级的build.gradle中，添加仓库地址:
 ```
 allprojects {
 		repositories {
@@ -52,19 +53,20 @@ allprojects {
 		}
 }
 ```
-Step 2. 在你主module的build.gradle中添加依赖：
+##### Step 2. 在你主module的build.gradle中添加依赖：
 
-# 此处显示的是本框架的最新版本号：
-#### 对于glide4.x : 使用v4_2.2.0
-#### 对于glide3.x : 使用v3_2.2.0
-
+##### 此处显示的是本框架的最新版本号：
+```
+对于glide4.x : 使用 v4_2.2.3
+对于glide3.x : 使用 v3_2.2.3
+```
 ```
 dependencies {
 
   // 针对glide v4 版本：如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
 
   // 主库，必须添加！
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_2.2.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_2.2.3'
   // v7支持库，必须添加！
   implementation 'com.android.support:appcompat-v7:27.1.1'
   // 由于本框架使用了glide和okhttp3，所以还请增加依赖以下框架，必须添加！
@@ -76,11 +78,12 @@ dependencies {
 ================================分割线==================================
 
   // 针对glide v3 版本：如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_2.2.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_2.2.3'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```
-Step 3. 在您的主module里，添加自定义AppGlideModule（注意！！！如果您用的是glide 3.x版本，不需要做这一步，上一步的依赖后就完事儿了）例如：
+##### Step 3. 在您的主module里，添加自定义AppGlideModule
+######（注意！！！如果您用的是glide 3.x版本，不需要做这一步的操作，上一步的依赖后就完事儿了；但如果您用的是glide 4.x版本，并且您的app中已经存在了自定义的GlideModule，您只需要把下面的那一行代码，添加到对应的重载方法中即可。）例如：
 
 ```
 @GlideModule
@@ -98,7 +101,7 @@ public class MyAppGlideModule extends AppGlideModule {
 }
 ```
 
-Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project，等待重建完成，至此，框架添加完成。如遇到任何问题，请附带截图提issues，我会及时回复，或添加底部QQ群，进行交流。
+##### Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project，等待重建完成，至此，框架添加完成。如遇到任何问题，请附带截图提issues，我会及时回复，或添加底部QQ群，进行交流。
 
 
 ## 调用方式
@@ -172,13 +175,14 @@ ImagePreview
 					.setEnableClickClose(enableClickClose)// 是否启用点击图片关闭。默认启用
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
 
-					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认不显示
+					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
 					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
 
 					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
 					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
 
 					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
+					.setErrorPlaceHolder(R.drawable.load_failed)// 设置失败时的占位图，默认为R.drawable.load_failed，设置为0时不显示
 					.start();
 			}
 		});
@@ -200,13 +204,14 @@ ImagePreview
 					.setEnableClickClose(enableClickClose)// 是否启用点击图片关闭。默认启用
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
 
-					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认不显示
+					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
 					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
 
 					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
 					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
 
 					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
+					.setErrorPlaceHolder(R.drawable.load_failed)// 设置失败时的占位图，默认为R.drawable.load_failed，设置为0时不显示
 					.start();
 			}
 		});
@@ -228,13 +233,14 @@ ImagePreview
 					.setEnableClickClose(enableClickClose)// 是否启用点击图片关闭。默认启用
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
 
-					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认不显示
+					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
 					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
 
 					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
 					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
 
 					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
+					.setErrorPlaceHolder(R.drawable.load_failed)// 设置失败时的占位图，默认为R.drawable.load_failed，设置为0时不显示
 					.start();
 			}
 		});
@@ -256,13 +262,14 @@ ImagePreview
 					.setEnableClickClose(enableClickClose)// 是否启用点击图片关闭。默认启用
 					.setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
 
-					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认不显示
+					.setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
 					.setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
 
 					.setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
 					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
 
 					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
+					.setErrorPlaceHolder(R.drawable.load_failed)// 设置失败时的占位图，默认为R.drawable.load_failed，设置为0时不显示
 					.start();
 			}
 		});
