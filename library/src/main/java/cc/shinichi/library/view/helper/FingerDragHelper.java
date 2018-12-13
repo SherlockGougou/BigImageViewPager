@@ -127,7 +127,12 @@ public class FingerDragHelper extends LinearLayout {
 	}
 
 	private void onActionUp() {
-		if (Math.abs(mTranslationY) > MAX_EXIT_Y) {
+		//if (Math.abs(mTranslationY) > MAX_EXIT_Y) {
+		//	exitWithTranslation(mTranslationY);
+		//} else {
+		//	resetCallBackAnimation();
+		//}
+		if (mTranslationY > MAX_EXIT_Y) {
 			exitWithTranslation(mTranslationY);
 		} else {
 			resetCallBackAnimation();

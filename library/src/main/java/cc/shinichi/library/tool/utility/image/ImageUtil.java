@@ -1,11 +1,14 @@
 package cc.shinichi.library.tool.utility.image;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.os.Environment;
 import android.text.TextUtils;
+import cc.shinichi.library.tool.utility.common.Print;
+import cc.shinichi.library.tool.utility.ui.PhoneUtil;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,6 +22,8 @@ import java.io.IOException;
  * description:
  */
 public class ImageUtil {
+
+	private static final String TAG = "ImageUtil";
 
 	public static Bitmap getImageBitmap(String srcPath, float maxWidth, float maxHeight) {
 		BitmapFactory.Options newOpts = new BitmapFactory.Options();
@@ -110,14 +115,6 @@ public class ImageUtil {
 		return returnBm;
 	}
 
-	public static float getImageRatio(String imagePath) {
-		int[] wh = getWidthHeight(imagePath);
-		if (wh[0] > 0 && wh[1] > 0) {
-			return (float) Math.max(wh[0], wh[1]) / (float) Math.min(wh[0], wh[1]);
-		}
-		return 1;
-	}
-
 	public static Bitmap resizeImage(Bitmap origin, int newWidth, int newHeight) {
 		if (origin == null) {
 			return null;
@@ -156,8 +153,6 @@ public class ImageUtil {
 		bos.close();
 		return savedFile.getAbsolutePath();
 	}
-
-	private final static int LONG_IMAGE_RATIO = 3;
 
 	public static int getOrientation(String imagePath) {
 		int degree = 0;
@@ -225,21 +220,55 @@ public class ImageUtil {
 				}
 			}
 		}
+		int orient = getOrientation(imagePath);
+		if (orient == 90 || orient == 270) {
+			return new int[] { srcHeight, srcWidth };
+		}
 		return new int[] { srcWidth, srcHeight };
 	}
 
-	public static boolean isLongImage(String imagePath) {
+	public static boolean isLongImage(Context context, String imagePath) {
 		int[] wh = getWidthHeight(imagePath);
-		int w = wh[0];
-		int h = wh[1];
-		return (w > 0 && h > 0) && (h > w) && (h / w >= LONG_IMAGE_RATIO);
+		float w = wh[0];
+		float h = wh[1];
+		float imageRatio = (h / w);
+		float phoneRatio = PhoneUtil.getPhoneRatio(context.getApplicationContext()) + 0.1F;
+		return (w > 0 && h > 0) && (h > w) && (imageRatio >= phoneRatio);
 	}
 
-	public static boolean iWidthImage(String imagePath) {
+	public static boolean isWideImage(Context context, String imagePath) {
 		int[] wh = getWidthHeight(imagePath);
-		int w = wh[0];
-		int h = wh[1];
-		return (w > 0 && h > 0) && (w > h) && (w / h >= LONG_IMAGE_RATIO);
+		float w = wh[0];
+		float h = wh[1];
+		float imageRatio = (w / h);
+		float phoneRatio = PhoneUtil.getPhoneRatio(context.getApplicationContext()) + 0.1F;
+		return (w > 0 && h > 0) && (w > h) && (imageRatio >= phoneRatio);
+	}
+
+	public static boolean isSmallImage(Context context, String imagePath) {
+		int[] wh = getWidthHeight(imagePath);
+		if (wh[0] < PhoneUtil.getPhoneWid(context.getApplicationContext())) {
+			return true;
+		}
+		return false;
+	}
+
+	public static float getSmallImageMinScale(Context context, String imagePath) {
+		int[] wh = getWidthHeight(imagePath);
+		float imageWid = wh[0];
+		float phoneWid = PhoneUtil.getPhoneWid(context.getApplicationContext());
+		return phoneWid / imageWid;
+	}
+
+	public static float getSmallImageMaxScale(Context context, String imagePath) {
+		return getSmallImageMinScale(context, imagePath) * 2;
+	}
+
+	public static float getWideImageDoubleScale(Context context, String imagePath) {
+		int[] wh = getWidthHeight(imagePath);
+		float imageHei = wh[1];
+		float phoneHei = PhoneUtil.getPhoneHei(context.getApplicationContext());
+		return phoneHei / imageHei;
 	}
 
 	public static Bitmap getImageBitmap(String srcPath, int degree) {

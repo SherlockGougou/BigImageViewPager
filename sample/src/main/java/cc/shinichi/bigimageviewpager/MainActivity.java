@@ -19,15 +19,18 @@ public class MainActivity extends AppCompatActivity {
 		"http://img3.16fan.com/live/origin/201805/21/4D7B35fdf082e.jpg",
 		"http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg", //  5760 * 3840
 		"http://img3.16fan.com/live/origin/201805/21/2D02ebc5838e6.jpg",
+		"http://img3.16fan.com/live/origin/201812/01/qz2x9e6l98b5h.jpg",
 		"http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg", //  2280 * 22116
 		"http://img3.16fan.com/live/origin/201805/21/14C5e483e7583.jpg",
 		"http://img3.16fan.com/live/origin/201805/21/A1B17c5f59b78.jpg",
 		"http://img3.16fan.com/live/origin/201805/21/94699b2be3cfa.jpg",
+		"http://img3.16fan.com/live/origin/201812/01/qz2x9e6l98b5h.jpg",
 		"http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg", //  2280 * 22116
 		"http://img3.16fan.com/live/origin/201805/21/14C5e483e7583.jpg",
 		"http://img3.16fan.com/live/origin/201805/21/EB298ce595dd2.jpg",
 		"http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg", //  5760 * 3840
 		"http://img3.16fan.com/live/origin/201805/21/264Ba4860d469.jpg",
+		"http://img3.16fan.com/live/origin/201812/01/qz2x9e6l98b5h.jpg",
 		"http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg", //  2280 * 22116
 		"http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg" //  5760 * 3840
 	};
@@ -96,13 +99,13 @@ public class MainActivity extends AppCompatActivity {
 			imageInfoList.add(imageInfo);
 		}
 
-        // 此图为超宽图
-        imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");// 这张是https图片
-        imageInfo.setThumbnailUrl("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");// 这张是https图片
-        imageInfoList.add(0, imageInfo);
+		// 此图为超宽图
+		imageInfo = new ImageInfo();
+		imageInfo.setOriginUrl("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");// 这张是https图片
+		imageInfo.setThumbnailUrl("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");// 这张是https图片
+		imageInfoList.add(0, imageInfo);
 
-        // 此图为https图
+		// 此图为https图
 		imageInfo = new ImageInfo();
 		imageInfo.setOriginUrl("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");// 这张是https图片
 		imageInfo.setThumbnailUrl("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");// 这张是https图片
@@ -118,6 +121,26 @@ public class MainActivity extends AppCompatActivity {
 		imageInfo = new ImageInfo();
 		imageInfo.setOriginUrl("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
 		imageInfo.setThumbnailUrl("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
+		imageInfoList.add(0, imageInfo);
+
+		imageInfo = new ImageInfo();
+		imageInfo.setOriginUrl("/storage/emulated/0/Pictures/screenshots/Screenshot_2018-12-13-10-41-27-342.png");
+		imageInfo.setThumbnailUrl("/storage/emulated/0/Pictures/screenshots/Screenshot_2018-12-13-10-41-27-342.png");
+		imageInfoList.add(0, imageInfo);
+
+		imageInfo = new ImageInfo();
+		imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916732&di=3bc3e11ccd7185a4ab9932b93de2077a&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201602%2F05%2F20160205113750_UsRPe.thumb.700_0.jpeg");
+		imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916732&di=3bc3e11ccd7185a4ab9932b93de2077a&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201602%2F05%2F20160205113750_UsRPe.thumb.700_0.jpeg");
+		imageInfoList.add(0, imageInfo);
+
+		imageInfo = new ImageInfo();
+		imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916731&di=89e3775c25c5f21254cd0a5aa3b0b1b1&imgtype=0&src=http%3A%2F%2Fimage.biaobaiju.com%2Fuploads%2F20180210%2F20%2F1518266167-ActRaEkWDS.jpg");
+		imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916731&di=89e3775c25c5f21254cd0a5aa3b0b1b1&imgtype=0&src=http%3A%2F%2Fimage.biaobaiju.com%2Fuploads%2F20180210%2F20%2F1518266167-ActRaEkWDS.jpg");
+		imageInfoList.add(0, imageInfo);
+
+		imageInfo = new ImageInfo();
+		imageInfo.setOriginUrl("https://sacasnap.neusoft.com/snap-engine-file/image/obtain/1264c125-387e-4af0-a361-f26c3f7fd12e?tenantId=neusoft");
+		imageInfo.setThumbnailUrl("https://sacasnap.neusoft.com/snap-engine-file/image/obtain/1264c125-387e-4af0-a361-f26c3f7fd12e?tenantId=neusoft");
 		imageInfoList.add(0, imageInfo);
 
 		// 本地图片：将原图和缩略图地址传一样的即可。
@@ -164,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
 					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
 
 					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
+					.setErrorPlaceHolder(R.drawable.load_failed)// 设置失败时的占位图，默认为R.drawable.load_failed，设置为0时不显示
 					.start();
 			}
 		});
@@ -192,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
 					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
 
 					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
+					.setErrorPlaceHolder(R.drawable.load_failed)// 设置失败时的占位图，默认为R.drawable.load_failed，设置为0时不显示
 					.start();
 			}
 		});
@@ -220,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
 					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
 
 					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
+					.setErrorPlaceHolder(R.drawable.load_failed)// 设置失败时的占位图，默认为R.drawable.load_failed，设置为0时不显示
 					.start();
 			}
 		});
@@ -234,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
 					.setImageInfoList(imageInfoList)
 					.setShowDownButton(true)
 					.setLoadStrategy(ImagePreview.LoadStrategy.NetworkAuto)
-					.setFolderName("BigImageViewDownload")
+					.setFolderName("BigImageView/Download")
 					.setScaleLevel(1, 3, 5)
 					.setZoomTransitionDuration(300)
 
@@ -248,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
 					.setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
 
 					.setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
+					.setErrorPlaceHolder(R.drawable.load_failed)// 设置失败时的占位图，默认为R.drawable.load_failed，设置为0时不显示
 					.start();
 			}
 		});
