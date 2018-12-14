@@ -50,7 +50,6 @@ public class ImagePreviewActivity extends AppCompatActivity
 
   private List<ImageInfo> imageInfoList;
   private int currentItem;// 当前显示的图片索引
-  private String downloadFolderName = "";// 保存的文件夹名
   private boolean isShowDownButton;
   private boolean isShowCloseButton;
   private boolean isShowOriginButton;
@@ -110,7 +109,6 @@ public class ImagePreviewActivity extends AppCompatActivity
       onBackPressed();
     }
     currentItem = ImagePreview.getInstance().getIndex();
-    downloadFolderName = ImagePreview.getInstance().getFolderName();
     isShowDownButton = ImagePreview.getInstance().isShowDownButton();
     isShowCloseButton = ImagePreview.getInstance().isShowCloseButton();
     isShowIndicator = ImagePreview.getInstance().isShowIndicator();
@@ -198,10 +196,7 @@ public class ImagePreviewActivity extends AppCompatActivity
    * 下载当前图片到SD卡
    */
   private void downloadCurrentImg() {
-    String path = Environment.getExternalStorageDirectory() + "/" + downloadFolderName + "/";
-    String name = currentItemOriginPathUrl.substring(currentItemOriginPathUrl.lastIndexOf("/") + 1, currentItemOriginPathUrl.length());
-    FileUtil.createFileByDeleteOldFile(path + name);
-    DownloadPictureUtil.downloadPicture(context, currentItemOriginPathUrl, path, name);
+    DownloadPictureUtil.downloadPicture(context, currentItemOriginPathUrl);
   }
 
   @Override public void onBackPressed() {
