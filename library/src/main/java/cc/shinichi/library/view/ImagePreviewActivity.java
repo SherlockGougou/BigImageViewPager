@@ -197,10 +197,7 @@ public class ImagePreviewActivity extends AppCompatActivity
    * 下载当前图片到SD卡
    */
   private void downloadCurrentImg() {
-    String path = Environment.getExternalStorageDirectory() + "/" + downloadFolderName + "/";
-    String name = currentItemOriginPathUrl.substring(currentItemOriginPathUrl.lastIndexOf("/") + 1, currentItemOriginPathUrl.length());
-    FileUtil.createFileByDeleteOldFile(path + name);
-    DownloadPictureUtil.downloadPicture(context, currentItemOriginPathUrl, path, name);
+    DownloadPictureUtil.downloadPicture(context, currentItemOriginPathUrl);
   }
 
   @Override public void onBackPressed() {

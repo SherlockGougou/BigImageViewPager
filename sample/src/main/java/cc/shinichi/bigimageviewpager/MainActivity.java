@@ -123,24 +123,34 @@ public class MainActivity extends AppCompatActivity {
 		imageInfo.setThumbnailUrl("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
 		imageInfoList.add(0, imageInfo);
 
+		// 测试加载失败
 		imageInfo = new ImageInfo();
-		imageInfo.setOriginUrl("/storage/emulated/0/Pictures/screenshots/Screenshot_2018-12-13-10-41-27-342.png");
-		imageInfo.setThumbnailUrl("/storage/emulated/0/Pictures/screenshots/Screenshot_2018-12-13-10-41-27-342.png");
+		imageInfo.setOriginUrl("/storage/emulated/0/Tencent/Tim_Images/-265a3ee2846fa434.jpg");
+		imageInfo.setThumbnailUrl("/storage/emulated/0/Tencent/Tim_Images/-265a3ee2846fa434.jpg");
 		imageInfoList.add(0, imageInfo);
 
+		// 测试小尺寸图片
 		imageInfo = new ImageInfo();
 		imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916732&di=3bc3e11ccd7185a4ab9932b93de2077a&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201602%2F05%2F20160205113750_UsRPe.thumb.700_0.jpeg");
 		imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916732&di=3bc3e11ccd7185a4ab9932b93de2077a&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201602%2F05%2F20160205113750_UsRPe.thumb.700_0.jpeg");
 		imageInfoList.add(0, imageInfo);
 
+		// 测试小尺寸图片
 		imageInfo = new ImageInfo();
 		imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916731&di=89e3775c25c5f21254cd0a5aa3b0b1b1&imgtype=0&src=http%3A%2F%2Fimage.biaobaiju.com%2Fuploads%2F20180210%2F20%2F1518266167-ActRaEkWDS.jpg");
 		imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916731&di=89e3775c25c5f21254cd0a5aa3b0b1b1&imgtype=0&src=http%3A%2F%2Fimage.biaobaiju.com%2Fuploads%2F20180210%2F20%2F1518266167-ActRaEkWDS.jpg");
 		imageInfoList.add(0, imageInfo);
 
+		// 测试没有后缀的链接
 		imageInfo = new ImageInfo();
 		imageInfo.setOriginUrl("https://sacasnap.neusoft.com/snap-engine-file/image/obtain/1264c125-387e-4af0-a361-f26c3f7fd12e?tenantId=neusoft");
 		imageInfo.setThumbnailUrl("https://sacasnap.neusoft.com/snap-engine-file/image/obtain/1264c125-387e-4af0-a361-f26c3f7fd12e?tenantId=neusoft");
+		imageInfoList.add(0, imageInfo);
+
+		// 测试超长文件名 没有后缀的链接
+		imageInfo = new ImageInfo();
+		imageInfo.setOriginUrl("http://img2.weishoot.com/?4583B5ECE38DC1B27FD1269F4E70B7670C426883D16355F21B46193F75071C599A3E6AED54A235489F4C38835361546D7648065651316476F7E30592DAF1CD6C50358835D5DD10D029DA4A9C59B56C3EA48055CE4E0A7627AF8C90303A4D1FBC2D88218AB0F699E74425A61E5D9E2B378E199A2906934C52DAC2D3920C74DBAF34BD945EEA7E86AC72AF12CD00F1179846E1DA2926B782C1D2215DB087EFDE04A1C0F46B1352527F");
+		imageInfo.setThumbnailUrl("http://img2.weishoot.com/?4583B5ECE38DC1B27FD1269F4E70B7670C426883D16355F21B46193F75071C599A3E6AED54A235489F4C38835361546D7648065651316476F7E30592DAF1CD6C50358835D5DD10D029DA4A9C59B56C3EA48055CE4E0A7627AF8C90303A4D1FBC2D88218AB0F699E74425A61E5D9E2B378E199A2906934C52DAC2D3920C74DBAF34BD945EEA7E86AC72AF12CD00F1179846E1DA2926B782C1D2215DB087EFDE04A1C0F46B1352527F");
 		imageInfoList.add(0, imageInfo);
 
 		// 本地图片：将原图和缩略图地址传一样的即可。

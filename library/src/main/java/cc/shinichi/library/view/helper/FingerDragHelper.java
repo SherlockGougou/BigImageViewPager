@@ -34,8 +34,8 @@ public class FingerDragHelper extends LinearLayout {
 	private float mTranslationY;
 	private float mLastTranslationY;
 	private static int MAX_TRANSLATE_Y = 500;
-	private final static int MAX_EXIT_Y = 300;
-	private final static long DURATION = 150;
+	private final static int MAX_EXIT_Y = 500;
+	private final static long DURATION = 200;
 	private boolean isAnimate = false;
 	private int fadeIn = R.anim.fade_in_150;
 	private int fadeOut = R.anim.fade_out_150;

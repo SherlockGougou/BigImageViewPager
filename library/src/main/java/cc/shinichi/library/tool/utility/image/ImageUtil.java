@@ -233,7 +233,9 @@ public class ImageUtil {
 		float h = wh[1];
 		float imageRatio = (h / w);
 		float phoneRatio = PhoneUtil.getPhoneRatio(context.getApplicationContext()) + 0.1F;
-		return (w > 0 && h > 0) && (h > w) && (imageRatio >= phoneRatio);
+		boolean isLongImage = (w > 0 && h > 0) && (h > w) && (imageRatio >= phoneRatio);
+		Print.d(TAG, "isLongImage = " + isLongImage);
+		return isLongImage;
 	}
 
 	public static boolean isWideImage(Context context, String imagePath) {
@@ -241,16 +243,35 @@ public class ImageUtil {
 		float w = wh[0];
 		float h = wh[1];
 		float imageRatio = (w / h);
-		float phoneRatio = PhoneUtil.getPhoneRatio(context.getApplicationContext()) + 0.1F;
-		return (w > 0 && h > 0) && (w > h) && (imageRatio >= phoneRatio);
+		//float phoneRatio = PhoneUtil.getPhoneRatio(context.getApplicationContext()) + 0.1F;
+		boolean isWideImage = (w > 0 && h > 0) && (w > h) && (imageRatio >= 2);
+		Print.d(TAG, "isWideImage = " + isWideImage);
+		return isWideImage;
 	}
 
 	public static boolean isSmallImage(Context context, String imagePath) {
 		int[] wh = getWidthHeight(imagePath);
-		if (wh[0] < PhoneUtil.getPhoneWid(context.getApplicationContext())) {
-			return true;
-		}
-		return false;
+		boolean isSmallImage = wh[0] < PhoneUtil.getPhoneWid(context.getApplicationContext());
+		Print.d(TAG, "isSmallImage = " + isSmallImage);
+		return isSmallImage;
+	}
+
+	public static float getLongImageMinScale(Context context, String imagePath) {
+		int[] wh = getWidthHeight(imagePath);
+		float imageWid = wh[0];
+		float phoneWid = PhoneUtil.getPhoneWid(context.getApplicationContext());
+		return phoneWid / imageWid;
+	}
+
+	public static float getLongImageMaxScale(Context context, String imagePath) {
+		return getLongImageMinScale(context, imagePath) * 2;
+	}
+
+	public static float getWideImageDoubleScale(Context context, String imagePath) {
+		int[] wh = getWidthHeight(imagePath);
+		float imageHei = wh[1];
+		float phoneHei = PhoneUtil.getPhoneHei(context.getApplicationContext());
+		return phoneHei / imageHei;
 	}
 
 	public static float getSmallImageMinScale(Context context, String imagePath) {
@@ -262,13 +283,6 @@ public class ImageUtil {
 
 	public static float getSmallImageMaxScale(Context context, String imagePath) {
 		return getSmallImageMinScale(context, imagePath) * 2;
-	}
-
-	public static float getWideImageDoubleScale(Context context, String imagePath) {
-		int[] wh = getWidthHeight(imagePath);
-		float imageHei = wh[1];
-		float phoneHei = PhoneUtil.getPhoneHei(context.getApplicationContext());
-		return phoneHei / imageHei;
 	}
 
 	public static Bitmap getImageBitmap(String srcPath, int degree) {

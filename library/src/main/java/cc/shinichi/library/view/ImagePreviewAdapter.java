@@ -138,19 +138,22 @@ public class ImagePreviewAdapter extends PagerAdapter {
           boolean isLongImage = ImageUtil.isLongImage(activity, imagePath);
           if (isLongImage) {
             imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_START);
+            imageView.setMinScale(ImageUtil.getLongImageMinScale(activity, imagePath));
+            imageView.setMaxScale(ImageUtil.getLongImageMaxScale(activity, imagePath));
+            imageView.setDoubleTapZoomScale(ImageUtil.getLongImageMaxScale(activity, imagePath));
           } else {
-            boolean isSmallImage = ImageUtil.isSmallImage(activity, imagePath);
             boolean isWideImage = ImageUtil.isWideImage(activity, imagePath);
-            if (isSmallImage) {
-              imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_CUSTOM);
-              imageView.setMinScale(ImageUtil.getSmallImageMinScale(activity, imagePath));
-              imageView.setMaxScale(ImageUtil.getSmallImageMaxScale(activity, imagePath));
-              imageView.setDoubleTapZoomScale(ImageUtil.getSmallImageMaxScale(activity, imagePath));
-            } else if (isWideImage) {
+            boolean isSmallImage = ImageUtil.isSmallImage(activity, imagePath);
+            if (isWideImage) {
               imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_CENTER_INSIDE);
               imageView.setMinScale(ImagePreview.getInstance().getMinScale());
               imageView.setMaxScale(ImagePreview.getInstance().getMaxScale());
               imageView.setDoubleTapZoomScale(ImageUtil.getWideImageDoubleScale(activity, imagePath));
+            } else if (isSmallImage) {
+              imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_CUSTOM);
+              imageView.setMinScale(ImageUtil.getSmallImageMinScale(activity, imagePath));
+              imageView.setMaxScale(ImageUtil.getSmallImageMaxScale(activity, imagePath));
+              imageView.setDoubleTapZoomScale(ImageUtil.getSmallImageMaxScale(activity, imagePath));
             } else {
               imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_CENTER_INSIDE);
               imageView.setMinScale(ImagePreview.getInstance().getMinScale());
@@ -437,19 +440,22 @@ public class ImagePreviewAdapter extends PagerAdapter {
     boolean isLongImage = ImageUtil.isLongImage(activity, imagePath);
     if (isLongImage) {
       imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_START);
+      imageView.setMinScale(ImageUtil.getLongImageMinScale(activity, imagePath));
+      imageView.setMaxScale(ImageUtil.getLongImageMaxScale(activity, imagePath));
+      imageView.setDoubleTapZoomScale(ImageUtil.getLongImageMaxScale(activity, imagePath));
     } else {
-      boolean isSmallImage = ImageUtil.isSmallImage(activity, imagePath);
       boolean isWideImage = ImageUtil.isWideImage(activity, imagePath);
-      if (isSmallImage) {
-        imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_CUSTOM);
-        imageView.setMinScale(ImageUtil.getSmallImageMinScale(activity, imagePath));
-        imageView.setMaxScale(ImageUtil.getSmallImageMaxScale(activity, imagePath));
-        imageView.setDoubleTapZoomScale(ImageUtil.getSmallImageMaxScale(activity, imagePath));
-      } else if (isWideImage) {
+      boolean isSmallImage = ImageUtil.isSmallImage(activity, imagePath);
+      if (isWideImage) {
         imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_CENTER_INSIDE);
         imageView.setMinScale(ImagePreview.getInstance().getMinScale());
         imageView.setMaxScale(ImagePreview.getInstance().getMaxScale());
         imageView.setDoubleTapZoomScale(ImageUtil.getWideImageDoubleScale(activity, imagePath));
+      } else if (isSmallImage) {
+        imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_CUSTOM);
+        imageView.setMinScale(ImageUtil.getSmallImageMinScale(activity, imagePath));
+        imageView.setMaxScale(ImageUtil.getSmallImageMaxScale(activity, imagePath));
+        imageView.setDoubleTapZoomScale(ImageUtil.getSmallImageMaxScale(activity, imagePath));
       } else {
         imageView.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_CENTER_INSIDE);
         imageView.setMinScale(ImagePreview.getInstance().getMinScale());
