@@ -22,6 +22,7 @@
 - v2.1.4修复超宽图显示错位的问题
 - v2.2.2新增：支持gif，支持加载失败时占位图的设置
 - v2.2.3优化小尺寸图片的显示；超宽图双击默认放大到屏幕高度
+- v2.2.4发布：1、针对小尺寸图片显示优化；2、对于没有后缀的图片，保存时使用mime信息进行后缀的写入；3、对url原始文件名做md5处理，防止名字过长或者特殊字符造成的保存失败。
 
 # 截图
 
@@ -57,8 +58,8 @@ allprojects {
 
 ##### 此处显示的是本框架的最新版本号：
 ```
-对于glide4.x : 使用 v4_2.2.3
-对于glide3.x : 使用 v3_2.2.3
+对于glide4.x : 使用 v4_2.2.4
+对于glide3.x : 使用 v3_2.2.4
 ```
 ```
 dependencies {
@@ -66,7 +67,7 @@ dependencies {
   // 针对glide v4 版本：如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
 
   // 主库，必须添加！
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_2.2.3'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_2.2.4'
   // v7支持库，必须添加！
   implementation 'com.android.support:appcompat-v7:27.1.1'
   // 由于本框架使用了glide和okhttp3，所以还请增加依赖以下框架，必须添加！
@@ -78,7 +79,7 @@ dependencies {
 ================================分割线==================================
 
   // 针对glide v3 版本：如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_2.2.3'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_2.2.4'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```
