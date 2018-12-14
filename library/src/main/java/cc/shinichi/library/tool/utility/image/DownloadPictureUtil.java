@@ -9,7 +9,7 @@ import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.tool.utility.file.FileUtil;
 import cc.shinichi.library.tool.utility.file.SingleMediaScanner;
 import cc.shinichi.library.tool.utility.text.MD5Util;
-import cc.shinichi.library.tool.utility.ui.MyToast;
+import cc.shinichi.library.tool.utility.ui.ToastUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -27,13 +27,13 @@ public class DownloadPictureUtil {
   public static void downloadPicture(final Context context, final String url) {
     SimpleTarget<File> target = new SimpleTarget<File>() {
       @Override public void onLoadStarted(@Nullable Drawable placeholder) {
-        MyToast.getInstance()._short(context, "开始下载...");
+        ToastUtil.getInstance()._short(context, "开始下载...");
         super.onLoadStarted(placeholder);
       }
 
       @Override public void onLoadFailed(@Nullable Drawable errorDrawable) {
         super.onLoadFailed(errorDrawable);
-        MyToast.getInstance()._short(context, "保存失败");
+        ToastUtil.getInstance()._short(context, "保存失败");
       }
 
       @Override public void onResourceReady(@NonNull File resource,
@@ -56,14 +56,14 @@ public class DownloadPictureUtil {
           FileUtil.createFileByDeleteOldFile(path + name);
           boolean result = FileUtil.copyFile(resource, path, name);
           if (result) {
-              MyToast.getInstance()._short(context, "成功保存到 ".concat(path).concat(name));
+              ToastUtil.getInstance()._short(context, "成功保存到 ".concat(path).concat(name));
               new SingleMediaScanner(context, path.concat(name), new SingleMediaScanner.ScanListener() {
                   @Override public void onScanFinish() {
                       // scanning...
                   }
               });
           } else {
-              MyToast.getInstance()._short(context, "保存失败");
+              ToastUtil.getInstance()._short(context, "保存失败");
           }
       }
     };
