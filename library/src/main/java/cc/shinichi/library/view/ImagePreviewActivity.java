@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -28,9 +27,8 @@ import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.glide.engine.ProgressTarget;
 import cc.shinichi.library.tool.utility.common.HandlerUtils;
-import cc.shinichi.library.tool.utility.file.FileUtil;
 import cc.shinichi.library.tool.utility.image.DownloadPictureUtil;
-import cc.shinichi.library.tool.utility.ui.MyToast;
+import cc.shinichi.library.tool.utility.ui.ToastUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SizeReadyCallback;
@@ -349,7 +347,7 @@ public class ImagePreviewActivity extends AppCompatActivity
         if (ActivityCompat.shouldShowRequestPermissionRationale(ImagePreviewActivity.this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
           // 拒绝权限
-          MyToast.getInstance()._short(context, "您拒绝了存储权限，下载失败！");
+          ToastUtil.getInstance()._short(context, "您拒绝了存储权限，下载失败！");
         } else {
           //申请权限
           ActivityCompat.requestPermissions(ImagePreviewActivity.this,
@@ -373,7 +371,7 @@ public class ImagePreviewActivity extends AppCompatActivity
         if (grantResults[i] == PERMISSION_GRANTED) {
           downloadCurrentImg();
         } else {
-          MyToast.getInstance()._short(context, "您拒绝了存储权限，下载失败！");
+          ToastUtil.getInstance()._short(context, "您拒绝了存储权限，下载失败！");
         }
       }
     }

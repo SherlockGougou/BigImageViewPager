@@ -8,27 +8,22 @@ import android.widget.Toast;
 /**
  * @author SherlockHolmes
  */
-public class MyToast {
+public class ToastUtil {
 
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
-    private Toast toast;
 
-    public MyToast() {
+    public ToastUtil() {
 
     }
 
-    public static MyToast getInstance() {
+    public static ToastUtil getInstance() {
         return InnerClass.instance;
     }
 
     public void _short(final Context context, final String text) {
         HANDLER.post(new Runnable() {
             @Override public void run() {
-                if (toast == null) {
-                    toast = Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_SHORT);
-                }
-                toast.setText(text);
-                toast.show();
+                Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -36,16 +31,12 @@ public class MyToast {
     public void _long(final Context context, final String text) {
         HANDLER.post(new Runnable() {
             @Override public void run() {
-                if (toast == null) {
-                    toast = Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_LONG);
-                }
-                toast.setText(text);
-                toast.show();
+                Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_LONG).show();
             }
         });
     }
 
     private static class InnerClass {
-        private static MyToast instance = new MyToast();
+        private static ToastUtil instance = new ToastUtil();
     }
 }

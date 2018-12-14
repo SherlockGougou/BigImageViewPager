@@ -8,7 +8,7 @@ import cc.shinichi.library.glide.engine.SimpleFileTarget;
 import cc.shinichi.library.tool.text.MD5Util;
 import cc.shinichi.library.tool.utility.file.FileUtil;
 import cc.shinichi.library.tool.utility.file.SingleMediaScanner;
-import cc.shinichi.library.tool.utility.ui.MyToast;
+import cc.shinichi.library.tool.utility.ui.ToastUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import java.io.File;
@@ -26,12 +26,12 @@ public class DownloadPictureUtil {
     Glide.with(context.getApplicationContext()).load(url).downloadOnly(new SimpleFileTarget() {
       @Override public void onLoadStarted(Drawable placeholder) {
         super.onLoadStarted(placeholder);
-        MyToast.getInstance()._short(context, "开始下载...");
+        ToastUtil.getInstance()._short(context, "开始下载...");
       }
 
       @Override public void onLoadFailed(Exception e, Drawable errorDrawable) {
         super.onLoadFailed(e, errorDrawable);
-        MyToast.getInstance()._short(context, "保存失败");
+        ToastUtil.getInstance()._short(context, "保存失败");
       }
 
       @Override
@@ -54,14 +54,14 @@ public class DownloadPictureUtil {
         FileUtil.createFileByDeleteOldFile(path + name);
         boolean result = FileUtil.copyFile(resource, path, name);
         if (result) {
-          MyToast.getInstance()._short(context, "成功保存到 ".concat(path).concat(name));
+          ToastUtil.getInstance()._short(context, "成功保存到 ".concat(path).concat(name));
           new SingleMediaScanner(context, path.concat(name), new SingleMediaScanner.ScanListener() {
             @Override public void onScanFinish() {
               // scanning...
             }
           });
         } else {
-          MyToast.getInstance()._short(context, "保存失败");
+          ToastUtil.getInstance()._short(context, "保存失败");
         }
       }
     });
