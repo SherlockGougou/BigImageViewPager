@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.view.ImagePreviewActivity;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -84,6 +85,28 @@ public class ImagePreview {
 
   public ImagePreview setImageInfoList(@NonNull List<ImageInfo> imageInfoList) {
     this.imageInfoList = imageInfoList;
+    return this;
+  }
+
+  public ImagePreview setImageList(@NonNull List<String> imageList) {
+    ImageInfo imageInfo;
+    this.imageInfoList = new ArrayList<>();
+    for (int i = 0; i < imageList.size(); i++) {
+      imageInfo = new ImageInfo();
+      imageInfo.setThumbnailUrl(imageList.get(i));
+      imageInfo.setOriginUrl(imageList.get(i));
+      this.imageInfoList.add(imageInfo);
+    }
+    return this;
+  }
+
+  public ImagePreview setImage(@NonNull String image) {
+    this.imageInfoList = new ArrayList<>();
+    ImageInfo imageInfo;
+    imageInfo = new ImageInfo();
+    imageInfo.setThumbnailUrl(image);
+    imageInfo.setOriginUrl(image);
+    this.imageInfoList.add(imageInfo);
     return this;
   }
 
