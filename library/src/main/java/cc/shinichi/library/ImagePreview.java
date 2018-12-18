@@ -27,7 +27,7 @@ public class ImagePreview {
   private Context context;
   private List<ImageInfo> imageInfoList;// 图片数据集合
   private int index = 0;// 默认显示第几个
-  private String folderName = "ImagePreview";// 下载到的文件夹名（根目录中）
+  private String folderName = "Download";// 下载到的文件夹名（根目录中）
   private float minScale = 1.0f;// 最小缩放倍数
   private float mediumScale = 3.0f;// 中等缩放倍数
   private float maxScale = 5.0f;// 最大缩放倍数
@@ -172,7 +172,7 @@ public class ImagePreview {
 
   public String getFolderName() {
     if (TextUtils.isEmpty(folderName)) {
-      folderName = "BigImageViewDownload";
+      folderName = "Download";
     }
     return folderName;
   }
@@ -318,7 +318,7 @@ public class ImagePreview {
     errorPlaceHolder = R.drawable.load_failed;
 
     loadStrategy = LoadStrategy.Default;
-    folderName = "ImagePreview";
+    folderName = "Download";
     context = null;
   }
 

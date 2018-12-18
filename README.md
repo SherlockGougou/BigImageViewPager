@@ -45,8 +45,8 @@ allprojects {
 
 ##### 此处显示的是本框架的最新版本号：
 ```
-对于glide4.x : 使用 v4_3.0.0
-对于glide3.x : 使用 v3_3.0.0
+对于glide4.x : 使用 v4_3.0.1
+对于glide3.x : 使用 v3_3.0.1
 ```
 
 ```
@@ -55,7 +55,7 @@ dependencies {
   // 针对glide v4 版本：如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
 
   // 主库，必须添加！
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_3.0.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_3.0.1'
   // v7支持库，必须添加！
   implementation 'com.android.support:appcompat-v7:27.1.1'
   // 由于本框架使用了glide和okhttp3，所以还请增加依赖以下框架，必须添加！
@@ -67,7 +67,7 @@ dependencies {
 ================================v4/v3分割线==================================
 
   // 针对glide v3 版本：如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_3.0.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_3.0.1'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```
@@ -87,7 +87,6 @@ public class MyAppGlideModule extends AppGlideModule {
     // 如果您的app中已经存在了自定义的GlideModule，您只需要把这一行代码，添加到对应的重载方法中即可。
     registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(ProgressManager.getOkHttpClient()));
   }
-
 }
 ```
 
@@ -95,86 +94,107 @@ public class MyAppGlideModule extends AppGlideModule {
 
 ## 调用方式
 
-#### 根据需求生成图片源：
+#### 1：生成图片源：（如果你有缩略图和原图两种路径，请使用下面的方式，进行图片List的生成；如果你是本地图片或者只有一张图片，可以跳过这一步）
 ```
-		// 网络图片：
-		String[] images = {"url","url","url","url"};
 		ImageInfo imageInfo;
 		final List<ImageInfo> imageInfoList = new ArrayList<>();
 		for (String image : images) {
 			imageInfo = new ImageInfo();
-			// 原图地址（必填）
-			imageInfo.setOriginUrl(image);
-			// 缩略图地址（必填）
-			// 如果没有缩略图url，可以将两项设置为一样。（注意：此处作为演示用，加了-1200，你们不要这么做）
-			imageInfo.setThumbnailUrl(image.concat("-1200"));
+			imageInfo.setOriginUrl(url);// 原图url
+			imageInfo.setThumbnailUrl(thumbUrl);// 缩略图url
 			imageInfoList.add(imageInfo);
-			imageInfo = null;
 		}
-
-		// 本地图片：将原图和缩略图地址传一样的即可。
-		//String[] paths = {"path","path","path","path"};
-		//ImageInfo imageInfo;
-		//final List<ImageInfo> imageInfoList = new ArrayList<>();
-		//for (String path : paths) {
-		//	imageInfo = new ImageInfo();
-		//	imageInfo.setOriginUrl(path);
-		//	imageInfo.setThumbnailUrl(path);
-		//	imageInfoList.add(imageInfo);
-		//	imageInfo = null;
-		//}
-
 ```
 
-#### 最简单的调用方式：
+#### 2：最简单的调用方式：
 ```
-ImagePreview
-  .getInstance()
-  .setContext(MainActivity.this)
-  .setImageInfoList(imageInfoList)
-  .start();
-```
-
-##### 另有多种参数可配置：
-```
-        // 最简单的调用：
-		findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) {
-				// 仅需一行代码：
-				// 默认配置为：显示顶部进度指示器、显示右侧下载按钮、隐藏左侧关闭按钮、开启点击图片关闭、关闭下拉图片关闭、加载方式为手动模式
-				// 一行代码即可实现大部分需求，如需定制，可参考下面代码
-				ImagePreview.getInstance().setContext(MainActivity.this).setImageInfoList(imageInfoList).start();
-			}
-		});
-
-        // 多种自定义：
+        // 最简单的调用，即可实现大部分需求，如需定制，可参考下一步的自定义代码
+        
         ImagePreview
             .getInstance()
-            .setContext(MainActivity.this)// 上下文，必须是activity，不需要担心内存泄漏，本框架已经处理好；
-            .setIndex(0)// 从第一张图片开始，索引从0开始哦
-            .setImageInfoList(imageInfoList)// 图片源
-            .setLoadStrategy(ImagePreview.LoadStrategy.AlwaysThumb)// 加载策略，见下面介绍
-            .setFolderName("BigImageViewDownload")// 保存的文件夹名称，SD卡根目录
-            .setScaleLevel(1, 3, 8)// 设置三级缩放级别
-            .setZoomTransitionDuration(300)// 缩放动画时长
-
-            .setEnableClickClose(enableClickClose)// 是否启用点击图片关闭。默认启用
-            .setEnableDragClose(enableDragClose)// 是否启用上拉/下拉关闭。默认不启用
-
-            .setShowCloseButton(showCloseButton)// 是否显示关闭页面按钮，在页面左下角。默认显示
-            .setCloseIconResId(R.drawable.ic_action_close)// 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
-
-            .setShowDownButton(showDownButton)// 是否显示下载按钮，在页面右下角。默认显示
-            .setDownIconResId(R.drawable.icon_download_new)// 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
-
-            .setShowIndicator(showIndicator)// 设置是否显示顶部的指示器（1/9）。默认显示
+            // 上下文，必须是activity，不需要担心内存泄漏，本框架已经处理好；
+            .setContext(MainActivity.this)
             
-            .setErrorPlaceHolder(R.drawable.load_failed)// 设置失败时的占位图，默认为R.drawable.load_failed，设置为0时不显示
+            // 有三种设置数据集合的方式，根据自己的需求进行选择：
+            
+            // 第一步生成的imageInfo List
+            .setImageInfoList(imageInfoList)
+            
+            // 直接传url List
+            //.setImageList(List<String> imageList)
+            
+            // 只有一张图片的情况，可以直接传入这张图片的url
+            //.setImage(String image)
+            
+            // 开启预览
+            .start();
+            
+        // 默认的配置为：
+        //  显示顶部进度指示器、
+        //  显示右侧下载按钮、
+        //  隐藏左侧关闭按钮、
+        //  开启点击图片关闭、
+        //  关闭下拉图片关闭、
+        //  加载方式为手动模式 
+```
+
+##### 3：自定义多种配置：
+```
+        ImagePreview
+            .getInstance()
+            // 上下文，必须是activity，不需要担心内存泄漏，本框架已经处理好
+            .setContext(MainActivity.this)
+            // 从第几张图片开始，索引从0开始哦~
+            .setIndex(0)
+            
+            // 有三种设置数据集合的方式，根据自己的需求进行选择：
+            
+            // 第一步生成的imageInfo List
+            .setImageInfoList(imageInfoList)
+            
+            // 直接传url List
+            //.setImageList(List<String> imageList)
+            
+            // 只有一张图片的情况，可以直接传入这张图片的url
+            //.setImage(String image)
+            
+            // 加载策略，详细说明见下面“加载策略介绍”。默认为手动模式
+            .setLoadStrategy(ImagePreview.LoadStrategy.AlwaysThumb)
+            
+            // 保存的文件夹名称，会在SD卡根目录进行文件夹的新建。
+            // (你也可设置嵌套模式，比如："BigImageView/Download"，会在SD卡根目录新建BigImageView文件夹，并在BigImageView文件夹中新建Download文件夹)
+            .setFolderName("BigImageViewDownload")
+            
+            // 缩放动画时长，单位ms
+            .setZoomTransitionDuration(300)
+
+            // 是否启用点击图片关闭。默认启用
+            .setEnableClickClose(enableClickClose)
+            // 是否启用上拉/下拉关闭。默认不启用
+            .setEnableDragClose(enableDragClose)
+
+            // 是否显示关闭页面按钮，在页面左下角。默认不显示
+            .setShowCloseButton(showCloseButton)
+            // 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
+            .setCloseIconResId(R.drawable.ic_action_close)
+
+            // 是否显示下载按钮，在页面右下角。默认显示
+            .setShowDownButton(showDownButton)
+            // 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
+            .setDownIconResId(R.drawable.icon_download_new)
+
+            // 设置是否显示顶部的指示器（1/9）默认显示
+            .setShowIndicator(showIndicator)
+            
+            // 设置失败时的占位图，默认为R.drawable.load_failed，设置为 0 时不显示
+            .setErrorPlaceHolder(R.drawable.load_failed)
+            
+            // 开启预览
             .start();
 
 ```
 
-# 加载策略介绍
+##### 4：加载策略介绍
 ```
   public enum LoadStrategy {
     /**
@@ -197,8 +217,8 @@ ImagePreview
      */
     Default
   }
-
-  以上所有方式，如果原图缓存存在的情况，会默认加载原图缓存保证清晰度，且原图缓存只要存在，就不会显示查看原图按钮
+  
+  注：以上所有方式，如果原图缓存存在的情况，会默认加载原图缓存保证清晰度；且原图缓存只要存在，就不会显示查看原图按钮。
 ```
 
 # DEMO体验
@@ -216,3 +236,18 @@ https://github.com/SherlockGougou/BigImageViewPager
 ### 欢迎加入“大话安卓”技术交流群，一起分享，共同进步##
 
 ![欢迎加入“大话安卓”技术交流群，互相学习提升](https://upload-images.jianshu.io/upload_images/1710902-5cdeb8c1f58dd425.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+# LICENSE
+Copyright (C) 2018 SherlockGougou 18883840501@163.com
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
