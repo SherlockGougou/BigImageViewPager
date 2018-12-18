@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.view.ImagePreviewActivity;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ public class ImagePreview {
   private Context context;
   private List<ImageInfo> imageInfoList;// 图片数据集合
   private int index = 0;// 默认显示第几个
-  private String folderName = "ImagePreview";// 下载到的文件夹名（根目录中）
+  private String folderName = "Download";// 下载到的文件夹名（根目录中）
   private float minScale = 1.0f;// 最小缩放倍数
   private float mediumScale = 3.0f;// 中等缩放倍数
   private float maxScale = 5.0f;// 最大缩放倍数
@@ -84,6 +85,28 @@ public class ImagePreview {
 
   public ImagePreview setImageInfoList(@NonNull List<ImageInfo> imageInfoList) {
     this.imageInfoList = imageInfoList;
+    return this;
+  }
+
+  public ImagePreview setImageList(@NonNull List<String> imageList) {
+    ImageInfo imageInfo;
+    this.imageInfoList = new ArrayList<>();
+    for (int i = 0; i < imageList.size(); i++) {
+      imageInfo = new ImageInfo();
+      imageInfo.setThumbnailUrl(imageList.get(i));
+      imageInfo.setOriginUrl(imageList.get(i));
+      this.imageInfoList.add(imageInfo);
+    }
+    return this;
+  }
+
+  public ImagePreview setImage(@NonNull String image) {
+    this.imageInfoList = new ArrayList<>();
+    ImageInfo imageInfo;
+    imageInfo = new ImageInfo();
+    imageInfo.setThumbnailUrl(image);
+    imageInfo.setOriginUrl(image);
+    this.imageInfoList.add(imageInfo);
     return this;
   }
 
@@ -149,7 +172,7 @@ public class ImagePreview {
 
   public String getFolderName() {
     if (TextUtils.isEmpty(folderName)) {
-      folderName = "BigImageViewDownload";
+      folderName = "Download";
     }
     return folderName;
   }
@@ -295,7 +318,7 @@ public class ImagePreview {
     errorPlaceHolder = R.drawable.load_failed;
 
     loadStrategy = LoadStrategy.Default;
-    folderName = "ImagePreview";
+    folderName = "Download";
     context = null;
   }
 
