@@ -17,22 +17,15 @@ public class MainActivity extends AppCompatActivity {
 	String[] images = {
 		"http://img3.16fan.com/live/origin/201805/21/E421b24c08446.jpg",
 		"http://img3.16fan.com/live/origin/201805/21/4D7B35fdf082e.jpg",
-		"http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg", //  5760 * 3840
 		"http://img3.16fan.com/live/origin/201805/21/2D02ebc5838e6.jpg",
-		"http://img3.16fan.com/live/origin/201812/01/qz2x9e6l98b5h.jpg",
-		"http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg", //  2280 * 22116
-		"http://img3.16fan.com/live/origin/201805/21/14C5e483e7583.jpg",
 		"http://img3.16fan.com/live/origin/201805/21/A1B17c5f59b78.jpg",
 		"http://img3.16fan.com/live/origin/201805/21/94699b2be3cfa.jpg",
+		"http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg", //  5760 * 3840
 		"http://img3.16fan.com/live/origin/201812/01/qz2x9e6l98b5h.jpg",
-		"http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg", //  2280 * 22116
 		"http://img3.16fan.com/live/origin/201805/21/14C5e483e7583.jpg",
 		"http://img3.16fan.com/live/origin/201805/21/EB298ce595dd2.jpg",
-		"http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg", //  5760 * 3840
-		"http://img3.16fan.com/live/origin/201805/21/264Ba4860d469.jpg",
-		"http://img3.16fan.com/live/origin/201812/01/qz2x9e6l98b5h.jpg",
 		"http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg", //  2280 * 22116
-		"http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg" //  5760 * 3840
+		"http://img3.16fan.com/live/origin/201805/21/264Ba4860d469.jpg",
 	};
 
 	boolean enableClickClose = false;
@@ -86,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
 		});
 		switchShowDownButton.setChecked(true);
 
-		// 网络图片：
 		ImageInfo imageInfo;
 		final List<ImageInfo> imageInfoList = new ArrayList<>();
 
@@ -99,46 +91,28 @@ public class MainActivity extends AppCompatActivity {
 			imageInfoList.add(imageInfo);
 		}
 
-		// 此图为超宽图
+		// 测试超宽图
 		imageInfo = new ImageInfo();
 		imageInfo.setOriginUrl("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");// 这张是https图片
 		imageInfo.setThumbnailUrl("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");// 这张是https图片
 		imageInfoList.add(0, imageInfo);
 
-		// 此图为https图
+		// 测试https图
 		imageInfo = new ImageInfo();
 		imageInfo.setOriginUrl("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");// 这张是https图片
 		imageInfo.setThumbnailUrl("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");// 这张是https图片
 		imageInfoList.add(0, imageInfo);
 
-		// 此图为gif图
+		// 测试gif图
 		imageInfo = new ImageInfo();
 		imageInfo.setOriginUrl("http://s1.dwstatic.com/group1/M00/82/DB/c9d0b4c9fdba07709071784bce709c26.gif");
 		imageInfo.setThumbnailUrl("http://s1.dwstatic.com/group1/M00/82/DB/c9d0b4c9fdba07709071784bce709c26.gif");
 		imageInfoList.add(0, imageInfo);
 
-		// 此图为gif图
-		imageInfo = new ImageInfo();
-		imageInfo.setOriginUrl("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
-		imageInfo.setThumbnailUrl("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
-		imageInfoList.add(0, imageInfo);
-
-		// 测试加载失败
-		imageInfo = new ImageInfo();
-		imageInfo.setOriginUrl("/storage/emulated/0/Tencent/Tim_Images/-265a3ee2846fa434.jpg");
-		imageInfo.setThumbnailUrl("/storage/emulated/0/Tencent/Tim_Images/-265a3ee2846fa434.jpg");
-		imageInfoList.add(0, imageInfo);
-
-		// 测试小尺寸图片
+		// 测试小尺寸图
 		imageInfo = new ImageInfo();
 		imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916732&di=3bc3e11ccd7185a4ab9932b93de2077a&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201602%2F05%2F20160205113750_UsRPe.thumb.700_0.jpeg");
 		imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916732&di=3bc3e11ccd7185a4ab9932b93de2077a&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201602%2F05%2F20160205113750_UsRPe.thumb.700_0.jpeg");
-		imageInfoList.add(0, imageInfo);
-
-		// 测试小尺寸图片
-		imageInfo = new ImageInfo();
-		imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916731&di=89e3775c25c5f21254cd0a5aa3b0b1b1&imgtype=0&src=http%3A%2F%2Fimage.biaobaiju.com%2Fuploads%2F20180210%2F20%2F1518266167-ActRaEkWDS.jpg");
-		imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916731&di=89e3775c25c5f21254cd0a5aa3b0b1b1&imgtype=0&src=http%3A%2F%2Fimage.biaobaiju.com%2Fuploads%2F20180210%2F20%2F1518266167-ActRaEkWDS.jpg");
 		imageInfoList.add(0, imageInfo);
 
 		// 测试没有后缀的链接
@@ -147,22 +121,21 @@ public class MainActivity extends AppCompatActivity {
 		imageInfo.setThumbnailUrl("https://sacasnap.neusoft.com/snap-engine-file/image/obtain/1264c125-387e-4af0-a361-f26c3f7fd12e?tenantId=neusoft");
 		imageInfoList.add(0, imageInfo);
 
-		// 测试超长文件名 没有后缀的链接
+		// 测试超长文件名、没有后缀的链接
 		imageInfo = new ImageInfo();
 		imageInfo.setOriginUrl("http://img2.weishoot.com/?4583B5ECE38DC1B27FD1269F4E70B7670C426883D16355F21B46193F75071C599A3E6AED54A235489F4C38835361546D7648065651316476F7E30592DAF1CD6C50358835D5DD10D029DA4A9C59B56C3EA48055CE4E0A7627AF8C90303A4D1FBC2D88218AB0F699E74425A61E5D9E2B378E199A2906934C52DAC2D3920C74DBAF34BD945EEA7E86AC72AF12CD00F1179846E1DA2926B782C1D2215DB087EFDE04A1C0F46B1352527F");
 		imageInfo.setThumbnailUrl("http://img2.weishoot.com/?4583B5ECE38DC1B27FD1269F4E70B7670C426883D16355F21B46193F75071C599A3E6AED54A235489F4C38835361546D7648065651316476F7E30592DAF1CD6C50358835D5DD10D029DA4A9C59B56C3EA48055CE4E0A7627AF8C90303A4D1FBC2D88218AB0F699E74425A61E5D9E2B378E199A2906934C52DAC2D3920C74DBAF34BD945EEA7E86AC72AF12CD00F1179846E1DA2926B782C1D2215DB087EFDE04A1C0F46B1352527F");
 		imageInfoList.add(0, imageInfo);
 
-		// 本地图片：将原图和缩略图地址传一样的即可。
-		//ImageInfo imageInfo;
-		//final List<ImageInfo> imageInfoList = new ArrayList<>();
-		//for (String image : images) {
-		//	imageInfo = new ImageInfo();
-		//	imageInfo.setOriginUrl(image);
-		//	imageInfo.setThumbnailUrl(image);
-		//	imageInfoList.add(imageInfo);
-		//	imageInfo = null;
-		//}
+		// 也可直接传入url List
+		final List<String> imageList = new ArrayList<>();
+		imageList.add("http://img2.weishoot.com/?4583B5ECE38DC1B27FD1269F4E70B7670C426883D16355F21B46193F75071C599A3E6AED54A235489F4C38835361546D7648065651316476F7E30592DAF1CD6C50358835D5DD10D029DA4A9C59B56C3EA48055CE4E0A7627AF8C90303A4D1FBC2D88218AB0F699E74425A61E5D9E2B378E199A2906934C52DAC2D3920C74DBAF34BD945EEA7E86AC72AF12CD00F1179846E1DA2926B782C1D2215DB087EFDE04A1C0F46B1352527F");
+		imageList.add("https://sacasnap.neusoft.com/snap-engine-file/image/obtain/1264c125-387e-4af0-a361-f26c3f7fd12e?tenantId=neusoft");
+		imageList.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916731&di=89e3775c25c5f21254cd0a5aa3b0b1b1&imgtype=0&src=http%3A%2F%2Fimage.biaobaiju.com%2Fuploads%2F20180210%2F20%2F1518266167-ActRaEkWDS.jpg");
+		imageList.add("http://s1.dwstatic.com/group1/M00/82/DB/c9d0b4c9fdba07709071784bce709c26.gif");
+		imageList.add("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");
+		imageList.add("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");
+		imageList.add("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
 
 		// 最简单的调用
 		findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
@@ -170,21 +143,14 @@ public class MainActivity extends AppCompatActivity {
 				// 仅需一行代码
 				// 默认配置为：显示顶部进度指示器、显示右侧下载按钮、隐藏左侧关闭按钮、开启点击图片关闭、关闭下拉图片关闭、加载方式为手动模式
 				// 一行代码即可实现大部分需求，如需定制，可参考下面代码
-				ImagePreview.getInstance().setContext(MainActivity.this).setImageInfoList(imageInfoList).start();
+				ImagePreview
+					.getInstance()
+					.setContext(MainActivity.this)
+					//.setImageInfoList(imageInfoList)
+					.setImageList(imageList)
+					.start();
 			}
 		});
-
-		final List<String> imageList = new ArrayList<>();
-		imageList.add("http://img2.weishoot.com/?4583B5ECE38DC1B27FD1269F4E70B7670C426883D16355F21B46193F75071C599A3E6AED54A235489F4C38835361546D7648065651316476F7E30592DAF1CD6C50358835D5DD10D029DA4A9C59B56C3EA48055CE4E0A7627AF8C90303A4D1FBC2D88218AB0F699E74425A61E5D9E2B378E199A2906934C52DAC2D3920C74DBAF34BD945EEA7E86AC72AF12CD00F1179846E1DA2926B782C1D2215DB087EFDE04A1C0F46B1352527F");
-		imageList.add("https://sacasnap.neusoft.com/snap-engine-file/image/obtain/1264c125-387e-4af0-a361-f26c3f7fd12e?tenantId=neusoft");
-		imageList.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916731&di=89e3775c25c5f21254cd0a5aa3b0b1b1&imgtype=0&src=http%3A%2F%2Fimage.biaobaiju.com%2Fuploads%2F20180210%2F20%2F1518266167-ActRaEkWDS.jpg");
-		imageList.add("http://s1.dwstatic.com/group1/M00/82/DB/c9d0b4c9fdba07709071784bce709c26.gif");
-		imageList.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916732&di=3bc3e11ccd7185a4ab9932b93de2077a&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201602%2F05%2F20160205113750_UsRPe.thumb.700_0.jpeg");
-		imageList.add("/storage/emulated/0/Tencent/Tim_Images/-265a3ee2846fa434.jpg");
-		imageList.add("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");
-		imageList.add("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
-		imageList.add("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");
-		imageList.add("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");
 
 		// 仅加载普清
 		findViewById(R.id.buttonThumb).setOnClickListener(new View.OnClickListener() {
