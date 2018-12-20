@@ -16,7 +16,6 @@ import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.glide.engine.SimpleFileTarget;
 import cc.shinichi.library.tool.utility.common.NetworkUtil;
-import cc.shinichi.library.tool.utility.common.Print;
 import cc.shinichi.library.tool.utility.image.ImageUtil;
 import cc.shinichi.library.tool.utility.ui.ToastUtil;
 import cc.shinichi.library.tool.utility.ui.PhoneUtil;
@@ -153,7 +152,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
     if (activity == null) {
       return container;
     }
-    View convertView = View.inflate(activity, R.layout.item_photoview, null);
+    View convertView = View.inflate(activity, R.layout.sh_item_photoview, null);
     final ProgressBar progressBar = convertView.findViewById(R.id.progress_view);
     final FingerDragHelper fingerDragHelper = convertView.findViewById(R.id.fingerDragHelper);
     final SubsamplingScaleImageViewDragClose imageView = convertView.findViewById(R.id.photo_view);
