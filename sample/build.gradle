@@ -35,9 +35,4 @@ dependencies {
   // library
 //    implementation 'com.github.SherlockGougou:BigImageViewPager:v4_3.0.2'
   implementation project(':library')
-  implementation ('com.lzy.widget:ninegridview:0.2.0') {
-    exclude group: 'com.android.support'
-    exclude module: 'appcompat-v7'
-    exclude module: 'support-v4'
-  }
 }
