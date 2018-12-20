@@ -86,7 +86,7 @@ public class ImagePreviewActivity extends AppCompatActivity
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_preview);
+    setContentView(R.layout.sh_layout_preview);
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       Window window = getWindow();
