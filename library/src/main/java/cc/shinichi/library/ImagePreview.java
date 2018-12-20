@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.view.ImagePreviewActivity;
+import cc.shinichi.library.view.listener.OnBigImageClickListener;
+import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +49,10 @@ public class ImagePreview {
 
   // 加载失败时的占位图
   private int errorPlaceHolder = R.drawable.load_failed;
+
+  // 点击和长按事件接口
+  private OnBigImageClickListener bigImageClickListener;
+  private OnBigImageLongClickListener bigImageLongClickListener;
 
   public enum LoadStrategy {
     /**
@@ -300,6 +306,24 @@ public class ImagePreview {
     return this;
   }
 
+  public OnBigImageClickListener getBigImageClickListener() {
+    return bigImageClickListener;
+  }
+
+  public ImagePreview setBigImageClickListener(OnBigImageClickListener bigImageClickListener) {
+    this.bigImageClickListener = bigImageClickListener;
+    return this;
+  }
+
+  public OnBigImageLongClickListener getBigImageLongClickListener() {
+    return bigImageLongClickListener;
+  }
+
+  public ImagePreview setBigImageLongClickListener(OnBigImageLongClickListener bigImageLongClickListener) {
+    this.bigImageLongClickListener = bigImageLongClickListener;
+    return this;
+  }
+
   public void reset() {
     imageInfoList = null;
     index = 0;
@@ -320,6 +344,9 @@ public class ImagePreview {
     loadStrategy = LoadStrategy.Default;
     folderName = "Download";
     context = null;
+
+    bigImageClickListener = null;
+    bigImageLongClickListener = null;
   }
 
   public void start() {

@@ -9,6 +9,8 @@ import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.tool.utility.ui.ToastUtil;
+import cc.shinichi.library.view.listener.OnBigImageClickListener;
+import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
 		imageList.add("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");
 		imageList.add("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");
 		imageList.add("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
+		imageList.add("https://magiclanjie1920.io2c.com/static/images/bar/3.png");
 
 		// 最简单的调用
 		findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
@@ -204,6 +207,19 @@ public class MainActivity extends AppCompatActivity {
 					// 设置失败时的占位图，默认为R.drawable.load_failed，设置为 0 时不显示
 					.setErrorPlaceHolder(R.drawable.load_failed)
 
+					// 点击回调
+					.setBigImageClickListener(new OnBigImageClickListener() {
+						@Override public void onClick(View view, int position) {
+							// ...
+						}
+					})
+					// 长按回调
+					.setBigImageLongClickListener(new OnBigImageLongClickListener() {
+						@Override public void onLongClick(View view, int position) {
+							// ...
+						}
+					})
+
 					// 开启预览
 					.start();
 			}
@@ -260,6 +276,19 @@ public class MainActivity extends AppCompatActivity {
 
 					// 设置失败时的占位图，默认为R.drawable.load_failed，设置为 0 时不显示
 					.setErrorPlaceHolder(R.drawable.load_failed)
+
+					// 点击回调
+                    .setBigImageClickListener(new OnBigImageClickListener() {
+                        @Override public void onClick(View view, int position) {
+                        	// ...
+                        }
+                    })
+					// 长按回调
+                    .setBigImageLongClickListener(new OnBigImageLongClickListener() {
+                        @Override public void onLongClick(View view, int position) {
+                        	// ...
+                        }
+                    })
 
 					// 开启预览
 					.start();
@@ -318,6 +347,19 @@ public class MainActivity extends AppCompatActivity {
 					// 设置失败时的占位图，默认为R.drawable.load_failed，设置为 0 时不显示
 					.setErrorPlaceHolder(R.drawable.load_failed)
 
+					// 点击回调
+					.setBigImageClickListener(new OnBigImageClickListener() {
+						@Override public void onClick(View view, int position) {
+							// ...
+						}
+					})
+					// 长按回调
+					.setBigImageLongClickListener(new OnBigImageLongClickListener() {
+						@Override public void onLongClick(View view, int position) {
+							// ...
+						}
+					})
+
 					// 开启预览
 					.start();
 			}
@@ -374,6 +416,19 @@ public class MainActivity extends AppCompatActivity {
 
 					// 设置失败时的占位图，默认为R.drawable.load_failed，设置为 0 时不显示
 					.setErrorPlaceHolder(R.drawable.load_failed)
+
+					// 点击回调
+					.setBigImageClickListener(new OnBigImageClickListener() {
+						@Override public void onClick(View view, int position) {
+							// ...
+						}
+					})
+					// 长按回调
+					.setBigImageLongClickListener(new OnBigImageLongClickListener() {
+						@Override public void onLongClick(View view, int position) {
+							// ...
+						}
+					})
 
 					// 开启预览
 					.start();
