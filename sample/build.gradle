@@ -7,8 +7,8 @@ android {
         applicationId "cc.shinichi.bigimageviewpager"
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 303
-        versionName "v4_3.0.3"
+        versionCode 310
+        versionName "v4_3.1.0"
     }
     buildTypes {
         release {
@@ -35,4 +35,9 @@ dependencies {
   // library
 //    implementation 'com.github.SherlockGougou:BigImageViewPager:v4_3.0.2'
   implementation project(':library')
+  implementation ('com.lzy.widget:ninegridview:0.2.0') {
+    exclude group: 'com.android.support'
+    exclude module: 'appcompat-v7'
+    exclude module: 'support-v4'
+  }
 }

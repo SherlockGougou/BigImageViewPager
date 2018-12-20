@@ -155,7 +155,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
     if (activity == null) {
       return container;
     }
-    View convertView = View.inflate(activity, R.layout.item_photoview, null);
+    View convertView = View.inflate(activity, R.layout.sh_item_photoview, null);
     final ProgressBar progressBar = convertView.findViewById(R.id.progress_view);
     final FingerDragHelper fingerDragHelper = convertView.findViewById(R.id.fingerDragHelper);
     final SubsamplingScaleImageViewDragClose imageView = convertView.findViewById(R.id.photo_view);
