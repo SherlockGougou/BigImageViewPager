@@ -175,18 +175,43 @@ public class ImagePreviewAdapter extends PagerAdapter {
     imageGif.setMaximumScale(ImagePreview.getInstance().getMaxScale());
     imageGif.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-    if (ImagePreview.getInstance().isEnableClickClose()) {
-      imageView.setOnClickListener(new View.OnClickListener() {
-        @Override public void onClick(View v) {
+    imageView.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        if (ImagePreview.getInstance().isEnableClickClose()) {
           activity.finish();
         }
-      });
-      imageGif.setOnClickListener(new View.OnClickListener() {
-        @Override public void onClick(View v) {
+        if (ImagePreview.getInstance().getBigImageClickListener() != null) {
+          ImagePreview.getInstance().getBigImageClickListener().onClick(v, position);
+        }
+      }
+    });
+    imageGif.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        if (ImagePreview.getInstance().isEnableClickClose()) {
           activity.finish();
         }
-      });
-    }
+        if (ImagePreview.getInstance().getBigImageClickListener() != null) {
+          ImagePreview.getInstance().getBigImageClickListener().onClick(v, position);
+        }
+      }
+    });
+
+    imageView.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override public boolean onLongClick(View v) {
+        if (ImagePreview.getInstance().getBigImageLongClickListener() != null) {
+          ImagePreview.getInstance().getBigImageLongClickListener().onLongClick(v, position);
+        }
+        return false;
+      }
+    });
+    imageGif.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override public boolean onLongClick(View v) {
+        if (ImagePreview.getInstance().getBigImageLongClickListener() != null) {
+          ImagePreview.getInstance().getBigImageLongClickListener().onLongClick(v, position);
+        }
+        return false;
+      }
+    });
 
     if (ImagePreview.getInstance().isEnableDragClose()) {
       fingerDragHelper.setOnAlphaChangeListener(new FingerDragHelper.onAlphaChangedListener() {

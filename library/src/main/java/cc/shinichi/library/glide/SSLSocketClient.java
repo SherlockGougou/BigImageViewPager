@@ -40,7 +40,7 @@ public class SSLSocketClient {
                 }
 
                 @Override public X509Certificate[] getAcceptedIssuers() {
-                    return new X509Certificate[]{};
+                    return new X509Certificate[] {};
                 }
             }
         };
