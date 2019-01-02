@@ -16,5 +16,5 @@ public interface OnBigImageLongClickListener {
      * @param view
      * @param position
      */
-    void onLongClick(View view, int position);
+    boolean onLongClick(View view, int position);
 }

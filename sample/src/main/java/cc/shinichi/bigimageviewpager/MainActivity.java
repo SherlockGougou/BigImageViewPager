@@ -215,8 +215,9 @@ public class MainActivity extends AppCompatActivity {
 					})
 					// 长按回调
 					.setBigImageLongClickListener(new OnBigImageLongClickListener() {
-						@Override public void onLongClick(View view, int position) {
+						@Override public boolean onLongClick(View view, int position) {
 							// ...
+							return false;
 						}
 					})
 
@@ -285,8 +286,9 @@ public class MainActivity extends AppCompatActivity {
 					})
 					// 长按回调
 					.setBigImageLongClickListener(new OnBigImageLongClickListener() {
-						@Override public void onLongClick(View view, int position) {
+						@Override public boolean onLongClick(View view, int position) {
 							// ...
+							return false;
 						}
 					})
 
@@ -355,8 +357,9 @@ public class MainActivity extends AppCompatActivity {
 					})
 					// 长按回调
 					.setBigImageLongClickListener(new OnBigImageLongClickListener() {
-						@Override public void onLongClick(View view, int position) {
+						@Override public boolean onLongClick(View view, int position) {
 							// ...
+							return false;
 						}
 					})
 
@@ -425,8 +428,9 @@ public class MainActivity extends AppCompatActivity {
 					})
 					// 长按回调
 					.setBigImageLongClickListener(new OnBigImageLongClickListener() {
-						@Override public void onLongClick(View view, int position) {
+						@Override public boolean onLongClick(View view, int position) {
 							// ...
+							return false;
 						}
 					})
 
