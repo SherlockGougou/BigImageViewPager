@@ -33,7 +33,6 @@ import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -139,7 +138,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
 
           setImageSpec(imagePath, imageView);
 
-          imageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
+          imageView.setOrientation(SubsamplingScaleImageViewDragClose.ORIENTATION_USE_EXIF);
           imageView.setImage(origin, small);
         }
       } else {
@@ -201,7 +200,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
     imageView.setOnLongClickListener(new View.OnLongClickListener() {
       @Override public boolean onLongClick(View v) {
         if (ImagePreview.getInstance().getBigImageLongClickListener() != null) {
-          ImagePreview.getInstance().getBigImageLongClickListener().onLongClick(v, position);
+          return ImagePreview.getInstance().getBigImageLongClickListener().onLongClick(v, position);
         }
         return false;
       }
@@ -209,7 +208,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
     imageGif.setOnLongClickListener(new View.OnLongClickListener() {
       @Override public boolean onLongClick(View v) {
         if (ImagePreview.getInstance().getBigImageLongClickListener() != null) {
-          ImagePreview.getInstance().getBigImageLongClickListener().onLongClick(v, position);
+          return ImagePreview.getInstance().getBigImageLongClickListener().onLongClick(v, position);
         }
         return false;
       }
@@ -441,7 +440,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
 
     setImageSpec(imagePath, imageView);
 
-    imageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
+    imageView.setOrientation(SubsamplingScaleImageViewDragClose.ORIENTATION_USE_EXIF);
     imageView.setImage(ImageSource.uri(Uri.fromFile(new File(imagePath))));
 
     imageView.setOnImageEventListener(new SubsamplingScaleImageViewDragClose.OnImageEventListener() {
