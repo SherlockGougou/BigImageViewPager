@@ -10,6 +10,7 @@ import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.view.ImagePreviewActivity;
 import cc.shinichi.library.view.listener.OnBigImageClickListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
+import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +54,7 @@ public class ImagePreview {
   // 点击和长按事件接口
   private OnBigImageClickListener bigImageClickListener;
   private OnBigImageLongClickListener bigImageLongClickListener;
+  private OnBigImagePageChangeListener bigImagePageChangeListener;
 
   public enum LoadStrategy {
     /**
@@ -324,6 +326,15 @@ public class ImagePreview {
     return this;
   }
 
+  public OnBigImagePageChangeListener getBigImagePageChangeListener() {
+    return bigImagePageChangeListener;
+  }
+
+  public ImagePreview setBigImagePageChangeListener(OnBigImagePageChangeListener bigImagePageChangeListener) {
+    this.bigImagePageChangeListener = bigImagePageChangeListener;
+    return this;
+  }
+
   public void reset() {
     imageInfoList = null;
     index = 0;
@@ -347,6 +358,7 @@ public class ImagePreview {
 
     bigImageClickListener = null;
     bigImageLongClickListener = null;
+    bigImagePageChangeListener = null;
   }
 
   public void start() {
