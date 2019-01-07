@@ -3,6 +3,7 @@ package cc.shinichi.bigimageviewpager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import cc.shinichi.library.ImagePreview;
@@ -11,10 +12,13 @@ import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.tool.utility.ui.ToastUtil;
 import cc.shinichi.library.view.listener.OnBigImageClickListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
+import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+	private static final String TAG = "MainActivity";
 
 	String[] images = {
 		"http://img3.16fan.com/live/origin/201805/21/E421b24c08446.jpg",
@@ -211,13 +215,30 @@ public class MainActivity extends AppCompatActivity {
 					.setBigImageClickListener(new OnBigImageClickListener() {
 						@Override public void onClick(View view, int position) {
 							// ...
+							Log.d(TAG, "onClick: ");
 						}
 					})
 					// 长按回调
 					.setBigImageLongClickListener(new OnBigImageLongClickListener() {
 						@Override public boolean onLongClick(View view, int position) {
 							// ...
+							Log.d(TAG, "onLongClick: ");
 							return false;
+						}
+					})
+					// 页面切换回调
+					.setBigImagePageChangeListener(new OnBigImagePageChangeListener() {
+						@Override
+						public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+							Log.d(TAG, "onPageScrolled: ");
+						}
+
+						@Override public void onPageSelected(int position) {
+							Log.d(TAG, "onPageSelected: ");
+						}
+
+						@Override public void onPageScrollStateChanged(int state) {
+							Log.d(TAG, "onPageScrollStateChanged: ");
 						}
 					})
 
@@ -282,13 +303,30 @@ public class MainActivity extends AppCompatActivity {
 					.setBigImageClickListener(new OnBigImageClickListener() {
 						@Override public void onClick(View view, int position) {
 							// ...
+							Log.d(TAG, "onClick: ");
 						}
 					})
 					// 长按回调
 					.setBigImageLongClickListener(new OnBigImageLongClickListener() {
 						@Override public boolean onLongClick(View view, int position) {
 							// ...
+							Log.d(TAG, "onLongClick: ");
 							return false;
+						}
+					})
+					// 页面切换回调
+					.setBigImagePageChangeListener(new OnBigImagePageChangeListener() {
+						@Override
+						public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+							Log.d(TAG, "onPageScrolled: ");
+						}
+
+						@Override public void onPageSelected(int position) {
+							Log.d(TAG, "onPageSelected: ");
+						}
+
+						@Override public void onPageScrollStateChanged(int state) {
+							Log.d(TAG, "onPageScrollStateChanged: ");
 						}
 					})
 
@@ -353,13 +391,30 @@ public class MainActivity extends AppCompatActivity {
 					.setBigImageClickListener(new OnBigImageClickListener() {
 						@Override public void onClick(View view, int position) {
 							// ...
+							Log.d(TAG, "onClick: ");
 						}
 					})
 					// 长按回调
 					.setBigImageLongClickListener(new OnBigImageLongClickListener() {
 						@Override public boolean onLongClick(View view, int position) {
 							// ...
+							Log.d(TAG, "onLongClick: ");
 							return false;
+						}
+					})
+					// 页面切换回调
+					.setBigImagePageChangeListener(new OnBigImagePageChangeListener() {
+						@Override
+						public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+							Log.d(TAG, "onPageScrolled: ");
+						}
+
+						@Override public void onPageSelected(int position) {
+							Log.d(TAG, "onPageSelected: ");
+						}
+
+						@Override public void onPageScrollStateChanged(int state) {
+							Log.d(TAG, "onPageScrollStateChanged: ");
 						}
 					})
 
@@ -424,13 +479,30 @@ public class MainActivity extends AppCompatActivity {
 					.setBigImageClickListener(new OnBigImageClickListener() {
 						@Override public void onClick(View view, int position) {
 							// ...
+							Log.d(TAG, "onClick: ");
 						}
 					})
 					// 长按回调
 					.setBigImageLongClickListener(new OnBigImageLongClickListener() {
 						@Override public boolean onLongClick(View view, int position) {
 							// ...
+							Log.d(TAG, "onLongClick: ");
 							return false;
+						}
+					})
+					// 页面切换回调
+					.setBigImagePageChangeListener(new OnBigImagePageChangeListener() {
+						@Override
+						public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+							Log.d(TAG, "onPageScrolled: ");
+						}
+
+						@Override public void onPageSelected(int position) {
+							Log.d(TAG, "onPageSelected: ");
+						}
+
+						@Override public void onPageScrollStateChanged(int state) {
+							Log.d(TAG, "onPageScrollStateChanged: ");
 						}
 					})
 

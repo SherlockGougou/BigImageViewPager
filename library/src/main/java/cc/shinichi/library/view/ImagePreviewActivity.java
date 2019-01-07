@@ -176,6 +176,10 @@ public class ImagePreviewActivity extends AppCompatActivity
     viewPager.setCurrentItem(currentItem);
     viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
       @Override public void onPageSelected(int position) {
+        super.onPageSelected(position);
+        if (ImagePreview.getInstance().getBigImagePageChangeListener() != null) {
+          ImagePreview.getInstance().getBigImagePageChangeListener().onPageSelected(position);
+        }
         currentItem = position;
         currentItemOriginPathUrl = imageInfoList.get(position).getOriginUrl();
 
@@ -187,6 +191,22 @@ public class ImagePreviewActivity extends AppCompatActivity
         // 更新进度指示器
         tv_indicator.setText(
             String.format(getString(R.string.indicator), currentItem + 1 + "", "" + imageInfoList.size()));
+      }
+
+      @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+
+        if (ImagePreview.getInstance().getBigImagePageChangeListener() != null) {
+          ImagePreview.getInstance().getBigImagePageChangeListener().onPageScrolled(position, positionOffset, positionOffsetPixels);
+        }
+      }
+
+      @Override public void onPageScrollStateChanged(int state) {
+        super.onPageScrollStateChanged(state);
+
+        if (ImagePreview.getInstance().getBigImagePageChangeListener() != null) {
+          ImagePreview.getInstance().getBigImagePageChangeListener().onPageScrollStateChanged(state);
+        }
       }
     });
   }
