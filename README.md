@@ -45,8 +45,8 @@ allprojects {
 
 ##### 此处显示的是本框架的最新版本号：
 ```
-对于glide4.x : 使用 v4_3.2.0
-对于glide3.x : 使用 v3_3.2.0
+对于glide4.x : 使用 v4_3.2.1
+对于glide3.x : 使用 v3_3.2.1
 ```
 
 ```
@@ -55,7 +55,7 @@ dependencies {
   // 针对glide v4 版本：如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
 
   // 主库，必须添加！
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_3.2.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_3.2.1'
   // v7支持库，必须添加！
   implementation 'com.android.support:appcompat-v7:27.1.1'
   // 由于本框架使用了glide和okhttp3，所以还请增加依赖以下框架，必须添加！
@@ -67,7 +67,7 @@ dependencies {
 ================================v4/v3分割线==================================
 
   // 针对glide v3 版本：如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_3.2.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_3.2.1'
   implementation 'com.android.support:appcompat-v7:27.1.1'
 }
 ```
@@ -192,14 +192,31 @@ public class MyAppGlideModule extends AppGlideModule {
             // 点击回调
             .setBigImageClickListener(new OnBigImageClickListener() {
                 @Override public void onClick(View view, int position) {
-                    // ...图片的点击事件
+                    // ...
+                    Log.d(TAG, "onClick: ");
                 }
             })
             // 长按回调
             .setBigImageLongClickListener(new OnBigImageLongClickListener() {
                 @Override public boolean onLongClick(View view, int position) {
-                    // ...图片的长按事件
+                    // ...
+                    Log.d(TAG, "onLongClick: ");
                     return false;
+                }
+            })
+            // 页面切换回调
+            .setBigImagePageChangeListener(new OnBigImagePageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    Log.d(TAG, "onPageScrolled: ");
+                }
+
+                @Override public void onPageSelected(int position) {
+                    Log.d(TAG, "onPageSelected: ");
+                }
+
+                @Override public void onPageScrollStateChanged(int state) {
+                    Log.d(TAG, "onPageScrollStateChanged: ");
                 }
             })
             
