@@ -32,6 +32,6 @@ dependencies {
   debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.2'
   releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.2'
   // library
-  // implementation 'com.github.SherlockGougou:BigImageViewPager:v3_3.2.2'
+//   implementation 'com.github.SherlockGougou:BigImageViewPager:v3_3.2.2'
   implementation project(':library')
 }
