@@ -11,6 +11,7 @@ import cc.shinichi.library.view.ImagePreviewActivity;
 import cc.shinichi.library.view.listener.OnBigImageClickListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class ImagePreview {
   public static final int MODE_SCALE_TO_MAX_TO_MIN = 1002;// 二级放大，最大与最小
   public static final int MODE_SCALE_TO_MEDIUM_TO_MIN = 1003;// 二级放大，中等与最小
 
-  private Context context;
+  private WeakReference<Context> contextWeakReference;
   private List<ImageInfo> imageInfoList;// 图片数据集合
   private int index = 0;// 默认显示第几个
   private String folderName = "Download";// 下载到的文件夹名（根目录中）
@@ -83,7 +84,7 @@ public class ImagePreview {
   }
 
   public ImagePreview setContext(@NonNull Context context) {
-    this.context = context;
+    this.contextWeakReference = new WeakReference<>(context);
     return this;
   }
 
@@ -354,7 +355,8 @@ public class ImagePreview {
 
     loadStrategy = LoadStrategy.Default;
     folderName = "Download";
-    context = null;
+    contextWeakReference.clear();
+    contextWeakReference = null;
 
     bigImageClickListener = null;
     bigImageLongClickListener = null;
@@ -362,6 +364,10 @@ public class ImagePreview {
   }
 
   public void start() {
+    if (contextWeakReference == null) {
+      throw new IllegalArgumentException("You must call 'setContext(Context context)' first!");
+    }
+    Context context = contextWeakReference.get();
     if (context == null) {
       throw new IllegalArgumentException("You must call 'setContext(Context context)' first!");
     }
