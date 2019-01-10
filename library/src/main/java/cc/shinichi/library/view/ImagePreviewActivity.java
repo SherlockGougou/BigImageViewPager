@@ -105,6 +105,7 @@ public class ImagePreviewActivity extends AppCompatActivity
     imageInfoList = ImagePreview.getInstance().getImageInfoList();
     if (null == imageInfoList || imageInfoList.size() == 0) {
       onBackPressed();
+      return;
     }
     currentItem = ImagePreview.getInstance().getIndex();
     isShowDownButton = ImagePreview.getInstance().isShowDownButton();
