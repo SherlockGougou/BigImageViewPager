@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import cc.shinichi.library.bean.ImageInfo;
@@ -46,16 +47,23 @@ public class ImagePreview {
 
   private LoadStrategy loadStrategy = LoadStrategy.Default;// 加载策略
 
+  @DrawableRes
   private int closeIconResId = R.drawable.ic_action_close;
+  @DrawableRes
   private int downIconResId = R.drawable.icon_download_new;
 
   // 加载失败时的占位图
+  @DrawableRes
   private int errorPlaceHolder = R.drawable.load_failed;
 
   // 点击和长按事件接口
   private OnBigImageClickListener bigImageClickListener;
   private OnBigImageLongClickListener bigImageLongClickListener;
   private OnBigImagePageChangeListener bigImagePageChangeListener;
+
+  // 自定义百分比布局layout id
+  @LayoutRes
+  private int progressLayoutId = R.layout.sh_default_progress_layout;
 
   public enum LoadStrategy {
     /**
@@ -336,6 +344,15 @@ public class ImagePreview {
     return this;
   }
 
+  public int getProgressLayoutId() {
+    return progressLayoutId;
+  }
+
+  public ImagePreview setProgressLayoutId(int progressLayoutId) {
+    this.progressLayoutId = progressLayoutId;
+    return this;
+  }
+
   public void reset() {
     imageInfoList = null;
     index = 0;
@@ -361,6 +378,8 @@ public class ImagePreview {
     bigImageClickListener = null;
     bigImageLongClickListener = null;
     bigImagePageChangeListener = null;
+
+    progressLayoutId = R.layout.sh_default_progress_layout;
   }
 
   public void start() {

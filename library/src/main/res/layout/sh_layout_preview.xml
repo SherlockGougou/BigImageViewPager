@@ -28,13 +28,12 @@
       />
 
   <FrameLayout
-      android:id="@+id/fm_image"
+      android:id="@+id/fm_image_progress_container"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
       android:layout_centerHorizontal="true"
       android:layout_marginBottom="20dp"
-      android:visibility="gone"
       >
 
     <TextView
@@ -50,6 +49,15 @@
         android:text="查看原图"
         android:textColor="#ffffff"
         />
+  </FrameLayout>
+
+  <FrameLayout
+      android:id="@+id/fm_center_progress_container"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerInParent="true"
+      >
+
   </FrameLayout>
 
   <ImageView

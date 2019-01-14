@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -56,7 +57,7 @@ public class ImagePreviewActivity extends AppCompatActivity
   private ImagePreviewAdapter imagePreviewAdapter;
   private HackyViewPager viewPager;
   private TextView tv_indicator;
-  private FrameLayout fm_image;
+  private FrameLayout fm_image_progress_container;
   private TextView tv_show_origin;
   private ImageView img_download;
   private ImageView imgCloseButton;
@@ -123,7 +124,14 @@ public class ImagePreviewActivity extends AppCompatActivity
     rootView = findViewById(R.id.rootView);
     viewPager = findViewById(R.id.viewPager);
     tv_indicator = findViewById(R.id.tv_indicator);
-    fm_image = findViewById(R.id.fm_image);
+
+    fm_image_progress_container = findViewById(R.id.fm_image_progress_container);
+    fm_image_progress_container.setVisibility(View.GONE);
+    View progressView = LayoutInflater.from(context).inflate(ImagePreview.getInstance().getProgressLayoutId(), null);
+    if (progressView != null) {
+        fm_image_progress_container.addView(progressView);
+    }
+
     tv_show_origin = findViewById(R.id.tv_show_origin);
     img_download = findViewById(R.id.img_download);
     imgCloseButton = findViewById(R.id.imgCloseButton);
@@ -215,7 +223,7 @@ public class ImagePreviewActivity extends AppCompatActivity
    * 下载当前图片到SD卡
    */
   private void downloadCurrentImg() {
-    DownloadPictureUtil.downloadPicture(context, currentItemOriginPathUrl);
+    DownloadPictureUtil.downloadPicture(context.getApplicationContext(), currentItemOriginPathUrl);
   }
 
   @Override public void onBackPressed() {
@@ -244,7 +252,7 @@ public class ImagePreviewActivity extends AppCompatActivity
         tv_indicator.setVisibility(View.VISIBLE);
       }
       if (originalStatus) {
-        fm_image.setVisibility(View.VISIBLE);
+        fm_image_progress_container.setVisibility(View.VISIBLE);
       }
       if (downloadButtonStatus) {
         img_download.setVisibility(View.VISIBLE);
@@ -254,7 +262,7 @@ public class ImagePreviewActivity extends AppCompatActivity
       }
     } else {
       tv_indicator.setVisibility(View.GONE);
-      fm_image.setVisibility(View.GONE);
+      fm_image_progress_container.setVisibility(View.GONE);
       img_download.setVisibility(View.GONE);
       imgCloseButton.setVisibility(View.GONE);
     }
@@ -321,10 +329,10 @@ public class ImagePreviewActivity extends AppCompatActivity
       }
     } else if (msg.what == 3) {
       tv_show_origin.setText("查看原图");
-      fm_image.setVisibility(View.GONE);
+      fm_image_progress_container.setVisibility(View.GONE);
       originalStatus = false;
     } else if (msg.what == 4) {
-      fm_image.setVisibility(View.VISIBLE);
+      fm_image_progress_container.setVisibility(View.VISIBLE);
       originalStatus = true;
     }
     return true;
