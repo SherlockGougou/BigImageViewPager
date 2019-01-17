@@ -28,7 +28,7 @@
       />
 
   <FrameLayout
-      android:id="@+id/fm_image_progress_container"
+      android:id="@+id/fm_image_show_origin_container"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
@@ -36,15 +36,15 @@
       android:layout_marginBottom="20dp"
       >
 
-    <TextView
-        android:id="@+id/tv_show_origin"
+    <Button
+        android:id="@+id/btn_show_origin"
         android:layout_width="100dp"
         android:layout_height="30dp"
         android:background="@drawable/gray_square_circle_bg_white_stroke"
         android:gravity="center"
         android:paddingBottom="5dp"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:paddingTop="5dp"
         android:text="查看原图"
         android:textColor="#ffffff"

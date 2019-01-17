@@ -32,8 +32,7 @@ class Compat {
         }
     }
 
-    @TargetApi(16)
-    private static void postOnAnimationJellyBean(View view, Runnable runnable) {
+    @TargetApi(16) private static void postOnAnimationJellyBean(View view, Runnable runnable) {
         view.postOnAnimation(runnable);
     }
 }

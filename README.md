@@ -17,10 +17,11 @@
 - 支持多种界面的自定义（具体可查看Demo）
 - 支持加载失败时占位图的设置；
 - 针对保存图片进行优化，文件扩展名使用文件头部Mime信息进行设置，不用担心gif保存成jpeg；
+- 支持自定义查看原图时的百分比View；
 
 # 截图
 
-# 推荐扫描二维码进行安装体验：
+# 强烈推荐推荐扫描二维码进行安装体验：
 
 ![扫码下载demo](https://upload-images.jianshu.io/upload_images/1710902-0073c2f34a714fe2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -45,30 +46,27 @@ allprojects {
 
 ##### 此处显示的是本框架的最新版本号：
 ```
-对于glide4.x : 使用 v4_3.2.2
-对于glide3.x : 使用 v3_3.2.2
+对于glide4.x : 使用 v4_4.0.0
+对于glide3.x : 使用 v3_4.0.0
 ```
 
 ```
 dependencies {
 
-  // 针对glide v4 版本：如果您的app中没有使用glide任何版本，或者使用了glide，且glide版本号为4.x，请依赖以下库：
-
-  // 主库，必须添加！
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_3.2.2'
-  // v7支持库，必须添加！
+  // 针对glide v4 版本：
+  // 如果您的app中没有使用glide任何版本，或者使用了glide且glide版本号为4.x，请依赖以几个下库（已添加的可跳过）：
   implementation 'com.android.support:appcompat-v7:27.1.1'
-  // 由于本框架使用了glide和okhttp3，所以还请增加依赖以下框架，必须添加！
-  // 如果您app中已经依赖某一个的话，可以略过那一个，但要保证以下这些库的版本号一致：
   implementation 'com.github.bumptech.glide:glide:4.8.0'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_4.0.0'
 
 ================================v4/v3分割线==================================
 
-  // 针对glide v3 版本：如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_3.2.2'
+  // 针对glide v3 版本：
+  // 如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
   implementation 'com.android.support:appcompat-v7:27.1.1'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_4.0.0'
 }
 ```
 
@@ -94,7 +92,7 @@ public class MyAppGlideModule extends AppGlideModule {
 
 ## 调用方式
 
-#### 1：生成图片源：（如果你有缩略图和原图两种路径，请使用下面的方式，进行图片List的生成；如果你是本地图片或者只有一张图片，可以跳过这一步）
+#### 1：生成图片源：（如果你有缩略图和原图两种路径，请使用下面的方式，进行图片List的生成；如果你是本地图片或者没有原图缩略图之分，可以跳过这一步）
 ```
 		ImageInfo imageInfo;
 		final List<ImageInfo> imageInfoList = new ArrayList<>();
@@ -108,120 +106,164 @@ public class MyAppGlideModule extends AppGlideModule {
 
 #### 2：最简单的调用方式：
 ```
-        // 最简单的调用，即可实现大部分需求，如需定制，可参考下一步的自定义代码
+        // 最简单的调用，即可实现大部分需求，如需定制，可参考下一步的自定义代码：
         
         ImagePreview
             .getInstance()
             // 上下文，必须是activity，不需要担心内存泄漏，本框架已经处理好；
             .setContext(MainActivity.this)
-            
-            // 有三种设置数据集合的方式，根据自己的需求进行选择：
-            
-            // 第一步生成的imageInfo List
+
+            // 设置从第几张开始看（索引从0开始）
+            .setIndex(0)
+
+            //=================================================================================================
+            // 有三种设置数据集合的方式，根据自己的需求进行三选一：
+            // 1：第一步生成的imageInfo List
             .setImageInfoList(imageInfoList)
-            
-            // 直接传url List
+
+            // 2：直接传url List
             //.setImageList(List<String> imageList)
-            
-            // 只有一张图片的情况，可以直接传入这张图片的url
+
+            // 3：只有一张图片的情况，可以直接传入这张图片的url
             //.setImage(String image)
-            
+            //=================================================================================================
+
             // 开启预览
             .start();
             
-        // 默认的配置为：
-        //  显示顶部进度指示器、
-        //  显示右侧下载按钮、
-        //  隐藏左侧关闭按钮、
-        //  开启点击图片关闭、
-        //  关闭下拉图片关闭、
-        //  加载方式为手动模式 
+            // 仅需一行代码,默认配置为：
+            //      显示顶部进度指示器、
+            //      显示右侧下载按钮、
+            //      隐藏左侧关闭按钮、
+            //      开启点击图片关闭、
+            //      关闭下拉图片关闭、
+            //      加载方式为手动模式
+            //      加载原图的百分比在底部
 ```
 
 ##### 3：自定义多种配置：
 ```
-        ImagePreview
-            .getInstance()
-            // 上下文，必须是activity，不需要担心内存泄漏，本框架已经处理好
-            .setContext(MainActivity.this)
-            // 从第几张图片开始，索引从0开始哦~
-            .setIndex(0)
-            
-            // 有三种设置数据集合的方式，根据自己的需求进行选择：
-            
-            // 第一步生成的imageInfo List
-            .setImageInfoList(imageInfoList)
-            
-            // 直接传url List
-            //.setImageList(List<String> imageList)
-            
-            // 只有一张图片的情况，可以直接传入这张图片的url
-            //.setImage(String image)
-            
-            // 加载策略，详细说明见下面“加载策略介绍”。默认为手动模式
-            .setLoadStrategy(ImagePreview.LoadStrategy.AlwaysThumb)
-            
-            // 保存的文件夹名称，会在SD卡根目录进行文件夹的新建。
-            // (你也可设置嵌套模式，比如："BigImageView/Download"，会在SD卡根目录新建BigImageView文件夹，并在BigImageView文件夹中新建Download文件夹)
-            .setFolderName("BigImageViewDownload")
-            
-            // 缩放动画时长，单位ms
-            .setZoomTransitionDuration(300)
+        // 完全自定义调用：
+        findViewById(R.id.buttonPreview).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                ImagePreview.getInstance()
+                    // 上下文，必须是activity，不需要担心内存泄漏，本框架已经处理好
+                    .setContext(MainActivity.this)
+                    // 从第几张图片开始，索引从0开始哦~
+                    .setIndex(0)
 
-            // 是否启用点击图片关闭。默认启用
-            .setEnableClickClose(enableClickClose)
-            // 是否启用上拉/下拉关闭。默认不启用
-            .setEnableDragClose(enableDragClose)
+                    //=================================================================================================
+                    // 有三种设置数据集合的方式，根据自己的需求进行三选一：
+                    // 1：第一步生成的imageInfo List
+                    .setImageInfoList(imageInfoList)
 
-            // 是否显示关闭页面按钮，在页面左下角。默认不显示
-            .setShowCloseButton(showCloseButton)
-            // 设置关闭按钮图片资源，可不填，默认为：R.drawable.ic_action_close
-            .setCloseIconResId(R.drawable.ic_action_close)
+                    // 2：直接传url List
+                    //.setImageList(List<String> imageList)
 
-            // 是否显示下载按钮，在页面右下角。默认显示
-            .setShowDownButton(showDownButton)
-            // 设置下载按钮图片资源，可不填，默认为：R.drawable.icon_download_new
-            .setDownIconResId(R.drawable.icon_download_new)
+                    // 3：只有一张图片的情况，可以直接传入这张图片的url
+                    //.setImage(String image)
+                    //=================================================================================================
 
-            // 设置是否显示顶部的指示器（1/9）默认显示
-            .setShowIndicator(showIndicator)
-            
-            // 设置失败时的占位图，默认为R.drawable.load_failed，设置为 0 时不显示
-            .setErrorPlaceHolder(R.drawable.load_failed)
-            
-            // 点击回调
-            .setBigImageClickListener(new OnBigImageClickListener() {
-                @Override public void onClick(View view, int position) {
-                    // ...
-                    Log.d(TAG, "onClick: ");
-                }
-            })
-            // 长按回调
-            .setBigImageLongClickListener(new OnBigImageLongClickListener() {
-                @Override public boolean onLongClick(View view, int position) {
-                    // ...
-                    Log.d(TAG, "onLongClick: ");
-                    return false;
-                }
-            })
-            // 页面切换回调
-            .setBigImagePageChangeListener(new OnBigImagePageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                    Log.d(TAG, "onPageScrolled: ");
-                }
+                    // 加载策略，默认为手动模式（具体可看下面加载策略的详细说明）
+                    .setLoadStrategy(loadStrategy)
 
-                @Override public void onPageSelected(int position) {
-                    Log.d(TAG, "onPageSelected: ");
-                }
+                    // 保存的文件夹名称，会在SD卡根目录进行文件夹的新建。
+                    // (你也可设置嵌套模式，比如："BigImageView/Download"，会在SD卡根目录新建BigImageView文件夹，并在BigImageView文件夹中新建Download文件夹)
+                    .setFolderName("BigImageView/Download")
 
-                @Override public void onPageScrollStateChanged(int state) {
-                    Log.d(TAG, "onPageScrollStateChanged: ");
-                }
-            })
-            
-            // 开启预览
-            .start();
+                    // 缩放动画时长，单位ms
+                    .setZoomTransitionDuration(300)
+
+                    // 是否启用点击图片关闭。默认启用
+                    .setEnableClickClose(enableClickClose)
+                    // 是否启用上拉/下拉关闭。默认不启用
+                    .setEnableDragClose(enableDragClose)
+
+                    // 是否显示关闭页面按钮，在页面左下角。默认不显示
+                    .setShowCloseButton(showCloseButton)
+                    // 设置关闭按钮图片资源，可不填，默认为库中自带：R.drawable.ic_action_close
+                    .setCloseIconResId(R.drawable.ic_action_close)
+
+                    // 是否显示下载按钮，在页面右下角。默认显示
+                    .setShowDownButton(showDownButton)
+                    // 设置下载按钮图片资源，可不填，默认为库中自带：R.drawable.icon_download_new
+                    .setDownIconResId(R.drawable.icon_download_new)
+
+                    // 设置是否显示顶部的指示器（1/9）默认显示
+                    .setShowIndicator(showIndicator)
+
+                    // 设置失败时的占位图，默认为库中自带R.drawable.load_failed，设置为 0 时不显示
+                    .setErrorPlaceHolder(R.drawable.load_failed)
+
+                    // 点击回调
+                    .setBigImageClickListener(new OnBigImageClickListener() {
+                        @Override public void onClick(View view, int position) {
+                            // ...
+                            Log.d(TAG, "onClick: ");
+                        }
+                    })
+                    // 长按回调
+                    .setBigImageLongClickListener(new OnBigImageLongClickListener() {
+                        @Override public boolean onLongClick(View view, int position) {
+                            // ...
+                            Log.d(TAG, "onLongClick: ");
+                            return false;
+                        }
+                    })
+                    // 页面切换回调
+                    .setBigImagePageChangeListener(new OnBigImagePageChangeListener() {
+                        @Override
+                        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                            Log.d(TAG, "onPageScrolled: ");
+                        }
+
+                        @Override public void onPageSelected(int position) {
+                            Log.d(TAG, "onPageSelected: ");
+                        }
+
+                        @Override public void onPageScrollStateChanged(int state) {
+                            Log.d(TAG, "onPageScrollStateChanged: ");
+                        }
+                    })
+
+                    //=================================================================================================
+                    // 设置查看原图时的百分比样式：库中带有一个样式：ImagePreview.PROGRESS_THEME_CIRCLE_TEXT，使用如下：
+                    .setProgressLayoutId(ImagePreview.PROGRESS_THEME_CIRCLE_TEXT, new OnOriginProgressListener() {
+                        @Override public void progress(View parentView, int progress) {
+                            Log.d(TAG, "progress: " + progress);
+
+                            // 需要找到进度控件并设置百分比，回调中的parentView即是传入的布局的根View，可通过parentView找到进度控件：
+                            ProgressBar progressBar = parentView.findViewById(R.id.sh_progress_view);
+                            TextView textView = parentView.findViewById(R.id.sh_progress_text);
+                            progressBar.setProgress(progress);
+                            String progressText = progress + "%";
+                            textView.setText(progressText);
+                        }
+
+                        @Override public void finish(View parentView) {
+                            Log.d(TAG, "finish: ");
+                        }
+                    })
+
+                    // 使用自定义百分比样式，传入自己的布局，并设置回调，再根据parentView找到进度控件进行百分比的设置：
+                    //.setProgressLayoutId(R.layout.image_progress_layout_theme_1, new OnOriginProgressListener() {
+                    //    @Override public void progress(View parentView, int progress) {
+                    //        Log.d(TAG, "progress: " + progress);
+                    //
+                    //        ProgressBar progressBar = parentView.findViewById(R.id.progress_horizontal);
+                    //        progressBar.setProgress(progress);
+                    //    }
+                    //
+                    //    @Override public void finish(View parentView) {
+                    //        Log.d(TAG, "finish: ");
+                    //    }
+                    //})
+                    //=================================================================================================
+
+                    // 开启预览
+                    .start();
+            }
+        });
 
 ```
 
@@ -269,16 +311,18 @@ https://github.com/SherlockGougou/BigImageViewPager
 ![欢迎加入“大话安卓”技术交流群，互相学习提升](https://upload-images.jianshu.io/upload_images/1710902-5cdeb8c1f58dd425.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 # LICENSE
+```
 Copyright (C) 2018 SherlockGougou 18883840501@163.com
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-http://www.apache.org/licenses/LICENSE-2.0
+        http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+```

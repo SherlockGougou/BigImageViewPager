@@ -16,9 +16,6 @@ public class MD5Util {
 
     /**
      * MD5加密
-     *
-     * @param origin
-     * @return
      */
     public static String md5Encode(String origin) {
         return md5Encode(origin, "utf-8");

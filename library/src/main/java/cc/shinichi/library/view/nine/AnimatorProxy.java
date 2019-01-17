@@ -16,328 +16,324 @@ import java.util.WeakHashMap;
  * are using {@code ObjectAnimator} as it will handle that itself.
  */
 public final class AnimatorProxy extends Animation {
-	/** Whether or not the current running platform needs to be proxied. */
-	@SuppressWarnings("deprecation") public static final boolean NEEDS_PROXY =
-		Integer.valueOf(Build.VERSION.SDK).intValue() < Build.VERSION_CODES.HONEYCOMB;
+    /** Whether or not the current running platform needs to be proxied. */
+    @SuppressWarnings("deprecation") public static final boolean NEEDS_PROXY =
+        Integer.valueOf(Build.VERSION.SDK).intValue() < Build.VERSION_CODES.HONEYCOMB;
 
-	private static final WeakHashMap<View, AnimatorProxy> PROXIES = new WeakHashMap<View, AnimatorProxy>();
+    private static final WeakHashMap<View, AnimatorProxy> PROXIES = new WeakHashMap<View, AnimatorProxy>();
+    private final WeakReference<View> mView;
+    private final Camera mCamera = new Camera();
+    private final RectF mBefore = new RectF();
+    private final RectF mAfter = new RectF();
+    private final Matrix mTempMatrix = new Matrix();
+    private boolean mHasPivot;
+    private float mAlpha = 1;
+    private float mPivotX;
+    private float mPivotY;
+    private float mRotationX;
+    private float mRotationY;
+    private float mRotationZ;
+    private float mScaleX = 1;
+    private float mScaleY = 1;
+    private float mTranslationX;
+    private float mTranslationY;
+    private AnimatorProxy(View view) {
+        setDuration(0); //perform transformation immediately
+        setFillAfter(true); //persist transformation beyond duration
+        view.setAnimation(this);
+        mView = new WeakReference<View>(view);
+    }
 
-	/**
-	 * Create a proxy to allow for modifying post-3.0 view properties on all
-	 * pre-3.0 platforms. <strong>DO NOT</strong> wrap your views if you are
-	 * using {@code ObjectAnimator} as it will handle that itself.
-	 *
-	 * @param view View to wrap.
-	 * @return Proxy to post-3.0 properties.
-	 */
-	public static AnimatorProxy wrap(View view) {
-		AnimatorProxy proxy = PROXIES.get(view);
-		// This checks if the proxy already exists and whether it still is the animation of the given view
-		if (proxy == null || proxy != view.getAnimation()) {
-			proxy = new AnimatorProxy(view);
-			PROXIES.put(view, proxy);
-		}
-		return proxy;
-	}
+    /**
+     * Create a proxy to allow for modifying post-3.0 view properties on all
+     * pre-3.0 platforms. <strong>DO NOT</strong> wrap your views if you are
+     * using {@code ObjectAnimator} as it will handle that itself.
+     *
+     * @param view View to wrap.
+     * @return Proxy to post-3.0 properties.
+     */
+    public static AnimatorProxy wrap(View view) {
+        AnimatorProxy proxy = PROXIES.get(view);
+        // This checks if the proxy already exists and whether it still is the animation of the given view
+        if (proxy == null || proxy != view.getAnimation()) {
+            proxy = new AnimatorProxy(view);
+            PROXIES.put(view, proxy);
+        }
+        return proxy;
+    }
 
-	private final WeakReference<View> mView;
-	private final Camera mCamera = new Camera();
-	private boolean mHasPivot;
+    public float getAlpha() {
+        return mAlpha;
+    }
 
-	private float mAlpha = 1;
-	private float mPivotX;
-	private float mPivotY;
-	private float mRotationX;
-	private float mRotationY;
-	private float mRotationZ;
-	private float mScaleX = 1;
-	private float mScaleY = 1;
-	private float mTranslationX;
-	private float mTranslationY;
+    public void setAlpha(float alpha) {
+        if (mAlpha != alpha) {
+            mAlpha = alpha;
+            View view = mView.get();
+            if (view != null) {
+                view.invalidate();
+            }
+        }
+    }
 
-	private final RectF mBefore = new RectF();
-	private final RectF mAfter = new RectF();
-	private final Matrix mTempMatrix = new Matrix();
+    public float getPivotX() {
+        return mPivotX;
+    }
 
-	private AnimatorProxy(View view) {
-		setDuration(0); //perform transformation immediately
-		setFillAfter(true); //persist transformation beyond duration
-		view.setAnimation(this);
-		mView = new WeakReference<View>(view);
-	}
+    public void setPivotX(float pivotX) {
+        if (!mHasPivot || mPivotX != pivotX) {
+            prepareForUpdate();
+            mHasPivot = true;
+            mPivotX = pivotX;
+            invalidateAfterUpdate();
+        }
+    }
 
-	public float getAlpha() {
-		return mAlpha;
-	}
+    public float getPivotY() {
+        return mPivotY;
+    }
 
-	public void setAlpha(float alpha) {
-		if (mAlpha != alpha) {
-			mAlpha = alpha;
-			View view = mView.get();
-			if (view != null) {
-				view.invalidate();
-			}
-		}
-	}
+    public void setPivotY(float pivotY) {
+        if (!mHasPivot || mPivotY != pivotY) {
+            prepareForUpdate();
+            mHasPivot = true;
+            mPivotY = pivotY;
+            invalidateAfterUpdate();
+        }
+    }
 
-	public float getPivotX() {
-		return mPivotX;
-	}
+    public float getRotation() {
+        return mRotationZ;
+    }
 
-	public void setPivotX(float pivotX) {
-		if (!mHasPivot || mPivotX != pivotX) {
-			prepareForUpdate();
-			mHasPivot = true;
-			mPivotX = pivotX;
-			invalidateAfterUpdate();
-		}
-	}
+    public void setRotation(float rotation) {
+        if (mRotationZ != rotation) {
+            prepareForUpdate();
+            mRotationZ = rotation;
+            invalidateAfterUpdate();
+        }
+    }
 
-	public float getPivotY() {
-		return mPivotY;
-	}
+    public float getRotationX() {
+        return mRotationX;
+    }
 
-	public void setPivotY(float pivotY) {
-		if (!mHasPivot || mPivotY != pivotY) {
-			prepareForUpdate();
-			mHasPivot = true;
-			mPivotY = pivotY;
-			invalidateAfterUpdate();
-		}
-	}
+    public void setRotationX(float rotationX) {
+        if (mRotationX != rotationX) {
+            prepareForUpdate();
+            mRotationX = rotationX;
+            invalidateAfterUpdate();
+        }
+    }
 
-	public float getRotation() {
-		return mRotationZ;
-	}
+    public float getRotationY() {
+        return mRotationY;
+    }
 
-	public void setRotation(float rotation) {
-		if (mRotationZ != rotation) {
-			prepareForUpdate();
-			mRotationZ = rotation;
-			invalidateAfterUpdate();
-		}
-	}
+    public void setRotationY(float rotationY) {
+        if (mRotationY != rotationY) {
+            prepareForUpdate();
+            mRotationY = rotationY;
+            invalidateAfterUpdate();
+        }
+    }
 
-	public float getRotationX() {
-		return mRotationX;
-	}
+    public float getScaleX() {
+        return mScaleX;
+    }
 
-	public void setRotationX(float rotationX) {
-		if (mRotationX != rotationX) {
-			prepareForUpdate();
-			mRotationX = rotationX;
-			invalidateAfterUpdate();
-		}
-	}
+    public void setScaleX(float scaleX) {
+        if (mScaleX != scaleX) {
+            prepareForUpdate();
+            mScaleX = scaleX;
+            invalidateAfterUpdate();
+        }
+    }
 
-	public float getRotationY() {
-		return mRotationY;
-	}
+    public float getScaleY() {
+        return mScaleY;
+    }
 
-	public void setRotationY(float rotationY) {
-		if (mRotationY != rotationY) {
-			prepareForUpdate();
-			mRotationY = rotationY;
-			invalidateAfterUpdate();
-		}
-	}
+    public void setScaleY(float scaleY) {
+        if (mScaleY != scaleY) {
+            prepareForUpdate();
+            mScaleY = scaleY;
+            invalidateAfterUpdate();
+        }
+    }
 
-	public float getScaleX() {
-		return mScaleX;
-	}
+    public int getScrollX() {
+        View view = mView.get();
+        if (view == null) {
+            return 0;
+        }
+        return view.getScrollX();
+    }
 
-	public void setScaleX(float scaleX) {
-		if (mScaleX != scaleX) {
-			prepareForUpdate();
-			mScaleX = scaleX;
-			invalidateAfterUpdate();
-		}
-	}
+    public void setScrollX(int value) {
+        View view = mView.get();
+        if (view != null) {
+            view.scrollTo(value, view.getScrollY());
+        }
+    }
 
-	public float getScaleY() {
-		return mScaleY;
-	}
+    public int getScrollY() {
+        View view = mView.get();
+        if (view == null) {
+            return 0;
+        }
+        return view.getScrollY();
+    }
 
-	public void setScaleY(float scaleY) {
-		if (mScaleY != scaleY) {
-			prepareForUpdate();
-			mScaleY = scaleY;
-			invalidateAfterUpdate();
-		}
-	}
+    public void setScrollY(int value) {
+        View view = mView.get();
+        if (view != null) {
+            view.scrollTo(view.getScrollX(), value);
+        }
+    }
 
-	public int getScrollX() {
-		View view = mView.get();
-		if (view == null) {
-			return 0;
-		}
-		return view.getScrollX();
-	}
+    public float getTranslationX() {
+        return mTranslationX;
+    }
 
-	public void setScrollX(int value) {
-		View view = mView.get();
-		if (view != null) {
-			view.scrollTo(value, view.getScrollY());
-		}
-	}
+    public void setTranslationX(float translationX) {
+        if (mTranslationX != translationX) {
+            prepareForUpdate();
+            mTranslationX = translationX;
+            invalidateAfterUpdate();
+        }
+    }
 
-	public int getScrollY() {
-		View view = mView.get();
-		if (view == null) {
-			return 0;
-		}
-		return view.getScrollY();
-	}
+    public float getTranslationY() {
+        return mTranslationY;
+    }
 
-	public void setScrollY(int value) {
-		View view = mView.get();
-		if (view != null) {
-			view.scrollTo(view.getScrollX(), value);
-		}
-	}
+    public void setTranslationY(float translationY) {
+        if (mTranslationY != translationY) {
+            prepareForUpdate();
+            mTranslationY = translationY;
+            invalidateAfterUpdate();
+        }
+    }
 
-	public float getTranslationX() {
-		return mTranslationX;
-	}
+    public float getX() {
+        View view = mView.get();
+        if (view == null) {
+            return 0;
+        }
+        return view.getLeft() + mTranslationX;
+    }
 
-	public void setTranslationX(float translationX) {
-		if (mTranslationX != translationX) {
-			prepareForUpdate();
-			mTranslationX = translationX;
-			invalidateAfterUpdate();
-		}
-	}
+    public void setX(float x) {
+        View view = mView.get();
+        if (view != null) {
+            setTranslationX(x - view.getLeft());
+        }
+    }
 
-	public float getTranslationY() {
-		return mTranslationY;
-	}
+    public float getY() {
+        View view = mView.get();
+        if (view == null) {
+            return 0;
+        }
+        return view.getTop() + mTranslationY;
+    }
 
-	public void setTranslationY(float translationY) {
-		if (mTranslationY != translationY) {
-			prepareForUpdate();
-			mTranslationY = translationY;
-			invalidateAfterUpdate();
-		}
-	}
+    public void setY(float y) {
+        View view = mView.get();
+        if (view != null) {
+            setTranslationY(y - view.getTop());
+        }
+    }
 
-	public float getX() {
-		View view = mView.get();
-		if (view == null) {
-			return 0;
-		}
-		return view.getLeft() + mTranslationX;
-	}
+    private void prepareForUpdate() {
+        View view = mView.get();
+        if (view != null) {
+            computeRect(mBefore, view);
+        }
+    }
 
-	public void setX(float x) {
-		View view = mView.get();
-		if (view != null) {
-			setTranslationX(x - view.getLeft());
-		}
-	}
+    private void invalidateAfterUpdate() {
+        View view = mView.get();
+        if (view == null || view.getParent() == null) {
+            return;
+        }
 
-	public float getY() {
-		View view = mView.get();
-		if (view == null) {
-			return 0;
-		}
-		return view.getTop() + mTranslationY;
-	}
+        final RectF after = mAfter;
+        computeRect(after, view);
+        after.union(mBefore);
 
-	public void setY(float y) {
-		View view = mView.get();
-		if (view != null) {
-			setTranslationY(y - view.getTop());
-		}
-	}
+        ((View) view.getParent()).invalidate((int) Math.floor(after.left), (int) Math.floor(after.top),
+            (int) Math.ceil(after.right), (int) Math.ceil(after.bottom));
+    }
 
-	private void prepareForUpdate() {
-		View view = mView.get();
-		if (view != null) {
-			computeRect(mBefore, view);
-		}
-	}
+    private void computeRect(final RectF r, View view) {
+        // compute current rectangle according to matrix transformation
+        final float w = view.getWidth();
+        final float h = view.getHeight();
 
-	private void invalidateAfterUpdate() {
-		View view = mView.get();
-		if (view == null || view.getParent() == null) {
-			return;
-		}
+        // use a rectangle at 0,0 to make sure we don't run into issues with scaling
+        r.set(0, 0, w, h);
 
-		final RectF after = mAfter;
-		computeRect(after, view);
-		after.union(mBefore);
+        final Matrix m = mTempMatrix;
+        m.reset();
+        transformMatrix(m, view);
+        mTempMatrix.mapRect(r);
 
-		((View) view.getParent()).invalidate((int) Math.floor(after.left), (int) Math.floor(after.top),
-			(int) Math.ceil(after.right), (int) Math.ceil(after.bottom));
-	}
+        r.offset(view.getLeft(), view.getTop());
 
-	private void computeRect(final RectF r, View view) {
-		// compute current rectangle according to matrix transformation
-		final float w = view.getWidth();
-		final float h = view.getHeight();
+        // Straighten coords if rotations flipped them
+        if (r.right < r.left) {
+            final float f = r.right;
+            r.right = r.left;
+            r.left = f;
+        }
+        if (r.bottom < r.top) {
+            final float f = r.top;
+            r.top = r.bottom;
+            r.bottom = f;
+        }
+    }
 
-		// use a rectangle at 0,0 to make sure we don't run into issues with scaling
-		r.set(0, 0, w, h);
+    private void transformMatrix(Matrix m, View view) {
+        final float w = view.getWidth();
+        final float h = view.getHeight();
+        final boolean hasPivot = mHasPivot;
+        final float pX = hasPivot ? mPivotX : w / 2f;
+        final float pY = hasPivot ? mPivotY : h / 2f;
 
-		final Matrix m = mTempMatrix;
-		m.reset();
-		transformMatrix(m, view);
-		mTempMatrix.mapRect(r);
+        final float rX = mRotationX;
+        final float rY = mRotationY;
+        final float rZ = mRotationZ;
+        if ((rX != 0) || (rY != 0) || (rZ != 0)) {
+            final Camera camera = mCamera;
+            camera.save();
+            camera.rotateX(rX);
+            camera.rotateY(rY);
+            camera.rotateZ(-rZ);
+            camera.getMatrix(m);
+            camera.restore();
+            m.preTranslate(-pX, -pY);
+            m.postTranslate(pX, pY);
+        }
 
-		r.offset(view.getLeft(), view.getTop());
+        final float sX = mScaleX;
+        final float sY = mScaleY;
+        if ((sX != 1.0f) || (sY != 1.0f)) {
+            m.postScale(sX, sY);
+            final float sPX = -(pX / w) * ((sX * w) - w);
+            final float sPY = -(pY / h) * ((sY * h) - h);
+            m.postTranslate(sPX, sPY);
+        }
 
-		// Straighten coords if rotations flipped them
-		if (r.right < r.left) {
-			final float f = r.right;
-			r.right = r.left;
-			r.left = f;
-		}
-		if (r.bottom < r.top) {
-			final float f = r.top;
-			r.top = r.bottom;
-			r.bottom = f;
-		}
-	}
+        m.postTranslate(mTranslationX, mTranslationY);
+    }
 
-	private void transformMatrix(Matrix m, View view) {
-		final float w = view.getWidth();
-		final float h = view.getHeight();
-		final boolean hasPivot = mHasPivot;
-		final float pX = hasPivot ? mPivotX : w / 2f;
-		final float pY = hasPivot ? mPivotY : h / 2f;
-
-		final float rX = mRotationX;
-		final float rY = mRotationY;
-		final float rZ = mRotationZ;
-		if ((rX != 0) || (rY != 0) || (rZ != 0)) {
-			final Camera camera = mCamera;
-			camera.save();
-			camera.rotateX(rX);
-			camera.rotateY(rY);
-			camera.rotateZ(-rZ);
-			camera.getMatrix(m);
-			camera.restore();
-			m.preTranslate(-pX, -pY);
-			m.postTranslate(pX, pY);
-		}
-
-		final float sX = mScaleX;
-		final float sY = mScaleY;
-		if ((sX != 1.0f) || (sY != 1.0f)) {
-			m.postScale(sX, sY);
-			final float sPX = -(pX / w) * ((sX * w) - w);
-			final float sPY = -(pY / h) * ((sY * h) - h);
-			m.postTranslate(sPX, sPY);
-		}
-
-		m.postTranslate(mTranslationX, mTranslationY);
-	}
-
-	@Override protected void applyTransformation(float interpolatedTime, Transformation t) {
-		View view = mView.get();
-		if (view != null) {
-			t.setAlpha(mAlpha);
-			transformMatrix(t.getMatrix(), view);
-		}
-	}
+    @Override protected void applyTransformation(float interpolatedTime, Transformation t) {
+        View view = mView.get();
+        if (view != null) {
+            t.setAlpha(mAlpha);
+            transformMatrix(t.getMatrix(), view);
+        }
+    }
 }

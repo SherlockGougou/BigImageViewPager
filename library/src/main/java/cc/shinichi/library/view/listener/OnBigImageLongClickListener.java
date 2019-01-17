@@ -13,8 +13,6 @@ public interface OnBigImageLongClickListener {
 
     /**
      * 长按事件
-     * @param view
-     * @param position
      */
     boolean onLongClick(View view, int position);
 }

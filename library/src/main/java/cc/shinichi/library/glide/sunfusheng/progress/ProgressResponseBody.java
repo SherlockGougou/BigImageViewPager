@@ -17,63 +17,58 @@ import okio.Source;
  */
 public class ProgressResponseBody extends ResponseBody {
 
-  private static final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+    private static final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
-  private String url;
-  private InternalProgressListener internalProgressListener;
+    private String url;
+    private InternalProgressListener internalProgressListener;
 
-  private ResponseBody responseBody;
-  private BufferedSource bufferedSource;
+    private ResponseBody responseBody;
+    private BufferedSource bufferedSource;
 
-  ProgressResponseBody(String url, InternalProgressListener internalProgressListener,
-      ResponseBody responseBody) {
-    this.url = url;
-    this.internalProgressListener = internalProgressListener;
-    this.responseBody = responseBody;
-  }
-
-  @Override
-  public MediaType contentType() {
-    return responseBody.contentType();
-  }
-
-  @Override
-  public long contentLength() {
-    return responseBody.contentLength();
-  }
-
-  @Override
-  public BufferedSource source() {
-    if (bufferedSource == null) {
-      bufferedSource = Okio.buffer(source(responseBody.source()));
+    ProgressResponseBody(String url, InternalProgressListener internalProgressListener, ResponseBody responseBody) {
+        this.url = url;
+        this.internalProgressListener = internalProgressListener;
+        this.responseBody = responseBody;
     }
-    return bufferedSource;
-  }
 
-  private Source source(Source source) {
-    return new ForwardingSource(source) {
-      long totalBytesRead;
-      long lastTotalBytesRead;
+    @Override public MediaType contentType() {
+        return responseBody.contentType();
+    }
 
-      @Override
-      public long read(@NonNull Buffer sink, long byteCount) throws IOException {
-        long bytesRead = super.read(sink, byteCount);
-        totalBytesRead += (bytesRead == -1) ? 0 : bytesRead;
+    @Override public long contentLength() {
+        return responseBody.contentLength();
+    }
 
-        if (internalProgressListener != null && lastTotalBytesRead != totalBytesRead) {
-          lastTotalBytesRead = totalBytesRead;
-          mainThreadHandler.post(new Runnable() {
-            @Override public void run() {
-              internalProgressListener.onProgress(url, totalBytesRead, contentLength());
-            }
-          });
+    @Override public BufferedSource source() {
+        if (bufferedSource == null) {
+            bufferedSource = Okio.buffer(source(responseBody.source()));
         }
-        return bytesRead;
-      }
-    };
-  }
+        return bufferedSource;
+    }
 
-  interface InternalProgressListener {
-    void onProgress(String url, long bytesRead, long totalBytes);
-  }
+    private Source source(Source source) {
+        return new ForwardingSource(source) {
+            long totalBytesRead;
+            long lastTotalBytesRead;
+
+            @Override public long read(@NonNull Buffer sink, long byteCount) throws IOException {
+                long bytesRead = super.read(sink, byteCount);
+                totalBytesRead += (bytesRead == -1) ? 0 : bytesRead;
+
+                if (internalProgressListener != null && lastTotalBytesRead != totalBytesRead) {
+                    lastTotalBytesRead = totalBytesRead;
+                    mainThreadHandler.post(new Runnable() {
+                        @Override public void run() {
+                            internalProgressListener.onProgress(url, totalBytesRead, contentLength());
+                        }
+                    });
+                }
+                return bytesRead;
+            }
+        };
+    }
+
+    interface InternalProgressListener {
+        void onProgress(String url, long bytesRead, long totalBytes);
+    }
 }

@@ -11,14 +11,13 @@ import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.module.AppGlideModule;
 import java.io.InputStream;
 
-@GlideModule
-public class MyAppGlideModule extends AppGlideModule {
-  @Override
-  public void registerComponents(@NonNull Context context, @NonNull Glide glide,
-      @NonNull Registry registry) {
-    super.registerComponents(context, glide, registry);
+@GlideModule public class MyAppGlideModule extends AppGlideModule {
+    @Override
+    public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
+        super.registerComponents(context, glide, registry);
 
-    // 替换底层网络框架为okhttp3
-    registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(ProgressManager.getOkHttpClient()));
-  }
+        // 替换底层网络框架为okhttp3
+        registry.replace(GlideUrl.class, InputStream.class,
+            new OkHttpUrlLoader.Factory(ProgressManager.getOkHttpClient()));
+    }
 }

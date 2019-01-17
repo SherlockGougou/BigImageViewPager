@@ -42,12 +42,12 @@ public class FileTarget implements Target<File> {
 
     }
 
-    @Override public void setRequest(@Nullable Request request) {
-
-    }
-
     @Nullable @Override public Request getRequest() {
         return null;
+    }
+
+    @Override public void setRequest(@Nullable Request request) {
+
     }
 
     @Override public void onStart() {
