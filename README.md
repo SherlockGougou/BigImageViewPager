@@ -25,9 +25,8 @@
 
 ![扫码下载demo](https://upload-images.jianshu.io/upload_images/1710902-0073c2f34a714fe2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-![v1.2.6新增可下拉/上拉关闭](https://upload-images.jianshu.io/upload_images/1710902-08b5d2e3e9696f9f.gif?imageMogr2/auto-orient/strip)
-
-![QQ20181108-0.png](https://upload-images.jianshu.io/upload_images/1710902-9c9f417905c52934.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![kpFnSO.gif](https://s2.ax1x.com/2019/01/17/kpFnSO.gif)
+![kpFefK.jpg](https://s2.ax1x.com/2019/01/17/kpFefK.jpg)
 
 ![主要功能概览](https://upload-images.jianshu.io/upload_images/1710902-2c4cae8d0ddaef1f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
