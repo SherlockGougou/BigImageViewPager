@@ -12,46 +12,46 @@ import java.security.MessageDigest;
  */
 public class DataCacheKey implements Key {
 
-  private final Key sourceKey;
-  private final Key signature;
+    private final Key sourceKey;
+    private final Key signature;
 
-  public DataCacheKey(Key sourceKey, Key signature) {
-    this.sourceKey = sourceKey;
-    this.signature = signature;
-  }
-
-  public Key getSourceKey() {
-    return sourceKey;
-  }
-
-  @Override public boolean equals(Object o) {
-    if (o instanceof DataCacheKey) {
-      DataCacheKey other = (DataCacheKey) o;
-      return sourceKey.equals(other.sourceKey) && signature.equals(other.signature);
+    public DataCacheKey(Key sourceKey, Key signature) {
+        this.sourceKey = sourceKey;
+        this.signature = signature;
     }
-    return false;
-  }
 
-  @Override public int hashCode() {
-    int result = sourceKey.hashCode();
-    result = 31 * result + signature.hashCode();
-    return result;
-  }
-
-  @Override public String toString() {
-    return "DataCacheKey{" + "sourceKey=" + sourceKey + ", signature=" + signature + '}';
-  }
-
-  @Override public void updateDiskCacheKey(MessageDigest messageDigest) {
-    try {
-      sourceKey.updateDiskCacheKey(messageDigest);
-    } catch (Exception e) {
-      e.printStackTrace();
+    public Key getSourceKey() {
+        return sourceKey;
     }
-    try {
-      signature.updateDiskCacheKey(messageDigest);
-    } catch (Exception e) {
-      e.printStackTrace();
+
+    @Override public boolean equals(Object o) {
+        if (o instanceof DataCacheKey) {
+            DataCacheKey other = (DataCacheKey) o;
+            return sourceKey.equals(other.sourceKey) && signature.equals(other.signature);
+        }
+        return false;
     }
-  }
+
+    @Override public int hashCode() {
+        int result = sourceKey.hashCode();
+        result = 31 * result + signature.hashCode();
+        return result;
+    }
+
+    @Override public String toString() {
+        return "DataCacheKey{" + "sourceKey=" + sourceKey + ", signature=" + signature + '}';
+    }
+
+    @Override public void updateDiskCacheKey(MessageDigest messageDigest) {
+        try {
+            sourceKey.updateDiskCacheKey(messageDigest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            signature.updateDiskCacheKey(messageDigest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

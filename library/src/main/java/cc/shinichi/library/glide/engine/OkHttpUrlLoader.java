@@ -30,8 +30,7 @@ public class OkHttpUrlLoader implements StreamModelLoader<GlideUrl> {
         this.client = client;
     }
 
-    @Override
-    public DataFetcher<InputStream> getResourceFetcher(GlideUrl model, int width, int height) {
+    @Override public DataFetcher<InputStream> getResourceFetcher(GlideUrl model, int width, int height) {
         return new OkHttpStreamFetcher(client, model);
     }
 
@@ -69,13 +68,11 @@ public class OkHttpUrlLoader implements StreamModelLoader<GlideUrl> {
             return internalClient;
         }
 
-        @Override
-        public ModelLoader<GlideUrl, InputStream> build(Context context, GenericLoaderFactory factories) {
+        @Override public ModelLoader<GlideUrl, InputStream> build(Context context, GenericLoaderFactory factories) {
             return new OkHttpUrlLoader(client);
         }
 
-        @Override
-        public void teardown() {
+        @Override public void teardown() {
             // Do nothing, this instance doesn't own the client.
         }
     }

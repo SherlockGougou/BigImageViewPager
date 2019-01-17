@@ -16,46 +16,45 @@ import java.io.File;
  */
 public class SimpleFileTarget implements Target<File> {
 
-  private static final String TAG = "SimpleFileTarget";
+    private static final String TAG = "SimpleFileTarget";
 
-  @Override public void onLoadStarted(Drawable placeholder) {
+    @Override public void onLoadStarted(Drawable placeholder) {
 
-  }
+    }
 
-  @Override public void onLoadFailed(Exception e, Drawable errorDrawable) {
+    @Override public void onLoadFailed(Exception e, Drawable errorDrawable) {
 
-  }
+    }
 
-  @Override
-  public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
+    @Override public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
 
-  }
+    }
 
-  @Override public void onLoadCleared(Drawable placeholder) {
+    @Override public void onLoadCleared(Drawable placeholder) {
 
-  }
+    }
 
-  @Override public void getSize(SizeReadyCallback cb) {
-    cb.onSizeReady(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
-  }
+    @Override public void getSize(SizeReadyCallback cb) {
+        cb.onSizeReady(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+    }
 
-  @Override public Request getRequest() {
-    return null;
-  }
+    @Override public Request getRequest() {
+        return null;
+    }
 
-  @Override public void setRequest(Request request) {
+    @Override public void setRequest(Request request) {
 
-  }
+    }
 
-  @Override public void onStart() {
+    @Override public void onStart() {
 
-  }
+    }
 
-  @Override public void onStop() {
+    @Override public void onStop() {
 
-  }
+    }
 
-  @Override public void onDestroy() {
+    @Override public void onDestroy() {
 
-  }
+    }
 }

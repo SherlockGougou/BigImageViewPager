@@ -5,8 +5,7 @@ import android.widget.ImageView;
 
 class Util {
 
-    static void checkZoomLevels(float minZoom, float midZoom,
-        float maxZoom) {
+    static void checkZoomLevels(float minZoom, float midZoom, float maxZoom) {
         if (minZoom >= midZoom) {
             throw new IllegalArgumentException(
                 "Minimum zoom has to be less than Medium zoom. Call setMinimumZoom() with a more appropriate value");

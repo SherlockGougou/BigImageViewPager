@@ -35,8 +35,7 @@ public class OkHttpStreamFetcher implements DataFetcher<InputStream> {
         this.url = url;
     }
 
-    @Override
-    public InputStream loadData(Priority priority) throws Exception {
+    @Override public InputStream loadData(Priority priority) throws Exception {
         Request.Builder requestBuilder = new Request.Builder().url(url.toStringUrl());
 
         for (Map.Entry<String, String> headerEntry : url.getHeaders().entrySet()) {
@@ -58,8 +57,7 @@ public class OkHttpStreamFetcher implements DataFetcher<InputStream> {
         return stream;
     }
 
-    @Override
-    public void cleanup() {
+    @Override public void cleanup() {
         try {
             if (stream != null) {
                 stream.close();
@@ -72,13 +70,11 @@ public class OkHttpStreamFetcher implements DataFetcher<InputStream> {
         }
     }
 
-    @Override
-    public String getId() {
+    @Override public String getId() {
         return url.getCacheKey();
     }
 
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         Call local = call;
         if (local != null) {
             local.cancel();

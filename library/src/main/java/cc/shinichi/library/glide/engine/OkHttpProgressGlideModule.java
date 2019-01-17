@@ -70,13 +70,13 @@ public class OkHttpProgressGlideModule implements GlideModule {
 
     @Override public void registerComponents(Context context, Glide glide) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder
-            .hostnameVerifier(SSLSocketClient.getHostnameVerifier())
+        builder.hostnameVerifier(SSLSocketClient.getHostnameVerifier())
             .sslSocketFactory(SSLSocketClient.getSSLSocketFactory())
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
-            .networkInterceptors().add(createInterceptor(new DispatchingProgressListener()));
+            .networkInterceptors()
+            .add(createInterceptor(new DispatchingProgressListener()));
         glide.register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(builder.build()));
     }
 
