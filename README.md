@@ -53,8 +53,8 @@ allprojects {
 dependencies {
 
   // 针对glide v4 版本：
-  // 如果您的app中没有使用glide任何版本，或者使用了glide且glide版本号为4.x，请依赖以几个下库（已添加的可跳过）：
-  implementation 'com.android.support:appcompat-v7:27.1.1'
+  // 如果您的app中没有使用glide任何版本，或者使用了glide且glide版本号为4.x，请依赖以几个下库（已添加的可跳过，请尽量保证版本号与下面一致）：
+  implementation 'com.android.support:appcompat-v7:28.0.0'
   implementation 'com.github.bumptech.glide:glide:4.8.0'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
@@ -63,8 +63,8 @@ dependencies {
 ================================v4/v3分割线==================================
 
   // 针对glide v3 版本：
-  // 如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
-  implementation 'com.android.support:appcompat-v7:27.1.1'
+  // 如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库，请尽量保证版本号与下面一致：
+  implementation 'com.android.support:appcompat-v7:28.0.0'
   implementation 'com.github.SherlockGougou:BigImageViewPager:v3_4.0.1'
 }
 ```
