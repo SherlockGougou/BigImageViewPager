@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <item type="id" name="sh_progress_view">false</item>
-  <item type="id" name="sh_progress_text">false</item>
+  <item type="id" name="sh_progress_view"/>
+  <item type="id" name="sh_progress_text"/>
 </resources>

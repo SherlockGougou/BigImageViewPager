@@ -7,6 +7,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.view.ImagePreviewActivity;
 import cc.shinichi.library.view.listener.OnBigImageClickListener;
@@ -25,6 +26,9 @@ import java.util.List;
  * description:
  */
 public class ImagePreview {
+
+    // 触发双击的最短时间，小于这个时间的直接返回
+    private static final int MIN_DOUBLE_CLICK_TIME = 1500;
 
     public static final int MODE_SCALE_TO_MEDIUM_TO_MAX_TO_MIN = 1001;// 三级放大
     public static final int MODE_SCALE_TO_MAX_TO_MIN = 1002;// 二级放大，最大与最小
@@ -64,6 +68,8 @@ public class ImagePreview {
 
     // 自定义百分比布局layout id
     @LayoutRes private int progressLayoutId = -1;
+    // 防止多次快速点击，记录上次打开的时间戳
+    private long lastClickTime = 0;
 
     public static ImagePreview getInstance() {
         return InnerClass.instance;
@@ -352,17 +358,24 @@ public class ImagePreview {
 
         loadStrategy = LoadStrategy.Default;
         folderName = "Download";
-        contextWeakReference.clear();
-        contextWeakReference = null;
+        if (contextWeakReference != null) {
+            contextWeakReference.clear();
+            contextWeakReference = null;
+        }
 
         bigImageClickListener = null;
         bigImageLongClickListener = null;
         bigImagePageChangeListener = null;
 
         progressLayoutId = -1;
+        lastClickTime = 0;
     }
 
     public void start() {
+        if (System.currentTimeMillis() - lastClickTime <= MIN_DOUBLE_CLICK_TIME) {
+            Log.e("ImagePreview", "---忽略多次快速点击---");
+            return;
+        }
         if (contextWeakReference == null) {
             throw new IllegalArgumentException("You must call 'setContext(Context context)' first!");
         }
@@ -391,6 +404,7 @@ public class ImagePreview {
         if (this.index >= imageInfoList.size()) {
             throw new IllegalArgumentException("index out of range!");
         }
+        lastClickTime = System.currentTimeMillis();
         ImagePreviewActivity.activityStart(context);
     }
 

@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
 
 android {
-  compileSdkVersion 27
-  buildToolsVersion '27.0.3'
+  compileSdkVersion 28
+  buildToolsVersion '28.0.3'
   defaultConfig {
     minSdkVersion 14
-    targetSdkVersion 27
+    targetSdkVersion 28
   }
 
   buildTypes {
@@ -20,15 +20,20 @@ android {
   }
 }
 
-ext.supportLibVersion = '27.1.1'
+ext.supportLibVersion = '28.0.0'
 
 dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
   compileOnly "com.android.support:appcompat-v7:${supportLibVersion}"
+  implementation "com.android.support:exifinterface:${supportLibVersion}"
   // subsampling-scale-image-view
-  api 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
+  api ('com.davemorrissey.labs:subsampling-scale-image-view:3.10.0') {
+    exclude group: 'com.android.support'
+    exclude module: 'appcompat-v7'
+    exclude module: 'support-v4'
+  }
   // glide
   implementation 'com.github.bumptech.glide:glide:3.8.0'
   // okhttp3
-  implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+  implementation 'com.squareup.okhttp3:okhttp:3.12.0'
 }

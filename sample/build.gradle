@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-  compileSdkVersion 27
-  buildToolsVersion '27.0.3'
+  compileSdkVersion 28
+  buildToolsVersion '28.0.3'
   defaultConfig {
     applicationId "cc.shinichi.bigimageviewpager"
     minSdkVersion 14
-    targetSdkVersion 27
-    versionCode 400
-    versionName "v3_4.0.0"
+    targetSdkVersion 28
+    versionCode 401
+    versionName "v3_4.0.1"
   }
   buildTypes {
     release {
@@ -22,7 +22,7 @@ android {
   }
 }
 
-ext.supportLibVersion = '27.1.1'
+ext.supportLibVersion = '28.0.0'
 
 dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -32,6 +32,6 @@ dependencies {
   debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.2'
   releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.2'
   // library
-//   implementation 'com.github.SherlockGougou:BigImageViewPager:v3_3.2.2'
+//   implementation 'com.github.SherlockGougou:BigImageViewPager:v3_4.0.1'
   implementation project(':library')
 }
