@@ -45,8 +45,8 @@ allprojects {
 
 ##### 此处显示的是本框架的最新版本号：
 ```
-对于glide4.x : 使用 v4_4.0.0
-对于glide3.x : 使用 v3_4.0.0
+对于glide4.x : 使用 v4_4.0.1
+对于glide3.x : 使用 v3_4.0.1
 ```
 
 ```
@@ -58,14 +58,14 @@ dependencies {
   implementation 'com.github.bumptech.glide:glide:4.8.0'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_4.0.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_4.0.1'
 
 ================================v4/v3分割线==================================
 
   // 针对glide v3 版本：
   // 如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库：
   implementation 'com.android.support:appcompat-v7:27.1.1'
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_4.0.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_4.0.1'
 }
 ```
 
