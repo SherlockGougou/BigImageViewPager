@@ -52,7 +52,7 @@ allprojects {
 ```
 dependencies {
 
-  // 针对glide v4 版本：
+  // 针对glide v4 版本：（请使用glide 4.8.0版本，本框架依赖版本就是4.8.0，其余版本未做测试，不保证正常运行）
   // 如果您的app中没有使用glide任何版本，或者使用了glide且glide版本号为4.x，请依赖以几个下库（已添加的可跳过，请尽量保证版本号与下面一致）：
   implementation 'com.android.support:appcompat-v7:28.0.0'
   implementation 'com.github.bumptech.glide:glide:4.8.0'
@@ -311,6 +311,14 @@ https://github.com/SherlockGougou/BigImageViewPager
 ### 欢迎加入“大话安卓”技术交流群，一起分享，共同进步##
 
 ![欢迎加入“大话安卓”技术交流群，互相学习提升](https://upload-images.jianshu.io/upload_images/1710902-5cdeb8c1f58dd425.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+# Q&A
+- **1.glide 4.9.0加载gif闪退报错？**
+
+请先使用4.8.0，目前library所依赖版本为4.8.0，暂未升级到最新。
+- **2.glide某些方法怎么爆红找不到？**
+
+请检查glide版本是否是4.8.0，如不是，建议改成4.8.0
 
 # LICENSE
 ```
