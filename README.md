@@ -18,6 +18,7 @@
 - 支持加载失败时占位图的设置；
 - 针对保存图片进行优化，文件扩展名使用文件头部Mime信息进行设置，不用担心gif保存成jpeg；
 - 支持自定义查看原图时的百分比View；
+- 支持BMP格式的图片；
 
 # 截图
 
@@ -45,8 +46,8 @@ allprojects {
 
 ##### 此处显示的是本框架的最新版本号：
 ```
-对于glide4.x : 使用 v4_4.0.1
-对于glide3.x : 使用 v3_4.0.1
+对于glide4.x : 使用 v4_4.0.2
+对于glide3.x : 使用 v3_4.0.2
 ```
 
 ```
@@ -58,14 +59,14 @@ dependencies {
   implementation 'com.github.bumptech.glide:glide:4.8.0'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_4.0.1'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_4.0.2'
 
 ================================v4/v3分割线==================================
 
   // 针对glide v3 版本：
   // 如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库，请尽量保证版本号与下面一致：
   implementation 'com.android.support:appcompat-v7:28.0.0'
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_4.0.1'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_4.0.2'
 }
 ```
 
