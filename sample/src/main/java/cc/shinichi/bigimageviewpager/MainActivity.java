@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         "http://img3.16fan.com/live/origin/201805/21/14C5e483e7583.jpg",
         "http://img3.16fan.com/live/origin/201805/21/EB298ce595dd2.jpg",
         "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg", //  2280 * 22116
-        "http://img3.16fan.com/live/origin/201805/21/264Ba4860d469.jpg",
+        "http://img3.16fan.com/live/origin/201805/21/264Ba4860d469.jpg"
     };
 
     boolean enableClickClose = false;
@@ -148,6 +148,18 @@ public class MainActivity extends AppCompatActivity {
         imageInfo.setThumbnailUrl("http://s1.dwstatic.com/group1/M00/82/DB/c9d0b4c9fdba07709071784bce709c26.gif");
         imageInfoList.add(0, imageInfo);
 
+        // 测试gif图
+        imageInfo = new ImageInfo();
+        imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551350691824&di=888eada749b09bb0a1db18c3cb36a077&imgtype=0&src=http%3A%2F%2Fs9.rr.itc.cn%2Fr%2FwapChange%2F20173_7_18%2Fa1h59g3470867073619.gif");
+        imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551350691824&di=888eada749b09bb0a1db18c3cb36a077&imgtype=0&src=http%3A%2F%2Fs9.rr.itc.cn%2Fr%2FwapChange%2F20173_7_18%2Fa1h59g3470867073619.gif");
+        imageInfoList.add(0, imageInfo);
+
+        // 测试gif图
+        imageInfo = new ImageInfo();
+        imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550234159438&di=345e38a6d82e79a3c48abd85b57d5e89&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fq_70%2Cc_zoom%2Cw_640%2Fupload%2F20170331%2F99098fa2ae0e48ac8ee8d813c1620900_th.gif");
+        imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550234159438&di=345e38a6d82e79a3c48abd85b57d5e89&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fq_70%2Cc_zoom%2Cw_640%2Fupload%2F20170331%2F99098fa2ae0e48ac8ee8d813c1620900_th.gif");
+        imageInfoList.add(0, imageInfo);
+
         // 测试小尺寸图
         imageInfo = new ImageInfo();
         imageInfo.setOriginUrl(
@@ -184,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
         imageList.add("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");
         imageList.add("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");
         imageList.add("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
-        imageList.add("https://magiclanjie1920.io2c.com/static/images/bar/3.png");
+        imageList.add("http://img3.16fan.com/live/origin/201903/12/3EB3b3070c803.jpg?imageView2/0/h/1600/interlace/1/q/50/format/bmp");
 
         // 最简单的调用：
         findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {

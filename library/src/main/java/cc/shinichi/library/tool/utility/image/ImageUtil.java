@@ -361,6 +361,10 @@ public class ImageUtil {
         return "gif".equalsIgnoreCase(getImageTypeWithMime(path));
     }
 
+    public static boolean isBmpImageWithMime(String path) {
+        return "bmp".equalsIgnoreCase(getImageTypeWithMime(path));
+    }
+
     public static boolean isGifImageWithUrl(String url) {
         return url.toLowerCase().endsWith("gif");
     }

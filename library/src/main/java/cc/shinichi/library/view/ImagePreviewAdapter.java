@@ -129,6 +129,9 @@ public class ImagePreviewAdapter extends PagerAdapter {
                             ImageUtil.getImageBitmap(smallImagePath, ImageUtil.getBitmapDegree(smallImagePath)));
                         int widSmall = ImageUtil.getWidthHeight(smallImagePath)[0];
                         int heiSmall = ImageUtil.getWidthHeight(smallImagePath)[1];
+                        if (ImageUtil.isBmpImageWithMime(cacheFile.getAbsolutePath())) {
+                            small.tilingDisabled();
+                        }
                         small.dimensions(widSmall, heiSmall);
                     }
 
@@ -136,6 +139,9 @@ public class ImagePreviewAdapter extends PagerAdapter {
                     ImageSource origin = ImageSource.uri(imagePath);
                     int widOrigin = ImageUtil.getWidthHeight(imagePath)[0];
                     int heiOrigin = ImageUtil.getWidthHeight(imagePath)[1];
+                    if (ImageUtil.isBmpImageWithMime(cacheFile.getAbsolutePath())) {
+                        origin.tilingDisabled();
+                    }
                     origin.dimensions(widOrigin, heiOrigin);
 
                     setImageSpec(imagePath, imageView);
@@ -446,7 +452,11 @@ public class ImagePreviewAdapter extends PagerAdapter {
         setImageSpec(imagePath, imageView);
 
         imageView.setOrientation(SubsamplingScaleImageViewDragClose.ORIENTATION_USE_EXIF);
-        imageView.setImage(ImageSource.uri(Uri.fromFile(new File(imagePath))));
+        ImageSource imageSource = ImageSource.uri(Uri.fromFile(new File(imagePath)));
+        if (ImageUtil.isBmpImageWithMime(imagePath)) {
+            imageSource.tilingDisabled();
+        }
+        imageView.setImage(imageSource);
 
         imageView.setOnImageEventListener(new SubsamplingScaleImageViewDragClose.OnImageEventListener() {
             @Override public void onReady() {
