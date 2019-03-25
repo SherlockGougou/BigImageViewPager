@@ -1,4 +1,4 @@
-package cc.shinichi.library.tool.utility.image;
+package cc.shinichi.library.tool.image;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,8 +7,8 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.os.Environment;
 import android.text.TextUtils;
-import cc.shinichi.library.tool.utility.common.Print;
-import cc.shinichi.library.tool.utility.ui.PhoneUtil;
+import cc.shinichi.library.tool.common.Print;
+import cc.shinichi.library.tool.ui.PhoneUtil;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -352,7 +352,7 @@ public class ImageUtil {
         if (TextUtils.isEmpty(type)) {
             type = "";
         } else {
-            type = type.substring(6, type.length());
+            type = type.substring(6);
         }
         return type;
     }

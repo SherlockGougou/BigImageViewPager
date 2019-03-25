@@ -1,6 +1,14 @@
 package cc.shinichi.bigimageviewpager;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
@@ -9,16 +17,22 @@ import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import cc.shinichi.bigimageviewpager.glide.GlideV4Engine;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
-import cc.shinichi.library.tool.utility.ui.ToastUtil;
+import cc.shinichi.library.tool.ui.ToastUtil;
 import cc.shinichi.library.view.listener.OnBigImageClickListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
 import cc.shinichi.library.view.listener.OnOriginProgressListener;
+import com.zhihu.matisse.Matisse;
+import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.internal.entity.CaptureStrategy;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.support.v4.content.PermissionChecker.PERMISSION_GRANTED;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -338,6 +352,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // 通过相册选择图片，进行预览
+        findViewById(R.id.buttonChoose).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(MainActivity.this.getApplicationContext(),
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        // 拒绝权限
+                        ToastUtil.getInstance()._short(MainActivity.this.getApplicationContext(), "您拒绝了存储权限，无法读取图片！");
+                    } else {
+                        // 申请权限
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE, }, 1);
+                    }
+                } else {
+                    // 选择图片
+                    chooseImage();
+                }
+            }
+        });
+
         // 清除磁盘缓存
         findViewById(R.id.buttonClean).setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
@@ -345,5 +380,54 @@ public class MainActivity extends AppCompatActivity {
                 ToastUtil.getInstance()._short(MainActivity.this, "磁盘缓存已成功清除");
             }
         });
+    }
+
+    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+        @NonNull int[] grantResults) {
+        if (requestCode == 1) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[i] == PERMISSION_GRANTED) {
+                    chooseImage();
+                } else {
+                    ToastUtil.getInstance()._short(MainActivity.this.getApplicationContext(), "您拒绝了存储权限，无法读取图片！");
+                }
+            }
+        }
+    }
+
+    // 去选择图片
+    private void chooseImage() {
+        Matisse.from(MainActivity.this)
+            .choose(MimeType.ofImage())
+            .capture(true)
+            .captureStrategy(new CaptureStrategy(true, "cc.shinichi.bigimageviewpager.fileprovider", "BigImage"))
+            .countable(true)
+            .maxSelectable(30)
+            .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            .thumbnailScale(0.85f)
+            .imageEngine(new GlideV4Engine())
+            .theme(R.style.Matisse_Zhihu)
+            .showSingleMediaType(true)
+            .originalEnable(true)
+            .forResult(1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK && data != null) {
+                ArrayList<String> mCurrentSelectedPath = (ArrayList<String>) Matisse.obtainPathResult(data);
+                ImagePreview
+                    .getInstance()
+                    .setContext(MainActivity.this)
+                    .setImageList(mCurrentSelectedPath)
+                    .setShowDownButton(false)
+                    .setShowCloseButton(false)
+                    .setEnableDragClose(true)
+                    .setEnableClickClose(false)
+                    .start();
+            }
+        }
     }
 }

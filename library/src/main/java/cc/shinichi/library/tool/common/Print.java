@@ -1,4 +1,4 @@
-package cc.shinichi.library.tool.utility.common;
+package cc.shinichi.library.tool.common;
 
 import android.text.TextUtils;
 import android.util.Log;

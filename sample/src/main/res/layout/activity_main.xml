@@ -197,6 +197,14 @@
           android:layout_alignParentRight="true"
           android:text="清除图片磁盘缓存"
           />
+
+      <Button
+          android:id="@+id/buttonChoose"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_below="@+id/buttonPreview"
+          android:text="相册选图"
+          />
     </RelativeLayout>
   </LinearLayout>
 </ScrollView>

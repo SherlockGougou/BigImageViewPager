@@ -1,4 +1,4 @@
-package cc.shinichi.library.tool.utility.common;
+package cc.shinichi.library.tool.common;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

@@ -17,10 +17,10 @@ import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.FileTarget;
 import cc.shinichi.library.glide.ImageLoader;
-import cc.shinichi.library.tool.utility.common.NetworkUtil;
-import cc.shinichi.library.tool.utility.image.ImageUtil;
-import cc.shinichi.library.tool.utility.ui.PhoneUtil;
-import cc.shinichi.library.tool.utility.ui.ToastUtil;
+import cc.shinichi.library.tool.common.NetworkUtil;
+import cc.shinichi.library.tool.image.ImageUtil;
+import cc.shinichi.library.tool.ui.PhoneUtil;
+import cc.shinichi.library.tool.ui.ToastUtil;
 import cc.shinichi.library.view.helper.FingerDragHelper;
 import cc.shinichi.library.view.helper.ImageSource;
 import cc.shinichi.library.view.helper.SubsamplingScaleImageViewDragClose;
@@ -344,16 +344,16 @@ public class ImagePreviewAdapter extends PagerAdapter {
     }
 
     @Override public void destroyItem(ViewGroup container, int position, Object object) {
-        try {
-            container.removeView((View) object);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            ImageLoader.clearMemory(activity);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //try {
+        //    container.removeView((View) object);
+        //} catch (Exception e) {
+        //    e.printStackTrace();
+        //}
+        //try {
+        //    ImageLoader.clearMemory(activity);
+        //} catch (Exception e) {
+        //    e.printStackTrace();
+        //}
         try {
             if (imageHashMap != null && imageHashMap.get(imageInfo.get(position).getOriginUrl()) != null) {
                 imageHashMap.get(imageInfo.get(position).getOriginUrl()).destroyDrawingCache();
@@ -367,6 +367,11 @@ public class ImagePreviewAdapter extends PagerAdapter {
                 imageGifHashMap.get(imageInfo.get(position).getOriginUrl()).destroyDrawingCache();
                 imageGifHashMap.get(imageInfo.get(position).getOriginUrl()).setImageBitmap(null);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            ImageLoader.clearMemory(activity);
         } catch (Exception e) {
             e.printStackTrace();
         }

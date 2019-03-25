@@ -1,4 +1,4 @@
-package cc.shinichi.library.tool.utility.file;
+package cc.shinichi.library.tool.file;
 
 import android.content.Context;
 import android.media.MediaScannerConnection;

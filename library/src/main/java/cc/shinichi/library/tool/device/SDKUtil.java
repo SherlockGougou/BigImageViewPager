@@ -1,4 +1,4 @@
-package cc.shinichi.library.tool.utility.device;
+package cc.shinichi.library.tool.device;
 
 import android.os.Build;
 
