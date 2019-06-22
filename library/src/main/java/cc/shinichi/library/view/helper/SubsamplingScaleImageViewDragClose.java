@@ -3195,6 +3195,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
     private static class ScaleAndTranslate {
         private final PointF vTranslate;
         private float scale;
+
         private ScaleAndTranslate(float scale, PointF vTranslate) {
             this.scale = scale;
             this.vTranslate = vTranslate;

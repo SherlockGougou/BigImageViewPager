@@ -16,46 +16,28 @@ import java.io.File;
 
 public class GlideV4Engine implements ImageEngine {
 
-    @Override
-    public void loadThumbnail(Context context, int i, Drawable drawable, ImageView imageView,
-        Uri uri) {
-        GlideApp.with(context)
-            .load(uri)
-            .placeholder(drawable)
-            .apply(new RequestOptions().centerCrop())
-            .into(imageView);
+    @Override public void loadThumbnail(Context context, int i, Drawable drawable, ImageView imageView, Uri uri) {
+        GlideApp.with(context).load(uri).placeholder(drawable).apply(new RequestOptions().centerCrop()).into(imageView);
+    }
+
+    @Override public void loadGifThumbnail(Context context, int i, Drawable drawable, ImageView imageView, Uri uri) {
+        GlideApp.with(context).asGif().placeholder(drawable).load(uri).into(imageView);
     }
 
     @Override
-    public void loadGifThumbnail(Context context, int i, Drawable drawable, ImageView imageView,
+    public void loadImage(Context context, int i, int i1, final SubsamplingScaleImageView subsamplingScaleImageView,
         Uri uri) {
-        GlideApp.with(context)
-            .asGif()
-            .placeholder(drawable)
-            .load(uri)
-            .into(imageView);
-    }
-
-    @Override public void loadImage(Context context, int i, int i1,
-        final SubsamplingScaleImageView subsamplingScaleImageView, Uri uri) {
-        GlideApp.with(context)
-            .downloadOnly()
-            .load(uri)
-            .into(new FileTarget() {
-            @Override public void onResourceReady(@NonNull File resource,
-                @Nullable Transition<? super File> transition) {
+        GlideApp.with(context).downloadOnly().load(uri).into(new FileTarget() {
+            @Override
+            public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
                 super.onResourceReady(resource, transition);
                 subsamplingScaleImageView.setImage(ImageSource.uri(resource.getAbsolutePath()));
             }
         });
     }
 
-    @Override
-    public void loadGifImage(Context context, int i, int i1, ImageView imageView, Uri uri) {
-        GlideApp.with(context)
-            .asGif()
-            .load(uri)
-            .into(imageView);
+    @Override public void loadGifImage(Context context, int i, int i1, ImageView imageView, Uri uri) {
+        GlideApp.with(context).asGif().load(uri).into(imageView);
     }
 
     @Override public boolean supportAnimatedGif() {

@@ -1,14 +1,6 @@
 package cc.shinichi.bigimageviewpager;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
@@ -17,7 +9,6 @@ import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import cc.shinichi.bigimageviewpager.glide.GlideV4Engine;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
@@ -26,13 +17,8 @@ import cc.shinichi.library.view.listener.OnBigImageClickListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
 import cc.shinichi.library.view.listener.OnOriginProgressListener;
-import com.zhihu.matisse.Matisse;
-import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.internal.entity.CaptureStrategy;
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.support.v4.content.PermissionChecker.PERMISSION_GRANTED;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     boolean enableClickClose = false;
     boolean enableDragClose = false;
+    boolean enableUpDragClose = false;
     boolean showIndicator = false;
     boolean showCloseButton = false;
     boolean showDownButton = false;
@@ -66,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         SwitchCompat switchClickClose = findViewById(R.id.switchClickClose);
         SwitchCompat switchDragClose = findViewById(R.id.switchDragClose);
+        SwitchCompat switchUpDragClose = findViewById(R.id.switchUpDragClose);
         SwitchCompat switchShowIndicator = findViewById(R.id.switchShowIndicator);
         SwitchCompat switchShowCloseButton = findViewById(R.id.switchShowCloseButton);
         SwitchCompat switchShowDownButton = findViewById(R.id.switchShowDownButton);
@@ -85,6 +73,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         switchDragClose.setChecked(true);
+
+        switchUpDragClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                enableUpDragClose = isChecked;
+            }
+        });
+        switchUpDragClose.setChecked(true);
 
         switchShowIndicator.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -164,14 +159,18 @@ public class MainActivity extends AppCompatActivity {
 
         // 测试gif图
         imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551350691824&di=888eada749b09bb0a1db18c3cb36a077&imgtype=0&src=http%3A%2F%2Fs9.rr.itc.cn%2Fr%2FwapChange%2F20173_7_18%2Fa1h59g3470867073619.gif");
-        imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551350691824&di=888eada749b09bb0a1db18c3cb36a077&imgtype=0&src=http%3A%2F%2Fs9.rr.itc.cn%2Fr%2FwapChange%2F20173_7_18%2Fa1h59g3470867073619.gif");
+        imageInfo.setOriginUrl(
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551350691824&di=888eada749b09bb0a1db18c3cb36a077&imgtype=0&src=http%3A%2F%2Fs9.rr.itc.cn%2Fr%2FwapChange%2F20173_7_18%2Fa1h59g3470867073619.gif");
+        imageInfo.setThumbnailUrl(
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551350691824&di=888eada749b09bb0a1db18c3cb36a077&imgtype=0&src=http%3A%2F%2Fs9.rr.itc.cn%2Fr%2FwapChange%2F20173_7_18%2Fa1h59g3470867073619.gif");
         imageInfoList.add(0, imageInfo);
 
         // 测试gif图
         imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550234159438&di=345e38a6d82e79a3c48abd85b57d5e89&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fq_70%2Cc_zoom%2Cw_640%2Fupload%2F20170331%2F99098fa2ae0e48ac8ee8d813c1620900_th.gif");
-        imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550234159438&di=345e38a6d82e79a3c48abd85b57d5e89&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fq_70%2Cc_zoom%2Cw_640%2Fupload%2F20170331%2F99098fa2ae0e48ac8ee8d813c1620900_th.gif");
+        imageInfo.setOriginUrl(
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550234159438&di=345e38a6d82e79a3c48abd85b57d5e89&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fq_70%2Cc_zoom%2Cw_640%2Fupload%2F20170331%2F99098fa2ae0e48ac8ee8d813c1620900_th.gif");
+        imageInfo.setThumbnailUrl(
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550234159438&di=345e38a6d82e79a3c48abd85b57d5e89&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fq_70%2Cc_zoom%2Cw_640%2Fupload%2F20170331%2F99098fa2ae0e48ac8ee8d813c1620900_th.gif");
         imageInfoList.add(0, imageInfo);
 
         // 测试小尺寸图
@@ -210,7 +209,8 @@ public class MainActivity extends AppCompatActivity {
         imageList.add("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");
         imageList.add("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");
         imageList.add("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
-        imageList.add("http://img3.16fan.com/live/origin/201903/12/3EB3b3070c803.jpg?imageView2/0/h/1600/interlace/1/q/50/format/bmp");
+        imageList.add(
+            "http://img3.16fan.com/live/origin/201903/12/3EB3b3070c803.jpg?imageView2/0/h/1600/interlace/1/q/50/format/bmp");
 
         // 最简单的调用：
         findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
@@ -263,9 +263,10 @@ public class MainActivity extends AppCompatActivity {
 
                     // 是否启用点击图片关闭。默认启用
                     .setEnableClickClose(enableClickClose)
-                    // 是否启用上拉/下拉关闭。默认不启用
+                    // 是否启用下拉关闭。默认不启用
                     .setEnableDragClose(enableDragClose)
-
+                    // 是否启用上拉关闭。默认不启用
+                    .setEnableUpDragClose(enableUpDragClose)
                     // 是否显示关闭页面按钮，在页面左下角。默认不显示
                     .setShowCloseButton(showCloseButton)
                     // 设置关闭按钮图片资源，可不填，默认为库中自带：R.drawable.ic_action_close
@@ -316,20 +317,20 @@ public class MainActivity extends AppCompatActivity {
                     //=================================================================================================
                     // 设置查看原图时的百分比样式：库中带有一个样式：ImagePreview.PROGRESS_THEME_CIRCLE_TEXT，使用如下：
                     .setProgressLayoutId(ImagePreview.PROGRESS_THEME_CIRCLE_TEXT, new OnOriginProgressListener() {
-                    	@Override public void progress(View parentView, int progress) {
-                    		Log.d(TAG, "progress: " + progress);
+                        @Override public void progress(View parentView, int progress) {
+                            Log.d(TAG, "progress: " + progress);
 
-                    		// 需要找到进度控件并设置百分比，回调中的parentView即传入的布局的根View，可通过parentView找到控件：
-                    		ProgressBar progressBar = parentView.findViewById(R.id.sh_progress_view);
-                    		TextView textView = parentView.findViewById(R.id.sh_progress_text);
-                    		progressBar.setProgress(progress);
-                    		String progressText = progress + "%";
-                    		textView.setText(progressText);
-                    	}
+                            // 需要找到进度控件并设置百分比，回调中的parentView即传入的布局的根View，可通过parentView找到控件：
+                            ProgressBar progressBar = parentView.findViewById(R.id.sh_progress_view);
+                            TextView textView = parentView.findViewById(R.id.sh_progress_text);
+                            progressBar.setProgress(progress);
+                            String progressText = progress + "%";
+                            textView.setText(progressText);
+                        }
 
-                    	@Override public void finish(View parentView) {
-                    		Log.d(TAG, "finish: ");
-                    	}
+                        @Override public void finish(View parentView) {
+                            Log.d(TAG, "finish: ");
+                        }
                     })
 
                     // 使用自定义百分比样式，传入自己的布局，并设置回调，再根据parentView找到进度控件进行百分比的设置：
@@ -352,27 +353,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 通过相册选择图片，进行预览
-        findViewById(R.id.buttonChoose).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(MainActivity.this.getApplicationContext(),
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                        // 拒绝权限
-                        ToastUtil.getInstance()._short(MainActivity.this.getApplicationContext(), "您拒绝了存储权限，无法读取图片！");
-                    } else {
-                        // 申请权限
-                        ActivityCompat.requestPermissions(MainActivity.this,
-                            new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE, }, 1);
-                    }
-                } else {
-                    // 选择图片
-                    chooseImage();
-                }
-            }
-        });
-
         // 清除磁盘缓存
         findViewById(R.id.buttonClean).setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
@@ -380,54 +360,5 @@ public class MainActivity extends AppCompatActivity {
                 ToastUtil.getInstance()._short(MainActivity.this, "磁盘缓存已成功清除");
             }
         });
-    }
-
-    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-        @NonNull int[] grantResults) {
-        if (requestCode == 1) {
-            for (int i = 0; i < permissions.length; i++) {
-                if (grantResults[i] == PERMISSION_GRANTED) {
-                    chooseImage();
-                } else {
-                    ToastUtil.getInstance()._short(MainActivity.this.getApplicationContext(), "您拒绝了存储权限，无法读取图片！");
-                }
-            }
-        }
-    }
-
-    // 去选择图片
-    private void chooseImage() {
-        Matisse.from(MainActivity.this)
-            .choose(MimeType.ofImage())
-            .capture(true)
-            .captureStrategy(new CaptureStrategy(true, "cc.shinichi.bigimageviewpager.fileprovider", "BigImage"))
-            .countable(true)
-            .maxSelectable(30)
-            .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-            .thumbnailScale(0.85f)
-            .imageEngine(new GlideV4Engine())
-            .theme(R.style.Matisse_Zhihu)
-            .showSingleMediaType(true)
-            .originalEnable(true)
-            .forResult(1);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK && data != null) {
-                ArrayList<String> mCurrentSelectedPath = (ArrayList<String>) Matisse.obtainPathResult(data);
-                ImagePreview
-                    .getInstance()
-                    .setContext(MainActivity.this)
-                    .setImageList(mCurrentSelectedPath)
-                    .setShowDownButton(false)
-                    .setShowCloseButton(false)
-                    .setEnableDragClose(true)
-                    .setEnableClickClose(false)
-                    .start();
-            }
-        }
     }
 }

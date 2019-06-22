@@ -27,7 +27,7 @@ dependencies {
   compileOnly "com.android.support:appcompat-v7:${supportLibVersion}"
   implementation "com.android.support:exifinterface:${supportLibVersion}"
   // subsampling-scale-image-view
-  api ('com.davemorrissey.labs:subsampling-scale-image-view:3.10.0') {
+  api('com.davemorrissey.labs:subsampling-scale-image-view:3.10.0') {
     exclude group: 'com.android.support'
     exclude module: 'appcompat-v7'
     exclude module: 'support-v4'

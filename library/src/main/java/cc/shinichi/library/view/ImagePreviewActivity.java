@@ -446,8 +446,8 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         });
 
         ProgressManager.addListener(path, new OnProgressListener() {
-            @Override public void onProgress(String url, boolean isComplete, int percentage, long bytesRead,
-                long totalBytes) {
+            @Override
+            public void onProgress(String url, boolean isComplete, int percentage, long bytesRead, long totalBytes) {
                 if (isComplete) {// 加载完成
                     Message message = handlerHolder.obtainMessage();
                     Bundle bundle = new Bundle();

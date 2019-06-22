@@ -3,19 +3,19 @@ apply plugin: 'com.android.application'
 android {
   compileSdkVersion 28
   buildToolsVersion '28.0.3'
-    defaultConfig {
-        applicationId "cc.shinichi.bigimageviewpager"
-        minSdkVersion 14
-        targetSdkVersion 28
-        versionCode 402
-        versionName "v4_4.0.2"
+  defaultConfig {
+    applicationId "cc.shinichi.bigimageviewpager"
+    minSdkVersion 14
+    targetSdkVersion 28
+    versionCode 402
+    versionName "v4_4.0.2"
+  }
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
+  }
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_7
     targetCompatibility JavaVersion.VERSION_1_7
@@ -52,6 +52,6 @@ dependencies {
   debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.2'
   releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.2'
   // library
-// implementation 'com.github.SherlockGougou:BigImageViewPager:v4_4.0.2'
-   implementation project(':library')
+  // implementation 'com.github.SherlockGougou:BigImageViewPager:v4_4.0.2'
+  implementation project(':library')
 }

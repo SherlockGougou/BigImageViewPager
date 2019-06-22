@@ -27,15 +27,12 @@ import java.util.List;
  */
 public class ImagePreview {
 
-    // 触发双击的最短时间，小于这个时间的直接返回
-    private static final int MIN_DOUBLE_CLICK_TIME = 1500;
-
     public static final int MODE_SCALE_TO_MEDIUM_TO_MAX_TO_MIN = 1001;// 三级放大
     public static final int MODE_SCALE_TO_MAX_TO_MIN = 1002;// 二级放大，最大与最小
     public static final int MODE_SCALE_TO_MEDIUM_TO_MIN = 1003;// 二级放大，中等与最小
-
     @LayoutRes public static final int PROGRESS_THEME_CIRCLE_TEXT = R.layout.sh_default_progress_layout;
-
+    // 触发双击的最短时间，小于这个时间的直接返回
+    private static final int MIN_DOUBLE_CLICK_TIME = 1500;
     private WeakReference<Context> contextWeakReference;
     private List<ImageInfo> imageInfoList;// 图片数据集合
     private int index = 0;// 默认显示第几个
@@ -50,6 +47,7 @@ public class ImagePreview {
     private int zoomTransitionDuration = 200;// 动画持续时间 单位毫秒 ms
 
     private boolean isEnableDragClose = false;// 是否启用下拉关闭，默认不启用
+    private boolean isEnableUpDragClose = false;// 是否启用上拉关闭，默认不启用
     private boolean isEnableClickClose = true;// 是否启用点击关闭，默认启用
 
     private LoadStrategy loadStrategy = LoadStrategy.Default;// 加载策略
@@ -195,6 +193,7 @@ public class ImagePreview {
         return this;
     }
 
+    @Deprecated
     public ImagePreview setScaleLevel(int min, int medium, int max) {
         if (max > medium && medium > min && min > 0) {
             this.minScale = min;
@@ -245,6 +244,15 @@ public class ImagePreview {
 
     public ImagePreview setEnableDragClose(boolean enableDragClose) {
         isEnableDragClose = enableDragClose;
+        return this;
+    }
+
+    public boolean isEnableUpDragClose() {
+        return isEnableUpDragClose;
+    }
+
+    public ImagePreview setEnableUpDragClose(boolean enableUpDragClose) {
+        isEnableUpDragClose = enableUpDragClose;
         return this;
     }
 

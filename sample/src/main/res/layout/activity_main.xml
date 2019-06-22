@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -36,12 +35,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         >
+
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_centerVertical="true"
           android:text="开启或关闭点击图片关闭功能"
           />
+
       <android.support.v7.widget.SwitchCompat
           android:id="@+id/switchClickClose"
           android:layout_width="wrap_content"
@@ -55,14 +56,38 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         >
+
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_centerVertical="true"
           android:text="开启或关闭下拉关闭功能"
           />
+
       <android.support.v7.widget.SwitchCompat
           android:id="@+id/switchDragClose"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentRight="true"
+          />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        >
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerVertical="true"
+          android:text="开启或关闭上拉关闭功能"
+          />
+
+      <android.support.v7.widget.SwitchCompat
+          android:id="@+id/switchUpDragClose"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_alignParentRight="true"
@@ -74,12 +99,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         >
+
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_centerVertical="true"
           android:text="是否显示顶部指示器"
           />
+
       <android.support.v7.widget.SwitchCompat
           android:id="@+id/switchShowIndicator"
           android:layout_width="wrap_content"
@@ -93,12 +120,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         >
+
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_centerVertical="true"
           android:text="是否显示底部左侧关闭按钮"
           />
+
       <android.support.v7.widget.SwitchCompat
           android:id="@+id/switchShowCloseButton"
           android:layout_width="wrap_content"
@@ -112,12 +141,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         >
+
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_centerVertical="true"
           android:text="是否显示底部右侧下载按钮"
           />
+
       <android.support.v7.widget.SwitchCompat
           android:id="@+id/switchShowDownButton"
           android:layout_width="wrap_content"
@@ -132,6 +163,7 @@
         android:layout_marginTop="40dp"
         android:orientation="vertical"
         >
+
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -146,6 +178,7 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="20dp"
           >
+
         <RadioButton
             android:id="@+id/radioThumb"
             android:layout_width="wrap_content"
@@ -153,6 +186,7 @@
             android:checked="false"
             android:text="仅普清"
             />
+
         <RadioButton
             android:id="@+id/radioOrigin"
             android:layout_width="wrap_content"
@@ -160,6 +194,7 @@
             android:checked="false"
             android:text="仅原图"
             />
+
         <RadioButton
             android:id="@+id/radioDefault"
             android:layout_width="wrap_content"
@@ -167,6 +202,7 @@
             android:checked="true"
             android:text="默认普清手动原图（默认模式）"
             />
+
         <RadioButton
             android:id="@+id/radioNetAuto"
             android:layout_width="wrap_content"
@@ -196,14 +232,6 @@
           android:layout_height="wrap_content"
           android:layout_alignParentRight="true"
           android:text="清除图片磁盘缓存"
-          />
-
-      <Button
-          android:id="@+id/buttonChoose"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_below="@+id/buttonPreview"
-          android:text="相册选图"
           />
     </RelativeLayout>
   </LinearLayout>

@@ -46,8 +46,8 @@ allprojects {
 
 ##### 此处显示的是本框架的最新版本号：
 ```
-对于glide4.x : 使用 v4_4.0.2
-对于glide3.x : 使用 v3_4.0.2
+对于glide4.x : 使用 v4_4.0.3
+对于glide3.x : 使用 v3_4.0.3
 ```
 
 ```
@@ -59,14 +59,14 @@ dependencies {
   implementation 'com.github.bumptech.glide:glide:4.8.0'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_4.0.2'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_4.0.3'
 
 ================================v4/v3分割线==================================
 
   // 针对glide v3 版本：
   // 如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库，请尽量保证版本号与下面一致：
   implementation 'com.android.support:appcompat-v7:28.0.0'
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_4.0.2'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_4.0.3'
 }
 ```
 
@@ -141,6 +141,32 @@ public class MyAppGlideModule extends AppGlideModule {
             //      加载原图的百分比在底部
 ```
 
+方法名 | 功能 |  说明  
+-|-|-
+|setBigImageClickListener|设置图片点击事件|默认null|
+|setBigImageLongClickListener|设置图片长按事件|默认null|
+|setBigImagePageChangeListener|设置页面切换监听|默认null|
+|setCloseIconResId|设置关闭按钮的Drawable资源id|默认内置R.drawable.ic_action_close|
+|setContext|设置上下文|不允许为空|
+|setDownIconResId|设置下载按钮的Drawable资源id|R.drawable.icon_download_new|
+|setEnableClickClose|设置是否开启点击图片退出|默认true|
+|setEnableDragClose|设置是否开启下拉图片退出|默认false|
+|setEnableUpDragClose|设置是否开启上拉图片退出|默认false|
+|setErrorPlaceHolder|设置加载失败的占位图资源id|默认内置R.drawable.load_failed|
+|setFolderName|设置下载到的文件夹名称|默认根目录Download（可嵌套多层Download/Image）|
+|setImage|设置单张图片地址|三选一|
+|setImageInfoList|设置图片Bean集合|三选一|
+|setImageList|设置图片地址集合|三选一|
+|setIndex|设置开始的索引|从0开始|
+|setLoadStrategy|设置加载策略|详细见：[https://github.com/SherlockGougou/BigImageViewPager/blob/master/library/src/main/java/cc/shinichi/library/ImagePreview.java#L430](https://github.com/SherlockGougou/BigImageViewPager/blob/master/library/src/main/java/cc/shinichi/library/ImagePreview.java#L430)
+|
+|setOnOriginProgressListener|设置原图加载进度回调|加载原图的百分比进度|
+|setProgressLayoutId|自定义百分比布局|详细见demo|
+|setShowCloseButton|设置是否显示关闭按钮|默认false，不显示|
+|setShowDownButton|设置是否显示下载按钮|默认true，显示|
+|setShowIndicator|设置是否显示顶部的进度指示器|默认true，显示|
+|setZoomTransitionDuration|设置图片缩放动画时长|默认200ms|
+|start|开启看图|最后调用|
 ##### 3：自定义多种配置：
 ```
         // 完全自定义调用：

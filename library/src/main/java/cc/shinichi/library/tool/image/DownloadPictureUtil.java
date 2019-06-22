@@ -37,8 +37,8 @@ public class DownloadPictureUtil {
                 ToastUtil.getInstance()._short(context, "保存失败");
             }
 
-            @Override public void onResourceReady(@NonNull File resource,
-                @Nullable Transition<? super File> transition) {
+            @Override
+            public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
                 super.onResourceReady(resource, transition);
                 final String downloadFolderName = ImagePreview.getInstance().getFolderName();
                 final String path = Environment.getExternalStorageDirectory() + "/" + downloadFolderName + "/";

@@ -8,9 +8,9 @@
       android:id="@+id/progress_horizontal"
       android:layout_width="100dp"
       android:layout_height="wrap_content"
-      style="@android:style/Widget.DeviceDefault.ProgressBar.Horizontal"
       android:indeterminate="false"
       android:max="100"
+      style="@android:style/Widget.DeviceDefault.ProgressBar.Horizontal"
       />
 
 </LinearLayout>

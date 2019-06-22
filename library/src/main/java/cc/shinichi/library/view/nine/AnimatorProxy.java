@@ -37,6 +37,7 @@ public final class AnimatorProxy extends Animation {
     private float mScaleY = 1;
     private float mTranslationX;
     private float mTranslationY;
+
     private AnimatorProxy(View view) {
         setDuration(0); //perform transformation immediately
         setFillAfter(true); //persist transformation beyond duration
