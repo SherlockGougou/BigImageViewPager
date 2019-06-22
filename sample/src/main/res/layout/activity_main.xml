@@ -227,6 +227,14 @@
           />
 
       <Button
+          android:id="@+id/buttonChoose"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_below="@+id/buttonPreview"
+          android:text="相册选图"
+          />
+
+      <Button
           android:id="@+id/buttonClean"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
