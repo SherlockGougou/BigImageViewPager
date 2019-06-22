@@ -141,6 +141,8 @@ public class MyAppGlideModule extends AppGlideModule {
             //      加载原图的百分比在底部
 ```
 
+##### 接口说明：
+
 方法名 | 功能 |  说明  
 -|-|-
 |setBigImageClickListener|设置图片点击事件|默认null|
@@ -158,8 +160,7 @@ public class MyAppGlideModule extends AppGlideModule {
 |setImageInfoList|设置图片Bean集合|三选一|
 |setImageList|设置图片地址集合|三选一|
 |setIndex|设置开始的索引|从0开始|
-|setLoadStrategy|设置加载策略|详细见：[https://github.com/SherlockGougou/BigImageViewPager/blob/master/library/src/main/java/cc/shinichi/library/ImagePreview.java#L430](https://github.com/SherlockGougou/BigImageViewPager/blob/master/library/src/main/java/cc/shinichi/library/ImagePreview.java#L430)
-|
+|setLoadStrategy|设置加载策略|详见加载策略说明|
 |setOnOriginProgressListener|设置原图加载进度回调|加载原图的百分比进度|
 |setProgressLayoutId|自定义百分比布局|详细见demo|
 |setShowCloseButton|设置是否显示关闭按钮|默认false，不显示|
@@ -167,6 +168,7 @@ public class MyAppGlideModule extends AppGlideModule {
 |setShowIndicator|设置是否显示顶部的进度指示器|默认true，显示|
 |setZoomTransitionDuration|设置图片缩放动画时长|默认200ms|
 |start|开启看图|最后调用|
+
 ##### 3：自定义多种配置：
 ```
         // 完全自定义调用：
