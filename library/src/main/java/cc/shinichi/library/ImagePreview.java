@@ -50,6 +50,7 @@ public class ImagePreview {
     private int zoomTransitionDuration = 200;// 动画持续时间 单位毫秒 ms
 
     private boolean isEnableDragClose = false;// 是否启用下拉关闭，默认不启用
+    private boolean isEnableUpDragClose = false;// 是否启用上拉关闭，默认不启用
     private boolean isEnableClickClose = true;// 是否启用点击关闭，默认启用
 
     private LoadStrategy loadStrategy = LoadStrategy.Default;// 加载策略
@@ -248,6 +249,15 @@ public class ImagePreview {
         return this;
     }
 
+    public boolean isEnableUpDragClose() {
+        return isEnableUpDragClose;
+    }
+
+    public ImagePreview setEnableUpDragClose(boolean enableUpDragClose) {
+        isEnableUpDragClose = enableUpDragClose;
+        return this;
+    }
+
     public boolean isEnableClickClose() {
         return isEnableClickClose;
     }
@@ -349,6 +359,7 @@ public class ImagePreview {
         isShowDownButton = true;
         isShowCloseButton = false;
         isEnableDragClose = false;
+        isEnableUpDragClose = false;
         isEnableClickClose = true;
         isShowIndicator = true;
 

@@ -78,6 +78,25 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_centerVertical="true"
+          android:text="开启或关闭上拉关闭功能"
+          />
+      <android.support.v7.widget.SwitchCompat
+          android:id="@+id/switchUpDragClose"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentRight="true"
+          />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        >
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerVertical="true"
           android:text="是否显示顶部指示器"
           />
       <android.support.v7.widget.SwitchCompat
@@ -196,6 +215,14 @@
           android:layout_height="wrap_content"
           android:layout_alignParentRight="true"
           android:text="清除图片磁盘缓存"
+          />
+
+      <Button
+          android:id="@+id/buttonChoose"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_below="@+id/buttonPreview"
+          android:text="相册选图"
           />
     </RelativeLayout>
   </LinearLayout>

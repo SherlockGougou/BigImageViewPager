@@ -123,15 +123,19 @@ public class FingerDragHelper extends LinearLayout {
     }
 
     private void onActionUp() {
-        //if (Math.abs(mTranslationY) > MAX_EXIT_Y) {
-        //	exitWithTranslation(mTranslationY);
-        //} else {
-        //	resetCallBackAnimation();
-        //}
-        if (mTranslationY > MAX_EXIT_Y) {
-            exitWithTranslation(mTranslationY);
+        boolean enableUpDragClose = ImagePreview.getInstance().isEnableUpDragClose();
+        if (enableUpDragClose) {
+            if (Math.abs(mTranslationY) > MAX_EXIT_Y) {
+                exitWithTranslation(mTranslationY);
+            } else {
+                resetCallBackAnimation();
+            }
         } else {
-            resetCallBackAnimation();
+            if (mTranslationY > MAX_EXIT_Y) {
+                exitWithTranslation(mTranslationY);
+            } else {
+                resetCallBackAnimation();
+            }
         }
     }
 

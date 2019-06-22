@@ -1,6 +1,14 @@
 package cc.shinichi.bigimageviewpager;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
@@ -17,8 +25,14 @@ import cc.shinichi.library.view.listener.OnBigImageClickListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
 import cc.shinichi.library.view.listener.OnOriginProgressListener;
+import com.zhihu.matisse.Matisse;
+import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.engine.impl.GlideEngine;
+import com.zhihu.matisse.internal.entity.CaptureStrategy;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.support.v4.content.PermissionChecker.PERMISSION_GRANTED;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     boolean enableClickClose = false;
     boolean enableDragClose = false;
+    boolean enableUpDragClose = false;
     boolean showIndicator = false;
     boolean showCloseButton = false;
     boolean showDownButton = false;
@@ -52,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         SwitchCompat switchClickClose = findViewById(R.id.switchClickClose);
         SwitchCompat switchDragClose = findViewById(R.id.switchDragClose);
+        SwitchCompat switchUpDragClose = findViewById(R.id.switchUpDragClose);
         SwitchCompat switchShowIndicator = findViewById(R.id.switchShowIndicator);
         SwitchCompat switchShowCloseButton = findViewById(R.id.switchShowCloseButton);
         SwitchCompat switchShowDownButton = findViewById(R.id.switchShowDownButton);
@@ -71,6 +87,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         switchDragClose.setChecked(true);
+
+        switchUpDragClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                enableUpDragClose = isChecked;
+            }
+        });
+        switchUpDragClose.setChecked(true);
 
         switchShowIndicator.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -158,6 +181,11 @@ public class MainActivity extends AppCompatActivity {
         imageInfo = new ImageInfo();
         imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550234159438&di=345e38a6d82e79a3c48abd85b57d5e89&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fq_70%2Cc_zoom%2Cw_640%2Fupload%2F20170331%2F99098fa2ae0e48ac8ee8d813c1620900_th.gif");
         imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550234159438&di=345e38a6d82e79a3c48abd85b57d5e89&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fq_70%2Cc_zoom%2Cw_640%2Fupload%2F20170331%2F99098fa2ae0e48ac8ee8d813c1620900_th.gif");
+        imageInfoList.add(0, imageInfo);
+
+        imageInfo = new ImageInfo();
+        imageInfo.setOriginUrl("http://hongdan24.oss-cn-qingdao.aliyuncs.com/nba/9071185e93c349518d43a39b3281d99f.png");
+        imageInfo.setThumbnailUrl("http://hongdan24.oss-cn-qingdao.aliyuncs.com/nba/9071185e93c349518d43a39b3281d99f.png");
         imageInfoList.add(0, imageInfo);
 
         // 测试小尺寸图
@@ -249,8 +277,10 @@ public class MainActivity extends AppCompatActivity {
 
                     // 是否启用点击图片关闭。默认启用
                     .setEnableClickClose(enableClickClose)
-                    // 是否启用上拉/下拉关闭。默认不启用
+                    // 是否启用下拉关闭。默认不启用
                     .setEnableDragClose(enableDragClose)
+                    // 是否启用上拉关闭。默认不启用
+                    .setEnableUpDragClose(enableUpDragClose)
 
                     // 是否显示关闭页面按钮，在页面左下角。默认不显示
                     .setShowCloseButton(showCloseButton)
@@ -338,6 +368,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // 通过相册选择图片，进行预览
+        findViewById(R.id.buttonChoose).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(MainActivity.this.getApplicationContext(),
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        // 拒绝权限
+                        ToastUtil.getInstance()._short(MainActivity.this.getApplicationContext(), "您拒绝了存储权限，无法读取图片！");
+                    } else {
+                        // 申请权限
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE, }, 1);
+                    }
+                } else {
+                    // 选择图片
+                    chooseImage();
+                }
+            }
+        });
+
         // 清除磁盘缓存
         findViewById(R.id.buttonClean).setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
@@ -345,5 +396,54 @@ public class MainActivity extends AppCompatActivity {
                 ToastUtil.getInstance()._short(MainActivity.this, "磁盘缓存已成功清除");
             }
         });
+    }
+
+    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+        @NonNull int[] grantResults) {
+        if (requestCode == 1) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[i] == PERMISSION_GRANTED) {
+                    chooseImage();
+                } else {
+                    ToastUtil.getInstance()._short(MainActivity.this.getApplicationContext(), "您拒绝了存储权限，无法读取图片！");
+                }
+            }
+        }
+    }
+
+    // 去选择图片
+    private void chooseImage() {
+        Matisse.from(MainActivity.this)
+            .choose(MimeType.ofImage())
+            .capture(true)
+            .captureStrategy(new CaptureStrategy(true, "cc.shinichi.bigimageviewpager.fileprovider", "BigImage"))
+            .countable(true)
+            .maxSelectable(30)
+            .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            .thumbnailScale(0.85f)
+            .imageEngine(new GlideEngine())
+            .theme(com.zhihu.matisse.R.style.Matisse_Zhihu)
+            .showSingleMediaType(true)
+            .originalEnable(true)
+            .forResult(1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK && data != null) {
+                ArrayList<String> mCurrentSelectedPath = (ArrayList<String>) Matisse.obtainPathResult(data);
+                ImagePreview
+                    .getInstance()
+                    .setContext(MainActivity.this)
+                    .setImageList(mCurrentSelectedPath)
+                    .setShowDownButton(false)
+                    .setShowCloseButton(false)
+                    .setEnableDragClose(true)
+                    .setEnableClickClose(false)
+                    .start();
+            }
+        }
     }
 }
