@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
+
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.R;
 import cc.shinichi.library.view.nine.ViewHelper;
@@ -57,13 +58,15 @@ public class FingerDragHelper extends LinearLayout {
         mTouchslop = ViewConfiguration.getTouchSlop();
     }
 
-    @Override protected void onFinishInflate() {
+    @Override
+    protected void onFinishInflate() {
         super.onFinishInflate();
         imageView = (SubsamplingScaleImageViewDragClose) getChildAt(0);
         imageGif = (PhotoView) getChildAt(1);
     }
 
-    @Override public boolean onInterceptTouchEvent(MotionEvent ev) {
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
         boolean isIntercept = false;
         int action = ev.getAction() & ev.getActionMasked();
         switch (action) {
@@ -73,13 +76,13 @@ public class FingerDragHelper extends LinearLayout {
                 if (ImagePreview.getInstance().isEnableDragClose()) {
                     if (imageGif != null && imageGif.getVisibility() == View.VISIBLE) {
                         isIntercept = (imageGif.getScale() <= (imageGif.getMinimumScale() + 0.001F))
-                            && (imageGif.getMaxTouchCount() == 0 || imageGif.getMaxTouchCount() == 1)
-                            && Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop;
+                                && (imageGif.getMaxTouchCount() == 0 || imageGif.getMaxTouchCount() == 1)
+                                && Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop;
                     } else if (imageView != null && imageView.getVisibility() == View.VISIBLE) {
                         isIntercept = (imageView.getScale() <= (imageView.getMinScale() + 0.001F))
-                            && (imageView.getMaxTouchCount() == 0 || imageView.getMaxTouchCount() == 1)
-                            && Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop
-                            && imageView.atYEdge;
+                                && (imageView.getMaxTouchCount() == 0 || imageView.getMaxTouchCount() == 1)
+                                && Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop
+                                && imageView.atYEdge;
                     }
                 }
                 break;
@@ -89,7 +92,8 @@ public class FingerDragHelper extends LinearLayout {
         return isIntercept;
     }
 
-    @Override public boolean onTouchEvent(MotionEvent event) {
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction() & event.getActionMasked();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
@@ -128,130 +132,146 @@ public class FingerDragHelper extends LinearLayout {
         //} else {
         //	resetCallBackAnimation();
         //}
-        if (mTranslationY > MAX_EXIT_Y) {
+        if (mTranslationY > MAX_EXIT_Y || (mTranslationY < -MAX_EXIT_Y && ImagePreview.getInstance().isEnableUpDragClose())) {
             exitWithTranslation(mTranslationY);
-        } else {
-            resetCallBackAnimation();
+        }
+        else{
+                resetCallBackAnimation();
+            }
+        }
+
+        public void exitWithTranslation ( float currentY){
+            if (currentY > 0) {
+                ValueAnimator animDown = ValueAnimator.ofFloat(mTranslationY, getHeight());
+                animDown.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        float fraction = (float) animation.getAnimatedValue();
+                        ViewHelper.setScrollY(FingerDragHelper.this, -(int) fraction);
+                    }
+                });
+                animDown.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        reset();
+                        Activity activity = ((Activity) getContext());
+                        activity.finish();
+                        activity.overridePendingTransition(fadeIn, fadeOut);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                animDown.setDuration(DURATION);
+                animDown.setInterpolator(new LinearInterpolator());
+                animDown.start();
+            } else {
+                ValueAnimator animUp = ValueAnimator.ofFloat(mTranslationY, -getHeight());
+                animUp.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        float fraction = (float) animation.getAnimatedValue();
+                        ViewHelper.setScrollY(FingerDragHelper.this, -(int) fraction);
+                    }
+                });
+                animUp.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        reset();
+                        ((Activity) getContext()).finish();
+                        ((Activity) getContext()).overridePendingTransition(fadeIn, fadeOut);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                animUp.setDuration(DURATION);
+                animUp.setInterpolator(new LinearInterpolator());
+                animUp.start();
+            }
+        }
+
+        private void resetCallBackAnimation () {
+            ValueAnimator animatorY = ValueAnimator.ofFloat(mTranslationY, 0);
+            animatorY.setDuration(DURATION);
+            animatorY.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    if (isAnimate) {
+                        mTranslationY = (float) valueAnimator.getAnimatedValue();
+                        mLastTranslationY = mTranslationY;
+                        ViewHelper.setScrollY(FingerDragHelper.this, -(int) mTranslationY);
+                    }
+                }
+            });
+            animatorY.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    isAnimate = true;
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    if (isAnimate) {
+                        mTranslationY = 0;
+                        invalidate();
+                        reset();
+                    }
+                    isAnimate = false;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            animatorY.start();
+        }
+
+        /**
+         * 暴露的回调方法（可根据位移距离或者alpha来改变主UI控件的透明度等
+         */
+        public void setOnAlphaChangeListener (onAlphaChangedListener alphaChangeListener){
+            mOnAlphaChangedListener = alphaChangeListener;
+        }
+
+        private void reset () {
+            if (null != mOnAlphaChangedListener) {
+                mOnAlphaChangedListener.onTranslationYChanged(null, mTranslationY);
+            }
+        }
+
+        public interface onAlphaChangedListener {
+
+            void onTranslationYChanged(MotionEvent event, float translationY);
         }
     }
-
-    public void exitWithTranslation(float currentY) {
-        if (currentY > 0) {
-            ValueAnimator animDown = ValueAnimator.ofFloat(mTranslationY, getHeight());
-            animDown.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override public void onAnimationUpdate(ValueAnimator animation) {
-                    float fraction = (float) animation.getAnimatedValue();
-                    ViewHelper.setScrollY(FingerDragHelper.this, -(int) fraction);
-                }
-            });
-            animDown.addListener(new Animator.AnimatorListener() {
-                @Override public void onAnimationStart(Animator animation) {
-
-                }
-
-                @Override public void onAnimationEnd(Animator animation) {
-                    reset();
-                    Activity activity = ((Activity) getContext());
-                    activity.finish();
-                    activity.overridePendingTransition(fadeIn, fadeOut);
-                }
-
-                @Override public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override public void onAnimationRepeat(Animator animation) {
-
-                }
-            });
-            animDown.setDuration(DURATION);
-            animDown.setInterpolator(new LinearInterpolator());
-            animDown.start();
-        } else {
-            ValueAnimator animUp = ValueAnimator.ofFloat(mTranslationY, -getHeight());
-            animUp.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override public void onAnimationUpdate(ValueAnimator animation) {
-                    float fraction = (float) animation.getAnimatedValue();
-                    ViewHelper.setScrollY(FingerDragHelper.this, -(int) fraction);
-                }
-            });
-            animUp.addListener(new Animator.AnimatorListener() {
-                @Override public void onAnimationStart(Animator animation) {
-
-                }
-
-                @Override public void onAnimationEnd(Animator animation) {
-                    reset();
-                    ((Activity) getContext()).finish();
-                    ((Activity) getContext()).overridePendingTransition(fadeIn, fadeOut);
-                }
-
-                @Override public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override public void onAnimationRepeat(Animator animation) {
-
-                }
-            });
-            animUp.setDuration(DURATION);
-            animUp.setInterpolator(new LinearInterpolator());
-            animUp.start();
-        }
-    }
-
-    private void resetCallBackAnimation() {
-        ValueAnimator animatorY = ValueAnimator.ofFloat(mTranslationY, 0);
-        animatorY.setDuration(DURATION);
-        animatorY.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                if (isAnimate) {
-                    mTranslationY = (float) valueAnimator.getAnimatedValue();
-                    mLastTranslationY = mTranslationY;
-                    ViewHelper.setScrollY(FingerDragHelper.this, -(int) mTranslationY);
-                }
-            }
-        });
-        animatorY.addListener(new Animator.AnimatorListener() {
-            @Override public void onAnimationStart(Animator animation) {
-                isAnimate = true;
-            }
-
-            @Override public void onAnimationEnd(Animator animation) {
-                if (isAnimate) {
-                    mTranslationY = 0;
-                    invalidate();
-                    reset();
-                }
-                isAnimate = false;
-            }
-
-            @Override public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-        animatorY.start();
-    }
-
-    /**
-     * 暴露的回调方法（可根据位移距离或者alpha来改变主UI控件的透明度等
-     */
-    public void setOnAlphaChangeListener(onAlphaChangedListener alphaChangeListener) {
-        mOnAlphaChangedListener = alphaChangeListener;
-    }
-
-    private void reset() {
-        if (null != mOnAlphaChangedListener) {
-            mOnAlphaChangedListener.onTranslationYChanged(null, mTranslationY);
-        }
-    }
-
-    public interface onAlphaChangedListener {
-
-        void onTranslationYChanged(MotionEvent event, float translationY);
-    }
-}

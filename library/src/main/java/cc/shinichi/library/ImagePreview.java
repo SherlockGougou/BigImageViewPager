@@ -8,12 +8,14 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
+
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.view.ImagePreviewActivity;
 import cc.shinichi.library.view.listener.OnBigImageClickListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
 import cc.shinichi.library.view.listener.OnOriginProgressListener;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +36,8 @@ public class ImagePreview {
     public static final int MODE_SCALE_TO_MAX_TO_MIN = 1002;// 二级放大，最大与最小
     public static final int MODE_SCALE_TO_MEDIUM_TO_MIN = 1003;// 二级放大，中等与最小
 
-    @LayoutRes public static final int PROGRESS_THEME_CIRCLE_TEXT = R.layout.sh_default_progress_layout;
+    @LayoutRes
+    public static final int PROGRESS_THEME_CIRCLE_TEXT = R.layout.sh_default_progress_layout;
 
     private WeakReference<Context> contextWeakReference;
     private List<ImageInfo> imageInfoList;// 图片数据集合
@@ -50,15 +53,19 @@ public class ImagePreview {
     private int zoomTransitionDuration = 200;// 动画持续时间 单位毫秒 ms
 
     private boolean isEnableDragClose = false;// 是否启用下拉关闭，默认不启用
+    private boolean isEnableUpDragClose = false;// 是否启用上拉关闭，默认不启用
     private boolean isEnableClickClose = true;// 是否启用点击关闭，默认启用
 
     private LoadStrategy loadStrategy = LoadStrategy.Default;// 加载策略
 
-    @DrawableRes private int closeIconResId = R.drawable.ic_action_close;
-    @DrawableRes private int downIconResId = R.drawable.icon_download_new;
+    @DrawableRes
+    private int closeIconResId = R.drawable.ic_action_close;
+    @DrawableRes
+    private int downIconResId = R.drawable.icon_download_new;
 
     // 加载失败时的占位图
-    @DrawableRes private int errorPlaceHolder = R.drawable.load_failed;
+    @DrawableRes
+    private int errorPlaceHolder = R.drawable.load_failed;
 
     // 点击和长按事件接口
     private OnBigImageClickListener bigImageClickListener;
@@ -67,7 +74,8 @@ public class ImagePreview {
     private OnOriginProgressListener onOriginProgressListener;
 
     // 自定义百分比布局layout id
-    @LayoutRes private int progressLayoutId = -1;
+    @LayoutRes
+    private int progressLayoutId = -1;
     // 防止多次快速点击，记录上次打开的时间戳
     private long lastClickTime = 0;
 
@@ -165,7 +173,8 @@ public class ImagePreview {
     /**
      * 不再有效，是否显示查看原图按钮，取决于加载策略，LoadStrategy，会自行判断是否显示。
      */
-    @Deprecated public ImagePreview setShowOriginButton(boolean showOriginButton) {
+    @Deprecated
+    public ImagePreview setShowOriginButton(boolean showOriginButton) {
         //isShowOriginButton = showOriginButton;
         return this;
     }
@@ -185,7 +194,8 @@ public class ImagePreview {
     /**
      * 当前版本不再支持本设置，双击会在最小和中等缩放值之间进行切换，可手动放大到最大。
      */
-    @Deprecated public ImagePreview setScaleMode(int scaleMode) {
+    @Deprecated
+    public ImagePreview setScaleMode(int scaleMode) {
         //if (scaleMode != MODE_SCALE_TO_MAX_TO_MIN
         //	&& scaleMode != MODE_SCALE_TO_MEDIUM_TO_MAX_TO_MIN
         //	&& scaleMode != MODE_SCALE_TO_MEDIUM_TO_MIN) {
@@ -245,6 +255,15 @@ public class ImagePreview {
 
     public ImagePreview setEnableDragClose(boolean enableDragClose) {
         isEnableDragClose = enableDragClose;
+        return this;
+    }
+
+    public boolean isEnableUpDragClose() {
+        return isEnableUpDragClose;
+    }
+
+    public ImagePreview setEnableUpDragClose(boolean enableUpDragClose) {
+        isEnableUpDragClose = enableUpDragClose;
         return this;
     }
 
@@ -399,7 +418,7 @@ public class ImagePreview {
         }
         if (imageInfoList == null || imageInfoList.size() == 0) {
             throw new IllegalArgumentException(
-                "Do you forget to call 'setImageInfoList(List<ImageInfo> imageInfoList)' ?");
+                    "Do you forget to call 'setImageInfoList(List<ImageInfo> imageInfoList)' ?");
         }
         if (this.index >= imageInfoList.size()) {
             throw new IllegalArgumentException("index out of range!");
