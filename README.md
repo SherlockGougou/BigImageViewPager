@@ -46,8 +46,8 @@ allprojects {
 
 ##### 此处显示的是本框架的最新版本号：
 ```
-对于glide4.x : 使用 v4_4.0.3
-对于glide3.x : 使用 v3_4.0.3
+对于glide4.x : 使用 v4_4.1.0
+对于glide3.x : 使用 v3_4.1.0
 ```
 
 ```
@@ -59,14 +59,14 @@ dependencies {
   implementation 'com.github.bumptech.glide:glide:4.8.0'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_4.0.3'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_4.1.0'
 
 ================================v4/v3分割线==================================
 
   // 针对glide v3 版本：
   // 如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库，请尽量保证版本号与下面一致：
   implementation 'com.android.support:appcompat-v7:28.0.0'
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_4.0.3'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_4.1.0'
 }
 ```
 
@@ -166,6 +166,7 @@ public class MyAppGlideModule extends AppGlideModule {
 |setShowCloseButton|设置是否显示关闭按钮|默认false，不显示|
 |setShowDownButton|设置是否显示下载按钮|默认true，显示|
 |setShowIndicator|设置是否显示顶部的进度指示器|默认true，显示|
+|setShowErrorToast|设置是否显示加载失败的Toast|默认false，不显示|
 |setZoomTransitionDuration|设置图片缩放动画时长|默认200ms|
 |start|开启看图|最后调用|
 
@@ -201,6 +202,9 @@ public class MyAppGlideModule extends AppGlideModule {
 
                     // 缩放动画时长，单位ms
                     .setZoomTransitionDuration(300)
+                    
+                    // 是否显示加载失败的Toast
+                    .setShowErrorToast(showErrorToast)
 
                     // 是否启用点击图片关闭。默认启用
                     .setEnableClickClose(enableClickClose)
