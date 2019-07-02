@@ -24,6 +24,12 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="最简单调用，不受下面配置影响"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="自定义各种开关："
         android:textSize="18sp"
@@ -151,6 +157,27 @@
 
       <android.support.v7.widget.SwitchCompat
           android:id="@+id/switchShowDownButton"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentRight="true"
+          />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        >
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerVertical="true"
+          android:text="是否显示加载失败的Toast"
+          />
+
+      <android.support.v7.widget.SwitchCompat
+          android:id="@+id/switchShowErrorToast"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_alignParentRight="true"

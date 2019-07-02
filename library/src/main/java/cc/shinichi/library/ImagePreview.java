@@ -27,9 +27,6 @@ import java.util.List;
  */
 public class ImagePreview {
 
-    public static final int MODE_SCALE_TO_MEDIUM_TO_MAX_TO_MIN = 1001;// 三级放大
-    public static final int MODE_SCALE_TO_MAX_TO_MIN = 1002;// 二级放大，最大与最小
-    public static final int MODE_SCALE_TO_MEDIUM_TO_MIN = 1003;// 二级放大，中等与最小
     @LayoutRes public static final int PROGRESS_THEME_CIRCLE_TEXT = R.layout.sh_default_progress_layout;
     // 触发双击的最短时间，小于这个时间的直接返回
     private static final int MIN_DOUBLE_CLICK_TIME = 1500;
@@ -49,6 +46,7 @@ public class ImagePreview {
     private boolean isEnableDragClose = false;// 是否启用下拉关闭，默认不启用
     private boolean isEnableUpDragClose = false;// 是否启用上拉关闭，默认不启用
     private boolean isEnableClickClose = true;// 是否启用点击关闭，默认启用
+    private boolean isShowErrorToast = false;// 是否在加载失败时显示toast
 
     private LoadStrategy loadStrategy = LoadStrategy.Default;// 加载策略
 
@@ -265,6 +263,15 @@ public class ImagePreview {
         return this;
     }
 
+    public boolean isShowErrorToast() {
+        return isShowErrorToast;
+    }
+
+    public ImagePreview setShowErrorToast(boolean showErrorToast) {
+        isShowErrorToast = showErrorToast;
+        return this;
+    }
+
     public int getCloseIconResId() {
         return closeIconResId;
     }
@@ -359,6 +366,7 @@ public class ImagePreview {
         isEnableDragClose = false;
         isEnableClickClose = true;
         isShowIndicator = true;
+        isShowErrorToast = false;
 
         closeIconResId = R.drawable.ic_action_close;
         downIconResId = R.drawable.icon_download_new;

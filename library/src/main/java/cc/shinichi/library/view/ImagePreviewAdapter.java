@@ -106,48 +106,54 @@ public class ImagePreviewAdapter extends PagerAdapter {
             if (cacheFile != null && cacheFile.exists()) {
                 boolean isCacheIsGif = ImageUtil.isGifImageWithMime(cacheFile.getAbsolutePath());
                 if (isCacheIsGif) {
-                    imageGif.setVisibility(View.VISIBLE);
-                    imageView.setVisibility(View.GONE);
-
-                    Glide.with(activity)
-                        .asGif()
-                        .load(cacheFile)
-                        .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                            .error(ImagePreview.getInstance().getErrorPlaceHolder()))
-                        .into(imageGif);
+                    if (imageView != null) {
+                        imageView.setVisibility(View.GONE);
+                    }
+                    if (imageGif != null) {
+                        imageGif.setVisibility(View.VISIBLE);
+                        Glide.with(activity)
+                            .asGif()
+                            .load(cacheFile)
+                            .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                                .error(ImagePreview.getInstance().getErrorPlaceHolder()))
+                            .into(imageGif);
+                    }
                 } else {
-                    imageGif.setVisibility(View.GONE);
-                    imageView.setVisibility(View.VISIBLE);
+                    if (imageGif != null) {
+                        imageGif.setVisibility(View.GONE);
+                    }
+                    if (imageView != null) {
+                        imageView.setVisibility(View.VISIBLE);
+                        String thumbnailUrl = imageInfo.getThumbnailUrl();
+                        File smallCacheFile = ImageLoader.getGlideCacheFile(activity, thumbnailUrl);
 
-                    String thumbnailUrl = imageInfo.getThumbnailUrl();
-                    File smallCacheFile = ImageLoader.getGlideCacheFile(activity, thumbnailUrl);
-
-                    ImageSource small = null;
-                    if (smallCacheFile != null && smallCacheFile.exists()) {
-                        String smallImagePath = smallCacheFile.getAbsolutePath();
-                        small = ImageSource.bitmap(
-                            ImageUtil.getImageBitmap(smallImagePath, ImageUtil.getBitmapDegree(smallImagePath)));
-                        int widSmall = ImageUtil.getWidthHeight(smallImagePath)[0];
-                        int heiSmall = ImageUtil.getWidthHeight(smallImagePath)[1];
-                        if (ImageUtil.isBmpImageWithMime(cacheFile.getAbsolutePath())) {
-                            small.tilingDisabled();
+                        ImageSource small = null;
+                        if (smallCacheFile != null && smallCacheFile.exists()) {
+                            String smallImagePath = smallCacheFile.getAbsolutePath();
+                            small = ImageSource.bitmap(
+                                ImageUtil.getImageBitmap(smallImagePath, ImageUtil.getBitmapDegree(smallImagePath)));
+                            int widSmall = ImageUtil.getWidthHeight(smallImagePath)[0];
+                            int heiSmall = ImageUtil.getWidthHeight(smallImagePath)[1];
+                            if (ImageUtil.isBmpImageWithMime(cacheFile.getAbsolutePath())) {
+                                small.tilingDisabled();
+                            }
+                            small.dimensions(widSmall, heiSmall);
                         }
-                        small.dimensions(widSmall, heiSmall);
+
+                        String imagePath = cacheFile.getAbsolutePath();
+                        ImageSource origin = ImageSource.uri(imagePath);
+                        int widOrigin = ImageUtil.getWidthHeight(imagePath)[0];
+                        int heiOrigin = ImageUtil.getWidthHeight(imagePath)[1];
+                        if (ImageUtil.isBmpImageWithMime(cacheFile.getAbsolutePath())) {
+                            origin.tilingDisabled();
+                        }
+                        origin.dimensions(widOrigin, heiOrigin);
+
+                        setImageSpec(imagePath, imageView);
+
+                        imageView.setOrientation(SubsamplingScaleImageViewDragClose.ORIENTATION_USE_EXIF);
+                        imageView.setImage(origin, small);
                     }
-
-                    String imagePath = cacheFile.getAbsolutePath();
-                    ImageSource origin = ImageSource.uri(imagePath);
-                    int widOrigin = ImageUtil.getWidthHeight(imagePath)[0];
-                    int heiOrigin = ImageUtil.getWidthHeight(imagePath)[1];
-                    if (ImageUtil.isBmpImageWithMime(cacheFile.getAbsolutePath())) {
-                        origin.tilingDisabled();
-                    }
-                    origin.dimensions(widOrigin, heiOrigin);
-
-                    setImageSpec(imagePath, imageView);
-
-                    imageView.setOrientation(SubsamplingScaleImageViewDragClose.ORIENTATION_USE_EXIF);
-                    imageView.setImage(origin, small);
                 }
             } else {
                 notifyDataSetChanged();
@@ -343,29 +349,27 @@ public class ImagePreviewAdapter extends PagerAdapter {
         return convertView;
     }
 
-    @Override public void destroyItem(ViewGroup container, int position, Object object) {
-        //try {
-        //    container.removeView((View) object);
-        //} catch (Exception e) {
-        //    e.printStackTrace();
-        //}
-        //try {
-        //    ImageLoader.clearMemory(activity);
-        //} catch (Exception e) {
-        //    e.printStackTrace();
-        //}
+    @Override public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        String originUrl = imageInfo.get(position).getOriginUrl();
         try {
-            if (imageHashMap != null && imageHashMap.get(imageInfo.get(position).getOriginUrl()) != null) {
-                imageHashMap.get(imageInfo.get(position).getOriginUrl()).destroyDrawingCache();
-                imageHashMap.get(imageInfo.get(position).getOriginUrl()).recycle();
+            if (imageHashMap != null) {
+                SubsamplingScaleImageViewDragClose imageViewDragClose = imageHashMap.get(originUrl);
+                if (imageViewDragClose != null) {
+                    imageViewDragClose.resetScaleAndCenter();
+                    imageViewDragClose.destroyDrawingCache();
+                    imageViewDragClose.recycle();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         try {
-            if (imageGifHashMap != null && imageGifHashMap.get(imageInfo.get(position).getOriginUrl()) != null) {
-                imageGifHashMap.get(imageInfo.get(position).getOriginUrl()).destroyDrawingCache();
-                imageGifHashMap.get(imageInfo.get(position).getOriginUrl()).setImageBitmap(null);
+            if (imageGifHashMap != null) {
+                PhotoView photoView = imageGifHashMap.get(originUrl);
+                if (photoView != null) {
+                    photoView.destroyDrawingCache();
+                    photoView.setImageBitmap(null);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -377,15 +381,15 @@ public class ImagePreviewAdapter extends PagerAdapter {
         }
     }
 
-    @Override public void setPrimaryItem(ViewGroup container, int position, final Object object) {
+    @Override public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull final Object object) {
         super.setPrimaryItem(container, position, object);
     }
 
-    @Override public boolean isViewFromObject(View view, Object object) {
+    @Override public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view == object;
     }
 
-    @Override public int getItemPosition(Object object) {
+    @Override public int getItemPosition(@NonNull Object object) {
         return POSITION_NONE;
     }
 
@@ -398,14 +402,16 @@ public class ImagePreviewAdapter extends PagerAdapter {
         imageView.setZoomEnabled(false);
         imageView.setImage(ImageSource.resource(ImagePreview.getInstance().getErrorPlaceHolder()));
 
-        String errorMsg = "加载失败";
-        if (e != null) {
-            errorMsg = errorMsg.concat(":\n").concat(e.getMessage());
+        if (ImagePreview.getInstance().isShowErrorToast()) {
+            String errorMsg = "加载失败";
+            if (e != null) {
+                errorMsg = errorMsg.concat(":\n").concat(e.getMessage());
+            }
+            if (errorMsg.length() > 200) {
+                errorMsg = errorMsg.substring(0, 199);
+            }
+            ToastUtil.getInstance()._short(activity.getApplicationContext(), errorMsg);
         }
-        if (errorMsg.length() > 200) {
-            errorMsg = errorMsg.substring(0, 199);
-        }
-        ToastUtil.getInstance()._short(activity.getApplicationContext(), errorMsg);
     }
 
     private void loadSuccess(File resource, SubsamplingScaleImageViewDragClose imageView, ImageView imageGif,

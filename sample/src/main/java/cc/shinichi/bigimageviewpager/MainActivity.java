@@ -44,11 +44,13 @@ public class MainActivity extends AppCompatActivity {
         "http://img3.16fan.com/live/origin/201805/21/2D02ebc5838e6.jpg",
         "http://img3.16fan.com/live/origin/201805/21/A1B17c5f59b78.jpg",
         "http://img3.16fan.com/live/origin/201805/21/94699b2be3cfa.jpg",
-        "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg", //  5760 * 3840
+        // 下面这张是：5760 * 3840
+        "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg",
         "http://img3.16fan.com/live/origin/201812/01/qz2x9e6l98b5h.jpg",
         "http://img3.16fan.com/live/origin/201805/21/14C5e483e7583.jpg",
         "http://img3.16fan.com/live/origin/201805/21/EB298ce595dd2.jpg",
-        "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg", //  2280 * 22116
+        // 下面这张是：2280 * 22116
+        "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg",
         "http://img3.16fan.com/live/origin/201805/21/264Ba4860d469.jpg"
     };
 
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     boolean showIndicator = false;
     boolean showCloseButton = false;
     boolean showDownButton = false;
+    boolean showErrorToast = false;
 
     ImagePreview.LoadStrategy loadStrategy = ImagePreview.LoadStrategy.Default;
 
@@ -71,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         SwitchCompat switchShowIndicator = findViewById(R.id.switchShowIndicator);
         SwitchCompat switchShowCloseButton = findViewById(R.id.switchShowCloseButton);
         SwitchCompat switchShowDownButton = findViewById(R.id.switchShowDownButton);
+        SwitchCompat switchShowErrorToast = findViewById(R.id.switchShowErrorToast);
 
         RadioGroup radioGroupStrategy = findViewById(R.id.radioGroupStrategy);
 
@@ -115,6 +119,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         switchShowDownButton.setChecked(true);
+        switchShowErrorToast.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                showErrorToast = isChecked;
+            }
+        });
+        switchShowErrorToast.setChecked(false);
 
         loadStrategy = ImagePreview.LoadStrategy.Default;
         radioGroupStrategy.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -153,10 +163,8 @@ public class MainActivity extends AppCompatActivity {
 
         // 测试超宽图
         imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl(
-            "http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");// 这张是https图片
-        imageInfo.setThumbnailUrl(
-            "http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");// 这张是https图片
+        imageInfo.setOriginUrl("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");// 这张是https图片
+        imageInfo.setThumbnailUrl("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");// 这张是https图片
         imageInfoList.add(0, imageInfo);
 
         // 测试https图
@@ -173,58 +181,50 @@ public class MainActivity extends AppCompatActivity {
 
         // 测试gif图
         imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl(
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551350691824&di=888eada749b09bb0a1db18c3cb36a077&imgtype=0&src=http%3A%2F%2Fs9.rr.itc.cn%2Fr%2FwapChange%2F20173_7_18%2Fa1h59g3470867073619.gif");
-        imageInfo.setThumbnailUrl(
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551350691824&di=888eada749b09bb0a1db18c3cb36a077&imgtype=0&src=http%3A%2F%2Fs9.rr.itc.cn%2Fr%2FwapChange%2F20173_7_18%2Fa1h59g3470867073619.gif");
+        imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551350691824&di=888eada749b09bb0a1db18c3cb36a077&imgtype=0&src=http%3A%2F%2Fs9.rr.itc.cn%2Fr%2FwapChange%2F20173_7_18%2Fa1h59g3470867073619.gif");
+        imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551350691824&di=888eada749b09bb0a1db18c3cb36a077&imgtype=0&src=http%3A%2F%2Fs9.rr.itc.cn%2Fr%2FwapChange%2F20173_7_18%2Fa1h59g3470867073619.gif");
         imageInfoList.add(0, imageInfo);
 
         // 测试gif图
         imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl(
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550234159438&di=345e38a6d82e79a3c48abd85b57d5e89&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fq_70%2Cc_zoom%2Cw_640%2Fupload%2F20170331%2F99098fa2ae0e48ac8ee8d813c1620900_th.gif");
-        imageInfo.setThumbnailUrl(
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550234159438&di=345e38a6d82e79a3c48abd85b57d5e89&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fq_70%2Cc_zoom%2Cw_640%2Fupload%2F20170331%2F99098fa2ae0e48ac8ee8d813c1620900_th.gif");
+        imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550234159438&di=345e38a6d82e79a3c48abd85b57d5e89&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fq_70%2Cc_zoom%2Cw_640%2Fupload%2F20170331%2F99098fa2ae0e48ac8ee8d813c1620900_th.gif");
+        imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550234159438&di=345e38a6d82e79a3c48abd85b57d5e89&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fq_70%2Cc_zoom%2Cw_640%2Fupload%2F20170331%2F99098fa2ae0e48ac8ee8d813c1620900_th.gif");
         imageInfoList.add(0, imageInfo);
 
         // 测试小尺寸图
         imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl(
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916732&di=3bc3e11ccd7185a4ab9932b93de2077a&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201602%2F05%2F20160205113750_UsRPe.thumb.700_0.jpeg");
-        imageInfo.setThumbnailUrl(
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916732&di=3bc3e11ccd7185a4ab9932b93de2077a&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201602%2F05%2F20160205113750_UsRPe.thumb.700_0.jpeg");
+        imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916732&di=3bc3e11ccd7185a4ab9932b93de2077a&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201602%2F05%2F20160205113750_UsRPe.thumb.700_0.jpeg");
+        imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916732&di=3bc3e11ccd7185a4ab9932b93de2077a&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201602%2F05%2F20160205113750_UsRPe.thumb.700_0.jpeg");
+        imageInfoList.add(0, imageInfo);
+
+        // 测试不存在的图片404
+        imageInfo = new ImageInfo();
+        imageInfo.setOriginUrl("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
+        imageInfo.setThumbnailUrl("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
         imageInfoList.add(0, imageInfo);
 
         // 测试没有后缀的链接
         imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl(
-            "https://sacasnap.neusoft.com/snap-engine-file/image/obtain/1264c125-387e-4af0-a361-f26c3f7fd12e?tenantId=neusoft");
-        imageInfo.setThumbnailUrl(
-            "https://sacasnap.neusoft.com/snap-engine-file/image/obtain/1264c125-387e-4af0-a361-f26c3f7fd12e?tenantId=neusoft");
+        imageInfo.setOriginUrl("https://sacasnap.neusoft.com/snap-engine-file/image/obtain/1264c125-387e-4af0-a361-f26c3f7fd12e?tenantId=neusoft");
+        imageInfo.setThumbnailUrl("https://sacasnap.neusoft.com/snap-engine-file/image/obtain/1264c125-387e-4af0-a361-f26c3f7fd12e?tenantId=neusoft");
         imageInfoList.add(0, imageInfo);
 
         // 测试超长文件名、没有后缀的链接
         imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl(
-            "http://img2.weishoot.com/?4583B5ECE38DC1B27FD1269F4E70B7670C426883D16355F21B46193F75071C599A3E6AED54A235489F4C38835361546D7648065651316476F7E30592DAF1CD6C50358835D5DD10D029DA4A9C59B56C3EA48055CE4E0A7627AF8C90303A4D1FBC2D88218AB0F699E74425A61E5D9E2B378E199A2906934C52DAC2D3920C74DBAF34BD945EEA7E86AC72AF12CD00F1179846E1DA2926B782C1D2215DB087EFDE04A1C0F46B1352527F");
-        imageInfo.setThumbnailUrl(
-            "http://img2.weishoot.com/?4583B5ECE38DC1B27FD1269F4E70B7670C426883D16355F21B46193F75071C599A3E6AED54A235489F4C38835361546D7648065651316476F7E30592DAF1CD6C50358835D5DD10D029DA4A9C59B56C3EA48055CE4E0A7627AF8C90303A4D1FBC2D88218AB0F699E74425A61E5D9E2B378E199A2906934C52DAC2D3920C74DBAF34BD945EEA7E86AC72AF12CD00F1179846E1DA2926B782C1D2215DB087EFDE04A1C0F46B1352527F");
+        imageInfo.setOriginUrl("http://img2.weishoot.com/?4583B5ECE38DC1B27FD1269F4E70B7670C426883D16355F21B46193F75071C599A3E6AED54A235489F4C38835361546D7648065651316476F7E30592DAF1CD6C50358835D5DD10D029DA4A9C59B56C3EA48055CE4E0A7627AF8C90303A4D1FBC2D88218AB0F699E74425A61E5D9E2B378E199A2906934C52DAC2D3920C74DBAF34BD945EEA7E86AC72AF12CD00F1179846E1DA2926B782C1D2215DB087EFDE04A1C0F46B1352527F");
+        imageInfo.setThumbnailUrl("http://img2.weishoot.com/?4583B5ECE38DC1B27FD1269F4E70B7670C426883D16355F21B46193F75071C599A3E6AED54A235489F4C38835361546D7648065651316476F7E30592DAF1CD6C50358835D5DD10D029DA4A9C59B56C3EA48055CE4E0A7627AF8C90303A4D1FBC2D88218AB0F699E74425A61E5D9E2B378E199A2906934C52DAC2D3920C74DBAF34BD945EEA7E86AC72AF12CD00F1179846E1DA2926B782C1D2215DB087EFDE04A1C0F46B1352527F");
         imageInfoList.add(0, imageInfo);
 
         // 也可直接传入url List
         final List<String> imageList = new ArrayList<>();
-        imageList.add(
-            "http://img2.weishoot.com/?4583B5ECE38DC1B27FD1269F4E70B7670C426883D16355F21B46193F75071C599A3E6AED54A235489F4C38835361546D7648065651316476F7E30592DAF1CD6C50358835D5DD10D029DA4A9C59B56C3EA48055CE4E0A7627AF8C90303A4D1FBC2D88218AB0F699E74425A61E5D9E2B378E199A2906934C52DAC2D3920C74DBAF34BD945EEA7E86AC72AF12CD00F1179846E1DA2926B782C1D2215DB087EFDE04A1C0F46B1352527F");
-        imageList.add(
-            "https://sacasnap.neusoft.com/snap-engine-file/image/obtain/1264c125-387e-4af0-a361-f26c3f7fd12e?tenantId=neusoft");
-        imageList.add(
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916731&di=89e3775c25c5f21254cd0a5aa3b0b1b1&imgtype=0&src=http%3A%2F%2Fimage.biaobaiju.com%2Fuploads%2F20180210%2F20%2F1518266167-ActRaEkWDS.jpg");
+        imageList.add("http://img2.weishoot.com/?4583B5ECE38DC1B27FD1269F4E70B7670C426883D16355F21B46193F75071C599A3E6AED54A235489F4C38835361546D7648065651316476F7E30592DAF1CD6C50358835D5DD10D029DA4A9C59B56C3EA48055CE4E0A7627AF8C90303A4D1FBC2D88218AB0F699E74425A61E5D9E2B378E199A2906934C52DAC2D3920C74DBAF34BD945EEA7E86AC72AF12CD00F1179846E1DA2926B782C1D2215DB087EFDE04A1C0F46B1352527F");
+        imageList.add("https://sacasnap.neusoft.com/snap-engine-file/image/obtain/1264c125-387e-4af0-a361-f26c3f7fd12e?tenantId=neusoft");
+        imageList.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916731&di=89e3775c25c5f21254cd0a5aa3b0b1b1&imgtype=0&src=http%3A%2F%2Fimage.biaobaiju.com%2Fuploads%2F20180210%2F20%2F1518266167-ActRaEkWDS.jpg");
         imageList.add("http://s1.dwstatic.com/group1/M00/82/DB/c9d0b4c9fdba07709071784bce709c26.gif");
         imageList.add("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");
         imageList.add("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");
         imageList.add("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
-        imageList.add(
-            "http://img3.16fan.com/live/origin/201903/12/3EB3b3070c803.jpg?imageView2/0/h/1600/interlace/1/q/50/format/bmp");
+        imageList.add("http://img3.16fan.com/live/origin/201903/12/3EB3b3070c803.jpg?imageView2/0/h/1600/interlace/1/q/50/format/bmp");
 
         // 最简单的调用：
         findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
@@ -274,6 +274,9 @@ public class MainActivity extends AppCompatActivity {
 
                     // 缩放动画时长，单位ms
                     .setZoomTransitionDuration(300)
+
+                    // 是否显示加载失败的Toast
+                    .setShowErrorToast(showErrorToast)
 
                     // 是否启用点击图片关闭。默认启用
                     .setEnableClickClose(enableClickClose)
