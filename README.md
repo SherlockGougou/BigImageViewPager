@@ -45,9 +45,10 @@ allprojects {
 ##### Step 2. 在你主module的build.gradle中添加依赖：
 
 ##### 此处显示的是本框架的最新版本号：
+##### ⚠️注意：v3版本不再维护，最终版本为v3_4.0.2。建议使用v4版本。
 ```
 对于glide4.x : 使用 v4_4.1.0
-对于glide3.x : 使用 v3_4.1.0
+对于glide3.x : 使用 v3_4.0.2
 ```
 
 ```
@@ -66,7 +67,7 @@ dependencies {
   // 针对glide v3 版本：
   // 如果您的app中已经使用了glide，且glide版本号为3.x，仅需要依赖以下库，请尽量保证版本号与下面一致：
   implementation 'com.android.support:appcompat-v7:28.0.0'
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_4.1.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_4.0.2'
 }
 ```
 
