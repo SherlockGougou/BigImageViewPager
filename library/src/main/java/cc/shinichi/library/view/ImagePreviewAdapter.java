@@ -1,17 +1,17 @@
 package cc.shinichi.library.view;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.view.PagerAdapter;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.PagerAdapter;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
@@ -44,13 +44,13 @@ import java.util.Map;
 public class ImagePreviewAdapter extends PagerAdapter {
 
     private static final String TAG = "ImagePreview";
-    private Activity activity;
+    private AppCompatActivity activity;
     private List<ImageInfo> imageInfo;
     private HashMap<String, SubsamplingScaleImageViewDragClose> imageHashMap = new HashMap<>();
     private HashMap<String, PhotoView> imageGifHashMap = new HashMap<>();
     private String finalLoadUrl = "";
 
-    public ImagePreviewAdapter(Activity activity, @NonNull List<ImageInfo> imageInfo) {
+    public ImagePreviewAdapter(AppCompatActivity activity, @NonNull List<ImageInfo> imageInfo) {
         super();
         this.imageInfo = imageInfo;
         this.activity = activity;

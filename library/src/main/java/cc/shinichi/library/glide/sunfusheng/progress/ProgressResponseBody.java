@@ -2,7 +2,7 @@ package cc.shinichi.library.glide.sunfusheng.progress;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import java.io.IOException;
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;

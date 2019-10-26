@@ -1,7 +1,6 @@
 package cc.shinichi.library.view;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,12 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -23,6 +16,12 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
@@ -38,7 +37,7 @@ import com.bumptech.glide.request.transition.Transition;
 import java.io.File;
 import java.util.List;
 
-import static android.support.v4.content.PermissionChecker.PERMISSION_GRANTED;
+import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 
 public class ImagePreviewActivity extends AppCompatActivity implements Handler.Callback, View.OnClickListener {
 
@@ -86,7 +85,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         Intent intent = new Intent();
         intent.setClass(context, ImagePreviewActivity.class);
         context.startActivity(intent);
-        ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        ((AppCompatActivity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     @Override protected void onCreate(Bundle savedInstanceState) {

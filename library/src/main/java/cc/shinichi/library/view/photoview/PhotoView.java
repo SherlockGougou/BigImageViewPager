@@ -20,11 +20,11 @@ import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 
 /**
  * A zoomable ImageView. See {@link PhotoViewAttacher} for most of the details on how the zooming

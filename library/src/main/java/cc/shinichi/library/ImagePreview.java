@@ -1,13 +1,13 @@
 package cc.shinichi.library;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.view.ImagePreviewActivity;
 import cc.shinichi.library.view.listener.OnBigImageClickListener;
@@ -191,8 +191,7 @@ public class ImagePreview {
         return this;
     }
 
-    @Deprecated
-    public ImagePreview setScaleLevel(int min, int medium, int max) {
+    @Deprecated public ImagePreview setScaleLevel(int min, int medium, int max) {
         if (max > medium && medium > min && min > 0) {
             this.minScale = min;
             this.mediumScale = medium;
@@ -399,16 +398,16 @@ public class ImagePreview {
         if (context == null) {
             throw new IllegalArgumentException("You must call 'setContext(Context context)' first!");
         }
-        if (!(context instanceof Activity)) {
+        if (!(context instanceof AppCompatActivity)) {
             throw new IllegalArgumentException("context must be a Activity!");
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            if (((Activity) context).isFinishing() || ((Activity) context).isDestroyed()) {
+            if (((AppCompatActivity) context).isFinishing() || ((AppCompatActivity) context).isDestroyed()) {
                 reset();
                 return;
             }
         } else {
-            if (((Activity) context).isFinishing()) {
+            if (((AppCompatActivity) context).isFinishing()) {
                 reset();
                 return;
             }

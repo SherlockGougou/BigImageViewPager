@@ -49,7 +49,7 @@
           android:text="开启或关闭点击图片关闭功能"
           />
 
-      <android.support.v7.widget.SwitchCompat
+      <androidx.appcompat.widget.SwitchCompat
           android:id="@+id/switchClickClose"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
           android:text="开启或关闭下拉关闭功能"
           />
 
-      <android.support.v7.widget.SwitchCompat
+      <androidx.appcompat.widget.SwitchCompat
           android:id="@+id/switchDragClose"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
           android:text="开启或关闭上拉关闭功能"
           />
 
-      <android.support.v7.widget.SwitchCompat
+      <androidx.appcompat.widget.SwitchCompat
           android:id="@+id/switchUpDragClose"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -113,7 +113,7 @@
           android:text="是否显示顶部指示器"
           />
 
-      <android.support.v7.widget.SwitchCompat
+      <androidx.appcompat.widget.SwitchCompat
           android:id="@+id/switchShowIndicator"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -134,7 +134,7 @@
           android:text="是否显示底部左侧关闭按钮"
           />
 
-      <android.support.v7.widget.SwitchCompat
+      <androidx.appcompat.widget.SwitchCompat
           android:id="@+id/switchShowCloseButton"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -155,7 +155,7 @@
           android:text="是否显示底部右侧下载按钮"
           />
 
-      <android.support.v7.widget.SwitchCompat
+      <androidx.appcompat.widget.SwitchCompat
           android:id="@+id/switchShowDownButton"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -176,7 +176,7 @@
           android:text="是否显示加载失败的Toast"
           />
 
-      <android.support.v7.widget.SwitchCompat
+      <androidx.appcompat.widget.SwitchCompat
           android:id="@+id/switchShowErrorToast"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"

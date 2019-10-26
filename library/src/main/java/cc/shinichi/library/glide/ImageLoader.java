@@ -1,7 +1,7 @@
 package cc.shinichi.library.glide;
 
-import android.app.Activity;
 import android.content.Context;
+import androidx.appcompat.app.AppCompatActivity;
 import cc.shinichi.library.glide.cache.DataCacheKey;
 import cc.shinichi.library.glide.cache.SafeKeyGenerator;
 import com.bumptech.glide.Glide;
@@ -41,7 +41,7 @@ public class ImageLoader {
         return null;
     }
 
-    public static void clearMemory(Activity activity) {
+    public static void clearMemory(AppCompatActivity activity) {
         Glide.get(activity.getApplicationContext()).clearMemory();
     }
 

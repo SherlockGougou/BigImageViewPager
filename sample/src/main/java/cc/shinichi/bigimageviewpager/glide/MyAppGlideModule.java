@@ -1,7 +1,7 @@
 package cc.shinichi.bigimageviewpager.glide;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import cc.shinichi.library.glide.sunfusheng.progress.ProgressManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Registry;

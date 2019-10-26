@@ -5,18 +5,18 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import cc.shinichi.bigimageviewpager.glide.GlideV4Engine;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.bean.ImageInfo;
@@ -30,28 +30,31 @@ import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static android.support.v4.content.PermissionChecker.PERMISSION_GRANTED;
+import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
     String[] images = {
-        "http://img3.16fan.com/live/origin/201805/21/E421b24c08446.jpg",
-        "http://img3.16fan.com/live/origin/201805/21/4D7B35fdf082e.jpg",
-        "http://img3.16fan.com/live/origin/201805/21/2D02ebc5838e6.jpg",
-        "http://img3.16fan.com/live/origin/201805/21/A1B17c5f59b78.jpg",
-        "http://img3.16fan.com/live/origin/201805/21/94699b2be3cfa.jpg",
+        "http://img6.16fan.com/201510/11/005258wdngg6rv0tpn8z9z.jpg",
+        "http://img6.16fan.com/201510/11/013553aj3kp9u6iuz6k9uj.jpg",
+        "http://img6.16fan.com/201510/11/011753fnanichdca0wbhxc.jpg",
+        "http://img6.16fan.com/201510/11/011819zbzbciir9ctn295o.jpg",
+        "http://img6.16fan.com/201510/11/004847l7w568jc5n5wn385.jpg",
+        "http://img6.16fan.com/201510/11/004906z0a0a0e0hs56ce0t.jpg",
+        "http://img6.16fan.com/201510/11/004937pwttwjt0bgtoton7.jpg",
+        "http://img6.16fan.com/201510/11/004946t38ybzt8bq8c838y.jpg",
+        "http://img6.16fan.com/201510/11/004955d8ftz3t1sttt7ft7.jpg",
+        "http://img6.16fan.com/201510/11/005027qy2g55yyglb59zdu.jpg",
+        "http://img6.16fan.com/201510/11/005229bbtxkczcl0btmw8e.jpg",
         // 下面这张是：5760 * 3840
         "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg",
-        "http://img3.16fan.com/live/origin/201812/01/qz2x9e6l98b5h.jpg",
-        "http://img3.16fan.com/live/origin/201805/21/14C5e483e7583.jpg",
-        "http://img3.16fan.com/live/origin/201805/21/EB298ce595dd2.jpg",
         // 下面这张是：2280 * 22116
-        "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg",
-        "http://img3.16fan.com/live/origin/201805/21/264Ba4860d469.jpg"
+        "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg"
     };
 
     boolean enableClickClose = false;
@@ -156,75 +159,28 @@ public class MainActivity extends AppCompatActivity {
             imageInfo = new ImageInfo();
             // 原图地址
             imageInfo.setOriginUrl(image);
-            // 缩略图，实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样。
+            // 缩略图；实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样。
             imageInfo.setThumbnailUrl(image.concat("-1200"));
             imageInfoList.add(imageInfo);
         }
 
         // 测试超宽图
         imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");// 这张是https图片
-        imageInfo.setThumbnailUrl("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");// 这张是https图片
-        imageInfoList.add(0, imageInfo);
-
-        // 测试https图
-        imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");// 这张是https图片
-        imageInfo.setThumbnailUrl("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");// 这张是https图片
+        imageInfo.setOriginUrl("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");
+        imageInfo.setThumbnailUrl("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");
         imageInfoList.add(0, imageInfo);
 
         // 测试gif图
         imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl("http://s1.dwstatic.com/group1/M00/82/DB/c9d0b4c9fdba07709071784bce709c26.gif");
-        imageInfo.setThumbnailUrl("http://s1.dwstatic.com/group1/M00/82/DB/c9d0b4c9fdba07709071784bce709c26.gif");
+        imageInfo.setOriginUrl("http://image.coolapk.com/feed/2019/0325/17/1105409_1553505598_4989@299x299.gif");
+        imageInfo.setThumbnailUrl("http://image.coolapk.com/feed/2019/0325/17/1105409_1553505598_4989@299x299.gif");
         imageInfoList.add(0, imageInfo);
 
         // 测试gif图
         imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551350691824&di=888eada749b09bb0a1db18c3cb36a077&imgtype=0&src=http%3A%2F%2Fs9.rr.itc.cn%2Fr%2FwapChange%2F20173_7_18%2Fa1h59g3470867073619.gif");
-        imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551350691824&di=888eada749b09bb0a1db18c3cb36a077&imgtype=0&src=http%3A%2F%2Fs9.rr.itc.cn%2Fr%2FwapChange%2F20173_7_18%2Fa1h59g3470867073619.gif");
+        imageInfo.setOriginUrl("http://image.coolapk.com/feed/2019/0716/15/1412643_6de29040_1600_6194@463x357.gif");
+        imageInfo.setThumbnailUrl("http://image.coolapk.com/feed/2019/0716/15/1412643_6de29040_1600_6194@463x357.gif");
         imageInfoList.add(0, imageInfo);
-
-        // 测试gif图
-        imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550234159438&di=345e38a6d82e79a3c48abd85b57d5e89&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fq_70%2Cc_zoom%2Cw_640%2Fupload%2F20170331%2F99098fa2ae0e48ac8ee8d813c1620900_th.gif");
-        imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550234159438&di=345e38a6d82e79a3c48abd85b57d5e89&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fq_70%2Cc_zoom%2Cw_640%2Fupload%2F20170331%2F99098fa2ae0e48ac8ee8d813c1620900_th.gif");
-        imageInfoList.add(0, imageInfo);
-
-        // 测试小尺寸图
-        imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916732&di=3bc3e11ccd7185a4ab9932b93de2077a&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201602%2F05%2F20160205113750_UsRPe.thumb.700_0.jpeg");
-        imageInfo.setThumbnailUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916732&di=3bc3e11ccd7185a4ab9932b93de2077a&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201602%2F05%2F20160205113750_UsRPe.thumb.700_0.jpeg");
-        imageInfoList.add(0, imageInfo);
-
-        // 测试不存在的图片404
-        imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
-        imageInfo.setThumbnailUrl("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
-        imageInfoList.add(0, imageInfo);
-
-        // 测试没有后缀的链接
-        imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl("https://sacasnap.neusoft.com/snap-engine-file/image/obtain/1264c125-387e-4af0-a361-f26c3f7fd12e?tenantId=neusoft");
-        imageInfo.setThumbnailUrl("https://sacasnap.neusoft.com/snap-engine-file/image/obtain/1264c125-387e-4af0-a361-f26c3f7fd12e?tenantId=neusoft");
-        imageInfoList.add(0, imageInfo);
-
-        // 测试超长文件名、没有后缀的链接
-        imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl("http://img2.weishoot.com/?4583B5ECE38DC1B27FD1269F4E70B7670C426883D16355F21B46193F75071C599A3E6AED54A235489F4C38835361546D7648065651316476F7E30592DAF1CD6C50358835D5DD10D029DA4A9C59B56C3EA48055CE4E0A7627AF8C90303A4D1FBC2D88218AB0F699E74425A61E5D9E2B378E199A2906934C52DAC2D3920C74DBAF34BD945EEA7E86AC72AF12CD00F1179846E1DA2926B782C1D2215DB087EFDE04A1C0F46B1352527F");
-        imageInfo.setThumbnailUrl("http://img2.weishoot.com/?4583B5ECE38DC1B27FD1269F4E70B7670C426883D16355F21B46193F75071C599A3E6AED54A235489F4C38835361546D7648065651316476F7E30592DAF1CD6C50358835D5DD10D029DA4A9C59B56C3EA48055CE4E0A7627AF8C90303A4D1FBC2D88218AB0F699E74425A61E5D9E2B378E199A2906934C52DAC2D3920C74DBAF34BD945EEA7E86AC72AF12CD00F1179846E1DA2926B782C1D2215DB087EFDE04A1C0F46B1352527F");
-        imageInfoList.add(0, imageInfo);
-
-        // 也可直接传入url List
-        final List<String> imageList = new ArrayList<>();
-        imageList.add("http://img2.weishoot.com/?4583B5ECE38DC1B27FD1269F4E70B7670C426883D16355F21B46193F75071C599A3E6AED54A235489F4C38835361546D7648065651316476F7E30592DAF1CD6C50358835D5DD10D029DA4A9C59B56C3EA48055CE4E0A7627AF8C90303A4D1FBC2D88218AB0F699E74425A61E5D9E2B378E199A2906934C52DAC2D3920C74DBAF34BD945EEA7E86AC72AF12CD00F1179846E1DA2926B782C1D2215DB087EFDE04A1C0F46B1352527F");
-        imageList.add("https://sacasnap.neusoft.com/snap-engine-file/image/obtain/1264c125-387e-4af0-a361-f26c3f7fd12e?tenantId=neusoft");
-        imageList.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544679916731&di=89e3775c25c5f21254cd0a5aa3b0b1b1&imgtype=0&src=http%3A%2F%2Fimage.biaobaiju.com%2Fuploads%2F20180210%2F20%2F1518266167-ActRaEkWDS.jpg");
-        imageList.add("http://s1.dwstatic.com/group1/M00/82/DB/c9d0b4c9fdba07709071784bce709c26.gif");
-        imageList.add("https://ws1.sinaimg.cn/large/610dc034ly1fgepc1lpvfj20u011i0wv.jpg");
-        imageList.add("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");
-        imageList.add("http://s1.dwstatic.com/group1/M00/EE/9C/701cab3f6f04b8e7f8f5562ed65f8639.gif");
-        imageList.add("http://img3.16fan.com/live/origin/201903/12/3EB3b3070c803.jpg?imageView2/0/h/1600/interlace/1/q/50/format/bmp");
 
         // 最简单的调用：
         findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
@@ -240,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
                 //      加载原图的百分比在底部
 
                 // 一行代码即可实现大部分需求，如需定制，可参考下面自定义的代码：
-                ImagePreview.getInstance().setContext(MainActivity.this).setImageList(imageList).start();
+                ImagePreview.getInstance().setContext(MainActivity.this).setImageList(Arrays.asList(images)).start();
             }
         });
 
@@ -430,14 +386,12 @@ public class MainActivity extends AppCompatActivity {
             .forResult(1);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    @Override protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if (resultCode == RESULT_OK && data != null) {
                 ArrayList<String> mCurrentSelectedPath = (ArrayList<String>) Matisse.obtainPathResult(data);
-                ImagePreview
-                    .getInstance()
+                ImagePreview.getInstance()
                     .setContext(MainActivity.this)
                     .setImageList(mCurrentSelectedPath)
                     .setShowDownButton(false)

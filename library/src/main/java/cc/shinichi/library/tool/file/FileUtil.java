@@ -1,6 +1,5 @@
 package cc.shinichi.library.tool.file;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -65,7 +64,7 @@ public final class FileUtil {
         { "", "*/*" }
     };
     private static final String LINE_SEP = System.getProperty("line.separator");
-    private static final char HEX_DIGITS[] =
+    private static final char[] HEX_DIGITS =
         { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
     private static int sBufferSize = 8192;
 
@@ -120,7 +119,7 @@ public final class FileUtil {
         OutputStream os = null;
         try {
             os = new BufferedOutputStream(new FileOutputStream(file, append));
-            byte data[] = new byte[sBufferSize];
+            byte[] data = new byte[sBufferSize];
             int len;
             while ((len = is.read(data, 0, sBufferSize)) != -1) {
                 os.write(data, 0, len);
@@ -1838,7 +1837,7 @@ public final class FileUtil {
         return new String(ret);
     }
 
-    @SuppressLint("DefaultLocale") private static String byte2FitMemorySize(final long byteNum) {
+    private static String byte2FitMemorySize(final long byteNum) {
         if (byteNum < 0) {
             return "shouldn't be less than zero!";
         } else if (byteNum < 1024) {
@@ -1897,7 +1896,7 @@ public final class FileUtil {
             return type;
         }
         /* 获取文件的后缀名 */
-        String end = fName.substring(dotIndex, fName.length()).toLowerCase();
+        String end = fName.substring(dotIndex).toLowerCase();
         if (end == "") return type;
         // 在MIME和文件类型的匹配表中找到对应的MIME类型。
         for (int i = 0; i < MIME_MapTable.length; i++) {

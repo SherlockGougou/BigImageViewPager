@@ -77,9 +77,6 @@ public class ProgressManager {
         }
 
         OnProgressListener listenerWeakReference = listenersMap.get(url);
-        if (listenerWeakReference != null) {
-            return listenerWeakReference;
-        }
-        return null;
+        return listenerWeakReference;
     }
 }

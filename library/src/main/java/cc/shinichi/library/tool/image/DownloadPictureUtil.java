@@ -3,8 +3,8 @@ package cc.shinichi.library.tool.image;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.glide.FileTarget;
 import cc.shinichi.library.tool.file.FileUtil;
@@ -44,7 +44,7 @@ public class DownloadPictureUtil {
                 final String path = Environment.getExternalStorageDirectory() + "/" + downloadFolderName + "/";
                 String name = "";
                 try {
-                    name = url.substring(url.lastIndexOf("/") + 1, url.length());
+                    name = url.substring(url.lastIndexOf("/") + 1);
                     if (name.contains(".")) {
                         name = name.substring(0, name.lastIndexOf("."));
                     }

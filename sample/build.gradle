@@ -7,8 +7,8 @@ android {
     applicationId "cc.shinichi.bigimageviewpager"
     minSdkVersion 14
     targetSdkVersion 28
-    versionCode 410
-    versionName "v4_4.1.0"
+    versionCode 500
+    versionName "androidx-5.0.0"
   }
   buildTypes {
     release {
@@ -17,8 +17,8 @@ android {
     }
   }
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_7
-    targetCompatibility JavaVersion.VERSION_1_7
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
   }
   sourceSets {
     main {
@@ -37,21 +37,18 @@ repositories {
 
 dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
-  implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-  implementation "com.android.support:appcompat-v7:${supportLibVersion}"
-  implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
+  implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+  implementation 'androidx.appcompat:appcompat:1.1.0'
+  implementation 'androidx.recyclerview:recyclerview:1.0.0'
   // matisse
   implementation(name: 'matisse-release', ext: 'aar') {
     exclude group: 'com.github.bumptech.glide'
   }
   // glide
-  implementation 'com.github.bumptech.glide:glide:4.8.0'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
-  implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
-  // LeakCanary 内存泄漏检测
-  debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
-  releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
+  implementation 'com.github.bumptech.glide:glide:4.10.0'
+  annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
+  implementation 'com.github.bumptech.glide:okhttp3-integration:4.10.0'
   // library
-  // implementation 'com.github.SherlockGougou:BigImageViewPager:v4_4.1.0'
+  // implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-5.0.0'
   implementation project(':library')
 }
