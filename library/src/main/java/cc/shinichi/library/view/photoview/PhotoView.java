@@ -30,7 +30,8 @@ import android.view.MotionEvent;
  * A zoomable ImageView. See {@link PhotoViewAttacher} for most of the details on how the zooming
  * is accomplished
  */
-@SuppressWarnings("unused") public class PhotoView extends AppCompatImageView {
+@SuppressWarnings("unused")
+public class PhotoView extends AppCompatImageView {
 
     private PhotoViewAttacher attacher;
     private ScaleType pendingScaleType;
@@ -73,11 +74,13 @@ import android.view.MotionEvent;
         return attacher;
     }
 
-    @Override public ScaleType getScaleType() {
+    @Override
+    public ScaleType getScaleType() {
         return attacher.getScaleType();
     }
 
-    @Override public void setScaleType(ScaleType scaleType) {
+    @Override
+    public void setScaleType(ScaleType scaleType) {
         if (attacher == null) {
             pendingScaleType = scaleType;
         } else {
@@ -85,19 +88,23 @@ import android.view.MotionEvent;
         }
     }
 
-    @Override public Matrix getImageMatrix() {
+    @Override
+    public Matrix getImageMatrix() {
         return attacher.getImageMatrix();
     }
 
-    @Override public void setOnLongClickListener(OnLongClickListener l) {
+    @Override
+    public void setOnLongClickListener(OnLongClickListener l) {
         attacher.setOnLongClickListener(l);
     }
 
-    @Override public void setOnClickListener(OnClickListener l) {
+    @Override
+    public void setOnClickListener(OnClickListener l) {
         attacher.setOnClickListener(l);
     }
 
-    @Override public void setImageDrawable(Drawable drawable) {
+    @Override
+    public void setImageDrawable(Drawable drawable) {
         super.setImageDrawable(drawable);
         // setImageBitmap calls through to this method
         if (attacher != null) {
@@ -105,21 +112,24 @@ import android.view.MotionEvent;
         }
     }
 
-    @Override public void setImageResource(int resId) {
+    @Override
+    public void setImageResource(int resId) {
         super.setImageResource(resId);
         if (attacher != null) {
             attacher.update();
         }
     }
 
-    @Override public void setImageURI(Uri uri) {
+    @Override
+    public void setImageURI(Uri uri) {
         super.setImageURI(uri);
         if (attacher != null) {
             attacher.update();
         }
     }
 
-    @Override protected boolean setFrame(int l, int t, int r, int b) {
+    @Override
+    protected boolean setFrame(int l, int t, int r, int b) {
         boolean changed = super.setFrame(l, t, r, b);
         if (changed) {
             attacher.update();
@@ -151,7 +161,8 @@ import android.view.MotionEvent;
         attacher.getDisplayMatrix(matrix);
     }
 
-    @SuppressWarnings("UnusedReturnValue") public boolean setDisplayMatrix(Matrix finalRectangle) {
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean setDisplayMatrix(Matrix finalRectangle) {
         return attacher.setDisplayMatrix(finalRectangle);
     }
 
@@ -247,12 +258,14 @@ import android.view.MotionEvent;
         attacher.setOnSingleFlingListener(onSingleFlingListener);
     }
 
-    @Override public boolean onTouchEvent(MotionEvent event) {
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
         boolean handled = onTouchEventInternal(event);
         return handled || super.onTouchEvent(event);
     }
 
-    @SuppressWarnings("deprecation") private boolean onTouchEventInternal(@NonNull MotionEvent event) {
+    @SuppressWarnings("deprecation")
+    private boolean onTouchEventInternal(@NonNull MotionEvent event) {
         int touchCount = event.getPointerCount();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:

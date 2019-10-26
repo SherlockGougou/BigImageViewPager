@@ -46,7 +46,8 @@ class CustomGestureDetector {
         mListener = listener;
         ScaleGestureDetector.OnScaleGestureListener mScaleListener = new ScaleGestureDetector.OnScaleGestureListener() {
 
-            @Override public boolean onScale(ScaleGestureDetector detector) {
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
                 float scaleFactor = detector.getScaleFactor();
 
                 if (Float.isNaN(scaleFactor) || Float.isInfinite(scaleFactor)) {
@@ -59,11 +60,13 @@ class CustomGestureDetector {
                 return true;
             }
 
-            @Override public boolean onScaleBegin(ScaleGestureDetector detector) {
+            @Override
+            public boolean onScaleBegin(ScaleGestureDetector detector) {
                 return true;
             }
 
-            @Override public void onScaleEnd(ScaleGestureDetector detector) {
+            @Override
+            public void onScaleEnd(ScaleGestureDetector detector) {
                 // NO-OP
             }
         };

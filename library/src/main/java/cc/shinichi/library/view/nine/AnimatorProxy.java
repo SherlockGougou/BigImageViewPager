@@ -7,6 +7,7 @@ import android.os.Build;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+
 import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
 
@@ -16,9 +17,12 @@ import java.util.WeakHashMap;
  * are using {@code ObjectAnimator} as it will handle that itself.
  */
 public final class AnimatorProxy extends Animation {
-    /** Whether or not the current running platform needs to be proxied. */
-    @SuppressWarnings("deprecation") public static final boolean NEEDS_PROXY =
-        Integer.valueOf(Build.VERSION.SDK).intValue() < Build.VERSION_CODES.HONEYCOMB;
+    /**
+     * Whether or not the current running platform needs to be proxied.
+     */
+    @SuppressWarnings("deprecation")
+    public static final boolean NEEDS_PROXY =
+            Integer.valueOf(Build.VERSION.SDK).intValue() < Build.VERSION_CODES.HONEYCOMB;
 
     private static final WeakHashMap<View, AnimatorProxy> PROXIES = new WeakHashMap<View, AnimatorProxy>();
     private final WeakReference<View> mView;
@@ -265,7 +269,7 @@ public final class AnimatorProxy extends Animation {
         after.union(mBefore);
 
         ((View) view.getParent()).invalidate((int) Math.floor(after.left), (int) Math.floor(after.top),
-            (int) Math.ceil(after.right), (int) Math.ceil(after.bottom));
+                (int) Math.ceil(after.right), (int) Math.ceil(after.bottom));
     }
 
     private void computeRect(final RectF r, View view) {
@@ -330,7 +334,8 @@ public final class AnimatorProxy extends Animation {
         m.postTranslate(mTranslationX, mTranslationY);
     }
 
-    @Override protected void applyTransformation(float interpolatedTime, Transformation t) {
+    @Override
+    protected void applyTransformation(float interpolatedTime, Transformation t) {
         View view = mView.get();
         if (view != null) {
             t.setAlpha(mAlpha);

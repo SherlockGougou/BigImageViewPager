@@ -22,7 +22,8 @@ public class ToastUtil {
 
     public void _short(final Context context, final String text) {
         HANDLER.post(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_SHORT).show();
             }
         });
@@ -30,7 +31,8 @@ public class ToastUtil {
 
     public void _long(final Context context, final String text) {
         HANDLER.post(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_LONG).show();
             }
         });

@@ -2,14 +2,17 @@ package cc.shinichi.library.glide;
 
 import android.app.Activity;
 import android.content.Context;
-import cc.shinichi.library.glide.cache.DataCacheKey;
-import cc.shinichi.library.glide.cache.SafeKeyGenerator;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.disklrucache.DiskLruCache;
 import com.bumptech.glide.load.engine.cache.DiskCache;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.signature.EmptySignature;
+
 import java.io.File;
+
+import cc.shinichi.library.glide.cache.DataCacheKey;
+import cc.shinichi.library.glide.cache.SafeKeyGenerator;
 
 /**
  * @author 工藤
@@ -47,7 +50,8 @@ public class ImageLoader {
 
     public static void cleanDiskCache(final Context context) {
         new Thread(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 Glide.get(context.getApplicationContext()).clearDiskCache();
             }
         }).start();

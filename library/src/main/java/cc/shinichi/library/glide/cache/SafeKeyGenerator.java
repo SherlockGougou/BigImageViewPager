@@ -3,6 +3,7 @@ package cc.shinichi.library.glide.cache;
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.util.LruCache;
 import com.bumptech.glide.util.Util;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 

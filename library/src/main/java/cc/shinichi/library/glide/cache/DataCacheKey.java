@@ -1,6 +1,7 @@
 package cc.shinichi.library.glide.cache;
 
 import com.bumptech.glide.load.Key;
+
 import java.security.MessageDigest;
 
 /**
@@ -24,7 +25,8 @@ public class DataCacheKey implements Key {
         return sourceKey;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (o instanceof DataCacheKey) {
             DataCacheKey other = (DataCacheKey) o;
             return sourceKey.equals(other.sourceKey) && signature.equals(other.signature);
@@ -32,17 +34,20 @@ public class DataCacheKey implements Key {
         return false;
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         int result = sourceKey.hashCode();
         result = 31 * result + signature.hashCode();
         return result;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "DataCacheKey{" + "sourceKey=" + sourceKey + ", signature=" + signature + '}';
     }
 
-    @Override public void updateDiskCacheKey(MessageDigest messageDigest) {
+    @Override
+    public void updateDiskCacheKey(MessageDigest messageDigest) {
         sourceKey.updateDiskCacheKey(messageDigest);
         signature.updateDiskCacheKey(messageDigest);
     }

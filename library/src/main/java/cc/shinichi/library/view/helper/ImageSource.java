@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -14,14 +15,15 @@ import java.net.URLDecoder;
  * com.fan16.cn.widget.ninegrid.preview
  * create at 2018/10/19  11:33
  * description:
- *
+ * <p>
  * Helper class used to set the source and additional attributes from a variety of sources. Supports
  * use of a bitmap, asset, resource, external file or any other URI.
- *
+ * <p>
  * When you are using a preview image, you must set the dimensions of the full size image on the
  * ImageSource object for the full size image using the {@link #dimensions(int, int)} method.
  */
-@SuppressWarnings({ "unused", "WeakerAccess" }) public final class ImageSource {
+@SuppressWarnings({"unused", "WeakerAccess"})
+public final class ImageSource {
 
     static final String FILE_SCHEME = "file:///";
     static final String ASSET_SCHEME = "file:///android_asset/";
@@ -77,7 +79,8 @@ import java.net.URLDecoder;
      * @param resId resource ID.
      * @return an {@link ImageSource} instance.
      */
-    @NonNull public static ImageSource resource(int resId) {
+    @NonNull
+    public static ImageSource resource(int resId) {
         return new ImageSource(resId);
     }
 
@@ -87,7 +90,8 @@ import java.net.URLDecoder;
      * @param assetName asset name.
      * @return an {@link ImageSource} instance.
      */
-    @NonNull public static ImageSource asset(@NonNull String assetName) {
+    @NonNull
+    public static ImageSource asset(@NonNull String assetName) {
         //noinspection ConstantConditions
         if (assetName == null) {
             throw new NullPointerException("Asset name must not be null");
@@ -102,7 +106,8 @@ import java.net.URLDecoder;
      * @param uri image URI.
      * @return an {@link ImageSource} instance.
      */
-    @NonNull public static ImageSource uri(@NonNull String uri) {
+    @NonNull
+    public static ImageSource uri(@NonNull String uri) {
         //noinspection ConstantConditions
         if (uri == null) {
             throw new NullPointerException("Uri must not be null");
@@ -122,7 +127,8 @@ import java.net.URLDecoder;
      * @param uri image URI.
      * @return an {@link ImageSource} instance.
      */
-    @NonNull public static ImageSource uri(@NonNull Uri uri) {
+    @NonNull
+    public static ImageSource uri(@NonNull Uri uri) {
         //noinspection ConstantConditions
         if (uri == null) {
             throw new NullPointerException("Uri must not be null");
@@ -136,7 +142,8 @@ import java.net.URLDecoder;
      * @param bitmap bitmap to be displayed.
      * @return an {@link ImageSource} instance.
      */
-    @NonNull public static ImageSource bitmap(@NonNull Bitmap bitmap) {
+    @NonNull
+    public static ImageSource bitmap(@NonNull Bitmap bitmap) {
         //noinspection ConstantConditions
         if (bitmap == null) {
             throw new NullPointerException("Bitmap must not be null");
@@ -152,7 +159,8 @@ import java.net.URLDecoder;
      * @param bitmap bitmap to be displayed.
      * @return an {@link ImageSource} instance.
      */
-    @NonNull public static ImageSource cachedBitmap(@NonNull Bitmap bitmap) {
+    @NonNull
+    public static ImageSource cachedBitmap(@NonNull Bitmap bitmap) {
         //noinspection ConstantConditions
         if (bitmap == null) {
             throw new NullPointerException("Bitmap must not be null");
@@ -166,7 +174,8 @@ import java.net.URLDecoder;
      *
      * @return this instance for chaining.
      */
-    @NonNull public ImageSource tilingEnabled() {
+    @NonNull
+    public ImageSource tilingEnabled() {
         return tiling(true);
     }
 
@@ -176,7 +185,8 @@ import java.net.URLDecoder;
      *
      * @return this instance for chaining.
      */
-    @NonNull public ImageSource tilingDisabled() {
+    @NonNull
+    public ImageSource tilingDisabled() {
         return tiling(false);
     }
 
@@ -188,7 +198,8 @@ import java.net.URLDecoder;
      * @param tile whether tiling should be enabled.
      * @return this instance for chaining.
      */
-    @NonNull public ImageSource tiling(boolean tile) {
+    @NonNull
+    public ImageSource tiling(boolean tile) {
         this.tile = tile;
         return this;
     }
@@ -200,7 +211,8 @@ import java.net.URLDecoder;
      * @param sRegion the region of the source image to be displayed.
      * @return this instance for chaining.
      */
-    @NonNull public ImageSource region(Rect sRegion) {
+    @NonNull
+    public ImageSource region(Rect sRegion) {
         this.sRegion = sRegion;
         setInvariants();
         return this;
@@ -211,11 +223,12 @@ import java.net.URLDecoder;
      * and also a preview image. When displaying a bitmap object, or not using a preview, you do not need to declare
      * the image dimensions. Note if the declared dimensions are found to be incorrect, the view will reset.
      *
-     * @param sWidth width of the source image.
+     * @param sWidth  width of the source image.
      * @param sHeight height of the source image.
      * @return this instance for chaining.
      */
-    @NonNull public ImageSource dimensions(int sWidth, int sHeight) {
+    @NonNull
+    public ImageSource dimensions(int sWidth, int sHeight) {
         if (bitmap == null) {
             this.sWidth = sWidth;
             this.sHeight = sHeight;

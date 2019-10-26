@@ -7,12 +7,14 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.os.Environment;
 import android.text.TextUtils;
-import cc.shinichi.library.tool.common.Print;
-import cc.shinichi.library.tool.ui.PhoneUtil;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import cc.shinichi.library.tool.common.Print;
+import cc.shinichi.library.tool.ui.PhoneUtil;
 
 /**
  * @author 工藤
@@ -76,7 +78,7 @@ public class ImageUtil {
         try {
             ExifInterface exifInterface = new ExifInterface(path);
             int orientation =
-                exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                    exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
             switch (orientation) {
                 case ExifInterface.ORIENTATION_ROTATE_90:
                     degree = 90;
@@ -159,7 +161,7 @@ public class ImageUtil {
         try {
             ExifInterface exifInterface = new ExifInterface(imagePath);
             int orientation =
-                exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                    exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
             switch (orientation) {
                 case ExifInterface.ORIENTATION_ROTATE_90:
                     return 90;
@@ -178,7 +180,7 @@ public class ImageUtil {
 
     public static int[] getWidthHeight(String imagePath) {
         if (imagePath.isEmpty()) {
-            return new int[] { 0, 0 };
+            return new int[]{0, 0};
         }
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -197,9 +199,9 @@ public class ImageUtil {
             try {
                 ExifInterface exifInterface = new ExifInterface(imagePath);
                 srcHeight =
-                    exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, ExifInterface.ORIENTATION_NORMAL);
+                        exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, ExifInterface.ORIENTATION_NORMAL);
                 srcWidth =
-                    exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, ExifInterface.ORIENTATION_NORMAL);
+                        exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, ExifInterface.ORIENTATION_NORMAL);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -222,9 +224,9 @@ public class ImageUtil {
         }
         int orient = getOrientation(imagePath);
         if (orient == 90 || orient == 270) {
-            return new int[] { srcHeight, srcWidth };
+            return new int[]{srcHeight, srcWidth};
         }
-        return new int[] { srcWidth, srcHeight };
+        return new int[]{srcWidth, srcHeight};
     }
 
     public static boolean isLongImage(Context context, String imagePath) {

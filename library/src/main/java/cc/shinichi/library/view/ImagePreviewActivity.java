@@ -23,6 +23,13 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.transition.Transition;
+
+import java.io.File;
+import java.util.List;
+
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
@@ -33,10 +40,6 @@ import cc.shinichi.library.glide.sunfusheng.progress.ProgressManager;
 import cc.shinichi.library.tool.common.HandlerUtils;
 import cc.shinichi.library.tool.image.DownloadPictureUtil;
 import cc.shinichi.library.tool.ui.ToastUtil;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.transition.Transition;
-import java.io.File;
-import java.util.List;
 
 import static android.support.v4.content.PermissionChecker.PERMISSION_GRANTED;
 
@@ -89,7 +92,8 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
-    @Override protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sh_layout_preview);
 
@@ -97,7 +101,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.getDecorView()
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.TRANSPARENT);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -198,13 +202,14 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 
         // 更新进度指示器
         tv_indicator.setText(
-            String.format(getString(R.string.indicator), currentItem + 1 + "", "" + imageInfoList.size()));
+                String.format(getString(R.string.indicator), currentItem + 1 + "", "" + imageInfoList.size()));
 
         imagePreviewAdapter = new ImagePreviewAdapter(this, imageInfoList);
         viewPager.setAdapter(imagePreviewAdapter);
         viewPager.setCurrentItem(currentItem);
         viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override public void onPageSelected(int position) {
+            @Override
+            public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 if (ImagePreview.getInstance().getBigImagePageChangeListener() != null) {
                     ImagePreview.getInstance().getBigImagePageChangeListener().onPageSelected(position);
@@ -221,7 +226,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
                 }
                 // 更新进度指示器
                 tv_indicator.setText(
-                    String.format(getString(R.string.indicator), currentItem + 1 + "", "" + imageInfoList.size()));
+                        String.format(getString(R.string.indicator), currentItem + 1 + "", "" + imageInfoList.size()));
                 // 如果是自定义百分比进度view，每次切换都先隐藏，并重置百分比
                 if (isUserCustomProgressView) {
                     fm_center_progress_container.setVisibility(View.GONE);
@@ -229,17 +234,19 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
                 }
             }
 
-            @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
 
                 if (ImagePreview.getInstance().getBigImagePageChangeListener() != null) {
                     ImagePreview.getInstance()
-                        .getBigImagePageChangeListener()
-                        .onPageScrolled(position, positionOffset, positionOffsetPixels);
+                            .getBigImagePageChangeListener()
+                            .onPageScrolled(position, positionOffset, positionOffsetPixels);
                 }
             }
 
-            @Override public void onPageScrollStateChanged(int state) {
+            @Override
+            public void onPageScrollStateChanged(int state) {
                 super.onPageScrollStateChanged(state);
 
                 if (ImagePreview.getInstance().getBigImagePageChangeListener() != null) {
@@ -256,11 +263,13 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         DownloadPictureUtil.downloadPicture(context.getApplicationContext(), currentItemOriginPathUrl);
     }
 
-    @Override public void onBackPressed() {
+    @Override
+    public void onBackPressed() {
         finish();
     }
 
-    @Override public void finish() {
+    @Override
+    public void finish() {
         super.finish();
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
@@ -297,7 +306,8 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         }
     }
 
-    @Override public boolean handleMessage(Message msg) {
+    @Override
+    public boolean handleMessage(Message msg) {
         if (msg.what == 0) {// 点击查看原图按钮，开始加载原图
             final String path = imageInfoList.get(currentItem).getOriginUrl();
             visible();
@@ -344,8 +354,8 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
                     if (ImagePreview.getInstance().getOnOriginProgressListener() != null) {
                         progressParentLayout.setVisibility(View.VISIBLE);
                         ImagePreview.getInstance()
-                            .getOnOriginProgressListener()
-                            .progress(progressParentLayout, progress);
+                                .getOnOriginProgressListener()
+                                .progress(progressParentLayout, progress);
                     }
                 } else {
                     visible();
@@ -383,19 +393,20 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         }
     }
 
-    @Override public void onClick(View v) {
+    @Override
+    public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.img_download) {// 检查权限
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+                    != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(ImagePreviewActivity.this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     // 拒绝权限
                     ToastUtil.getInstance()._short(context, "您拒绝了存储权限，下载失败！");
                 } else {
                     //申请权限
                     ActivityCompat.requestPermissions(ImagePreviewActivity.this,
-                        new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE, }, 1);
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,}, 1);
                 }
             } else {
                 // 下载当前图片
@@ -408,8 +419,9 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         }
     }
 
-    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-        @NonNull int[] grantResults) {
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         if (requestCode == 1) {
             for (int i = 0; i < permissions.length; i++) {
                 if (grantResults[i] == PERMISSION_GRANTED) {
@@ -421,7 +433,8 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         }
     }
 
-    @Override protected void onDestroy() {
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
         ImagePreview.getInstance().reset();
         if (imagePreviewAdapter != null) {

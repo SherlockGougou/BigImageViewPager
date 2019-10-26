@@ -26,7 +26,8 @@ public class ImageInfo implements Serializable {
         this.originUrl = originUrl;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "ImageInfo{" + "thumbnailUrl='" + thumbnailUrl + '\'' + ", originUrl='" + originUrl + '\'' + '}';
     }
 }
