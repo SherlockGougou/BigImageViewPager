@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
             // 原图地址
             imageInfo.setOriginUrl(image);
             // 缩略图；实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样。
-            imageInfo.setThumbnailUrl(image.concat("-1200"));
+            imageInfo.setThumbnailUrl(image.concat("-400"));
             imageInfoList.add(imageInfo);
         }
 
