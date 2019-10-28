@@ -1,13 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cc.shinichi.library">
+  package="cc.shinichi.library">
 
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-  <application>
+  <application
+    android:networkSecurityConfig="@xml/network_config">
     <activity
-        android:name=".view.ImagePreviewActivity"
-        android:theme="@style/Theme.ImagePreview"/>
+      android:name=".view.ImagePreviewActivity"
+      android:theme="@style/Theme.ImagePreview"/>
   </application>
 </manifest>
