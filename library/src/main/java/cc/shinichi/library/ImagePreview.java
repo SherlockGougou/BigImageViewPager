@@ -1,5 +1,6 @@
 package cc.shinichi.library;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
@@ -7,7 +8,6 @@ import android.util.Log;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.view.ImagePreviewActivity;
 import cc.shinichi.library.view.listener.OnBigImageClickListener;
@@ -398,16 +398,16 @@ public class ImagePreview {
         if (context == null) {
             throw new IllegalArgumentException("You must call 'setContext(Context context)' first!");
         }
-        if (!(context instanceof AppCompatActivity)) {
+        if (!(context instanceof Activity)) {
             throw new IllegalArgumentException("context must be a Activity!");
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            if (((AppCompatActivity) context).isFinishing() || ((AppCompatActivity) context).isDestroyed()) {
+            if (((Activity) context).isFinishing() || ((Activity) context).isDestroyed()) {
                 reset();
                 return;
             }
         } else {
-            if (((AppCompatActivity) context).isFinishing()) {
+            if (((Activity) context).isFinishing()) {
                 reset();
                 return;
             }
