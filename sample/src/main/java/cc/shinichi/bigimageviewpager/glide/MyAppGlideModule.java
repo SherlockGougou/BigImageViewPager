@@ -12,7 +12,7 @@ import com.bumptech.glide.module.AppGlideModule;
 
 import java.io.InputStream;
 
-import cc.shinichi.library.glide.sunfusheng.progress.ProgressManager;
+import cc.shinichi.library.glide.progress.ProgressManager;
 
 @GlideModule
 public class MyAppGlideModule extends AppGlideModule {

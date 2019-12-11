@@ -1,4 +1,4 @@
-package cc.shinichi.library.glide.sunfusheng.progress;
+package cc.shinichi.library.glide.progress;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

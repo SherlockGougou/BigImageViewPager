@@ -1,4 +1,4 @@
-package cc.shinichi.library.glide.sunfusheng.progress;
+package cc.shinichi.library.glide.progress;
 
 /**
  * @author by sunfusheng on 2017/6/14.

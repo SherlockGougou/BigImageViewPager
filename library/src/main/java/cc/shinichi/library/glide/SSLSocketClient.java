@@ -13,7 +13,7 @@ import javax.net.ssl.X509TrustManager;
 /**
  * @author 工藤
  * @email gougou@16fan.com
- * cc.shinichi.library.glide.sunfusheng.progress
+ * cc.shinichi.library.glide.progress
  * create at 2018/11/2  15:55
  * description:
  */
@@ -45,6 +45,23 @@ public class SSLSocketClient {
                         return new X509Certificate[]{};
                     }
                 }
+        };
+    }
+
+    public static X509TrustManager geX509tTrustManager() {
+        return new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) {
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType) {
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[]{};
+            }
         };
     }
 

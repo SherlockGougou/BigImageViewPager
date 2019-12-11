@@ -1,4 +1,4 @@
-package cc.shinichi.library.glide.sunfusheng.progress;
+package cc.shinichi.library.glide.progress;
 
 import android.text.TextUtils;
 
@@ -54,7 +54,7 @@ public class ProgressManager {
                         .build();
             }
         })
-                .sslSocketFactory(SSLSocketClient.getSSLSocketFactory())
+                .sslSocketFactory(SSLSocketClient.getSSLSocketFactory(), SSLSocketClient.geX509tTrustManager())
                 .hostnameVerifier(SSLSocketClient.getHostnameVerifier());
         builder.connectTimeout(30, TimeUnit.SECONDS);
         builder.writeTimeout(30, TimeUnit.SECONDS);

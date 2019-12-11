@@ -7,8 +7,8 @@ android {
     applicationId "cc.shinichi.bigimageviewpager"
     minSdkVersion 14
     targetSdkVersion 28
-    versionCode 411
-    versionName "v4_4.1.1"
+    versionCode 504
+    versionName "v4_5.0.4"
   }
   buildTypes {
     release {
@@ -52,6 +52,6 @@ dependencies {
   debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
   releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
   // library
-  // implementation 'com.github.SherlockGougou:BigImageViewPager:v4_4.1.0'
+  // implementation 'com.github.SherlockGougou:BigImageViewPager:v4_5.0.4'
   implementation project(':library')
 }
