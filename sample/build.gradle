@@ -39,7 +39,7 @@ dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
   implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
   implementation 'androidx.appcompat:appcompat:1.1.0'
-  implementation 'androidx.recyclerview:recyclerview:1.0.0'
+  implementation 'androidx.recyclerview:recyclerview:1.1.0'
   // matisse
   implementation(name: 'matisse-release', ext: 'aar') {
     exclude group: 'com.github.bumptech.glide'

@@ -11,12 +11,22 @@ import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.zhihu.matisse.Matisse;
+import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.internal.entity.CaptureStrategy;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import cc.shinichi.bigimageviewpager.glide.GlideV4Engine;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.bean.ImageInfo;
@@ -26,12 +36,6 @@ import cc.shinichi.library.view.listener.OnBigImageClickListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
 import cc.shinichi.library.view.listener.OnOriginProgressListener;
-import com.zhihu.matisse.Matisse;
-import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.internal.entity.CaptureStrategy;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 
