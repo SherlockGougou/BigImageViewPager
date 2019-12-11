@@ -28,10 +28,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
+
 import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.exifinterface.media.ExifInterface;
+
 import com.davemorrissey.labs.subscaleview.ImageViewState;
 import com.davemorrissey.labs.subscaleview.R.styleable;
 import com.davemorrissey.labs.subscaleview.decoder.CompatDecoderFactory;
@@ -40,6 +42,7 @@ import com.davemorrissey.labs.subscaleview.decoder.ImageDecoder;
 import com.davemorrissey.labs.subscaleview.decoder.ImageRegionDecoder;
 import com.davemorrissey.labs.subscaleview.decoder.SkiaImageDecoder;
 import com.davemorrissey.labs.subscaleview.decoder.SkiaImageRegionDecoder;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,30 +76,49 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * <a href="https://github.com/davemorrissey/subsampling-scale-image-view">View project on GitHub</a>
  * </p>
  */
-@SuppressWarnings("unused") public class SubsamplingScaleImageViewDragClose extends View {
+@SuppressWarnings("unused")
+public class SubsamplingScaleImageViewDragClose extends View {
 
-    /** Attempt to use EXIF information on the image to rotate it. Works for external files only. */
+    /**
+     * Attempt to use EXIF information on the image to rotate it. Works for external files only.
+     */
     public static final int ORIENTATION_USE_EXIF = -1;
-    /** Display the image file in its native orientation. */
+    /**
+     * Display the image file in its native orientation.
+     */
     public static final int ORIENTATION_0 = 0;
-    /** Rotate the image 90 degrees clockwise. */
+    /**
+     * Rotate the image 90 degrees clockwise.
+     */
     public static final int ORIENTATION_90 = 90;
-    /** Rotate the image 180 degrees. */
+    /**
+     * Rotate the image 180 degrees.
+     */
     public static final int ORIENTATION_180 = 180;
-    /** Rotate the image 270 degrees clockwise. */
+    /**
+     * Rotate the image 270 degrees clockwise.
+     */
     public static final int ORIENTATION_270 = 270;
     /**
      * During zoom animation, keep the point of the image that was tapped in the same place, and scale the image around
      * it.
      */
     public static final int ZOOM_FOCUS_FIXED = 1;
-    /** During zoom animation, move the point of the image that was tapped to the center of the screen. */
+    /**
+     * During zoom animation, move the point of the image that was tapped to the center of the screen.
+     */
     public static final int ZOOM_FOCUS_CENTER = 2;
-    /** Zoom in to and center the tapped point immediately without animating. */
+    /**
+     * Zoom in to and center the tapped point immediately without animating.
+     */
     public static final int ZOOM_FOCUS_CENTER_IMMEDIATE = 3;
-    /** Quadratic ease out. Not recommended for scale animation, but good for panning. */
+    /**
+     * Quadratic ease out. Not recommended for scale animation, but good for panning.
+     */
     public static final int EASE_OUT_QUAD = 1;
-    /** Quadratic ease in and out. */
+    /**
+     * Quadratic ease in and out.
+     */
     public static final int EASE_IN_OUT_QUAD = 2;
     /**
      * Don't allow the image to be panned off screen. As much of the image as possible is always displayed, centered in
@@ -133,26 +155,34 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * of the view. The top left is shown.
      */
     public static final int SCALE_TYPE_START = 4;
-    /** State change originated from animation. */
+    /**
+     * State change originated from animation.
+     */
     public static final int ORIGIN_ANIM = 1;
-    /** State change originated from touch gesture. */
+    /**
+     * State change originated from touch gesture.
+     */
     public static final int ORIGIN_TOUCH = 2;
-    /** State change originated from a fling momentum anim. */
+    /**
+     * State change originated from a fling momentum anim.
+     */
     public static final int ORIGIN_FLING = 3;
-    /** State change originated from a double tap zoom anim. */
+    /**
+     * State change originated from a double tap zoom anim.
+     */
     public static final int ORIGIN_DOUBLE_TAP_ZOOM = 4;
     // overrides for the dimensions of the generated tiles
     public static final int TILE_SIZE_AUTO = Integer.MAX_VALUE;
     private static final String TAG = SubsamplingScaleImageViewDragClose.class.getSimpleName();
     private static final List<Integer> VALID_ORIENTATIONS =
-        Arrays.asList(ORIENTATION_0, ORIENTATION_90, ORIENTATION_180, ORIENTATION_270, ORIENTATION_USE_EXIF);
+            Arrays.asList(ORIENTATION_0, ORIENTATION_90, ORIENTATION_180, ORIENTATION_270, ORIENTATION_USE_EXIF);
     private static final List<Integer> VALID_ZOOM_STYLES =
-        Arrays.asList(ZOOM_FOCUS_FIXED, ZOOM_FOCUS_CENTER, ZOOM_FOCUS_CENTER_IMMEDIATE);
+            Arrays.asList(ZOOM_FOCUS_FIXED, ZOOM_FOCUS_CENTER, ZOOM_FOCUS_CENTER_IMMEDIATE);
     private static final List<Integer> VALID_EASING_STYLES = Arrays.asList(EASE_IN_OUT_QUAD, EASE_OUT_QUAD);
     private static final List<Integer> VALID_PAN_LIMITS =
-        Arrays.asList(PAN_LIMIT_INSIDE, PAN_LIMIT_OUTSIDE, PAN_LIMIT_CENTER);
+            Arrays.asList(PAN_LIMIT_INSIDE, PAN_LIMIT_OUTSIDE, PAN_LIMIT_CENTER);
     private static final List<Integer> VALID_SCALE_TYPES =
-        Arrays.asList(SCALE_TYPE_CENTER_CROP, SCALE_TYPE_CENTER_INSIDE, SCALE_TYPE_CUSTOM, SCALE_TYPE_START);
+            Arrays.asList(SCALE_TYPE_CENTER_CROP, SCALE_TYPE_CENTER_INSIDE, SCALE_TYPE_CUSTOM, SCALE_TYPE_START);
     private static final int MESSAGE_LONG_CLICK = 1;
     // A global preference for bitmap format, available to decoder classes that respect it
     private static Bitmap.Config preferredBitmapConfig;
@@ -238,9 +268,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
     // Tile and image decoding
     private ImageRegionDecoder decoder;
     private DecoderFactory<? extends ImageDecoder> bitmapDecoderFactory =
-        new CompatDecoderFactory<ImageDecoder>(SkiaImageDecoder.class);
+            new CompatDecoderFactory<ImageDecoder>(SkiaImageDecoder.class);
     private DecoderFactory<? extends ImageRegionDecoder> regionDecoderFactory =
-        new CompatDecoderFactory<ImageRegionDecoder>(SkiaImageRegionDecoder.class);
+            new CompatDecoderFactory<ImageRegionDecoder>(SkiaImageRegionDecoder.class);
     // Debug values
     private PointF vCenterStart;
     private float vDistStart;
@@ -281,7 +311,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
         setGestureDetector(context);
         mTouchslop = ViewConfiguration.get(context).getScaledPagingTouchSlop();
         this.handler = new Handler(new Handler.Callback() {
-            @Override public boolean handleMessage(Message message) {
+            @Override
+            public boolean handleMessage(Message message) {
                 if (message.what == MESSAGE_LONG_CLICK && onLongClickListener != null) {
                     maxTouchCount = 0;
                     SubsamplingScaleImageViewDragClose.super.setOnLongClickListener(onLongClickListener);
@@ -317,13 +348,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
             }
             if (typedAttr.hasValue(styleable.SubsamplingScaleImageView_tileBackgroundColor)) {
                 setTileBackgroundColor(typedAttr.getColor(styleable.SubsamplingScaleImageView_tileBackgroundColor,
-                    Color.argb(0, 0, 0, 0)));
+                        Color.argb(0, 0, 0, 0)));
             }
             typedAttr.recycle();
         }
 
         quickScaleThreshold =
-            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, context.getResources().getDisplayMetrics());
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, context.getResources().getDisplayMetrics());
     }
 
     public SubsamplingScaleImageViewDragClose(Context context) {
@@ -347,7 +378,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * an instance-specific config) but custom decoder classes will not.
      *
      * @param preferredBitmapConfig the bitmap configuration to be used by future instances of the view. Pass null to
-     * restore the default.
+     *                              restore the default.
      */
     public static void setPreferredBitmapConfig(Bitmap.Config preferredBitmapConfig) {
         SubsamplingScaleImageViewDragClose.preferredBitmapConfig = preferredBitmapConfig;
@@ -368,7 +399,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * after screen orientation change; it avoids any redundant loading of tiles in the wrong orientation.
      *
      * @param imageSource Image source.
-     * @param state State to be restored. Nullable.
+     * @param state       State to be restored. Nullable.
      */
     public final void setImage(@NonNull ImageSource imageSource, ImageViewState state) {
         setImage(imageSource, null, state);
@@ -377,14 +408,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
     /**
      * Set the image source from a bitmap, resource, asset, file or other URI, providing a preview image to be
      * displayed until the full size image is loaded.
-     *
+     * <p>
      * You must declare the dimensions of the full size image by calling {@link ImageSource#dimensions(int, int)}
      * on the imageSource object. The preview source will be ignored if you don't provide dimensions,
      * and if you provide a bitmap for the full size image.
      *
-     * @param imageSource Image source. Dimensions must be declared.
+     * @param imageSource   Image source. Dimensions must be declared.
      * @param previewSource Optional source for a preview image to be displayed and allow interaction while the full
-     * size image loads.
+     *                      size image loads.
      */
     public final void setImage(@NonNull ImageSource imageSource, ImageSource previewSource) {
         setImage(imageSource, previewSource, null);
@@ -395,15 +426,15 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * displayed until the full size image is loaded, starting with a given orientation setting, scale and center.
      * This is the best method to use when you want scale and center to be restored after screen orientation change;
      * it avoids any redundant loading of tiles in the wrong orientation.
-     *
+     * <p>
      * You must declare the dimensions of the full size image by calling {@link ImageSource#dimensions(int, int)}
      * on the imageSource object. The preview source will be ignored if you don't provide dimensions,
      * and if you provide a bitmap for the full size image.
      *
-     * @param imageSource Image source. Dimensions must be declared.
+     * @param imageSource   Image source. Dimensions must be declared.
      * @param previewSource Optional source for a preview image to be displayed and allow interaction while the full
-     * size image loads.
-     * @param state State to be restored. Nullable.
+     *                      size image loads.
+     * @param state         State to be restored. Nullable.
      */
     public final void setImage(@NonNull ImageSource imageSource, ImageSource previewSource, ImageViewState state) {
         //noinspection ConstantConditions
@@ -419,11 +450,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
         if (previewSource != null) {
             if (imageSource.getBitmap() != null) {
                 throw new IllegalArgumentException(
-                    "Preview image cannot be used when a bitmap is provided for the main image");
+                        "Preview image cannot be used when a bitmap is provided for the main image");
             }
             if (imageSource.getSWidth() <= 0 || imageSource.getSHeight() <= 0) {
                 throw new IllegalArgumentException(
-                    "Preview image cannot be used unless dimensions are provided for the main image");
+                        "Preview image cannot be used unless dimensions are provided for the main image");
             }
             this.sWidth = imageSource.getSWidth();
             this.sHeight = imageSource.getSHeight();
@@ -435,22 +466,22 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
                 Uri uri = previewSource.getUri();
                 if (uri == null && previewSource.getResource() != null) {
                     uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
-                        + "://"
-                        + getContext().getPackageName()
-                        + "/"
-                        + previewSource.getResource());
+                            + "://"
+                            + getContext().getPackageName()
+                            + "/"
+                            + previewSource.getResource());
                 }
                 SubsamplingScaleImageViewDragClose.BitmapLoadTask task =
-                    new SubsamplingScaleImageViewDragClose.BitmapLoadTask(this, getContext(), bitmapDecoderFactory, uri,
-                        true);
+                        new SubsamplingScaleImageViewDragClose.BitmapLoadTask(this, getContext(), bitmapDecoderFactory, uri,
+                                true);
                 execute(task);
             }
         }
 
         if (imageSource.getBitmap() != null && imageSource.getSRegion() != null) {
             onImageLoaded(Bitmap.createBitmap(imageSource.getBitmap(), imageSource.getSRegion().left,
-                imageSource.getSRegion().top, imageSource.getSRegion().width(), imageSource.getSRegion().height()),
-                ORIENTATION_0, false);
+                    imageSource.getSRegion().top, imageSource.getSRegion().width(), imageSource.getSRegion().height()),
+                    ORIENTATION_0, false);
         } else if (imageSource.getBitmap() != null) {
             onImageLoaded(imageSource.getBitmap(), ORIENTATION_0, imageSource.isCached());
         } else {
@@ -458,21 +489,21 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
             uri = imageSource.getUri();
             if (uri == null && imageSource.getResource() != null) {
                 uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
-                    + "://"
-                    + getContext().getPackageName()
-                    + "/"
-                    + imageSource.getResource());
+                        + "://"
+                        + getContext().getPackageName()
+                        + "/"
+                        + imageSource.getResource());
             }
             if (imageSource.getTile() || sRegion != null) {
                 // Load the bitmap using tile decoding.
                 SubsamplingScaleImageViewDragClose.TilesInitTask task =
-                    new SubsamplingScaleImageViewDragClose.TilesInitTask(this, getContext(), regionDecoderFactory, uri);
+                        new SubsamplingScaleImageViewDragClose.TilesInitTask(this, getContext(), regionDecoderFactory, uri);
                 execute(task);
             } else {
                 // Load the bitmap as a single image.
                 SubsamplingScaleImageViewDragClose.BitmapLoadTask task =
-                    new SubsamplingScaleImageViewDragClose.BitmapLoadTask(this, getContext(), bitmapDecoderFactory, uri,
-                        false);
+                        new SubsamplingScaleImageViewDragClose.BitmapLoadTask(this, getContext(), bitmapDecoderFactory, uri,
+                                false);
                 execute(task);
             }
         }
@@ -553,30 +584,33 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
     private void setGestureDetector(final Context context) {
         this.detector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
 
-            @Override public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                 if (panEnabled && readySent && vTranslate != null && e1 != null && e2 != null && (Math.abs(
-                    e1.getX() - e2.getX()) > 50 || Math.abs(e1.getY() - e2.getY()) > 50) && (Math.abs(velocityX) > 500
-                    || Math.abs(velocityY) > 500) && !isZooming) {
+                        e1.getX() - e2.getX()) > 50 || Math.abs(e1.getY() - e2.getY()) > 50) && (Math.abs(velocityX) > 500
+                        || Math.abs(velocityY) > 500) && !isZooming) {
                     PointF vTranslateEnd =
-                        new PointF(vTranslate.x + (velocityX * 0.25f), vTranslate.y + (velocityY * 0.25f));
+                            new PointF(vTranslate.x + (velocityX * 0.25f), vTranslate.y + (velocityY * 0.25f));
                     float sCenterXEnd = ((getWidth() / 2) - vTranslateEnd.x) / scale;
                     float sCenterYEnd = ((getHeight() / 2) - vTranslateEnd.y) / scale;
                     new SubsamplingScaleImageViewDragClose.AnimationBuilder(
-                        new PointF(sCenterXEnd, sCenterYEnd)).withEasing(EASE_OUT_QUAD)
-                        .withPanLimited(false)
-                        .withOrigin(ORIGIN_FLING)
-                        .start();
+                            new PointF(sCenterXEnd, sCenterYEnd)).withEasing(EASE_OUT_QUAD)
+                            .withPanLimited(false)
+                            .withOrigin(ORIGIN_FLING)
+                            .start();
                     return true;
                 }
                 return super.onFling(e1, e2, velocityX, velocityY);
             }
 
-            @Override public boolean onSingleTapConfirmed(MotionEvent e) {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
                 performClick();
                 return true;
             }
 
-            @Override public boolean onDoubleTap(MotionEvent e) {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
                 if (zoomEnabled && readySent && vTranslate != null) {
                     // Hacky solution for #15 - after a double tap the GestureDetector gets in a state
                     // where the next fling is ignored, so here we replace it with a new one.
@@ -599,7 +633,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
                     } else {
                         // Start double tap zoom animation.
                         doubleTapZoom(viewToSourceCoord(new PointF(e.getX(), e.getY())),
-                            new PointF(e.getX(), e.getY()));
+                                new PointF(e.getX(), e.getY()));
                         return true;
                     }
                 }
@@ -608,7 +642,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
         });
 
         singleDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
-            @Override public boolean onSingleTapConfirmed(MotionEvent e) {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
                 performClick();
                 return true;
             }
@@ -618,7 +653,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
     /**
      * On resize, preserve center and scale. Various behaviours are possible, override this method to use another.
      */
-    @Override protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         debug("onSizeChanged %dx%d -> %dx%d", oldw, oldh, w, h);
         PointF sCenter = getCenter();
         if (readySent && sCenter != null) {
@@ -632,7 +668,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * Measures the width and height of the view, preserving the aspect ratio of the image displayed if wrap_content is
      * used. The image will scale within this box, not resizing the view as it is zoomed.
      */
-    @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
         int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
         int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
@@ -659,7 +696,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
     /**
      * Handle touch events. One finger pans, and two finger pinch and zoom plus panning.
      */
-    @Override public boolean onTouchEvent(@NonNull MotionEvent event) {
+    @Override
+    public boolean onTouchEvent(@NonNull MotionEvent event) {
         // During non-interruptible anims, ignore all touch events
         if (anim != null && !anim.interruptible) {
             requestDisallowInterceptTouchEvent(true);
@@ -709,7 +747,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
         return handled || super.onTouchEvent(event);
     }
 
-    @SuppressWarnings("deprecation") private boolean onTouchEventInternal(@NonNull MotionEvent event) {
+    @SuppressWarnings("deprecation")
+    private boolean onTouchEventInternal(@NonNull MotionEvent event) {
         int touchCount = event.getPointerCount();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -751,8 +790,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
                         float vCenterEndY = (event.getY(0) + event.getY(1)) / 2;
 
                         if (zoomEnabled && (distance(vCenterStart.x, vCenterEndX, vCenterStart.y, vCenterEndY) > 5
-                            || Math.abs(vDistEnd - vDistStart) > 5
-                            || isPanning)) {
+                                || Math.abs(vDistEnd - vDistStart) > 5
+                                || isPanning)) {
                             isZooming = true;
                             isPanning = true;
                             consumed = true;
@@ -776,8 +815,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
                                 vTranslate.x = vCenterEndX - vLeftNow;
                                 vTranslate.y = vCenterEndY - vTopNow;
                                 if ((previousScale * sHeight() < getHeight() && scale * sHeight() >= getHeight()) || (
-                                    previousScale * sWidth() < getWidth()
-                                        && scale * sWidth() >= getWidth())) {
+                                        previousScale * sWidth() < getWidth()
+                                                && scale * sWidth() >= getWidth())) {
                                     fitToBounds(true);
                                     vCenterStart.set(vCenterEndX, vCenterEndY);
                                     vTranslateStart.set(vTranslate);
@@ -829,8 +868,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
                                 vTranslate.x = vCenterStart.x - vLeftNow;
                                 vTranslate.y = vCenterStart.y - vTopNow;
                                 if ((previousScale * sHeight() < getHeight() && scale * sHeight() >= getHeight()) || (
-                                    previousScale * sWidth() < getWidth()
-                                        && scale * sWidth() >= getWidth())) {
+                                        previousScale * sWidth() < getWidth()
+                                                && scale * sWidth() >= getWidth())) {
                                     fitToBounds(true);
                                     vCenterStart.set(sourceToViewCoord(quickScaleSCenter));
                                     vTranslateStart.set(vTranslate);
@@ -975,12 +1014,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
             setScaleAndCenter(targetScale, sCenter);
         } else if (doubleTapZoomStyle == ZOOM_FOCUS_CENTER || !zoomIn || !panEnabled) {
             new SubsamplingScaleImageViewDragClose.AnimationBuilder(targetScale, sCenter).withInterruptible(false)
-                .withDuration(doubleTapZoomDuration)
-                .withOrigin(ORIGIN_DOUBLE_TAP_ZOOM)
-                .start();
+                    .withDuration(doubleTapZoomDuration)
+                    .withOrigin(ORIGIN_DOUBLE_TAP_ZOOM)
+                    .start();
         } else if (doubleTapZoomStyle == ZOOM_FOCUS_FIXED) {
             new SubsamplingScaleImageViewDragClose.AnimationBuilder(targetScale, sCenter, vFocus).withInterruptible(
-                false).withDuration(doubleTapZoomDuration).withOrigin(ORIGIN_DOUBLE_TAP_ZOOM).start();
+                    false).withDuration(doubleTapZoomDuration).withOrigin(ORIGIN_DOUBLE_TAP_ZOOM).start();
         }
         invalidate();
     }
@@ -990,7 +1029,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * calculate
      * the scaling and tiling required. Once the view is setup, tiles are displayed as they are loaded.
      */
-    @Override protected void onDraw(Canvas canvas) {
+    @Override
+    protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         createPaints();
 
@@ -1030,11 +1070,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
             // Apply required animation to the focal point
             float vFocusNowX =
-                ease(anim.easing, scaleElapsed, anim.vFocusStart.x, anim.vFocusEnd.x - anim.vFocusStart.x,
-                    anim.duration);
+                    ease(anim.easing, scaleElapsed, anim.vFocusStart.x, anim.vFocusEnd.x - anim.vFocusStart.x,
+                            anim.duration);
             float vFocusNowY =
-                ease(anim.easing, scaleElapsed, anim.vFocusStart.y, anim.vFocusEnd.y - anim.vFocusStart.y,
-                    anim.duration);
+                    ease(anim.easing, scaleElapsed, anim.vFocusStart.y, anim.vFocusEnd.y - anim.vFocusStart.y,
+                            anim.duration);
             // Find out where the focal point is at this scale and adjust its position to follow the animation path
             vTranslate.x -= sourceToViewX(anim.sCenterEnd.x) - vFocusNowX;
             vTranslate.y -= sourceToViewY(anim.sCenterEnd.y) - vFocusNowY;
@@ -1087,23 +1127,23 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
                             }
                             matrix.reset();
                             setMatrixArray(srcArray, 0, 0, tile.bitmap.getWidth(), 0, tile.bitmap.getWidth(),
-                                tile.bitmap.getHeight(), 0, tile.bitmap.getHeight());
+                                    tile.bitmap.getHeight(), 0, tile.bitmap.getHeight());
                             if (getRequiredRotation() == ORIENTATION_0) {
                                 setMatrixArray(dstArray, tile.vRect.left, tile.vRect.top, tile.vRect.right,
-                                    tile.vRect.top, tile.vRect.right, tile.vRect.bottom, tile.vRect.left,
-                                    tile.vRect.bottom);
+                                        tile.vRect.top, tile.vRect.right, tile.vRect.bottom, tile.vRect.left,
+                                        tile.vRect.bottom);
                             } else if (getRequiredRotation() == ORIENTATION_90) {
                                 setMatrixArray(dstArray, tile.vRect.right, tile.vRect.top, tile.vRect.right,
-                                    tile.vRect.bottom, tile.vRect.left, tile.vRect.bottom, tile.vRect.left,
-                                    tile.vRect.top);
+                                        tile.vRect.bottom, tile.vRect.left, tile.vRect.bottom, tile.vRect.left,
+                                        tile.vRect.top);
                             } else if (getRequiredRotation() == ORIENTATION_180) {
                                 setMatrixArray(dstArray, tile.vRect.right, tile.vRect.bottom, tile.vRect.left,
-                                    tile.vRect.bottom, tile.vRect.left, tile.vRect.top, tile.vRect.right,
-                                    tile.vRect.top);
+                                        tile.vRect.bottom, tile.vRect.left, tile.vRect.top, tile.vRect.right,
+                                        tile.vRect.top);
                             } else if (getRequiredRotation() == ORIENTATION_270) {
                                 setMatrixArray(dstArray, tile.vRect.left, tile.vRect.bottom, tile.vRect.left,
-                                    tile.vRect.top, tile.vRect.right, tile.vRect.top, tile.vRect.right,
-                                    tile.vRect.bottom);
+                                        tile.vRect.top, tile.vRect.right, tile.vRect.top, tile.vRect.right,
+                                        tile.vRect.bottom);
                             }
                             matrix.setPolyToPoly(srcArray, 0, dstArray, 0, 4);
                             canvas.drawBitmap(tile.bitmap, matrix, bitmapPaint);
@@ -1112,19 +1152,19 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
                             }
                         } else if (tile.loading && debug) {
                             canvas.drawText("LOADING", tile.vRect.left + px(5), tile.vRect.top + px(35),
-                                debugTextPaint);
+                                    debugTextPaint);
                         }
                         if (tile.visible && debug) {
                             canvas.drawText("ISS "
-                                + tile.sampleSize
-                                + " RECT "
-                                + tile.sRect.top
-                                + ","
-                                + tile.sRect.left
-                                + ","
-                                + tile.sRect.bottom
-                                + ","
-                                + tile.sRect.right, tile.vRect.left + px(5), tile.vRect.top + px(15), debugTextPaint);
+                                    + tile.sampleSize
+                                    + " RECT "
+                                    + tile.sRect.top
+                                    + ","
+                                    + tile.sRect.left
+                                    + ","
+                                    + tile.sRect.bottom
+                                    + ","
+                                    + tile.sRect.right, tile.vRect.left + px(5), tile.vRect.top + px(15), debugTextPaint);
                         }
                     }
                 }
@@ -1158,7 +1198,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
                     sRect = new RectF();
                 }
                 sRect.set(0f, 0f, bitmapIsPreview ? bitmap.getWidth() : sWidth,
-                    bitmapIsPreview ? bitmap.getHeight() : sHeight);
+                        bitmapIsPreview ? bitmap.getHeight() : sHeight);
                 matrix.mapRect(sRect);
                 canvas.drawRect(sRect, tileBgPaint);
             }
@@ -1167,15 +1207,15 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
         if (debug) {
             canvas.drawText(
-                "Scale: " + String.format(Locale.ENGLISH, "%.2f", scale) + " (" + String.format(Locale.ENGLISH, "%.2f",
-                    minScale()) + " - " + String.format(Locale.ENGLISH, "%.2f", maxScale) + ")", px(5), px(15),
-                debugTextPaint);
+                    "Scale: " + String.format(Locale.ENGLISH, "%.2f", scale) + " (" + String.format(Locale.ENGLISH, "%.2f",
+                            minScale()) + " - " + String.format(Locale.ENGLISH, "%.2f", maxScale) + ")", px(5), px(15),
+                    debugTextPaint);
             canvas.drawText("Translate: " + String.format(Locale.ENGLISH, "%.2f", vTranslate.x) + ":" + String.format(
-                Locale.ENGLISH, "%.2f", vTranslate.y), px(5), px(30), debugTextPaint);
+                    Locale.ENGLISH, "%.2f", vTranslate.y), px(5), px(30), debugTextPaint);
             PointF center = getCenter();
             //noinspection ConstantConditions
             canvas.drawText("Source center: " + String.format(Locale.ENGLISH, "%.2f", center.x) + ":" + String.format(
-                Locale.ENGLISH, "%.2f", center.y), px(5), px(45), debugTextPaint);
+                    Locale.ENGLISH, "%.2f", center.y), px(5), px(45), debugTextPaint);
             if (anim != null) {
                 PointF vCenterStart = sourceToViewCoord(anim.sCenterStart);
                 PointF vCenterEndRequested = sourceToViewCoord(anim.sCenterEndRequested);
@@ -1198,7 +1238,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
             if (quickScaleSCenter != null) {
                 debugLinePaint.setColor(Color.BLUE);
                 canvas.drawCircle(sourceToViewX(quickScaleSCenter.x), sourceToViewY(quickScaleSCenter.y), px(35),
-                    debugLinePaint);
+                        debugLinePaint);
             }
             if (quickScaleVStart != null && isQuickScaling) {
                 debugLinePaint.setColor(Color.CYAN);
@@ -1212,7 +1252,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * Helper method for setting the values of a tile matrix array.
      */
     private void setMatrixArray(float[] array, float f0, float f1, float f2, float f3, float f4, float f5, float f6,
-        float f7) {
+                                float f7) {
         array[0] = f0;
         array[1] = f1;
         array[2] = f2;
@@ -1252,7 +1292,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      */
     private boolean checkReady() {
         boolean ready =
-            getWidth() > 0 && getHeight() > 0 && sWidth > 0 && sHeight > 0 && (bitmap != null || isBaseLayerReady());
+                getWidth() > 0 && getHeight() > 0 && sWidth > 0 && sHeight > 0 && (bitmap != null || isBaseLayerReady());
         if (!readySent && ready) {
             preDraw();
             readySent = true;
@@ -1321,17 +1361,17 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
         }
 
         if (fullImageSampleSize == 1
-            && sRegion == null
-            && sWidth() < maxTileDimensions.x
-            && sHeight() < maxTileDimensions.y) {
+                && sRegion == null
+                && sWidth() < maxTileDimensions.x
+                && sHeight() < maxTileDimensions.y) {
 
             // Whole image is required at native resolution, and is smaller than the canvas max bitmap size.
             // Use BitmapDecoder for better image support.
             decoder.recycle();
             decoder = null;
             SubsamplingScaleImageViewDragClose.BitmapLoadTask task =
-                new SubsamplingScaleImageViewDragClose.BitmapLoadTask(this, getContext(), bitmapDecoderFactory, uri,
-                    false);
+                    new SubsamplingScaleImageViewDragClose.BitmapLoadTask(this, getContext(), bitmapDecoderFactory, uri,
+                            false);
             execute(task);
         } else {
 
@@ -1340,7 +1380,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
             List<Tile> baseGrid = tileMap.get(fullImageSampleSize);
             for (SubsamplingScaleImageViewDragClose.Tile baseTile : baseGrid) {
                 SubsamplingScaleImageViewDragClose.TileLoadTask task =
-                    new SubsamplingScaleImageViewDragClose.TileLoadTask(this, decoder, baseTile);
+                        new SubsamplingScaleImageViewDragClose.TileLoadTask(this, decoder, baseTile);
                 execute(task);
             }
             refreshRequiredTiles(true);
@@ -1365,7 +1405,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
         for (Map.Entry<Integer, List<Tile>> tileMapEntry : tileMap.entrySet()) {
             for (SubsamplingScaleImageViewDragClose.Tile tile : tileMapEntry.getValue()) {
                 if (tile.sampleSize < sampleSize || (tile.sampleSize > sampleSize
-                    && tile.sampleSize != fullImageSampleSize)) {
+                        && tile.sampleSize != fullImageSampleSize)) {
                     tile.visible = false;
                     if (tile.bitmap != null) {
                         tile.bitmap.recycle();
@@ -1377,7 +1417,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
                         tile.visible = true;
                         if (!tile.loading && tile.bitmap == null && load) {
                             SubsamplingScaleImageViewDragClose.TileLoadTask task =
-                                new SubsamplingScaleImageViewDragClose.TileLoadTask(this, decoder, tile);
+                                    new SubsamplingScaleImageViewDragClose.TileLoadTask(this, decoder, tile);
                             execute(task);
                         }
                     } else if (tile.sampleSize != fullImageSampleSize) {
@@ -1399,11 +1439,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      */
     private boolean tileVisible(SubsamplingScaleImageViewDragClose.Tile tile) {
         float sVisLeft = viewToSourceX(0), sVisRight = viewToSourceX(getWidth()), sVisTop = viewToSourceY(0),
-            sVisBottom = viewToSourceY(getHeight());
+                sVisBottom = viewToSourceY(getHeight());
         return !(sVisLeft > tile.sRect.right
-            || tile.sRect.left > sVisRight
-            || sVisTop > tile.sRect.bottom
-            || tile.sRect.top > sVisBottom);
+                || tile.sRect.left > sVisRight
+                || sVisTop > tile.sRect.bottom
+                || tile.sRect.top > sVisBottom);
     }
 
     /**
@@ -1480,8 +1520,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * animation should be.
      *
      * @param center Whether the image should be centered in the dimension it's too small to fill. While animating this
-     * can be false to avoid changes in direction as bounds are reached.
-     * @param sat The scale we want and the translation we're aiming for. The values are adjusted to be valid.
+     *               can be false to avoid changes in direction as bounds are reached.
+     * @param sat    The scale we want and the translation we're aiming for. The values are adjusted to be valid.
      */
     private void fitToBounds(boolean center, SubsamplingScaleImageViewDragClose.ScaleAndTranslate sat) {
         if (panLimit == PAN_LIMIT_OUTSIDE && isReady()) {
@@ -1506,10 +1546,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
         // Asymmetric padding adjustments
         float xPaddingRatio =
-            getPaddingLeft() > 0 || getPaddingRight() > 0 ? getPaddingLeft() / (float) (getPaddingLeft()
-                + getPaddingRight()) : 0.5f;
+                getPaddingLeft() > 0 || getPaddingRight() > 0 ? getPaddingLeft() / (float) (getPaddingLeft()
+                        + getPaddingRight()) : 0.5f;
         float yPaddingRatio = getPaddingTop() > 0 || getPaddingBottom() > 0 ? getPaddingTop() / (float) (getPaddingTop()
-            + getPaddingBottom()) : 0.5f;
+                + getPaddingBottom()) : 0.5f;
 
         float maxTx;
         float maxTy;
@@ -1536,7 +1576,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * is set so one dimension fills the view and the image is centered on the other dimension.
      *
      * @param center Whether the image should be centered in the dimension it's too small to fill. While animating this
-     * can be false to avoid changes in direction as bounds are reached.
+     *               can be false to avoid changes in direction as bounds are reached.
      */
     private void fitToBounds(boolean center) {
         boolean init = false;
@@ -1572,13 +1612,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
             int subTileWidth = sTileWidth / sampleSize;
             int subTileHeight = sTileHeight / sampleSize;
             while (subTileWidth + xTiles + 1 > maxTileDimensions.x || (subTileWidth > getWidth() * 1.25
-                && sampleSize < fullImageSampleSize)) {
+                    && sampleSize < fullImageSampleSize)) {
                 xTiles += 1;
                 sTileWidth = sWidth() / xTiles;
                 subTileWidth = sTileWidth / sampleSize;
             }
             while (subTileHeight + yTiles + 1 > maxTileDimensions.y || (subTileHeight > getHeight() * 1.25
-                && sampleSize < fullImageSampleSize)) {
+                    && sampleSize < fullImageSampleSize)) {
                 yTiles += 1;
                 sTileHeight = sHeight() / yTiles;
                 subTileHeight = sTileHeight / sampleSize;
@@ -1590,8 +1630,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
                     tile.sampleSize = sampleSize;
                     tile.visible = sampleSize == fullImageSampleSize;
                     tile.sRect =
-                        new Rect(x * sTileWidth, y * sTileHeight, x == xTiles - 1 ? sWidth() : (x + 1) * sTileWidth,
-                            y == yTiles - 1 ? sHeight() : (y + 1) * sTileHeight);
+                            new Rect(x * sTileWidth, y * sTileHeight, x == xTiles - 1 ? sWidth() : (x + 1) * sTileWidth,
+                                    y == yTiles - 1 ? sHeight() : (y + 1) * sTileHeight);
                     tile.vRect = new Rect(0, 0, 0, 0);
                     tile.fileSRect = new Rect(tile.sRect);
                     tileGrid.add(tile);
@@ -1632,12 +1672,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
         this.sOrientation = sOrientation;
         checkReady();
         if (!checkImageLoaded()
-            && maxTileWidth > 0
-            && maxTileWidth != TILE_SIZE_AUTO
-            && maxTileHeight > 0
-            && maxTileHeight != TILE_SIZE_AUTO
-            && getWidth() > 0
-            && getHeight() > 0) {
+                && maxTileWidth > 0
+                && maxTileWidth != TILE_SIZE_AUTO
+                && maxTileHeight > 0
+                && maxTileHeight != TILE_SIZE_AUTO
+                && getWidth() > 0
+                && getHeight() > 0) {
             initialiseBaseLayer(new Point(maxTileWidth, maxTileHeight));
         }
         invalidate();
@@ -1693,7 +1733,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
         debug("onImageLoaded");
         // If actual dimensions don't match the declared size, reset everything.
         if (this.sWidth > 0 && this.sHeight > 0 && (this.sWidth != bitmap.getWidth()
-            || this.sHeight != bitmap.getHeight())) {
+                || this.sHeight != bitmap.getHeight())) {
             reset(false);
         }
         if (this.bitmap != null && !this.bitmapIsCached) {
@@ -1722,12 +1762,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * Helper method for load tasks. Examines the EXIF info on the image file to determine the orientation.
      * This will only work for external files, not assets, resources or other URIs.
      */
-    @AnyThread private int getExifOrientation(Context context, String sourceUri) {
+    @AnyThread
+    private int getExifOrientation(Context context, String sourceUri) {
         int exifOrientation = ORIENTATION_0;
         if (sourceUri.startsWith(ContentResolver.SCHEME_CONTENT)) {
             Cursor cursor = null;
             try {
-                String[] columns = { MediaStore.Images.Media.ORIENTATION };
+                String[] columns = {MediaStore.Images.Media.ORIENTATION};
                 cursor = context.getContentResolver().query(Uri.parse(sourceUri), columns, null, null, null);
                 if (cursor != null) {
                     if (cursor.moveToFirst()) {
@@ -1749,11 +1790,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
         } else if (sourceUri.startsWith(ImageSource.FILE_SCHEME) && !sourceUri.startsWith(ImageSource.ASSET_SCHEME)) {
             try {
                 ExifInterface exifInterface =
-                    new ExifInterface(sourceUri.substring(ImageSource.FILE_SCHEME.length() - 1));
+                        new ExifInterface(sourceUri.substring(ImageSource.FILE_SCHEME.length() - 1));
                 int orientationAttr =
-                    exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                        exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
                 if (orientationAttr == ExifInterface.ORIENTATION_NORMAL
-                    || orientationAttr == ExifInterface.ORIENTATION_UNDEFINED) {
+                        || orientationAttr == ExifInterface.ORIENTATION_UNDEFINED) {
                     exifOrientation = ORIENTATION_0;
                 } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_90) {
                     exifOrientation = ORIENTATION_90;
@@ -1815,15 +1856,17 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
     /**
      * Use canvas max bitmap width and height instead of the default 2048, to avoid redundant tiling.
      */
-    @NonNull private Point getMaxBitmapDimensions(Canvas canvas) {
+    @NonNull
+    private Point getMaxBitmapDimensions(Canvas canvas) {
         return new Point(Math.min(canvas.getMaximumBitmapWidth(), maxTileWidth),
-            Math.min(canvas.getMaximumBitmapHeight(), maxTileHeight));
+                Math.min(canvas.getMaximumBitmapHeight(), maxTileHeight));
     }
 
     /**
      * Get source width taking rotation into account.
      */
-    @SuppressWarnings("SuspiciousNameCombination") private int sWidth() {
+    @SuppressWarnings("SuspiciousNameCombination")
+    private int sWidth() {
         int rotation = getRequiredRotation();
         if (rotation == 90 || rotation == 270) {
             return sHeight;
@@ -1835,7 +1878,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
     /**
      * Get source height taking rotation into account.
      */
-    @SuppressWarnings("SuspiciousNameCombination") private int sHeight() {
+    @SuppressWarnings("SuspiciousNameCombination")
+    private int sHeight() {
         int rotation = getRequiredRotation();
         if (rotation == 90 || rotation == 270) {
             return sWidth;
@@ -1849,7 +1893,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * already,
      * to the rectangle of the image that needs to be loaded.
      */
-    @SuppressWarnings("SuspiciousNameCombination") @AnyThread private void fileSRect(Rect sRect, Rect target) {
+    @SuppressWarnings("SuspiciousNameCombination")
+    @AnyThread
+    private void fileSRect(Rect sRect, Rect target) {
         if (getRequiredRotation() == 0) {
             target.set(sRect);
         } else if (getRequiredRotation() == 90) {
@@ -1864,7 +1910,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
     /**
      * Determines the rotation to be applied to tiles, based on EXIF orientation or chosen setting.
      */
-    @AnyThread private int getRequiredRotation() {
+    @AnyThread
+    private int getRequiredRotation() {
         if (orientation == ORIENTATION_USE_EXIF) {
             return sOrientation;
         } else {
@@ -1918,10 +1965,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * Converts a rectangle within the view to the corresponding rectangle from the source file, taking
      * into account the current scale, translation, orientation and clipped region. This can be used
      * to decode a bitmap from the source file.
-     *
+     * <p>
      * This method will only work when the image has fully initialised, after {@link #isReady()} returns
      * true. It is not guaranteed to work with preloaded bitmaps.
-     *
+     * <p>
      * The result is written to the fRect argument. Re-use a single instance for efficiency.
      *
      * @param vRect rectangle representing the view area to interpret.
@@ -1932,10 +1979,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
             return;
         }
         fRect.set((int) viewToSourceX(vRect.left), (int) viewToSourceY(vRect.top), (int) viewToSourceX(vRect.right),
-            (int) viewToSourceY(vRect.bottom));
+                (int) viewToSourceY(vRect.bottom));
         fileSRect(fRect, fRect);
         fRect.set(Math.max(0, fRect.left), Math.max(0, fRect.top), Math.min(sWidth, fRect.right),
-            Math.min(sHeight, fRect.bottom));
+                Math.min(sHeight, fRect.bottom));
         if (sRegion != null) {
             fRect.offset(sRegion.left, sRegion.top);
         }
@@ -1962,7 +2009,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * @param vxy view X/Y coordinate.
      * @return a coordinate representing the corresponding source coordinate.
      */
-    @Nullable public final PointF viewToSourceCoord(PointF vxy) {
+    @Nullable
+    public final PointF viewToSourceCoord(PointF vxy) {
         return viewToSourceCoord(vxy.x, vxy.y, new PointF());
     }
 
@@ -1973,30 +2021,33 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * @param vy view Y coordinate.
      * @return a coordinate representing the corresponding source coordinate.
      */
-    @Nullable public final PointF viewToSourceCoord(float vx, float vy) {
+    @Nullable
+    public final PointF viewToSourceCoord(float vx, float vy) {
         return viewToSourceCoord(vx, vy, new PointF());
     }
 
     /**
      * Convert screen coordinate to source coordinate.
      *
-     * @param vxy view coordinates to convert.
+     * @param vxy     view coordinates to convert.
      * @param sTarget target object for result. The same instance is also returned.
      * @return source coordinates. This is the same instance passed to the sTarget param.
      */
-    @Nullable public final PointF viewToSourceCoord(PointF vxy, @NonNull PointF sTarget) {
+    @Nullable
+    public final PointF viewToSourceCoord(PointF vxy, @NonNull PointF sTarget) {
         return viewToSourceCoord(vxy.x, vxy.y, sTarget);
     }
 
     /**
      * Convert screen coordinate to source coordinate.
      *
-     * @param vx view X coordinate.
-     * @param vy view Y coordinate.
+     * @param vx      view X coordinate.
+     * @param vy      view Y coordinate.
      * @param sTarget target object for result. The same instance is also returned.
      * @return source coordinates. This is the same instance passed to the sTarget param.
      */
-    @Nullable public final PointF viewToSourceCoord(float vx, float vy, @NonNull PointF sTarget) {
+    @Nullable
+    public final PointF viewToSourceCoord(float vx, float vy, @NonNull PointF sTarget) {
         if (vTranslate == null) {
             return null;
         }
@@ -2030,7 +2081,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * @param sxy source coordinates to convert.
      * @return view coordinates.
      */
-    @Nullable public final PointF sourceToViewCoord(PointF sxy) {
+    @Nullable
+    public final PointF sourceToViewCoord(PointF sxy) {
         return sourceToViewCoord(sxy.x, sxy.y, new PointF());
     }
 
@@ -2041,31 +2093,35 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * @param sy source Y coordinate.
      * @return view coordinates.
      */
-    @Nullable public final PointF sourceToViewCoord(float sx, float sy) {
+    @Nullable
+    public final PointF sourceToViewCoord(float sx, float sy) {
         return sourceToViewCoord(sx, sy, new PointF());
     }
 
     /**
      * Convert source coordinate to view coordinate.
      *
-     * @param sxy source coordinates to convert.
+     * @param sxy     source coordinates to convert.
      * @param vTarget target object for result. The same instance is also returned.
      * @return view coordinates. This is the same instance passed to the vTarget param.
      */
-    @SuppressWarnings("UnusedReturnValue") @Nullable public final PointF sourceToViewCoord(PointF sxy,
-        @NonNull PointF vTarget) {
+    @SuppressWarnings("UnusedReturnValue")
+    @Nullable
+    public final PointF sourceToViewCoord(PointF sxy,
+                                          @NonNull PointF vTarget) {
         return sourceToViewCoord(sxy.x, sxy.y, vTarget);
     }
 
     /**
      * Convert source coordinate to view coordinate.
      *
-     * @param sx source X coordinate.
-     * @param sy source Y coordinate.
+     * @param sx      source X coordinate.
+     * @param sy      source Y coordinate.
      * @param vTarget target object for result. The same instance is also returned.
      * @return view coordinates. This is the same instance passed to the vTarget param.
      */
-    @Nullable public final PointF sourceToViewCoord(float sx, float sy, @NonNull PointF vTarget) {
+    @Nullable
+    public final PointF sourceToViewCoord(float sx, float sy, @NonNull PointF vTarget) {
         if (vTranslate == null) {
             return null;
         }
@@ -2078,7 +2134,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      */
     private void sourceToViewRect(@NonNull Rect sRect, @NonNull Rect vTarget) {
         vTarget.set((int) sourceToViewX(sRect.left), (int) sourceToViewY(sRect.top), (int) sourceToViewX(sRect.right),
-            (int) sourceToViewY(sRect.bottom));
+                (int) sourceToViewY(sRect.bottom));
     }
 
     /**
@@ -2087,7 +2143,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * translate and scale. The result is fitted to bounds, putting the image point as near to the screen center as
      * permitted.
      */
-    @NonNull private PointF vTranslateForSCenter(float sCenterX, float sCenterY, float scale) {
+    @NonNull
+    private PointF vTranslateForSCenter(float sCenterX, float sCenterY, float scale) {
         int vxCenter = getPaddingLeft() + (getWidth() - getPaddingRight() - getPaddingLeft()) / 2;
         int vyCenter = getPaddingTop() + (getHeight() - getPaddingBottom() - getPaddingTop()) / 2;
         if (satTemp == null) {
@@ -2103,7 +2160,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * Given a requested source center and scale, calculate what the actual center will have to be to keep the image in
      * pan limits, keeping the requested center as near to the middle of the screen as allowed.
      */
-    @NonNull private PointF limitedSCenter(float sCenterX, float sCenterY, float scale, @NonNull PointF sTarget) {
+    @NonNull
+    private PointF limitedSCenter(float sCenterX, float sCenterY, float scale, @NonNull PointF sTarget) {
         PointF vTranslate = vTranslateForSCenter(sCenterX, sCenterY, scale);
         int vxCenter = getPaddingLeft() + (getWidth() - getPaddingRight() - getPaddingLeft()) / 2;
         int vyCenter = getPaddingTop() + (getHeight() - getPaddingBottom() - getPaddingTop()) / 2;
@@ -2140,10 +2198,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
     /**
      * Apply a selected type of easing.
      *
-     * @param type Easing type, from static fields
-     * @param time Elapsed time
-     * @param from Start value
-     * @param change Target value
+     * @param type     Easing type, from static fields
+     * @param time     Elapsed time
+     * @param from     Start value
+     * @param change   Target value
      * @param duration Anm duration
      * @return Current value
      */
@@ -2161,9 +2219,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
     /**
      * Quadratic easing for fling. With thanks to Robert Penner - http://gizma.com/easing/
      *
-     * @param time Elapsed time
-     * @param from Start value
-     * @param change Target value
+     * @param time     Elapsed time
+     * @param from     Start value
+     * @param change   Target value
      * @param duration Anm duration
      * @return Current value
      */
@@ -2175,9 +2233,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
     /**
      * Quadratic easing for scale and center animations. With thanks to Robert Penner - http://gizma.com/easing/
      *
-     * @param time Elapsed time
-     * @param from Start value
-     * @param change Target value
+     * @param time     Elapsed time
+     * @param from     Start value
+     * @param change   Target value
      * @param duration Anm duration
      * @return Current value
      */
@@ -2194,7 +2252,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
     /**
      * Debug logger
      */
-    @AnyThread private void debug(String message, Object... args) {
+    @AnyThread
+    private void debug(String message, Object... args) {
         if (debug) {
             Log.d(TAG, String.format(message, args));
         }
@@ -2229,10 +2288,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * asset, and you cannot use a custom decoder when using layout XML to set an asset name.
      *
      * @param regionDecoderFactory The {@link DecoderFactory} implementation that produces {@link ImageRegionDecoder}
-     * instances.
+     *                             instances.
      */
     public final void setRegionDecoderFactory(
-        @NonNull DecoderFactory<? extends ImageRegionDecoder> regionDecoderFactory) {
+            @NonNull DecoderFactory<? extends ImageRegionDecoder> regionDecoderFactory) {
         //noinspection ConstantConditions
         if (regionDecoderFactory == null) {
             throw new IllegalArgumentException("Decoder factory cannot be set to null");
@@ -2262,7 +2321,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * asset, and you cannot use a custom decoder when using layout XML to set an asset name.
      *
      * @param bitmapDecoderFactory The {@link DecoderFactory} implementation that produces {@link ImageDecoder}
-     * instances.
+     *                             instances.
      */
     public final void setBitmapDecoderFactory(@NonNull DecoderFactory<? extends ImageDecoder> bitmapDecoderFactory) {
         //noinspection ConstantConditions
@@ -2426,7 +2485,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      *
      * @return the source coordinates current at the center of the view.
      */
-    @Nullable public final PointF getCenter() {
+    @Nullable
+    public final PointF getCenter() {
         int mX = getWidth() / 2;
         int mY = getHeight() / 2;
         return viewToSourceCoord(mX, mY);
@@ -2445,7 +2505,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * Externally change the scale and translation of the source image. This may be used with getCenter() and getScale()
      * to restore the scale and zoom after a screen rotate.
      *
-     * @param scale New scale to set.
+     * @param scale   New scale to set.
      * @param sCenter New source image coordinate to center on the screen, subject to boundaries.
      */
     public final void setScaleAndCenter(float scale, @Nullable PointF sCenter) {
@@ -2489,7 +2549,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * but
      * allows a subclass to receive this event without using a listener.
      */
-    @SuppressWarnings("EmptyMethod") protected void onReady() {
+    @SuppressWarnings("EmptyMethod")
+    protected void onReady() {
 
     }
 
@@ -2506,7 +2567,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
     /**
      * Called once when the full size image or its base layer tiles have been loaded.
      */
-    @SuppressWarnings("EmptyMethod") protected void onImageLoaded() {
+    @SuppressWarnings("EmptyMethod")
+    protected void onImageLoaded() {
 
     }
 
@@ -2574,7 +2636,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      *
      * @return an {@link ImageViewState} instance representing the current position of the image. null if the view isn't ready.
      */
-    @Nullable public final ImageViewState getState() {
+    @Nullable
+    public final ImageViewState getState() {
         if (vTranslate != null && sWidth > 0 && sHeight > 0) {
             //noinspection ConstantConditions
             return new ImageViewState(getScale(), getCenter(), getOrientation());
@@ -2770,7 +2833,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
     /**
      * {@inheritDoc}
      */
-    @Override public void setOnLongClickListener(OnLongClickListener onLongClickListener) {
+    @Override
+    public void setOnLongClickListener(OnLongClickListener onLongClickListener) {
         this.onLongClickListener = onLongClickListener;
     }
 
@@ -2793,7 +2857,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * @param onStateChangedListener an {@link SubsamplingScaleImageViewDragClose.OnStateChangedListener} instance.
      */
     public void setOnStateChangedListener(
-        SubsamplingScaleImageViewDragClose.OnStateChangedListener onStateChangedListener) {
+            SubsamplingScaleImageViewDragClose.OnStateChangedListener onStateChangedListener) {
         this.onStateChangedListener = onStateChangedListener;
     }
 
@@ -2816,7 +2880,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * @return {@link SubsamplingScaleImageViewDragClose.AnimationBuilder} instance. Call {@link
      * SubsamplingScaleImageViewDragClose.AnimationBuilder#start()} to start the anim.
      */
-    @Nullable public SubsamplingScaleImageViewDragClose.AnimationBuilder animateCenter(PointF sCenter) {
+    @Nullable
+    public SubsamplingScaleImageViewDragClose.AnimationBuilder animateCenter(PointF sCenter) {
         if (!isReady()) {
             return null;
         }
@@ -2831,7 +2896,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * @return {@link SubsamplingScaleImageViewDragClose.AnimationBuilder} instance. Call {@link
      * SubsamplingScaleImageViewDragClose.AnimationBuilder#start()} to start the anim.
      */
-    @Nullable public SubsamplingScaleImageViewDragClose.AnimationBuilder animateScale(float scale) {
+    @Nullable
+    public SubsamplingScaleImageViewDragClose.AnimationBuilder animateScale(float scale) {
         if (!isReady()) {
             return null;
         }
@@ -2842,13 +2908,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * Creates a scale animation builder, that when started will animate a zoom in or out. If this would move the image
      * beyond the panning limits, the image is automatically panned during the animation.
      *
-     * @param scale Target scale.
+     * @param scale   Target scale.
      * @param sCenter Target source center.
      * @return {@link SubsamplingScaleImageViewDragClose.AnimationBuilder} instance. Call {@link
      * SubsamplingScaleImageViewDragClose.AnimationBuilder#start()} to start the anim.
      */
-    @Nullable public SubsamplingScaleImageViewDragClose.AnimationBuilder animateScaleAndCenter(float scale,
-        PointF sCenter) {
+    @Nullable
+    public SubsamplingScaleImageViewDragClose.AnimationBuilder animateScaleAndCenter(float scale,
+                                                                                     PointF sCenter) {
         if (!isReady()) {
             return null;
         }
@@ -2869,7 +2936,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * these events are triggered if the activity is paused, the image is swapped, or in other cases
      * where the view's internal state gets wiped or draw events stop.
      */
-    @SuppressWarnings("EmptyMethod") public interface OnAnimationEventListener {
+    @SuppressWarnings("EmptyMethod")
+    public interface OnAnimationEventListener {
 
         /**
          * The animation has completed, having reached its endpoint.
@@ -2890,7 +2958,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
     /**
      * An event listener, allowing subclasses and activities to be notified of significant events.
      */
-    @SuppressWarnings("EmptyMethod") public interface OnImageEventListener {
+    @SuppressWarnings("EmptyMethod")
+    public interface OnImageEventListener {
 
         /**
          * Called when the dimensions of the image and view are known, and either a preview image,
@@ -2951,14 +3020,15 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * this listener will be called on the UI thread and may be called very frequently - your
      * implementation should return quickly.
      */
-    @SuppressWarnings("EmptyMethod") public interface OnStateChangedListener {
+    @SuppressWarnings("EmptyMethod")
+    public interface OnStateChangedListener {
 
         /**
          * The scale has changed. Use with {@link #getMaxScale()} and {@link #getMinScale()} to determine
          * whether the image is fully zoomed in or out.
          *
          * @param newScale The new scale.
-         * @param origin Where the event originated from - one of {@link #ORIGIN_ANIM}, {@link #ORIGIN_TOUCH}.
+         * @param origin   Where the event originated from - one of {@link #ORIGIN_ANIM}, {@link #ORIGIN_TOUCH}.
          */
         void onScaleChanged(float newScale, int origin);
 
@@ -2966,7 +3036,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
          * The source center has been changed. This can be a result of panning or zooming.
          *
          * @param newCenter The new source center point.
-         * @param origin Where the event originated from - one of {@link #ORIGIN_ANIM}, {@link #ORIGIN_TOUCH}.
+         * @param origin    Where the event originated from - one of {@link #ORIGIN_ANIM}, {@link #ORIGIN_TOUCH}.
          */
         void onCenterChanged(PointF newCenter, int origin);
     }
@@ -2983,14 +3053,15 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
         private Exception exception;
 
         TilesInitTask(SubsamplingScaleImageViewDragClose view, Context context,
-            DecoderFactory<? extends ImageRegionDecoder> decoderFactory, Uri source) {
+                      DecoderFactory<? extends ImageRegionDecoder> decoderFactory, Uri source) {
             this.viewRef = new WeakReference<>(view);
             this.contextRef = new WeakReference<>(context);
             this.decoderFactoryRef = new WeakReference<DecoderFactory<? extends ImageRegionDecoder>>(decoderFactory);
             this.source = source;
         }
 
-        @Override protected int[] doInBackground(Void... params) {
+        @Override
+        protected int[] doInBackground(Void... params) {
             try {
                 String sourceUri = source.toString();
                 Context context = contextRef.get();
@@ -3011,7 +3082,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
                         sWidth = view.sRegion.width();
                         sHeight = view.sRegion.height();
                     }
-                    return new int[] { sWidth, sHeight, exifOrientation };
+                    return new int[]{sWidth, sHeight, exifOrientation};
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Failed to initialise bitmap decoder", e);
@@ -3020,7 +3091,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
             return null;
         }
 
-        @Override protected void onPostExecute(int[] xyo) {
+        @Override
+        protected void onPostExecute(int[] xyo) {
             final SubsamplingScaleImageViewDragClose view = viewRef.get();
             if (view != null) {
                 if (decoder != null && xyo != null && xyo.length == 3) {
@@ -3042,21 +3114,22 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
         private Exception exception;
 
         TileLoadTask(SubsamplingScaleImageViewDragClose view, ImageRegionDecoder decoder,
-            SubsamplingScaleImageViewDragClose.Tile tile) {
+                     SubsamplingScaleImageViewDragClose.Tile tile) {
             this.viewRef = new WeakReference<>(view);
             this.decoderRef = new WeakReference<>(decoder);
             this.tileRef = new WeakReference<>(tile);
             tile.loading = true;
         }
 
-        @Override protected Bitmap doInBackground(Void... params) {
+        @Override
+        protected Bitmap doInBackground(Void... params) {
             try {
                 SubsamplingScaleImageViewDragClose view = viewRef.get();
                 ImageRegionDecoder decoder = decoderRef.get();
                 SubsamplingScaleImageViewDragClose.Tile tile = tileRef.get();
                 if (decoder != null && tile != null && view != null && decoder.isReady() && tile.visible) {
                     view.debug("TileLoadTask.doInBackground, tile.sRect=%s, tile.sampleSize=%d", tile.sRect,
-                        tile.sampleSize);
+                            tile.sampleSize);
                     view.decoderLock.readLock().lock();
                     try {
                         if (decoder.isReady()) {
@@ -3085,7 +3158,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
             return null;
         }
 
-        @Override protected void onPostExecute(Bitmap bitmap) {
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
             final SubsamplingScaleImageViewDragClose subsamplingScaleImageView = viewRef.get();
             final SubsamplingScaleImageViewDragClose.Tile tile = tileRef.get();
             if (subsamplingScaleImageView != null && tile != null) {
@@ -3113,7 +3187,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
         private Exception exception;
 
         BitmapLoadTask(SubsamplingScaleImageViewDragClose view, Context context,
-            DecoderFactory<? extends ImageDecoder> decoderFactory, Uri source, boolean preview) {
+                       DecoderFactory<? extends ImageDecoder> decoderFactory, Uri source, boolean preview) {
             this.viewRef = new WeakReference<>(view);
             this.contextRef = new WeakReference<>(context);
             this.decoderFactoryRef = new WeakReference<DecoderFactory<? extends ImageDecoder>>(decoderFactory);
@@ -3121,7 +3195,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
             this.preview = preview;
         }
 
-        @Override protected Integer doInBackground(Void... params) {
+        @Override
+        protected Integer doInBackground(Void... params) {
             try {
                 String sourceUri = source.toString();
                 Context context = contextRef.get();
@@ -3142,7 +3217,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
             return null;
         }
 
-        @Override protected void onPostExecute(Integer orientation) {
+        @Override
+        protected void onPostExecute(Integer orientation) {
             SubsamplingScaleImageViewDragClose subsamplingScaleImageView = viewRef.get();
             if (subsamplingScaleImageView != null) {
                 if (bitmap != null && orientation != null) {
@@ -3207,15 +3283,18 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * does nothing in any method.
      */
     public static class DefaultOnAnimationEventListener
-        implements SubsamplingScaleImageViewDragClose.OnAnimationEventListener {
+            implements SubsamplingScaleImageViewDragClose.OnAnimationEventListener {
 
-        @Override public void onComplete() {
+        @Override
+        public void onComplete() {
         }
 
-        @Override public void onInterruptedByUser() {
+        @Override
+        public void onInterruptedByUser() {
         }
 
-        @Override public void onInterruptedByNewAnim() {
+        @Override
+        public void onInterruptedByNewAnim() {
         }
     }
 
@@ -3225,22 +3304,28 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      */
     public static class DefaultOnImageEventListener implements SubsamplingScaleImageViewDragClose.OnImageEventListener {
 
-        @Override public void onReady() {
+        @Override
+        public void onReady() {
         }
 
-        @Override public void onImageLoaded() {
+        @Override
+        public void onImageLoaded() {
         }
 
-        @Override public void onPreviewLoadError(Exception e) {
+        @Override
+        public void onPreviewLoadError(Exception e) {
         }
 
-        @Override public void onImageLoadError(Exception e) {
+        @Override
+        public void onImageLoadError(Exception e) {
         }
 
-        @Override public void onTileLoadError(Exception e) {
+        @Override
+        public void onTileLoadError(Exception e) {
         }
 
-        @Override public void onPreviewReleased() {
+        @Override
+        public void onPreviewReleased() {
         }
     }
 
@@ -3249,12 +3334,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
      * any method.
      */
     public static class DefaultOnStateChangedListener
-        implements SubsamplingScaleImageViewDragClose.OnStateChangedListener {
+            implements SubsamplingScaleImageViewDragClose.OnStateChangedListener {
 
-        @Override public void onCenterChanged(PointF newCenter, int origin) {
+        @Override
+        public void onCenterChanged(PointF newCenter, int origin) {
         }
 
-        @Override public void onScaleChanged(float newScale, int origin) {
+        @Override
+        public void onScaleChanged(float newScale, int origin) {
         }
     }
 
@@ -3305,7 +3392,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
          * @param duration duration in milliseconds.
          * @return this builder for method chaining.
          */
-        @NonNull public SubsamplingScaleImageViewDragClose.AnimationBuilder withDuration(long duration) {
+        @NonNull
+        public SubsamplingScaleImageViewDragClose.AnimationBuilder withDuration(long duration) {
             this.duration = duration;
             return this;
         }
@@ -3316,7 +3404,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
          * @param interruptible interruptible flag.
          * @return this builder for method chaining.
          */
-        @NonNull public SubsamplingScaleImageViewDragClose.AnimationBuilder withInterruptible(boolean interruptible) {
+        @NonNull
+        public SubsamplingScaleImageViewDragClose.AnimationBuilder withInterruptible(boolean interruptible) {
             this.interruptible = interruptible;
             return this;
         }
@@ -3327,7 +3416,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
          * @param easing easing style.
          * @return this builder for method chaining.
          */
-        @NonNull public SubsamplingScaleImageViewDragClose.AnimationBuilder withEasing(int easing) {
+        @NonNull
+        public SubsamplingScaleImageViewDragClose.AnimationBuilder withEasing(int easing) {
             if (!VALID_EASING_STYLES.contains(easing)) {
                 throw new IllegalArgumentException("Unknown easing type: " + easing);
             }
@@ -3341,8 +3431,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
          * @param listener The listener.
          * @return this builder for method chaining.
          */
-        @NonNull public SubsamplingScaleImageViewDragClose.AnimationBuilder withOnAnimationEventListener(
-            SubsamplingScaleImageViewDragClose.OnAnimationEventListener listener) {
+        @NonNull
+        public SubsamplingScaleImageViewDragClose.AnimationBuilder withOnAnimationEventListener(
+                SubsamplingScaleImageViewDragClose.OnAnimationEventListener listener) {
             this.listener = listener;
             return this;
         }
@@ -3353,7 +3444,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
          * point and is stopped when the limit for each axis is reached. The latter behaviour is used for flings but
          * nothing else.
          */
-        @NonNull private SubsamplingScaleImageViewDragClose.AnimationBuilder withPanLimited(boolean panLimited) {
+        @NonNull
+        private SubsamplingScaleImageViewDragClose.AnimationBuilder withPanLimited(boolean panLimited) {
             this.panLimited = panLimited;
             return this;
         }
@@ -3361,7 +3453,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
         /**
          * Only for internal use. Indicates what caused the animation.
          */
-        @NonNull private SubsamplingScaleImageViewDragClose.AnimationBuilder withOrigin(int origin) {
+        @NonNull
+        private SubsamplingScaleImageViewDragClose.AnimationBuilder withOrigin(int origin) {
             this.origin = origin;
             return this;
         }
@@ -3382,8 +3475,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
             int vyCenter = getPaddingTop() + (getHeight() - getPaddingBottom() - getPaddingTop()) / 2;
             float targetScale = limitedScale(this.targetScale);
             PointF targetSCenter =
-                panLimited ? limitedSCenter(this.targetSCenter.x, this.targetSCenter.y, targetScale, new PointF())
-                    : this.targetSCenter;
+                    panLimited ? limitedSCenter(this.targetSCenter.x, this.targetSCenter.y, targetScale, new PointF())
+                            : this.targetSCenter;
             anim = new SubsamplingScaleImageViewDragClose.Anim();
             anim.scaleStart = scale;
             anim.scaleEnd = targetScale;
@@ -3405,13 +3498,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
                 float vTranslateXEnd = vFocus.x - (targetScale * anim.sCenterStart.x);
                 float vTranslateYEnd = vFocus.y - (targetScale * anim.sCenterStart.y);
                 SubsamplingScaleImageViewDragClose.ScaleAndTranslate satEnd =
-                    new SubsamplingScaleImageViewDragClose.ScaleAndTranslate(targetScale,
-                        new PointF(vTranslateXEnd, vTranslateYEnd));
+                        new SubsamplingScaleImageViewDragClose.ScaleAndTranslate(targetScale,
+                                new PointF(vTranslateXEnd, vTranslateYEnd));
                 // Fit the end translation into bounds
                 fitToBounds(true, satEnd);
                 // Adjust the position of the focus point at end so image will be in bounds
                 anim.vFocusEnd = new PointF(vFocus.x + (satEnd.vTranslate.x - vTranslateXEnd),
-                    vFocus.y + (satEnd.vTranslate.y - vTranslateYEnd));
+                        vFocus.y + (satEnd.vTranslate.y - vTranslateYEnd));
             }
 
             invalidate();

@@ -3,12 +3,21 @@ package cc.shinichi.library.bean;
 import java.io.Serializable;
 
 /**
+ * @author 工藤
+ * @email gougou@16fan.com
  * 图片信息
  */
 public class ImageInfo implements Serializable {
 
-    private String thumbnailUrl;// 缩略图，质量很差
-    private String originUrl;// 原图或者高清图
+    /**
+     * 缩略图
+     */
+    private String thumbnailUrl;
+
+    /**
+     * 原图
+     */
+    private String originUrl;
 
     public String getThumbnailUrl() {
         return thumbnailUrl;
@@ -24,9 +33,5 @@ public class ImageInfo implements Serializable {
 
     public void setOriginUrl(String originUrl) {
         this.originUrl = originUrl;
-    }
-
-    @Override public String toString() {
-        return "ImageInfo{" + "thumbnailUrl='" + thumbnailUrl + '\'' + ", originUrl='" + originUrl + '\'' + '}';
     }
 }

@@ -15,7 +15,7 @@ public class PhoneUtil {
 
     public static int getPhoneWid(Context context) {
         WindowManager windowManager =
-            (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+                (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics metric = new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(metric);
         return metric.widthPixels;
@@ -23,7 +23,7 @@ public class PhoneUtil {
 
     public static int getPhoneHei(Context context) {
         WindowManager windowManager =
-            (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+                (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics metric = new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(metric);
         return metric.heightPixels;

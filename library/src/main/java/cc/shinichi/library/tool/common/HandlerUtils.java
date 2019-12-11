@@ -2,6 +2,7 @@ package cc.shinichi.library.tool.common;
 
 import android.os.Handler;
 import android.os.Message;
+
 import java.lang.ref.WeakReference;
 
 /**
@@ -30,7 +31,8 @@ public final class HandlerUtils {
             mListenerWeakReference = new WeakReference<>(listener);
         }
 
-        @Override public void handleMessage(Message msg) {
+        @Override
+        public void handleMessage(Message msg) {
             if (mListenerWeakReference != null && mListenerWeakReference.get() != null) {
                 mListenerWeakReference.get().handleMessage(msg);
             }

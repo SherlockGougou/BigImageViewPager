@@ -1,9 +1,12 @@
-package cc.shinichi.library.glide.sunfusheng.progress;
+package cc.shinichi.library.glide.progress;
 
 import android.os.Handler;
 import android.os.Looper;
+
 import androidx.annotation.NonNull;
+
 import java.io.IOException;
+
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
 import okio.Buffer;
@@ -13,7 +16,8 @@ import okio.Okio;
 import okio.Source;
 
 /**
- * @author by sunfusheng on 2017/6/14.
+ * @author 工藤
+ * @email gougou@16fan.com
  */
 public class ProgressResponseBody extends ResponseBody {
 
@@ -31,15 +35,18 @@ public class ProgressResponseBody extends ResponseBody {
         this.responseBody = responseBody;
     }
 
-    @Override public MediaType contentType() {
+    @Override
+    public MediaType contentType() {
         return responseBody.contentType();
     }
 
-    @Override public long contentLength() {
+    @Override
+    public long contentLength() {
         return responseBody.contentLength();
     }
 
-    @Override public BufferedSource source() {
+    @Override
+    public BufferedSource source() {
         if (bufferedSource == null) {
             bufferedSource = Okio.buffer(source(responseBody.source()));
         }
@@ -51,14 +58,16 @@ public class ProgressResponseBody extends ResponseBody {
             long totalBytesRead;
             long lastTotalBytesRead;
 
-            @Override public long read(@NonNull Buffer sink, long byteCount) throws IOException {
+            @Override
+            public long read(@NonNull Buffer sink, long byteCount) throws IOException {
                 long bytesRead = super.read(sink, byteCount);
                 totalBytesRead += (bytesRead == -1) ? 0 : bytesRead;
 
                 if (internalProgressListener != null && lastTotalBytesRead != totalBytesRead) {
                     lastTotalBytesRead = totalBytesRead;
                     mainThreadHandler.post(new Runnable() {
-                        @Override public void run() {
+                        @Override
+                        public void run() {
                             internalProgressListener.onProgress(url, totalBytesRead, contentLength());
                         }
                     });

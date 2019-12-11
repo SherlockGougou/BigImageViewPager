@@ -3,6 +3,7 @@ package cc.shinichi.library.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+
 import androidx.viewpager.widget.ViewPager;
 
 /**
@@ -16,7 +17,8 @@ import androidx.viewpager.widget.ViewPager;
  * There's not much I can do in my code for now, but we can mask the result by
  * just catching the problem and ignoring it.
  *
- * @author Chris Banes
+ * @author 工藤
+ * @email gougou@16fan.com
  */
 public class HackyViewPager extends ViewPager {
 
@@ -28,7 +30,8 @@ public class HackyViewPager extends ViewPager {
         super(context, attrs);
     }
 
-    @Override public boolean onInterceptTouchEvent(MotionEvent ev) {
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
         try {
             return super.onInterceptTouchEvent(ev);
         } catch (IllegalArgumentException e) {

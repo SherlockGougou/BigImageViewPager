@@ -24,11 +24,13 @@ public class SingleMediaScanner implements MediaScannerConnection.MediaScannerCo
         this.mMs.connect();
     }
 
-    @Override public void onMediaScannerConnected() {
+    @Override
+    public void onMediaScannerConnected() {
         mMs.scanFile(path, null);
     }
 
-    @Override public void onScanCompleted(String path, Uri uri) {
+    @Override
+    public void onScanCompleted(String path, Uri uri) {
         mMs.disconnect();
         if (listener != null) {
             listener.onScanFinish();

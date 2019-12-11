@@ -4,7 +4,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 /**
- * @author SherlockHolmes
+ * @author 工藤
+ * @email gougou@16fan.com
  */
 public class Print {
     public static void d(String TAG, String msg) {

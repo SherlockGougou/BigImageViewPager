@@ -6,7 +6,8 @@ import android.os.Looper;
 import android.widget.Toast;
 
 /**
- * @author SherlockHolmes
+ * @author 工藤
+ * @email gougou@16fan.com
  */
 public class ToastUtil {
 
@@ -22,7 +23,8 @@ public class ToastUtil {
 
     public void _short(final Context context, final String text) {
         HANDLER.post(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_SHORT).show();
             }
         });
@@ -30,7 +32,8 @@ public class ToastUtil {
 
     public void _long(final Context context, final String text) {
         HANDLER.post(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_LONG).show();
             }
         });

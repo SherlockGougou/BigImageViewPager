@@ -1,34 +1,34 @@
 apply plugin: 'com.android.library'
 
 android {
-  compileSdkVersion 28
-  buildToolsVersion '28.0.3'
-  defaultConfig {
-    minSdkVersion 14
-    targetSdkVersion 28
-  }
-
-  buildTypes {
-    release {
-      minifyEnabled false
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 28
     }
-  }
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
-  }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 ext.supportLibVersion = '28.0.0'
 
 dependencies {
-  implementation fileTree(include: ['*.jar'], dir: 'libs')
-  implementation 'androidx.appcompat:appcompat:1.1.0'
-  implementation 'androidx.exifinterface:exifinterface:1.0.0'
-  api 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
-  // glide
-  implementation 'com.github.bumptech.glide:glide:4.10.0'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
-  implementation 'com.github.bumptech.glide:okhttp3-integration:4.10.0'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.exifinterface:exifinterface:1.0.0'
+    api 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
+    // glide
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
+    implementation 'com.github.bumptech.glide:okhttp3-integration:4.10.0'
 }

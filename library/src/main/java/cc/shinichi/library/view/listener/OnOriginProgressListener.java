@@ -5,7 +5,8 @@ import android.view.View;
 /**
  * 原图加载百分比接口
  *
- * @author SherlockHolmes
+ * @author 工藤
+ * @email gougou@16fan.com
  */
 public interface OnOriginProgressListener {
 
