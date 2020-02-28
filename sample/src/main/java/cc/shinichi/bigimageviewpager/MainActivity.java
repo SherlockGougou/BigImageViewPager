@@ -256,6 +256,8 @@ public class MainActivity extends AppCompatActivity {
 
                     // 设置是否显示顶部的指示器（1/9）默认显示
                     .setShowIndicator(showIndicator)
+                    // 设置顶部指示器背景shape，默认自带灰色圆角shape
+                    .setIndicatorShapeResId(R.drawable.shape_indicator_bg)
 
                     // 设置失败时的占位图，默认为库中自带R.drawable.load_failed，设置为 0 时不显示
                     .setErrorPlaceHolder(R.drawable.load_failed)
