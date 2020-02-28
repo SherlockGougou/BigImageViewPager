@@ -47,8 +47,8 @@ allprojects {
 ##### 此处显示的是本框架的最新版本号：
 ##### ⚠️注意：v3版本不再维护，最终版本为v3_4.0.2。建议使用v4版本。
 ```
-androidx用户  :   使用  androidx-5.0.4
-对于glide4.x  :   使用        v4_5.0.4
+androidx用户  :   使用  androidx-5.0.5
+对于glide4.x  :   使用        v4_5.0.5
 对于glide3.x  :   使用        v3_4.0.2
 ```
 
@@ -62,7 +62,7 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.10.0'
   // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-5.0.4'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-5.0.5'
 
 ================================分割线==================================
 
@@ -73,7 +73,7 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
   // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_5.0.4'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_5.0.5'
 
 ================================分割线==================================
 
@@ -180,6 +180,7 @@ public class MyAppGlideModule extends AppGlideModule {
 |setShowCloseButton|设置是否显示关闭按钮|默认false，不显示|
 |setShowDownButton|设置是否显示下载按钮|默认true，显示|
 |setShowIndicator|设置是否显示顶部的进度指示器|默认true，显示|
+|setIndicatorShapeResId|设置顶部指示器背景shape|默认自带灰色圆角shape，设置为0时不显示背景|
 |setShowErrorToast|设置是否显示加载失败的Toast|默认false，不显示|
 |setZoomTransitionDuration|设置图片缩放动画时长|默认200ms|
 |start|开启看图|最后调用|

@@ -54,6 +54,8 @@ public class ImagePreview {
     private LoadStrategy loadStrategy = LoadStrategy.Default;// 加载策略
 
     @DrawableRes
+    private int indicatorShapeResId = R.drawable.shape_indicator_bg;
+    @DrawableRes
     private int closeIconResId = R.drawable.ic_action_close;
     @DrawableRes
     private int downIconResId = R.drawable.icon_download_new;
@@ -278,6 +280,15 @@ public class ImagePreview {
 
     public ImagePreview setShowErrorToast(boolean showErrorToast) {
         isShowErrorToast = showErrorToast;
+        return this;
+    }
+
+    public int getIndicatorShapeResId() {
+        return indicatorShapeResId;
+    }
+
+    public ImagePreview setIndicatorShapeResId(int indicatorShapeResId) {
+        this.indicatorShapeResId = indicatorShapeResId;
         return this;
     }
 

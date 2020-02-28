@@ -183,6 +183,10 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
                 indicatorStatus = false;
             }
         }
+        // 设置顶部指示器背景shape
+        if (ImagePreview.getInstance().getIndicatorShapeResId() > 0) {
+            tv_indicator.setBackgroundResource(ImagePreview.getInstance().getIndicatorShapeResId());
+        }
 
         if (isShowDownButton) {
             img_download.setVisibility(View.VISIBLE);

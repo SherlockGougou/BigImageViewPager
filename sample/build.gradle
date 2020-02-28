@@ -7,8 +7,8 @@ android {
     applicationId "cc.shinichi.bigimageviewpager"
     minSdkVersion 14
     targetSdkVersion 28
-    versionCode 504
-    versionName "v4_5.0.4"
+    versionCode 505
+    versionName "v4_5.0.5"
   }
   buildTypes {
     release {
@@ -17,8 +17,8 @@ android {
     }
   }
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_7
-    targetCompatibility JavaVersion.VERSION_1_7
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
   }
   sourceSets {
     main {
@@ -48,10 +48,7 @@ dependencies {
   implementation 'com.github.bumptech.glide:glide:4.8.0'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
-  // LeakCanary 内存泄漏检测
-  debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
-  releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
   // library
-  // implementation 'com.github.SherlockGougou:BigImageViewPager:v4_5.0.4'
+  // implementation 'com.github.SherlockGougou:BigImageViewPager:v4_5.0.5'
   implementation project(':library')
 }
