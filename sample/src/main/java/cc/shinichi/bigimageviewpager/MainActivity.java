@@ -1,6 +1,7 @@
 package cc.shinichi.bigimageviewpager;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -264,14 +265,14 @@ public class MainActivity extends AppCompatActivity {
 
                     // 点击回调
                     .setBigImageClickListener(new OnBigImageClickListener() {
-                        @Override public void onClick(View view, int position) {
+                        @Override public void onClick(Activity activity, View view, int position) {
                             // ...
                             Log.d(TAG, "onClick: ");
                         }
                     })
                     // 长按回调
                     .setBigImageLongClickListener(new OnBigImageLongClickListener() {
-                        @Override public boolean onLongClick(View view, int position) {
+                        @Override public boolean onLongClick(Activity activity, View view, int position) {
                             // ...
                             Log.d(TAG, "onLongClick: ");
                             return false;
