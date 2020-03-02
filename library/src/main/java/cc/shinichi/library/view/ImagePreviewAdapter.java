@@ -203,7 +203,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
                     activity.finish();
                 }
                 if (ImagePreview.getInstance().getBigImageClickListener() != null) {
-                    ImagePreview.getInstance().getBigImageClickListener().onClick(v, position);
+                    ImagePreview.getInstance().getBigImageClickListener().onClick(activity, v, position);
                 }
             }
         });
@@ -214,7 +214,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
                     activity.finish();
                 }
                 if (ImagePreview.getInstance().getBigImageClickListener() != null) {
-                    ImagePreview.getInstance().getBigImageClickListener().onClick(v, position);
+                    ImagePreview.getInstance().getBigImageClickListener().onClick(activity, v, position);
                 }
             }
         });
@@ -223,7 +223,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
             @Override
             public boolean onLongClick(View v) {
                 if (ImagePreview.getInstance().getBigImageLongClickListener() != null) {
-                    return ImagePreview.getInstance().getBigImageLongClickListener().onLongClick(v, position);
+                    return ImagePreview.getInstance().getBigImageLongClickListener().onLongClick(activity, v, position);
                 }
                 return false;
             }
@@ -232,7 +232,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
             @Override
             public boolean onLongClick(View v) {
                 if (ImagePreview.getInstance().getBigImageLongClickListener() != null) {
-                    return ImagePreview.getInstance().getBigImageLongClickListener().onLongClick(v, position);
+                    return ImagePreview.getInstance().getBigImageLongClickListener().onLongClick(activity, v, position);
                 }
                 return false;
             }

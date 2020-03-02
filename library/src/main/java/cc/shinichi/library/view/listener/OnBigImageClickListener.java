@@ -1,5 +1,6 @@
 package cc.shinichi.library.view.listener;
 
+import android.app.Activity;
 import android.view.View;
 
 /**
@@ -14,5 +15,5 @@ public interface OnBigImageClickListener {
     /**
      * 点击事件
      */
-    void onClick(View view, int position);
+    void onClick(Activity activity, View view, int position);
 }

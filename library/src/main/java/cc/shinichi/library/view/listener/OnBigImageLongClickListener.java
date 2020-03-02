@@ -1,5 +1,6 @@
 package cc.shinichi.library.view.listener;
 
+import android.app.Activity;
 import android.view.View;
 
 /**
@@ -14,5 +15,5 @@ public interface OnBigImageLongClickListener {
     /**
      * 长按事件
      */
-    boolean onLongClick(View view, int position);
+    boolean onLongClick(Activity activity, View view, int position);
 }
