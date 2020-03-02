@@ -45,10 +45,10 @@ allprojects {
 ##### Step 2. 在你主module的build.gradle中添加依赖：
 
 ##### 此处显示的是本框架的最新版本号：
-##### ⚠️注意：v3版本不再维护，最终版本为v3_4.0.2。建议使用v4版本。
+##### ⚠️注意：v3版本不再维护，最终版本为v3_4.0.2。建议使用v4、androidx版本。
 ```
-androidx用户  :   使用  androidx-5.0.5
-对于glide4.x  :   使用        v4_5.0.5
+androidx用户  :   使用  androidx-5.0.6
+对于glide4.x  :   使用        v4_5.0.6
 对于glide3.x  :   使用        v3_4.0.2
 ```
 
@@ -62,7 +62,7 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.10.0'
   // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-5.0.5'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-5.0.6'
 
 ================================分割线==================================
 
@@ -73,7 +73,7 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
   // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_5.0.5'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_5.0.6'
 
 ================================分割线==================================
 
