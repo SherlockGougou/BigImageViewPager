@@ -1872,7 +1872,7 @@ public final class FileUtil {
     /**
      * 调用系统软件打开文件, 会自动判断文件类型
      *
-     * @author 工藤一号 gougou@16fan.com
+     * @author 工藤一号 18883840501@163.com
      * @date 2017年6月8日  上午10:46:50
      */
     public static void openFileBySystemApp(Context context, File file) {
@@ -1892,7 +1892,7 @@ public final class FileUtil {
     /**
      * 得到文件类型
      *
-     * @author 工藤一号 gougou@16fan.com
+     * @author 工藤一号 18883840501@163.com
      * @date 2017年6月8日  上午10:48:30
      */
     public static String getMIMEType(File file) {

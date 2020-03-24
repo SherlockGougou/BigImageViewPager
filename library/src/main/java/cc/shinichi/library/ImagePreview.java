@@ -22,7 +22,7 @@ import cc.shinichi.library.view.listener.OnOriginProgressListener;
 
 /**
  * @author 工藤
- * @email gougou@16fan.com
+ * @email 18883840501@163.com
  * cc.shinichi.library
  * create at 2018/5/22  09:06
  * description:

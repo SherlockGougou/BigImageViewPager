@@ -87,55 +87,48 @@ public class MainActivity extends AppCompatActivity {
         RadioGroup radioGroupStrategy = findViewById(R.id.radioGroupStrategy);
 
         switchClickClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 enableClickClose = isChecked;
             }
         });
         switchClickClose.setChecked(true);
 
         switchDragClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 enableDragClose = isChecked;
             }
         });
         switchDragClose.setChecked(true);
 
         switchUpDragClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 enableUpDragClose = isChecked;
             }
         });
         switchUpDragClose.setChecked(true);
 
         switchShowIndicator.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 showIndicator = isChecked;
             }
         });
         switchShowIndicator.setChecked(true);
 
         switchShowCloseButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 showCloseButton = isChecked;
             }
         });
         switchShowCloseButton.setChecked(false);
 
         switchShowDownButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 showDownButton = isChecked;
             }
         });
         switchShowDownButton.setChecked(true);
         switchShowErrorToast.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 showErrorToast = isChecked;
             }
         });
@@ -143,8 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
         loadStrategy = ImagePreview.LoadStrategy.Default;
         radioGroupStrategy.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
+            @Override public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.radioThumb:
                         loadStrategy = ImagePreview.LoadStrategy.AlwaysThumb;
@@ -197,8 +189,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 最简单的调用：
         findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            @Override public void onClick(View v) {
 
                 // 仅需一行代码,默认配置为：
                 //      显示顶部进度指示器、
@@ -216,8 +207,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 完全自定义调用：
         findViewById(R.id.buttonPreview).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            @Override public void onClick(View v) {
                 ImagePreview.getInstance()
                         // 上下文，必须是activity，不需要担心内存泄漏，本框架已经处理好
                         .setContext(MainActivity.this)
@@ -239,9 +229,8 @@ public class MainActivity extends AppCompatActivity {
                         // 加载策略，默认为手动模式
                         .setLoadStrategy(loadStrategy)
 
-                        // 保存的文件夹名称，会在SD卡根目录进行文件夹的新建。
-                        // (你也可设置嵌套模式，比如："BigImageView/Download"，会在SD卡根目录新建BigImageView文件夹，并在BigImageView文件夹中新建Download文件夹)
-                        .setFolderName("BigImageView/Download")
+                        // 保存的文件夹名称，会在Picture目录进行文件夹的新建。比如："BigImageView"，会在Picture目录新建BigImageView文件夹)
+                        .setFolderName("BigImageView")
 
                         // 缩放动画时长，单位ms
                         .setZoomTransitionDuration(300)
@@ -267,22 +256,22 @@ public class MainActivity extends AppCompatActivity {
 
                         // 设置是否显示顶部的指示器（1/9）默认显示
                         .setShowIndicator(showIndicator)
+                        // 设置顶部指示器背景shape，默认自带灰色圆角shape
+                        .setIndicatorShapeResId(R.drawable.shape_indicator_bg)
 
                         // 设置失败时的占位图，默认为库中自带R.drawable.load_failed，设置为 0 时不显示
                         .setErrorPlaceHolder(R.drawable.load_failed)
 
                         // 点击回调
                         .setBigImageClickListener(new OnBigImageClickListener() {
-                            @Override
-                            public void onClick(Activity activity, View view, int position) {
+                            @Override public void onClick(Activity activity, View view, int position) {
                                 // ...
                                 Log.d(TAG, "onClick: ");
                             }
                         })
                         // 长按回调
                         .setBigImageLongClickListener(new OnBigImageLongClickListener() {
-                            @Override
-                            public boolean onLongClick(Activity activity, View view, int position) {
+                            @Override public boolean onLongClick(Activity activity, View view, int position) {
                                 // ...
                                 Log.d(TAG, "onLongClick: ");
                                 return false;
@@ -295,13 +284,11 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d(TAG, "onPageScrolled: ");
                             }
 
-                            @Override
-                            public void onPageSelected(int position) {
+                            @Override public void onPageSelected(int position) {
                                 Log.d(TAG, "onPageSelected: ");
                             }
 
-                            @Override
-                            public void onPageScrollStateChanged(int state) {
+                            @Override public void onPageScrollStateChanged(int state) {
                                 Log.d(TAG, "onPageScrollStateChanged: ");
                             }
                         })
@@ -309,8 +296,7 @@ public class MainActivity extends AppCompatActivity {
                         //=================================================================================================
                         // 设置查看原图时的百分比样式：库中带有一个样式：ImagePreview.PROGRESS_THEME_CIRCLE_TEXT，使用如下：
                         .setProgressLayoutId(ImagePreview.PROGRESS_THEME_CIRCLE_TEXT, new OnOriginProgressListener() {
-                            @Override
-                            public void progress(View parentView, int progress) {
+                            @Override public void progress(View parentView, int progress) {
                                 Log.d(TAG, "progress: " + progress);
 
                                 // 需要找到进度控件并设置百分比，回调中的parentView即传入的布局的根View，可通过parentView找到控件：
@@ -321,8 +307,7 @@ public class MainActivity extends AppCompatActivity {
                                 textView.setText(progressText);
                             }
 
-                            @Override
-                            public void finish(View parentView) {
+                            @Override public void finish(View parentView) {
                                 Log.d(TAG, "finish: ");
                             }
                         })
@@ -349,8 +334,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 通过相册选择图片，进行预览
         findViewById(R.id.buttonChoose).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            @Override public void onClick(View v) {
                 if (ContextCompat.checkSelfPermission(MainActivity.this.getApplicationContext(),
                         Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
@@ -360,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         // 申请权限
                         ActivityCompat.requestPermissions(MainActivity.this,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,}, 1);
+                                new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE, }, 1);
                     }
                 } else {
                     // 选择图片
@@ -371,8 +355,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 清除磁盘缓存
         findViewById(R.id.buttonClean).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            @Override public void onClick(View v) {
                 ImageLoader.cleanDiskCache(MainActivity.this);
                 ToastUtil.getInstance()._short(MainActivity.this, "磁盘缓存已成功清除");
             }

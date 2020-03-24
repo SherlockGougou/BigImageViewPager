@@ -2,7 +2,7 @@ package cc.shinichi.library.view.listener;
 
 /**
  * @author 工藤
- * @email gougou@16fan.com
+ * @email 18883840501@163.com
  * cc.shinichi.library.view.listener
  * create at 2019/1/7  11:45
  * description:

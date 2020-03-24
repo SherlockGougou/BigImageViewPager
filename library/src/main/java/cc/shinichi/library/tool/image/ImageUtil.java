@@ -18,7 +18,7 @@ import cc.shinichi.library.tool.ui.PhoneUtil;
 
 /**
  * @author 工藤
- * @email gougou@16fan.com
+ * @email 18883840501@163.com
  * cc.shinichi.drawlongpicturedemo.util
  * create at 2018/8/28  10:46
  * description:

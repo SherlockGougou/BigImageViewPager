@@ -1,7 +1,7 @@
 ### BigImage + ImageView + ViewPager = BigImageViewPager
 
 一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。支持手势下拉退出。
-#### 注意：本框架支持网络图片、本地图片、支持gif动图。
+#### 注意：本框架支持网络图片、本地图片、支持gif动图、支持Android Q。
 
 # 框架特性
 - 支持网络图片、本地图片；
@@ -19,6 +19,7 @@
 - 针对保存图片进行优化，文件扩展名使用文件头部Mime信息进行设置，不用担心gif保存成jpeg；
 - 支持自定义查看原图时的百分比View；
 - 支持BMP格式的图片；
+- 支持Android Q；
 
 # 截图
 
@@ -47,8 +48,8 @@ allprojects {
 ##### 此处显示的是本框架的最新版本号：
 ##### ⚠️注意：v3版本不再维护，最终版本为v3_4.0.2。建议使用v4、androidx版本。
 ```
-androidx用户  :   使用  androidx-5.0.6
-对于glide4.x  :   使用        v4_5.0.6
+androidx用户  :   使用  androidx-6.0.0
+对于glide4.x  :   使用        v4_6.0.0
 对于glide3.x  :   使用        v3_4.0.2
 ```
 
@@ -62,7 +63,7 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.10.0'
   // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-5.0.6'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-6.0.0'
 
 ================================分割线==================================
 
@@ -73,7 +74,7 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
   // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_5.0.6'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_6.0.0'
 
 ================================分割线==================================
 
@@ -121,7 +122,7 @@ public class MyAppGlideModule extends AppGlideModule {
 #### 2：最简单的调用方式：
 ```
         // 最简单的调用，即可实现大部分需求，如需定制，可参考下一步的自定义代码：
-        
+
         ImagePreview
             .getInstance()
             // 上下文，必须是activity，不需要担心内存泄漏，本框架已经处理好；
@@ -144,7 +145,7 @@ public class MyAppGlideModule extends AppGlideModule {
 
             // 开启预览
             .start();
-            
+
             // 仅需一行代码,默认配置为：
             //      显示顶部进度指示器、
             //      显示右侧下载按钮、
@@ -157,7 +158,7 @@ public class MyAppGlideModule extends AppGlideModule {
 
 ##### 接口说明：
 
-方法名 | 功能 |  说明  
+方法名 | 功能 |  说明
 -|-|-
 |setBigImageClickListener|设置图片点击事件|默认null|
 |setBigImageLongClickListener|设置图片长按事件|默认null|
@@ -169,7 +170,7 @@ public class MyAppGlideModule extends AppGlideModule {
 |setEnableDragClose|设置是否开启下拉图片退出|默认false|
 |setEnableUpDragClose|设置是否开启上拉图片退出|默认false|
 |setErrorPlaceHolder|设置加载失败的占位图资源id|默认内置R.drawable.load_failed|
-|setFolderName|设置下载到的文件夹名称|默认根目录Download（可嵌套多层Download/Image）|
+|setFolderName|设置下载到的文件夹名称|默认保存Picture文件夹中|
 |setImage|设置单张图片地址|三选一|
 |setImageInfoList|设置图片Bean集合|三选一|
 |setImageList|设置图片地址集合|三选一|
@@ -211,9 +212,8 @@ public class MyAppGlideModule extends AppGlideModule {
                     // 加载策略，默认为手动模式（具体可看下面加载策略的详细说明）
                     .setLoadStrategy(loadStrategy)
 
-                    // 保存的文件夹名称，会在SD卡根目录进行文件夹的新建。
-                    // (你也可设置嵌套模式，比如："BigImageView/Download"，会在SD卡根目录新建BigImageView文件夹，并在BigImageView文件夹中新建Download文件夹)
-                    .setFolderName("BigImageView/Download")
+                    // 保存的文件夹名称，会在Picture目录进行文件夹的新建。比如："BigImageView"，会在Picture目录新建BigImageView文件夹)
+                    .setFolderName("BigImageView")
 
                     // 缩放动画时长，单位ms
                     .setZoomTransitionDuration(300)

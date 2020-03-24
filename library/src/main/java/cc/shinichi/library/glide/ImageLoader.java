@@ -16,7 +16,7 @@ import cc.shinichi.library.glide.cache.SafeKeyGenerator;
 
 /**
  * @author 工藤
- * @email gougou@16fan.com
+ * @email 18883840501@163.com
  * cc.shinichi.library.glide
  * create at 2018/5/21  15:22
  * description:
