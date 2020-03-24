@@ -229,9 +229,8 @@ public class MainActivity extends AppCompatActivity {
                     // 加载策略，默认为手动模式
                     .setLoadStrategy(loadStrategy)
 
-                    // 保存的文件夹名称，会在SD卡根目录进行文件夹的新建。
-                    // (你也可设置嵌套模式，比如："BigImageView/Download"，会在SD卡根目录新建BigImageView文件夹，并在BigImageView文件夹中新建Download文件夹)
-                    .setFolderName("BigImageView/Download")
+                    // 保存的文件夹名称，会在Picture目录进行文件夹的新建。比如："BigImageView"，会在Picture目录新建BigImageView文件夹)
+                    .setFolderName("BigImageView")
 
                     // 缩放动画时长，单位ms
                     .setZoomTransitionDuration(300)

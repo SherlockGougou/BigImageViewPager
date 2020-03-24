@@ -5,7 +5,7 @@ import android.util.Log;
 
 /**
  * @author 工藤
- * @email gougou@16fan.com
+ * @email 18883840501@163.com
  */
 public class Print {
     public static void d(String TAG, String msg) {

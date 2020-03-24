@@ -14,7 +14,7 @@ import java.io.File;
 
 /**
  * @author 工藤
- * @email gougou@16fan.com
+ * @email 18883840501@163.com
  * cc.shinichi.library.glide
  * create at 2018/11/2  17:12
  * description:

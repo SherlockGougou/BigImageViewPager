@@ -44,7 +44,7 @@ import cc.shinichi.library.view.photoview.PhotoView;
 
 /**
  * @author 工藤
- * @email gougou@16fan.com
+ * @email 18883840501@163.com
  */
 public class ImagePreviewAdapter extends PagerAdapter {
 

@@ -4,7 +4,7 @@ import java.security.MessageDigest;
 
 /**
  * @author 工藤
- * @email gougou@16fan.com
+ * @email 18883840501@163.com
  * cc.shinichi.library.tool.text
  * create at 2018/12/14  09:48
  * description:

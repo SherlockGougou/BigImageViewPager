@@ -1,54 +1,54 @@
 apply plugin: 'com.android.application'
 
 android {
-  compileSdkVersion 28
-  buildToolsVersion '28.0.3'
-  defaultConfig {
-    applicationId "cc.shinichi.bigimageviewpager"
-    minSdkVersion 14
-    targetSdkVersion 28
-    versionCode 506
-    versionName "androidx-5.0.6"
-  }
-  buildTypes {
-    release {
-      minifyEnabled false
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    compileSdkVersion 29
+    buildToolsVersion '29.0.3'
+    defaultConfig {
+        applicationId "cc.shinichi.bigimageviewpager"
+        minSdkVersion 14
+        targetSdkVersion 29
+        versionCode 600
+        versionName "androidx-6.0.0"
     }
-  }
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
-  }
-  sourceSets {
-    main {
-      jniLibs.srcDirs = ['libs']
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
-  }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
-ext.supportLibVersion = '28.0.0'
+ext.supportLibVersion = '29.0.0'
 
 repositories {
-  flatDir {
-    dirs 'libs'
-  }
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
-  implementation fileTree(include: ['*.jar'], dir: 'libs')
-  implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-  implementation 'androidx.appcompat:appcompat:1.1.0'
-  implementation 'androidx.recyclerview:recyclerview:1.1.0'
-  // matisse
-  implementation(name: 'matisse-release', ext: 'aar') {
-    exclude group: 'com.github.bumptech.glide'
-  }
-  // glide
-  implementation 'com.github.bumptech.glide:glide:4.10.0'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
-  implementation 'com.github.bumptech.glide:okhttp3-integration:4.10.0'
-  // library
-//   implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-5.0.6'
-  implementation project(':library')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    // matisse
+    implementation(name: 'matisse-release', ext: 'aar') {
+        exclude group: 'com.github.bumptech.glide'
+    }
+    // glide
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
+    implementation 'com.github.bumptech.glide:okhttp3-integration:4.10.0'
+    // library
+//   implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-6.0.0'
+    implementation project(':library')
 }

@@ -12,7 +12,7 @@ import java.net.URLDecoder;
 
 /**
  * @author 工藤
- * @email gougou@16fan.com
+ * @email 18883840501@163.com
  * com.fan16.cn.widget.ninegrid.preview
  * create at 2018/10/19  11:33
  * description:

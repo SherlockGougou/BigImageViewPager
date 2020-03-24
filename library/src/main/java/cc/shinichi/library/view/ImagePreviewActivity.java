@@ -1,6 +1,7 @@
 package cc.shinichi.library.view;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -45,16 +46,17 @@ import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 
 /**
  * @author 工藤
- * @email gougou@16fan.com
+ * @email 18883840501@163.com
  */
 public class ImagePreviewActivity extends AppCompatActivity implements Handler.Callback, View.OnClickListener {
 
     public static final String TAG = "ImagePreview";
 
     private Context context;
+    private HandlerUtils.HandlerHolder handlerHolder;
 
     private List<ImageInfo> imageInfoList;
-    private int currentItem;// 当前显示的图片索引
+    private int currentItem;
     private boolean isShowDownButton;
     private boolean isShowCloseButton;
     private boolean isShowOriginButton;
@@ -62,6 +64,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 
     private ImagePreviewAdapter imagePreviewAdapter;
     private HackyViewPager viewPager;
+
     private TextView tv_indicator;
     private FrameLayout fm_image_show_origin_container;
     private FrameLayout fm_center_progress_container;
@@ -82,8 +85,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
     // 关闭按钮显示状态
     private boolean closeButtonStatus = false;
 
-    private String currentItemOriginPathUrl = "";// 当前显示的原图链接
-    private HandlerUtils.HandlerHolder handlerHolder;
+    private String currentItemOriginPathUrl = "";
     private int lastProgress = 0;
 
     public static void activityStart(Context context) {
@@ -93,7 +95,9 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         Intent intent = new Intent();
         intent.setClass(context, ImagePreviewActivity.class);
         context.startActivity(intent);
-        ((AppCompatActivity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        if (context instanceof Activity) {
+            ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        }
     }
 
     @Override
@@ -104,8 +108,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.getDecorView()
-                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.TRANSPARENT);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -209,8 +212,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         }
 
         // 更新进度指示器
-        tv_indicator.setText(
-                String.format(getString(R.string.indicator), currentItem + 1 + "", "" + imageInfoList.size()));
+        tv_indicator.setText(String.format(getString(R.string.indicator), currentItem + 1 + "", "" + imageInfoList.size()));
 
         imagePreviewAdapter = new ImagePreviewAdapter(this, imageInfoList);
         viewPager.setAdapter(imagePreviewAdapter);
@@ -233,8 +235,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
                     gone();
                 }
                 // 更新进度指示器
-                tv_indicator.setText(
-                        String.format(getString(R.string.indicator), currentItem + 1 + "", "" + imageInfoList.size()));
+                tv_indicator.setText(String.format(getString(R.string.indicator), currentItem + 1 + "", "" + imageInfoList.size()));
                 // 如果是自定义百分比进度view，每次切换都先隐藏，并重置百分比
                 if (isUserCustomProgressView) {
                     fm_center_progress_container.setVisibility(View.GONE);
@@ -316,7 +317,8 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 
     @Override
     public boolean handleMessage(Message msg) {
-        if (msg.what == 0) {// 点击查看原图按钮，开始加载原图
+        if (msg.what == 0) {
+            // 点击查看原图按钮，开始加载原图
             final String path = imageInfoList.get(currentItem).getOriginUrl();
             visible();
             if (isUserCustomProgressView) {
@@ -335,7 +337,8 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
                 return true;
             }
             loadOriginImage(path);
-        } else if (msg.what == 1) {// 加载完成
+        } else if (msg.what == 1) {
+            // 加载完成
             Bundle bundle = (Bundle) msg.obj;
             String url = bundle.getString("url");
             gone();
@@ -351,7 +354,8 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
                     imagePreviewAdapter.loadOrigin(imageInfoList.get(currentItem));
                 }
             }
-        } else if (msg.what == 2) {// 加载中
+        } else if (msg.what == 2) {
+            // 加载中
             Bundle bundle = (Bundle) msg.obj;
             String url = bundle.getString("url");
             int progress = bundle.getInt("progress");
@@ -370,11 +374,13 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
                     btn_show_origin.setText(String.format("%s %%", String.valueOf(progress)));
                 }
             }
-        } else if (msg.what == 3) {// 隐藏查看原图按钮
+        } else if (msg.what == 3) {
+            // 隐藏查看原图按钮
             btn_show_origin.setText("查看原图");
             fm_image_show_origin_container.setVisibility(View.GONE);
             originalStatus = false;
-        } else if (msg.what == 4) {// 显示查看原图按钮
+        } else if (msg.what == 4) {
+            // 显示查看原图按钮
             fm_image_show_origin_container.setVisibility(View.VISIBLE);
             originalStatus = true;
         }

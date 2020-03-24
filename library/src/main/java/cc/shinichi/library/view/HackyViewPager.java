@@ -18,7 +18,7 @@ import androidx.viewpager.widget.ViewPager;
  * just catching the problem and ignoring it.
  *
  * @author 工藤
- * @email gougou@16fan.com
+ * @email 18883840501@163.com
  */
 public class HackyViewPager extends ViewPager {
 

@@ -20,7 +20,7 @@ import cc.shinichi.library.view.photoview.PhotoView;
 
 /**
  * @author 工藤
- * @email gougou@16fan.com
+ * @email 18883840501@163.com
  * com.fan16.cn.widget.ninegrid
  * create at 2018/10/19  11:22
  * description:辅助下拉关闭图片

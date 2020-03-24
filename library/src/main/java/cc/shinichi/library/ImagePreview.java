@@ -23,7 +23,7 @@ import cc.shinichi.library.view.listener.OnOriginProgressListener;
 
 /**
  * @author 工藤
- * @email gougou@16fan.com
+ * @email 18883840501@163.com
  * cc.shinichi.library
  * create at 2018/5/22  09:06
  * description:
@@ -37,7 +37,7 @@ public class ImagePreview {
     private WeakReference<Context> contextWeakReference;
     private List<ImageInfo> imageInfoList;// 图片数据集合
     private int index = 0;// 默认显示第几个
-    private String folderName = "Download";// 下载到的文件夹名（根目录中）
+    private String folderName = "";// 下载到的文件夹名（根目录中）
     private float minScale = 1.0f;// 最小缩放倍数
     private float mediumScale = 3.0f;// 中等缩放倍数
     private float maxScale = 5.0f;// 最大缩放倍数
