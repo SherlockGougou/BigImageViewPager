@@ -25,7 +25,7 @@
 
 # 强烈推荐推荐扫描二维码进行安装体验：
 
-![扫码下载demo](https://upload-images.jianshu.io/upload_images/1710902-0073c2f34a714fe2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![扫码下载demo](https://tva1.sinaimg.cn/large/00831rSTly1gdfm1hbfisj3074074wey.jpg)
 
 ![kpFnSO.gif](https://s2.ax1x.com/2019/01/17/kpFnSO.gif)
 ![kpFefK.jpg](https://s2.ax1x.com/2019/01/17/kpFefK.jpg)
