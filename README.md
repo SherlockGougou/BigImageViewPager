@@ -345,7 +345,7 @@ public class MyAppGlideModule extends AppGlideModule {
 详细操作请参考Demo：https://github.com/SherlockGougou/BigImageViewPager/blob/master/sample/src/main/java/cc/shinichi/bigimageviewpager/MainActivity.java#L291
 
 # DEMO体验
-![扫码下载demo](https://tva1.sinaimg.cn/large/00831rSTly1gdflzfku7mj305k05kq3d.jpg)
+![扫码下载demo](https://tva1.sinaimg.cn/large/00831rSTly1gdfm1hbfisj3074074wey.jpg)
 
 # GitHub源码
 https://github.com/SherlockGougou/BigImageViewPager
