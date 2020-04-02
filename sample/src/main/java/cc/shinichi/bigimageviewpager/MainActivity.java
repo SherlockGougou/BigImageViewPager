@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,13 +23,13 @@ import androidx.core.content.ContextCompat;
 
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import cc.shinichi.bigimageviewpager.glide.GlideV4Engine;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
@@ -385,7 +386,7 @@ public class MainActivity extends AppCompatActivity {
             .maxSelectable(30)
             .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
             .thumbnailScale(0.85f)
-            .imageEngine(new GlideV4Engine())
+            .imageEngine(new GlideEngine())
             .theme(com.zhihu.matisse.R.style.Matisse_Zhihu)
             .showSingleMediaType(true)
             .originalEnable(true)
@@ -396,10 +397,14 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if (resultCode == RESULT_OK && data != null) {
-                ArrayList<String> mCurrentSelectedPath = (ArrayList<String>) Matisse.obtainPathResult(data);
+                List<Uri> uriList = Matisse.obtainResult(data);
+                List<String> urlList = new ArrayList<>();
+                for (Uri uri : uriList) {
+                    urlList.add(uri.toString());
+                }
                 ImagePreview.getInstance()
                     .setContext(MainActivity.this)
-                    .setImageList(mCurrentSelectedPath)
+                    .setImageList(urlList)
                     .setShowDownButton(false)
                     .setShowCloseButton(false)
                     .setEnableDragClose(true)
