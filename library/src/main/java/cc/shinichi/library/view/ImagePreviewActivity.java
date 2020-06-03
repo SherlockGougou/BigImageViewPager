@@ -303,8 +303,18 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         //item 被移除后
         if (imageInfoList.size() > 0) {
             // 更新进度指示器
-            tv_indicator.setText(
-                    String.format(getString(R.string.indicator), currentItem + 1 + "", "" + imageInfoList.size()));
+            tv_indicator.setText(String.format(getString(R.string.indicator), currentItem + 1 + "", "" + imageInfoList.size()));
+            //更新图片下载url
+            currentItemOriginPathUrl = imageInfoList.get(currentItem).getOriginUrl();
+
+            isShowOriginButton = ImagePreview.getInstance().isShowOriginButton(currentItem);
+            if (isShowOriginButton) {
+                // 检查缓存是否存在
+                checkCache(currentItemOriginPathUrl);
+            } else {
+                gone();
+            }
+
         }else {
             onBackPressed();
         }
@@ -313,6 +323,9 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         }
     }
 
+    /**
+     * 显示删除确认弹窗弹窗
+     */
     private void showDeleteTipsDialog() {
         if (deleteTipsDialog == null) {
             deleteTipsDialog = new DeleteTipsDialog(this);
