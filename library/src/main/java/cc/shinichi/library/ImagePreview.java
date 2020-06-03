@@ -17,6 +17,7 @@ import java.util.List;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.view.ImagePreviewActivity;
 import cc.shinichi.library.view.listener.OnBigImageClickListener;
+import cc.shinichi.library.view.listener.OnBigImageDeleteListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
 import cc.shinichi.library.view.listener.OnOriginProgressListener;
@@ -45,6 +46,8 @@ public class ImagePreview {
     private boolean isShowIndicator = true;// 是否显示图片指示器（1/9）
     private boolean isShowCloseButton = false;// 是否显示关闭页面按钮
     private boolean isShowDownButton = true;// 是否显示下载按钮
+    private boolean isShowDeleteButton = false; //是否显示删除按钮
+    private boolean isShowDeleteConfirmDialog = true; //是否显示删除确认按钮
     private int zoomTransitionDuration = 200;// 动画持续时间 单位毫秒 ms
 
     private boolean isEnableDragClose = false;// 是否启用下拉关闭，默认不启用
@@ -60,6 +63,8 @@ public class ImagePreview {
     private int closeIconResId = R.drawable.ic_action_close;
     @DrawableRes
     private int downIconResId = R.drawable.icon_download_new;
+    @DrawableRes
+    private int deleteIconResId = R.drawable.ic_action_delete;
 
     // 加载失败时的占位图
     @DrawableRes
@@ -70,6 +75,8 @@ public class ImagePreview {
     private OnBigImageLongClickListener bigImageLongClickListener;
     private OnBigImagePageChangeListener bigImagePageChangeListener;
     private OnOriginProgressListener onOriginProgressListener;
+    private OnBigImageDeleteListener bigImageDeleteListener;
+
 
     // 自定义百分比布局layout id
     @LayoutRes
@@ -142,6 +149,19 @@ public class ImagePreview {
     public ImagePreview setShowCloseButton(boolean showCloseButton) {
         isShowCloseButton = showCloseButton;
         return this;
+    }
+
+    public boolean isShowDeleteButton() {
+        return isShowDeleteButton;
+    }
+
+    public ImagePreview setShowDeleteButton(boolean showDeleteButton) {
+        isShowDeleteButton = showDeleteButton;
+        return this;
+    }
+
+    public boolean isShowDeleteConfirmDialog() {
+        return isShowDeleteConfirmDialog;
     }
 
     public boolean isShowOriginButton(int index) {
@@ -311,6 +331,15 @@ public class ImagePreview {
         return this;
     }
 
+    public int getDeleteIconResId() {
+        return deleteIconResId;
+    }
+
+    public ImagePreview setDeleteIconResId(@DrawableRes int deleteIconResId) {
+        this.deleteIconResId = deleteIconResId;
+        return this;
+    }
+
     public boolean isShowIndicator() {
         return isShowIndicator;
     }
@@ -365,6 +394,20 @@ public class ImagePreview {
         return this;
     }
 
+    public OnBigImageDeleteListener getBigImageDeleteListener() {
+        return bigImageDeleteListener;
+    }
+
+    public ImagePreview setBigImageDeleteListener(OnBigImageDeleteListener bigImageDeleteListener) {
+        return setBigImageDeleteListener(true, bigImageDeleteListener);
+    }
+
+    public ImagePreview setBigImageDeleteListener(boolean showDeleteDialog, OnBigImageDeleteListener bigImageDeleteListener) {
+        this.isShowDeleteConfirmDialog = showDeleteDialog;
+        this.bigImageDeleteListener = bigImageDeleteListener;
+        return this;
+    }
+
     public int getProgressLayoutId() {
         return progressLayoutId;
     }
@@ -388,10 +431,13 @@ public class ImagePreview {
         isEnableClickClose = true;
         isShowIndicator = true;
         isShowErrorToast = false;
+        isShowDeleteButton = false;
+        isShowDeleteConfirmDialog = true;
 
         closeIconResId = R.drawable.ic_action_close;
         downIconResId = R.drawable.icon_download_new;
         errorPlaceHolder = R.drawable.load_failed;
+        deleteIconResId = R.drawable.ic_action_delete;
 
         loadStrategy = LoadStrategy.Default;
         folderName = "Download";
@@ -403,6 +449,7 @@ public class ImagePreview {
         bigImageClickListener = null;
         bigImageLongClickListener = null;
         bigImagePageChangeListener = null;
+        bigImageDeleteListener = null;
 
         progressLayoutId = -1;
         lastClickTime = 0;

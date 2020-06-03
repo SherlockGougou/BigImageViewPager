@@ -15,6 +15,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -61,6 +62,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
     private boolean isShowCloseButton;
     private boolean isShowOriginButton;
     private boolean isShowIndicator;
+    private boolean isShowDelete;
 
     private ImagePreviewAdapter imagePreviewAdapter;
     private HackyViewPager viewPager;
@@ -73,6 +75,9 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
     private ImageView imgCloseButton;
     private View rootView;
     private View progressParentLayout;
+    private ImageButton img_btn_delete;
+
+    private DeleteTipsDialog deleteTipsDialog;
 
     private boolean isUserCustomProgressView = false;
 
@@ -84,6 +89,8 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
     private boolean downloadButtonStatus = false;
     // 关闭按钮显示状态
     private boolean closeButtonStatus = false;
+    // 删除按钮显示状态
+    private boolean deleteButtonStatus = false;
 
     private String currentItemOriginPathUrl = "";
     private int lastProgress = 0;
@@ -127,6 +134,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         isShowDownButton = ImagePreview.getInstance().isShowDownButton();
         isShowCloseButton = ImagePreview.getInstance().isShowCloseButton();
         isShowIndicator = ImagePreview.getInstance().isShowIndicator();
+        isShowDelete = ImagePreview.getInstance().isShowDeleteButton();
 
         currentItemOriginPathUrl = imageInfoList.get(currentItem).getOriginUrl();
 
@@ -167,9 +175,11 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         btn_show_origin = findViewById(R.id.btn_show_origin);
         img_download = findViewById(R.id.img_download);
         imgCloseButton = findViewById(R.id.imgCloseButton);
+        img_btn_delete = findViewById(R.id.iv_delete);
 
         img_download.setImageResource(ImagePreview.getInstance().getDownIconResId());
         imgCloseButton.setImageResource(ImagePreview.getInstance().getCloseIconResId());
+        img_btn_delete.setImageResource(ImagePreview.getInstance().getDeleteIconResId());
 
         // 关闭页面按钮
         imgCloseButton.setOnClickListener(this);
@@ -177,6 +187,8 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         btn_show_origin.setOnClickListener(this);
         // 下载图片按钮
         img_download.setOnClickListener(this);
+        // 删除图片按钮
+        img_btn_delete.setOnClickListener(this);
 
         if (!isShowIndicator) {
             tv_indicator.setVisibility(View.GONE);
@@ -209,6 +221,14 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         } else {
             imgCloseButton.setVisibility(View.GONE);
             closeButtonStatus = false;
+        }
+
+        if (isShowDelete) {
+            img_btn_delete.setVisibility(View.VISIBLE);
+            deleteButtonStatus = true;
+        } else {
+            img_btn_delete.setVisibility(View.GONE);
+            deleteButtonStatus = false;
         }
 
         // 更新进度指示器
@@ -272,6 +292,39 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         DownloadPictureUtil.downloadPicture(context.getApplicationContext(), currentItemOriginPathUrl);
     }
 
+    /**
+     * 删除当前图片(在当前列表显示中移除, 事件传递给外部处理)
+     */
+    private void deleteCurrentImg() {
+
+        imageInfoList.remove(currentItem);
+        imagePreviewAdapter.notifyDataSetChanged();
+
+        //item 被移除后
+        if (imageInfoList.size() > 0) {
+            // 更新进度指示器
+            tv_indicator.setText(
+                    String.format(getString(R.string.indicator), currentItem + 1 + "", "" + imageInfoList.size()));
+        }else {
+            onBackPressed();
+        }
+        if (ImagePreview.getInstance().getBigImageDeleteListener() != null) {
+            ImagePreview.getInstance().getBigImageDeleteListener().onDelete(currentItem);
+        }
+    }
+
+    private void showDeleteTipsDialog() {
+        if (deleteTipsDialog == null) {
+            deleteTipsDialog = new DeleteTipsDialog(this);
+            deleteTipsDialog.setOnClickOkListener((dialog, which) -> {
+                dialog.dismiss();
+                deleteCurrentImg();
+            });
+        }
+        deleteTipsDialog.show();
+    }
+
+
     @Override
     public void onBackPressed() {
         finish();
@@ -307,11 +360,15 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
             if (closeButtonStatus) {
                 imgCloseButton.setVisibility(View.VISIBLE);
             }
+            if (deleteButtonStatus) {
+                img_btn_delete.setVisibility(View.VISIBLE);
+            }
         } else {
             tv_indicator.setVisibility(View.GONE);
             fm_image_show_origin_container.setVisibility(View.GONE);
             img_download.setVisibility(View.GONE);
             imgCloseButton.setVisibility(View.GONE);
+            img_btn_delete.setVisibility(View.GONE);
         }
     }
 
@@ -430,6 +487,13 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
             handlerHolder.sendEmptyMessage(0);
         } else if (i == R.id.imgCloseButton) {
             onBackPressed();
+        }else if (i == R.id.iv_delete) {
+            //删除图片
+            if (ImagePreview.getInstance().isShowDeleteConfirmDialog()) {
+                showDeleteTipsDialog();
+            } else {
+                deleteCurrentImg();
+            }
         }
     }
 

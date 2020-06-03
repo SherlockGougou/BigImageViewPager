@@ -370,6 +370,9 @@ public class ImagePreviewAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        container.removeView((View) object);
+        if (position >= imageInfo.size()) return;
+
         String originUrl = imageInfo.get(position).getOriginUrl();
         try {
             if (imageHashMap != null) {

@@ -35,6 +35,7 @@ import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.tool.ui.ToastUtil;
 import cc.shinichi.library.view.listener.OnBigImageClickListener;
+import cc.shinichi.library.view.listener.OnBigImageDeleteListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
 import cc.shinichi.library.view.listener.OnOriginProgressListener;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     boolean showCloseButton = false;
     boolean showDownButton = false;
     boolean showErrorToast = false;
+    boolean showDeleteButton = false;
 
     ImagePreview.LoadStrategy loadStrategy = ImagePreview.LoadStrategy.Default;
 
@@ -84,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         SwitchCompat switchShowCloseButton = findViewById(R.id.switchShowCloseButton);
         SwitchCompat switchShowDownButton = findViewById(R.id.switchShowDownButton);
         SwitchCompat switchShowErrorToast = findViewById(R.id.switchShowErrorToast);
+        SwitchCompat switchShowDelete = findViewById(R.id.switchShowDelete);
 
         RadioGroup radioGroupStrategy = findViewById(R.id.radioGroupStrategy);
 
@@ -134,6 +137,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         switchShowErrorToast.setChecked(false);
+        switchShowDelete.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                showDeleteButton = isChecked;
+            }
+        });
+        switchShowDelete.setChecked(showDeleteButton);
 
         loadStrategy = ImagePreview.LoadStrategy.Default;
         radioGroupStrategy.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -209,6 +219,10 @@ public class MainActivity extends AppCompatActivity {
         // 完全自定义调用：
         findViewById(R.id.buttonPreview).setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
+                if (imageInfoList.size() == 0) {
+                    ToastUtil.getInstance()._short(MainActivity.this,"图片全被删除了，请重新打开Demo");
+                    return;
+                }
                 ImagePreview.getInstance()
                     // 上下文，必须是activity，不需要担心内存泄漏，本框架已经处理好
                     .setContext(MainActivity.this)
@@ -255,6 +269,11 @@ public class MainActivity extends AppCompatActivity {
                     // 设置下载按钮图片资源，可不填，默认为库中自带：R.drawable.icon_download_new
                     .setDownIconResId(R.drawable.icon_download_new)
 
+                      //是否显示删除按钮，在页面右上角，默认不显示
+                     .setShowDeleteButton(showDeleteButton)
+                     //设置删除按钮图片资源， 可不填，默认为库中自带：R.drawable.ic_action_delete
+                     .setDeleteIconResId(R.drawable.ic_action_delete)
+
                     // 设置是否显示顶部的指示器（1/9）默认显示
                     .setShowIndicator(showIndicator)
                     // 设置顶部指示器背景shape，默认自带灰色圆角shape
@@ -293,7 +312,17 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "onPageScrollStateChanged: ");
                         }
                     })
-
+                        // 删除回调 (默认使用删除提示弹窗)
+                    .setBigImageDeleteListener(false, new OnBigImageDeleteListener() {
+                        @Override
+                        public void onDelete(int position) {
+                            Log.d(TAG, "onDelete: "+ position);
+//                            ToastUtil.getInstance()._short(MainActivity.this.getApplication(),"删除 ->pos: " + position);
+                            if (imageInfoList.size() == 0) {
+                                ToastUtil.getInstance()._short(MainActivity.this,"图片全被删除了，请重新打开Demo");
+                            }
+                        }
+                    })
                     //=================================================================================================
                     // 设置查看原图时的百分比样式：库中带有一个样式：ImagePreview.PROGRESS_THEME_CIRCLE_TEXT，使用如下：
                     .setProgressLayoutId(ImagePreview.PROGRESS_THEME_CIRCLE_TEXT, new OnOriginProgressListener() {
