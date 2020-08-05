@@ -44,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     String[] images = {
+            "http://shop.static.yaowuip.com/community/topic/guimiezhiren.jpg",
+            "http://shop.static.yaowuip.com/community/image/timg.gif",
+            "http://shop.static.yaowuip.com/community/image/202005065eb217d6d8366.jpg",
             "http://img6.16fan.com/201510/11/005258wdngg6rv0tpn8z9z.jpg",
             "http://img6.16fan.com/201510/11/013553aj3kp9u6iuz6k9uj.jpg",
             "http://img6.16fan.com/201510/11/011753fnanichdca0wbhxc.jpg",

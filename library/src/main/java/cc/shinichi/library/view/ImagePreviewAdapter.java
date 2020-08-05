@@ -238,6 +238,10 @@ public class ImagePreviewAdapter extends PagerAdapter {
             }
         });
 
+        if (activity instanceof ImagePreviewActivity) {
+            ((ImagePreviewActivity) activity).setAlpha(1);
+        }
+
         if (ImagePreview.getInstance().isEnableDragClose()) {
             fingerDragHelper.setOnAlphaChangeListener(new FingerDragHelper.onAlphaChangedListener() {
                 @Override
