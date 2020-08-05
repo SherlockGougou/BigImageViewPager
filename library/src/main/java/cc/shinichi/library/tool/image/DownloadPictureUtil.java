@@ -59,17 +59,7 @@ public class DownloadPictureUtil {
                 // 传入的保存文件夹名
                 final String downloadFolderName = ImagePreview.getInstance().getFolderName();
                 // 保存的图片名称
-                String name = "";
-                try {
-                    name = url.substring(url.lastIndexOf("/") + 1);
-                    if (name.contains(".")) {
-                        name = name.substring(0, name.lastIndexOf("."));
-                    }
-                    name = MD5Util.md5Encode(name);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    name = System.currentTimeMillis() + "";
-                }
+                String name = System.currentTimeMillis() + "";
                 String mimeType = ImageUtil.getImageTypeWithMime(resource.getAbsolutePath());
                 name = name + "." + mimeType;
 
