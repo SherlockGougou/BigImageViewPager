@@ -298,6 +298,11 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
     private void deleteCurrentImg() {
 
         imageInfoList.remove(currentItem);
+
+        if (ImagePreview.getInstance().getBigImageDeleteListener() != null) {
+            ImagePreview.getInstance().getBigImageDeleteListener().onDelete(currentItem);
+        }
+
         imagePreviewAdapter.notifyDataSetChanged();
 
         //item 被移除后
@@ -318,9 +323,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         }else {
             onBackPressed();
         }
-        if (ImagePreview.getInstance().getBigImageDeleteListener() != null) {
-            ImagePreview.getInstance().getBigImageDeleteListener().onDelete(currentItem);
-        }
+
     }
 
     /**
