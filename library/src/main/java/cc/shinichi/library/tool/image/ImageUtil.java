@@ -195,7 +195,10 @@ public class ImageUtil {
     }
 
     public static float getSmallImageMaxScale(Context context, String imagePath) {
-        return getSmallImageMinScale(context, imagePath) * 2;
+        int[] wh = getWidthHeight(imagePath);
+        float imageWid = wh[0];
+        float phoneWid = PhoneUtil.getPhoneWid(context.getApplicationContext());
+        return phoneWid * 2 / imageWid;
     }
 
     public static Bitmap getImageBitmap(String srcPath, int degree) {

@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
             "http://img6.16fan.com/201510/11/004955d8ftz3t1sttt7ft7.jpg",
             "http://img6.16fan.com/201510/11/005027qy2g55yyglb59zdu.jpg",
             "http://img6.16fan.com/201510/11/005229bbtxkczcl0btmw8e.jpg",
+            // 小尺寸图片
+            "https://s1.ax1x.com/2020/10/16/0HXKv4.jpg",
             // 下面这张是：5760 * 3840
             "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg",
             // 下面这张是：2280 * 22116
