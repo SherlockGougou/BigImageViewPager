@@ -48,8 +48,9 @@ allprojects {
 ##### 此处显示的是本框架的最新版本号：
 ##### ⚠️注意：v3版本不再维护，最终版本为v3_4.0.2。建议使用v4、androidx版本。
 ```
-androidx用户  :   使用  androidx-6.0.0
-对于glide4.x  :   使用        v4_6.0.0
+androidx用户  :   使用  androidx-6.1.0
+对于glide4.x  :   使用        v4_6.0.1
+
 对于glide3.x  :   使用        v3_4.0.2
 ```
 
@@ -59,11 +60,11 @@ dependencies {
   // 针对androidx用户，需要添加以下依赖：
 
   // glide
-  implementation 'com.github.bumptech.glide:glide:4.10.0'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
-  implementation 'com.github.bumptech.glide:okhttp3-integration:4.10.0'
+  implementation 'com.github.bumptech.glide:glide:4.11.0'
+  annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+  implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
   // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-6.0.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-6.1.0'
 
 ================================分割线==================================
 
@@ -74,7 +75,7 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
   // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_6.0.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_6.0.1'
 
 ================================分割线==================================
 
@@ -96,7 +97,7 @@ public class MyAppGlideModule extends AppGlideModule {
       @NonNull Registry registry) {
     super.registerComponents(context, glide, registry);
 
-    // 替换底层网络框架为okhttp3，这步很重要！
+    // 替换底层网络框架为okhttp3，这步很重要！如果不添加会无法显示原图的加载百分比
     // 如果您的app中已经存在了自定义的GlideModule，您只需要把这一行代码，添加到对应的重载方法中即可。
     registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(ProgressManager.getOkHttpClient()));
   }
@@ -163,6 +164,7 @@ public class MyAppGlideModule extends AppGlideModule {
 |setBigImageClickListener|设置图片点击事件|默认null|
 |setBigImageLongClickListener|设置图片长按事件|默认null|
 |setBigImagePageChangeListener|设置页面切换监听|默认null|
+|setDownloadClickListener|设置点击下载监听|默认null，可选是否拦截下载行为|
 |setCloseIconResId|设置关闭按钮的Drawable资源id|默认内置R.drawable.ic_action_close|
 |setContext|设置上下文|不允许为空|
 |setDownIconResId|设置下载按钮的Drawable资源id|R.drawable.icon_download_new|
@@ -270,6 +272,21 @@ public class MyAppGlideModule extends AppGlideModule {
 
                         @Override public void onPageScrollStateChanged(int state) {
                             Log.d(TAG, "onPageScrollStateChanged: ");
+                        }
+                    })
+                    // 下载按钮点击回调，可以拦截下载逻辑，从而实现自己下载或埋点统计
+                    .setDownloadClickListener(new OnDownloadClickListener() {
+                        @Override
+                        public void onClick(Activity activity, View view, int position) {
+                            // 可以在此处执行您自己的下载逻辑、埋点统计等信息
+                            Log.d(TAG, "onClick: position = " + position);
+                        }
+
+                        @Override
+                        public boolean isInterceptDownload() {
+                            // return true 时, 需要自己实现下载
+                            // return false 时, 使用内置下载
+                            return false;
                         }
                     })
 
