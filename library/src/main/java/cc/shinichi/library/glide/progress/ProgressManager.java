@@ -16,11 +16,11 @@ import okhttp3.Response;
 
 /**
  * @author 工藤
- * @email 18883840501@163.com
+ * @email qinglingou@gmail.com
  */
 public class ProgressManager {
 
-    private static Map<String, OnProgressListener> listenersMap =
+    private static final Map<String, OnProgressListener> listenersMap =
             Collections.synchronizedMap(new HashMap<String, OnProgressListener>());
 
     private static final ProgressResponseBody.InternalProgressListener LISTENER =

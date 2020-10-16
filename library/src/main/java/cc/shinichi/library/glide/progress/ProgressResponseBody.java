@@ -17,16 +17,16 @@ import okio.Source;
 
 /**
  * @author 工藤
- * @email 18883840501@163.com
+ * @email qinglingou@gmail.com
  */
 public class ProgressResponseBody extends ResponseBody {
 
     private static final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
-    private String url;
-    private InternalProgressListener internalProgressListener;
+    private final String url;
+    private final InternalProgressListener internalProgressListener;
 
-    private ResponseBody responseBody;
+    private final ResponseBody responseBody;
     private BufferedSource bufferedSource;
 
     ProgressResponseBody(String url, InternalProgressListener internalProgressListener, ResponseBody responseBody) {

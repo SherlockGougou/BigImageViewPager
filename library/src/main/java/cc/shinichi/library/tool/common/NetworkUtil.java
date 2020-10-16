@@ -6,7 +6,7 @@ import android.net.NetworkInfo;
 
 /**
  * @author 工藤
- * @email 18883840501@163.com
+ * @email qinglingou@gmail.com
  */
 public class NetworkUtil {
 

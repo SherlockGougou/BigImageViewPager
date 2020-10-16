@@ -7,7 +7,7 @@ import android.widget.Toast;
 
 /**
  * @author 工藤
- * @email 18883840501@163.com
+ * @email qinglingou@gmail.com
  */
 public class ToastUtil {
 
@@ -40,6 +40,6 @@ public class ToastUtil {
     }
 
     private static class InnerClass {
-        private static ToastUtil instance = new ToastUtil();
+        private static final ToastUtil instance = new ToastUtil();
     }
 }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * @author 工藤
- * @email 18883840501@163.com
+ * @email qinglingou@gmail.com
  * 图片信息
  */
 public class ImageInfo implements Serializable {

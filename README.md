@@ -362,7 +362,7 @@ https://github.com/SherlockGougou/BigImageViewPager
 
 # LICENSE
 ```
-Copyright (C) 2018 SherlockGougou 18883840501@163.com
+Copyright (C) 2018 SherlockGougou qinglingou@gmail.com
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

@@ -41,18 +41,19 @@ import cc.shinichi.library.glide.progress.ProgressManager;
 import cc.shinichi.library.tool.common.HandlerUtils;
 import cc.shinichi.library.tool.image.DownloadPictureUtil;
 import cc.shinichi.library.tool.ui.ToastUtil;
+import cc.shinichi.library.view.listener.OnDownloadClickListener;
 
 import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 
 /**
  * @author 工藤
- * @email 18883840501@163.com
+ * @email qinglingou@gmail.com
  */
 public class ImagePreviewActivity extends AppCompatActivity implements Handler.Callback, View.OnClickListener {
 
     public static final String TAG = "ImagePreview";
 
-    private Context context;
+    private Activity context;
     private HandlerUtils.HandlerHolder handlerHolder;
 
     private List<ImageInfo> imageInfoList;
@@ -371,7 +372,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
                     }
                 } else {
                     visible();
-                    btn_show_origin.setText(String.format("%s %%", String.valueOf(progress)));
+                    btn_show_origin.setText(String.format("%s %%", progress));
                 }
             }
         } else if (msg.what == 3) {
@@ -410,26 +411,40 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
     @Override
     public void onClick(View v) {
         int i = v.getId();
-        if (i == R.id.img_download) {// 检查权限
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(ImagePreviewActivity.this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    // 拒绝权限
-                    ToastUtil.getInstance()._short(context, "您拒绝了存储权限，下载失败！");
+        if (i == R.id.img_download) {
+            OnDownloadClickListener downloadClickListener = ImagePreview.getInstance().getDownloadClickListener();
+            if (downloadClickListener != null) {
+                boolean interceptDownload = downloadClickListener.isInterceptDownload();
+                if (interceptDownload) {
+                    // 拦截了下载，不执行下载
                 } else {
-                    //申请权限
-                    ActivityCompat.requestPermissions(ImagePreviewActivity.this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,}, 1);
+                    // 没有拦截下载
+                    checkAndDownload();
                 }
+                ImagePreview.getInstance().getDownloadClickListener().onClick(context, v, currentItem);
             } else {
-                // 下载当前图片
-                downloadCurrentImg();
+                checkAndDownload();
             }
         } else if (i == R.id.btn_show_origin) {
             handlerHolder.sendEmptyMessage(0);
         } else if (i == R.id.imgCloseButton) {
             onBackPressed();
+        }
+    }
+
+    private void checkAndDownload() {
+        // 检查权限
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(ImagePreviewActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // 拒绝权限
+                ToastUtil.getInstance()._short(context, "您拒绝了存储权限，下载失败！");
+            } else {
+                //申请权限
+                ActivityCompat.requestPermissions(ImagePreviewActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,}, 1);
+            }
+        } else {
+            // 下载当前图片
+            downloadCurrentImg();
         }
     }
 

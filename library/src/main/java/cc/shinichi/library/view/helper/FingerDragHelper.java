@@ -20,7 +20,7 @@ import cc.shinichi.library.view.photoview.PhotoView;
 
 /**
  * @author 工藤
- * @email 18883840501@163.com
+ * @email qinglingou@gmail.com
  * com.fan16.cn.widget.ninegrid
  * create at 2018/10/19  11:22
  * description:辅助下拉关闭图片
@@ -30,15 +30,15 @@ public class FingerDragHelper extends LinearLayout {
     private static final String TAG = FingerDragHelper.class.getSimpleName();
     private final static int MAX_EXIT_Y = 500;
     private final static long DURATION = 200;
-    private static int MAX_TRANSLATE_Y = 500;
+    private static final int MAX_TRANSLATE_Y = 500;
+    private final int fadeIn = R.anim.fade_in_150;
+    private final int fadeOut = R.anim.fade_out_150;
     private SubsamplingScaleImageViewDragClose imageView;
     private PhotoView imageGif;
     private float mDownY;
     private float mTranslationY;
     private float mLastTranslationY;
     private boolean isAnimate = false;
-    private int fadeIn = R.anim.fade_in_150;
-    private int fadeOut = R.anim.fade_out_150;
     private int mTouchslop;
     private onAlphaChangedListener mOnAlphaChangedListener;
 

@@ -46,17 +46,18 @@ public class PhotoViewAttacher implements View.OnTouchListener, View.OnLayoutCha
     private static final int VERTICAL_EDGE_TOP = 0;
     private static final int VERTICAL_EDGE_BOTTOM = 1;
     private static final int VERTICAL_EDGE_BOTH = 2;
-    private static float DEFAULT_MAX_SCALE = 3.0f;
-    private static float DEFAULT_MID_SCALE = 1.75f;
-    private static float DEFAULT_MIN_SCALE = 1.0f;
-    private static int DEFAULT_ZOOM_DURATION = 200;
-    private static int SINGLE_TOUCH = 1;
+    private static final float DEFAULT_MAX_SCALE = 3.0f;
+    private static final float DEFAULT_MID_SCALE = 1.75f;
+    private static final float DEFAULT_MIN_SCALE = 1.0f;
+    private static final int DEFAULT_ZOOM_DURATION = 200;
+    private static final int SINGLE_TOUCH = 1;
     // These are set so we don't keep allocating them on the heap
     private final Matrix mBaseMatrix = new Matrix();
     private final Matrix mDrawMatrix = new Matrix();
     private final Matrix mSuppMatrix = new Matrix();
     private final RectF mDisplayRect = new RectF();
     private final float[] mMatrixValues = new float[9];
+    private final ImageView mImageView;
     private Interpolator mInterpolator = new AccelerateDecelerateInterpolator();
     private int mZoomDuration = DEFAULT_ZOOM_DURATION;
     private float mMinScale = DEFAULT_MIN_SCALE;
@@ -64,7 +65,6 @@ public class PhotoViewAttacher implements View.OnTouchListener, View.OnLayoutCha
     private float mMaxScale = DEFAULT_MAX_SCALE;
     private boolean mAllowParentInterceptOnEdge = true;
     private boolean mBlockParentIntercept = false;
-    private ImageView mImageView;
     // Gesture Detectors
     private GestureDetector mGestureDetector;
     private CustomGestureDetector mScaleDragDetector;
@@ -87,7 +87,7 @@ public class PhotoViewAttacher implements View.OnTouchListener, View.OnLayoutCha
     private boolean mZoomEnabled = true;
     private ScaleType mScaleType = ScaleType.FIT_CENTER;
 
-    private OnGestureListener onGestureListener = new OnGestureListener() {
+    private final OnGestureListener onGestureListener = new OnGestureListener() {
         @Override
         public void onDrag(float dx, float dy) {
             if (mScaleDragDetector.isScaling()) {

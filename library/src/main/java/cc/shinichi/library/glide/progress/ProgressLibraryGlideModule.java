@@ -15,7 +15,7 @@ import java.io.InputStream;
 
 /**
  * @author 工藤
- * @email 18883840501@163.com
+ * @email qinglingou@gmail.com
  */
 @GlideModule
 public class ProgressLibraryGlideModule extends LibraryGlideModule {

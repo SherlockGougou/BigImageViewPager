@@ -56,7 +56,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * @author 工藤
- * @email 18883840501@163.com
+ * @email qinglingou@gmail.com
  * com.fan16.cn.widget.ninegrid.preview
  * create at 2018/10/19  11:28
  * description:
@@ -195,6 +195,7 @@ public class SubsamplingScaleImageViewDragClose extends View {
     private final float[] dstArray = new float[8];
     //The logical density of the display
     private final float density;
+    private final int mTouchslop;
     public boolean atXEdge;
     public boolean atYEdge;
     // Bitmap (preview or full image)
@@ -300,7 +301,6 @@ public class SubsamplingScaleImageViewDragClose extends View {
     private SubsamplingScaleImageViewDragClose.ScaleAndTranslate satTemp;
     private Matrix matrix;
     private RectF sRect;
-    private int mTouchslop;
 
     public SubsamplingScaleImageViewDragClose(Context context, AttributeSet attr) {
         super(context, attr);
