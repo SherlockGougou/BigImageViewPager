@@ -6,7 +6,7 @@ import java.security.MessageDigest;
 
 /**
  * @author 工藤
- * @email 18883840501@163.com
+ * @email qinglingou@gmail.com
  * com.fan16.cn.loader.glide
  * create at 2018/5/10  11:12
  * description:

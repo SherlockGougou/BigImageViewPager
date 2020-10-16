@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,13 +22,13 @@ import android.widget.TextView;
 
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import cc.shinichi.bigimageviewpager.glide.GlideV4Engine;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
@@ -35,6 +36,7 @@ import cc.shinichi.library.tool.ui.ToastUtil;
 import cc.shinichi.library.view.listener.OnBigImageClickListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
+import cc.shinichi.library.view.listener.OnDownloadClickListener;
 import cc.shinichi.library.view.listener.OnOriginProgressListener;
 
 import static android.support.v4.content.PermissionChecker.PERMISSION_GRANTED;
@@ -43,10 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    String[] images = {
-            "http://shop.static.yaowuip.com/community/topic/guimiezhiren.jpg",
-            "http://shop.static.yaowuip.com/community/image/timg.gif",
-            "http://shop.static.yaowuip.com/community/image/202005065eb217d6d8366.jpg",
+    private String[] images = {
             "http://img6.16fan.com/201510/11/005258wdngg6rv0tpn8z9z.jpg",
             "http://img6.16fan.com/201510/11/013553aj3kp9u6iuz6k9uj.jpg",
             "http://img6.16fan.com/201510/11/011753fnanichdca0wbhxc.jpg",
@@ -58,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
             "http://img6.16fan.com/201510/11/004955d8ftz3t1sttt7ft7.jpg",
             "http://img6.16fan.com/201510/11/005027qy2g55yyglb59zdu.jpg",
             "http://img6.16fan.com/201510/11/005229bbtxkczcl0btmw8e.jpg",
+            // 小尺寸图片
+            "https://s1.ax1x.com/2020/10/16/0HXKv4.jpg",
             // 下面这张是：5760 * 3840
             "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg",
             // 下面这张是：2280 * 22116
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     boolean showDownButton = false;
     boolean showErrorToast = false;
 
-    ImagePreview.LoadStrategy loadStrategy = ImagePreview.LoadStrategy.Default;
+    private ImagePreview.LoadStrategy loadStrategy = ImagePreview.LoadStrategy.Default;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,48 +91,55 @@ public class MainActivity extends AppCompatActivity {
         RadioGroup radioGroupStrategy = findViewById(R.id.radioGroupStrategy);
 
         switchClickClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 enableClickClose = isChecked;
             }
         });
         switchClickClose.setChecked(true);
 
         switchDragClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 enableDragClose = isChecked;
             }
         });
         switchDragClose.setChecked(true);
 
         switchUpDragClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 enableUpDragClose = isChecked;
             }
         });
         switchUpDragClose.setChecked(true);
 
         switchShowIndicator.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 showIndicator = isChecked;
             }
         });
         switchShowIndicator.setChecked(true);
 
         switchShowCloseButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 showCloseButton = isChecked;
             }
         });
         switchShowCloseButton.setChecked(false);
 
         switchShowDownButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 showDownButton = isChecked;
             }
         });
         switchShowDownButton.setChecked(true);
         switchShowErrorToast.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 showErrorToast = isChecked;
             }
         });
@@ -139,7 +147,8 @@ public class MainActivity extends AppCompatActivity {
 
         loadStrategy = ImagePreview.LoadStrategy.Default;
         radioGroupStrategy.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override public void onCheckedChanged(RadioGroup group, int checkedId) {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.radioThumb:
                         loadStrategy = ImagePreview.LoadStrategy.AlwaysThumb;
@@ -172,28 +181,11 @@ public class MainActivity extends AppCompatActivity {
             imageInfoList.add(imageInfo);
         }
 
-        // 测试超宽图
-        imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");
-        imageInfo.setThumbnailUrl("http://cache.house.sina.com.cn/citylifehouse/citylife/de/26/20090508_7339__.jpg");
-        imageInfoList.add(0, imageInfo);
-
-        // 测试gif图
-        imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl("http://image.coolapk.com/feed/2019/0325/17/1105409_1553505598_4989@299x299.gif");
-        imageInfo.setThumbnailUrl("http://image.coolapk.com/feed/2019/0325/17/1105409_1553505598_4989@299x299.gif");
-        imageInfoList.add(0, imageInfo);
-
-        // 测试gif图
-        imageInfo = new ImageInfo();
-        imageInfo.setOriginUrl("http://image.coolapk.com/feed/2019/0716/15/1412643_6de29040_1600_6194@463x357.gif");
-        imageInfo.setThumbnailUrl("http://image.coolapk.com/feed/2019/0716/15/1412643_6de29040_1600_6194@463x357.gif");
-        imageInfoList.add(0, imageInfo);
 
         // 最简单的调用：
         findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-
+            @Override
+            public void onClick(View v) {
                 // 仅需一行代码,默认配置为：
                 //      显示顶部进度指示器、
                 //      显示右侧下载按钮、
@@ -210,7 +202,9 @@ public class MainActivity extends AppCompatActivity {
 
         // 完全自定义调用：
         findViewById(R.id.buttonPreview).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
+                // 完全自定义配置
                 ImagePreview.getInstance()
                         // 上下文，必须是activity，不需要担心内存泄漏，本框架已经处理好
                         .setContext(MainActivity.this)
@@ -267,14 +261,16 @@ public class MainActivity extends AppCompatActivity {
 
                         // 点击回调
                         .setBigImageClickListener(new OnBigImageClickListener() {
-                            @Override public void onClick(Activity activity, View view, int position) {
+                            @Override
+                            public void onClick(Activity activity, View view, int position) {
                                 // ...
                                 Log.d(TAG, "onClick: ");
                             }
                         })
                         // 长按回调
                         .setBigImageLongClickListener(new OnBigImageLongClickListener() {
-                            @Override public boolean onLongClick(Activity activity, View view, int position) {
+                            @Override
+                            public boolean onLongClick(Activity activity, View view, int position) {
                                 // ...
                                 Log.d(TAG, "onLongClick: ");
                                 return false;
@@ -287,19 +283,37 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d(TAG, "onPageScrolled: ");
                             }
 
-                            @Override public void onPageSelected(int position) {
+                            @Override
+                            public void onPageSelected(int position) {
                                 Log.d(TAG, "onPageSelected: ");
                             }
 
-                            @Override public void onPageScrollStateChanged(int state) {
+                            @Override
+                            public void onPageScrollStateChanged(int state) {
                                 Log.d(TAG, "onPageScrollStateChanged: ");
+                            }
+                        })
+                        // 下载按钮点击回调，可以拦截下载逻辑，从而实现自己下载或埋点统计
+                        .setDownloadClickListener(new OnDownloadClickListener() {
+                            @Override
+                            public void onClick(Activity activity, View view, int position) {
+                                // 可以在此处执行您自己的下载逻辑、埋点统计等信息
+                                Log.d(TAG, "onClick: position = " + position);
+                            }
+
+                            @Override
+                            public boolean isInterceptDownload() {
+                                // return true 时, 需要自己实现下载
+                                // return false 时, 使用内置下载
+                                return false;
                             }
                         })
 
                         //=================================================================================================
                         // 设置查看原图时的百分比样式：库中带有一个样式：ImagePreview.PROGRESS_THEME_CIRCLE_TEXT，使用如下：
                         .setProgressLayoutId(ImagePreview.PROGRESS_THEME_CIRCLE_TEXT, new OnOriginProgressListener() {
-                            @Override public void progress(View parentView, int progress) {
+                            @Override
+                            public void progress(View parentView, int progress) {
                                 Log.d(TAG, "progress: " + progress);
 
                                 // 需要找到进度控件并设置百分比，回调中的parentView即传入的布局的根View，可通过parentView找到控件：
@@ -310,7 +324,8 @@ public class MainActivity extends AppCompatActivity {
                                 textView.setText(progressText);
                             }
 
-                            @Override public void finish(View parentView) {
+                            @Override
+                            public void finish(View parentView) {
                                 Log.d(TAG, "finish: ");
                             }
                         })
@@ -337,7 +352,8 @@ public class MainActivity extends AppCompatActivity {
 
         // 通过相册选择图片，进行预览
         findViewById(R.id.buttonChoose).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 if (ContextCompat.checkSelfPermission(MainActivity.this.getApplicationContext(),
                         Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
@@ -347,7 +363,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         // 申请权限
                         ActivityCompat.requestPermissions(MainActivity.this,
-                                new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE, }, 1);
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,}, 1);
                     }
                 } else {
                     // 选择图片
@@ -358,7 +374,8 @@ public class MainActivity extends AppCompatActivity {
 
         // 清除磁盘缓存
         findViewById(R.id.buttonClean).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 ImageLoader.cleanDiskCache(MainActivity.this);
                 ToastUtil.getInstance()._short(MainActivity.this, "磁盘缓存已成功清除");
             }
@@ -389,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
                 .maxSelectable(30)
                 .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                 .thumbnailScale(0.85f)
-                .imageEngine(new GlideV4Engine())
+                .imageEngine(new GlideEngine())
                 .theme(com.zhihu.matisse.R.style.Matisse_Zhihu)
                 .showSingleMediaType(true)
                 .originalEnable(true)
@@ -401,10 +418,14 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if (resultCode == RESULT_OK && data != null) {
-                ArrayList<String> mCurrentSelectedPath = (ArrayList<String>) Matisse.obtainPathResult(data);
+                List<Uri> uriList = Matisse.obtainResult(data);
+                List<String> urlList = new ArrayList<>();
+                for (Uri uri : uriList) {
+                    urlList.add(uri.toString());
+                }
                 ImagePreview.getInstance()
                         .setContext(MainActivity.this)
-                        .setImageList(mCurrentSelectedPath)
+                        .setImageList(urlList)
                         .setShowDownButton(false)
                         .setShowCloseButton(false)
                         .setEnableDragClose(true)

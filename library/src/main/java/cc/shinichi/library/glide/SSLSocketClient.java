@@ -12,7 +12,7 @@ import javax.net.ssl.X509TrustManager;
 
 /**
  * @author 工藤
- * @email 18883840501@163.com
+ * @email qinglingou@gmail.com
  * cc.shinichi.library.glide.progress
  * create at 2018/11/2  15:55
  * description:

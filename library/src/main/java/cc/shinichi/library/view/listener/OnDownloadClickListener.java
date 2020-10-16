@@ -10,10 +10,17 @@ import android.view.View;
  * create at 2018/12/19  16:23
  * description:
  */
-public interface OnBigImageClickListener {
+public abstract class OnDownloadClickListener {
 
     /**
      * 点击事件
+     * 是否拦截下载行为
      */
-    void onClick(Activity activity, View view, int position);
+    public abstract void onClick(Activity activity, View view, int position);
+
+    /**
+     * 是否拦截下载
+     * @return
+     */
+    public abstract boolean isInterceptDownload();
 }

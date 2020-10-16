@@ -32,7 +32,9 @@ import cc.shinichi.library.R;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.FileTarget;
 import cc.shinichi.library.glide.ImageLoader;
+import cc.shinichi.library.tool.common.HttpUtil;
 import cc.shinichi.library.tool.common.NetworkUtil;
+import cc.shinichi.library.tool.file.FileUtil;
 import cc.shinichi.library.tool.image.ImageUtil;
 import cc.shinichi.library.tool.ui.PhoneUtil;
 import cc.shinichi.library.tool.ui.ToastUtil;
@@ -309,47 +311,20 @@ public class ImagePreviewAdapter extends PagerAdapter {
                 @Override
                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<File> target,
                                             boolean isFirstResource) {
-
-                    Glide.with(activity).downloadOnly().load(url).addListener(new RequestListener<File>() {
+                    new Thread(new Runnable() {
                         @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<File> target,
-                                                    boolean isFirstResource) {
-
-                            Glide.with(activity).downloadOnly().load(url).addListener(new RequestListener<File>() {
-                                @Override
-                                public boolean onLoadFailed(@Nullable GlideException e, Object model,
-                                                            Target<File> target, boolean isFirstResource) {
-                                    loadFailed(imageView, imageGif, progressBar, e);
-                                    return true;
-                                }
-
-                                @Override
-                                public boolean onResourceReady(File resource, Object model, Target<File> target,
-                                                               DataSource dataSource, boolean isFirstResource) {
-                                    loadSuccess(resource, imageView, imageGif, progressBar);
-                                    return true;
-                                }
-                            }).into(new FileTarget() {
-                                @Override
-                                public void onLoadStarted(@Nullable Drawable placeholder) {
-                                    super.onLoadStarted(placeholder);
-                                }
-                            });
-                            return true;
+                        public void run() {
+                            String fileFullName = String.valueOf(System.currentTimeMillis());
+                            String saveDir = FileUtil.getAvailableCacheDir(activity).getAbsolutePath() + File.separator + "image/";
+                            File downloadFile = HttpUtil.downloadFile(url, fileFullName, saveDir);
+                            if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
+                                // 通过urlConn下载完成
+                                loadSuccess(downloadFile, imageView, imageGif, progressBar);
+                            } else {
+                                loadFailed(imageView, imageGif, progressBar, e);
+                            }
                         }
-
-                        @Override
-                        public boolean onResourceReady(File resource, Object model, Target<File> target,
-                                                       DataSource dataSource, boolean isFirstResource) {
-                            loadSuccess(resource, imageView, imageGif, progressBar);
-                            return true;
-                        }
-                    }).into(new FileTarget() {
-                        @Override
-                        public void onLoadStarted(@Nullable Drawable placeholder) {
-                            super.onLoadStarted(placeholder);
-                        }
-                    });
+                    }).start();
                     return true;
                 }
 
@@ -368,39 +343,6 @@ public class ImagePreviewAdapter extends PagerAdapter {
         }
         container.addView(convertView);
         return convertView;
-    }
-
-    @Override
-    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        String originUrl = imageInfo.get(position).getOriginUrl();
-        try {
-            if (imageHashMap != null) {
-                SubsamplingScaleImageViewDragClose imageViewDragClose = imageHashMap.get(originUrl);
-                if (imageViewDragClose != null) {
-                    imageViewDragClose.resetScaleAndCenter();
-                    imageViewDragClose.destroyDrawingCache();
-                    imageViewDragClose.recycle();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            if (imageGifHashMap != null) {
-                PhotoView photoView = imageGifHashMap.get(originUrl);
-                if (photoView != null) {
-                    photoView.destroyDrawingCache();
-                    photoView.setImageBitmap(null);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            ImageLoader.clearMemory(activity);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -556,5 +498,38 @@ public class ImagePreviewAdapter extends PagerAdapter {
                     }
                 })
                 .into(imageGif);
+    }
+
+    @Override
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        String originUrl = imageInfo.get(position).getOriginUrl();
+        try {
+            if (imageHashMap != null) {
+                SubsamplingScaleImageViewDragClose imageViewDragClose = imageHashMap.get(originUrl);
+                if (imageViewDragClose != null) {
+                    imageViewDragClose.resetScaleAndCenter();
+                    imageViewDragClose.destroyDrawingCache();
+                    imageViewDragClose.recycle();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            if (imageGifHashMap != null) {
+                PhotoView photoView = imageGifHashMap.get(originUrl);
+                if (photoView != null) {
+                    photoView.destroyDrawingCache();
+                    photoView.setImageBitmap(null);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            ImageLoader.clearMemory(activity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

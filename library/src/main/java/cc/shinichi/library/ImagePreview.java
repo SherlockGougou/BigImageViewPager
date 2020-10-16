@@ -18,11 +18,12 @@ import cc.shinichi.library.view.ImagePreviewActivity;
 import cc.shinichi.library.view.listener.OnBigImageClickListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
+import cc.shinichi.library.view.listener.OnDownloadClickListener;
 import cc.shinichi.library.view.listener.OnOriginProgressListener;
 
 /**
  * @author 工藤
- * @email 18883840501@163.com
+ * @email qinglingou@gmail.com
  * cc.shinichi.library
  * create at 2018/5/22  09:06
  * description:
@@ -68,6 +69,7 @@ public class ImagePreview {
     private OnBigImageClickListener bigImageClickListener;
     private OnBigImageLongClickListener bigImageLongClickListener;
     private OnBigImagePageChangeListener bigImagePageChangeListener;
+    private OnDownloadClickListener downloadClickListener;
     private OnOriginProgressListener onOriginProgressListener;
 
     // 自定义百分比布局layout id
@@ -352,6 +354,15 @@ public class ImagePreview {
 
     public ImagePreview setBigImagePageChangeListener(OnBigImagePageChangeListener bigImagePageChangeListener) {
         this.bigImagePageChangeListener = bigImagePageChangeListener;
+        return this;
+    }
+
+    public OnDownloadClickListener getDownloadClickListener() {
+        return downloadClickListener;
+    }
+
+    public ImagePreview setDownloadClickListener(OnDownloadClickListener downloadClickListener) {
+        this.downloadClickListener = downloadClickListener;
         return this;
     }
 

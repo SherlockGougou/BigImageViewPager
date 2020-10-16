@@ -21,7 +21,6 @@ public class MyAppGlideModule extends AppGlideModule {
         super.registerComponents(context, glide, registry);
 
         // 替换底层网络框架为okhttp3
-        registry.replace(GlideUrl.class, InputStream.class,
-                new OkHttpUrlLoader.Factory(ProgressManager.getOkHttpClient()));
+        registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(ProgressManager.getOkHttpClient()));
     }
 }

@@ -18,7 +18,7 @@ import cc.shinichi.library.tool.ui.PhoneUtil;
 
 /**
  * @author 工藤
- * @email 18883840501@163.com
+ * @email qinglingou@gmail.com
  * cc.shinichi.drawlongpicturedemo.util
  * create at 2018/8/28  10:46
  * description:
@@ -284,7 +284,10 @@ public class ImageUtil {
     }
 
     public static float getSmallImageMaxScale(Context context, String imagePath) {
-        return getSmallImageMinScale(context, imagePath) * 2;
+        int[] wh = getWidthHeight(imagePath);
+        float imageWid = wh[0];
+        float phoneWid = PhoneUtil.getPhoneWid(context.getApplicationContext());
+        return phoneWid * 2 / imageWid;
     }
 
     public static Bitmap getImageBitmap(String srcPath, int degree) {

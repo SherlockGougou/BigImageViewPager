@@ -24,12 +24,11 @@ import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.glide.FileTarget;
 import cc.shinichi.library.tool.file.FileUtil;
 import cc.shinichi.library.tool.file.SingleMediaScanner;
-import cc.shinichi.library.tool.text.MD5Util;
 import cc.shinichi.library.tool.ui.ToastUtil;
 
 /**
  * @author 工藤
- * @email 18883840501@163.com
+ * @email qinglingou@gmail.com
  * com.fan16.cn.util.picture
  * create at 2018/5/4  16:34
  * description:图片下载工具类
