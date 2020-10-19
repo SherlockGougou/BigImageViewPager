@@ -46,6 +46,16 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private String[] images = {
+            // 六种格式的图片
+            "https://aloss.11oi.com/app/img/temp/launch_top.bmp",
+            "https://aloss.11oi.com/app/img/temp/launch_top.gif",
+            "https://aloss.11oi.com/app/img/temp/launch_top.jpeg",
+            "https://aloss.11oi.com/app/img/temp/launch_top.jpg",
+            "https://aloss.11oi.com/app/img/temp/launch_top.png",
+            "https://aloss.11oi.com/app/img/temp/launch_top.webp",
+            // 小尺寸图片
+            "https://s1.ax1x.com/2020/10/16/0HXKv4.jpg",
+            // 普通jpg图片
             "http://img6.16fan.com/201510/11/005258wdngg6rv0tpn8z9z.jpg",
             "http://img6.16fan.com/201510/11/013553aj3kp9u6iuz6k9uj.jpg",
             "http://img6.16fan.com/201510/11/011753fnanichdca0wbhxc.jpg",
@@ -57,11 +67,9 @@ public class MainActivity extends AppCompatActivity {
             "http://img6.16fan.com/201510/11/004955d8ftz3t1sttt7ft7.jpg",
             "http://img6.16fan.com/201510/11/005027qy2g55yyglb59zdu.jpg",
             "http://img6.16fan.com/201510/11/005229bbtxkczcl0btmw8e.jpg",
-            // 小尺寸图片
-            "https://s1.ax1x.com/2020/10/16/0HXKv4.jpg",
-            // 下面这张是：5760 * 3840
+            // 大图：5760 * 3840
             "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg",
-            // 下面这张是：2280 * 22116
+            // 长图：2280 * 22116
             "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg"
     };
 
@@ -176,8 +184,13 @@ public class MainActivity extends AppCompatActivity {
             imageInfo = new ImageInfo();
             // 原图地址
             imageInfo.setOriginUrl(image);
-            // 缩略图；实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样。
-            imageInfo.setThumbnailUrl(image.concat("-400"));
+            if (image.contains("16fan.com")) {
+                // 缩略图；实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样。
+                imageInfo.setThumbnailUrl(image.concat("-400"));
+            } else {
+                // 缩略图；实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样。
+                imageInfo.setThumbnailUrl(image);
+            }
             imageInfoList.add(imageInfo);
         }
 

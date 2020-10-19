@@ -5,12 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import cc.shinichi.library.tool.common.Print;
@@ -26,52 +23,6 @@ import cc.shinichi.library.tool.ui.PhoneUtil;
 public class ImageUtil {
 
     private static final String TAG = "ImageUtil";
-
-    public static Bitmap getImageBitmap(String srcPath, float maxWidth, float maxHeight) {
-        BitmapFactory.Options newOpts = new BitmapFactory.Options();
-        newOpts.inJustDecodeBounds = true;
-        Bitmap bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
-
-        newOpts.inJustDecodeBounds = false;
-        int originalWidth = newOpts.outWidth;
-        int originalHeight = newOpts.outHeight;
-
-        float be = 1;
-        if (originalWidth > originalHeight && originalWidth > maxWidth) {
-            be = originalWidth / maxWidth;
-        } else if (originalWidth < originalHeight && originalHeight > maxHeight) {
-            be = newOpts.outHeight / maxHeight;
-        }
-        if (be <= 0) {
-            be = 1;
-        }
-
-        newOpts.inSampleSize = (int) be;
-        newOpts.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        newOpts.inDither = false;
-        newOpts.inPurgeable = true;
-        newOpts.inInputShareable = true;
-
-        if (bitmap != null && !bitmap.isRecycled()) {
-            bitmap.recycle();
-        }
-
-        try {
-            bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
-        } catch (OutOfMemoryError e) {
-            if (bitmap != null && !bitmap.isRecycled()) {
-                bitmap.recycle();
-            }
-            Runtime.getRuntime().gc();
-        } catch (Exception e) {
-            Runtime.getRuntime().gc();
-        }
-
-        if (bitmap != null) {
-            bitmap = rotateBitmapByDegree(bitmap, getBitmapDegree(srcPath));
-        }
-        return bitmap;
-    }
 
     public static int getBitmapDegree(String path) {
         int degree = 0;
@@ -115,45 +66,6 @@ public class ImageUtil {
             bm.recycle();
         }
         return returnBm;
-    }
-
-    public static Bitmap resizeImage(Bitmap origin, int newWidth, int newHeight) {
-        if (origin == null) {
-            return null;
-        }
-        int height = origin.getHeight();
-        int width = origin.getWidth();
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-        Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);
-        Bitmap newBM = Bitmap.createBitmap(origin, 0, 0, width, height, matrix, false);
-        if (!origin.isRecycled()) {
-            origin.recycle();
-        }
-        return newBM;
-    }
-
-    public static String saveBitmapBackPath(Bitmap bm) throws IOException {
-        String path = Environment.getExternalStorageDirectory() + "/ShareLongPicture/.temp/";
-        File targetDir = new File(path);
-        if (!targetDir.exists()) {
-            try {
-                targetDir.mkdirs();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        String fileName = "temp_LongPictureShare_" + System.currentTimeMillis() + ".jpeg";
-        File savedFile = new File(path + fileName);
-        if (!savedFile.exists()) {
-            savedFile.createNewFile();
-        }
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(savedFile));
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-        bos.flush();
-        bos.close();
-        return savedFile.getAbsolutePath();
     }
 
     public static int getOrientation(String imagePath) {
@@ -353,24 +265,39 @@ public class ImageUtil {
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(path, options);
         String type = options.outMimeType;
+        Log.d(TAG, "getImageTypeWithMime: type1 = " + type);
         // ”image/png”、”image/jpeg”、”image/gif”
         if (TextUtils.isEmpty(type)) {
             type = "";
         } else {
             type = type.substring(6);
         }
+        Log.d(TAG, "getImageTypeWithMime: type2 = " + type);
         return type;
     }
 
-    public static boolean isGifImageWithMime(String path) {
-        return "gif".equalsIgnoreCase(getImageTypeWithMime(path));
+    public static boolean isPngImageWithMime(String url, String path) {
+        return "png".equalsIgnoreCase(getImageTypeWithMime(path)) || url.toLowerCase().endsWith("png");
     }
 
-    public static boolean isBmpImageWithMime(String path) {
-        return "bmp".equalsIgnoreCase(getImageTypeWithMime(path));
+    public static boolean isJpegImageWithMime(String url, String path) {
+        return "jpeg".equalsIgnoreCase(getImageTypeWithMime(path)) || "jpg".equalsIgnoreCase(getImageTypeWithMime(path))
+                || url.toLowerCase().endsWith("jpeg") || url.toLowerCase().endsWith("jpg");
     }
 
-    public static boolean isGifImageWithUrl(String url) {
-        return url.toLowerCase().endsWith("gif");
+    public static boolean isBmpImageWithMime(String url, String path) {
+        return "bmp".equalsIgnoreCase(getImageTypeWithMime(path)) || url.toLowerCase().endsWith("bmp");
+    }
+
+    public static boolean isGifImageWithMime(String url, String path) {
+        return "gif".equalsIgnoreCase(getImageTypeWithMime(path)) || url.toLowerCase().endsWith("gif");
+    }
+
+    public static boolean isWebpImageWithMime(String url, String path) {
+        return "webp".equalsIgnoreCase(getImageTypeWithMime(path)) || url.toLowerCase().endsWith("webp");
+    }
+
+    public static boolean isStandardImage(String url, String path) {
+        return isJpegImageWithMime(url, path) || isPngImageWithMime(url, path) || isBmpImageWithMime(url, path);
     }
 }
