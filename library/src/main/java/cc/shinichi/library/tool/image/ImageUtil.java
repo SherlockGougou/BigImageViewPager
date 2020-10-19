@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.IOException;
 
@@ -264,20 +265,39 @@ public class ImageUtil {
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(path, options);
         String type = options.outMimeType;
+        Log.d(TAG, "getImageTypeWithMime: type1 = " + type);
         // ”image/png”、”image/jpeg”、”image/gif”
         if (TextUtils.isEmpty(type)) {
             type = "";
         } else {
             type = type.substring(6);
         }
+        Log.d(TAG, "getImageTypeWithMime: type2 = " + type);
         return type;
     }
 
-    public static boolean isGifImageWithMime(String path) {
-        return "gif".equalsIgnoreCase(getImageTypeWithMime(path));
+    public static boolean isPngImageWithMime(String url, String path) {
+        return "png".equalsIgnoreCase(getImageTypeWithMime(path)) || url.toLowerCase().endsWith("png");
     }
 
-    public static boolean isBmpImageWithMime(String path) {
-        return "bmp".equalsIgnoreCase(getImageTypeWithMime(path));
+    public static boolean isJpegImageWithMime(String url, String path) {
+        return "jpeg".equalsIgnoreCase(getImageTypeWithMime(path)) || "jpg".equalsIgnoreCase(getImageTypeWithMime(path))
+                || url.toLowerCase().endsWith("jpeg") || url.toLowerCase().endsWith("jpg");
+    }
+
+    public static boolean isBmpImageWithMime(String url, String path) {
+        return "bmp".equalsIgnoreCase(getImageTypeWithMime(path)) || url.toLowerCase().endsWith("bmp");
+    }
+
+    public static boolean isGifImageWithMime(String url, String path) {
+        return "gif".equalsIgnoreCase(getImageTypeWithMime(path)) || url.toLowerCase().endsWith("gif");
+    }
+
+    public static boolean isWebpImageWithMime(String url, String path) {
+        return "webp".equalsIgnoreCase(getImageTypeWithMime(path)) || url.toLowerCase().endsWith("webp");
+    }
+
+    public static boolean isStandardImage(String url, String path) {
+        return isJpegImageWithMime(url, path) || isPngImageWithMime(url, path) || isBmpImageWithMime(url, path);
     }
 }

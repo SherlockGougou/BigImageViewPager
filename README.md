@@ -48,8 +48,8 @@ allprojects {
 ##### 此处显示的是本框架的最新版本号：
 ##### ⚠️注意：v3版本不再维护，最终版本为v3_4.0.2。建议使用v4、androidx版本。
 ```
-androidx用户  :   使用  androidx-6.1.0
-对于glide4.x  :   使用        v4_6.0.1
+androidx用户  :   使用  androidx-6.1.1
+对于glide4.x  :   使用        v4_6.1.1
 
 对于glide3.x  :   使用        v3_4.0.2
 ```
@@ -64,18 +64,18 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
   // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-6.1.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-6.1.1'
 
 ================================分割线==================================
 
   // 针对glide v4 版本，需要添加以下依赖：
 
   // glide
-  implementation 'com.github.bumptech.glide:glide:4.8.0'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
-  implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
+  implementation 'com.github.bumptech.glide:glide:4.9.0'
+  annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+  implementation 'com.github.bumptech.glide:okhttp3-integration:4.9.0'
   // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_6.0.1'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_6.1.1'
 
 ================================分割线==================================
 
