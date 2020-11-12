@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     boolean enableClickClose = false;
     boolean enableDragClose = false;
     boolean enableUpDragClose = false;
+    boolean enableDragIgnoreScale = false;
     boolean showIndicator = false;
     boolean showCloseButton = false;
     boolean showDownButton = false;
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         SwitchCompat switchClickClose = findViewById(R.id.switchClickClose);
         SwitchCompat switchDragClose = findViewById(R.id.switchDragClose);
         SwitchCompat switchUpDragClose = findViewById(R.id.switchUpDragClose);
+        SwitchCompat switchDragCloseIgnore = findViewById(R.id.switchDragCloseIgnore);
         SwitchCompat switchShowIndicator = findViewById(R.id.switchShowIndicator);
         SwitchCompat switchShowCloseButton = findViewById(R.id.switchShowCloseButton);
         SwitchCompat switchShowDownButton = findViewById(R.id.switchShowDownButton);
@@ -121,6 +123,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         switchUpDragClose.setChecked(true);
+
+        switchDragCloseIgnore.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                enableDragIgnoreScale = isChecked;
+            }
+        });
+        switchDragCloseIgnore.setChecked(false);
 
         switchShowIndicator.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -254,6 +264,9 @@ public class MainActivity extends AppCompatActivity {
                         .setEnableDragClose(enableDragClose)
                         // 是否启用上拉关闭。默认不启用
                         .setEnableUpDragClose(enableUpDragClose)
+                        // 是否忽略缩放启用拉动关闭。默认不忽略
+                        .setEnableDragCloseIgnoreScale(enableDragIgnoreScale)
+
                         // 是否显示关闭页面按钮，在页面左下角。默认不显示
                         .setShowCloseButton(showCloseButton)
                         // 设置关闭按钮图片资源，可不填，默认为库中自带：R.drawable.ic_action_close

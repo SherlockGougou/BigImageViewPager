@@ -37,7 +37,7 @@ public class ImagePreview {
     private WeakReference<Context> contextWeakReference;
     private List<ImageInfo> imageInfoList;// 图片数据集合
     private int index = 0;// 默认显示第几个
-    private String folderName = "Download";// 下载到的文件夹名（根目录中）
+    private String folderName = "";// 下载到的文件夹名（根目录中）
     private float minScale = 1.0f;// 最小缩放倍数
     private float mediumScale = 3.0f;// 中等缩放倍数
     private float maxScale = 5.0f;// 最大缩放倍数
@@ -49,6 +49,7 @@ public class ImagePreview {
 
     private boolean isEnableDragClose = false;// 是否启用下拉关闭，默认不启用
     private boolean isEnableUpDragClose = false;// 是否启用上拉关闭，默认不启用
+    private boolean isEnableDragCloseIgnoreScale = false;// 是否忽略缩放启用拉动关闭，默认false，true即忽略
     private boolean isEnableClickClose = true;// 是否启用点击关闭，默认启用
     private boolean isShowErrorToast = false;// 是否在加载失败时显示toast
 
@@ -267,6 +268,15 @@ public class ImagePreview {
         return this;
     }
 
+    public boolean isEnableDragCloseIgnoreScale() {
+        return isEnableDragCloseIgnoreScale;
+    }
+
+    public ImagePreview setEnableDragCloseIgnoreScale(boolean enableDragCloseIgnoreScale) {
+        isEnableDragCloseIgnoreScale = enableDragCloseIgnoreScale;
+        return this;
+    }
+
     public boolean isEnableClickClose() {
         return isEnableClickClose;
     }
@@ -357,13 +367,13 @@ public class ImagePreview {
         return this;
     }
 
-    public OnDownloadClickListener getDownloadClickListener() {
-        return downloadClickListener;
-    }
-
     public ImagePreview setDownloadClickListener(OnDownloadClickListener downloadClickListener) {
         this.downloadClickListener = downloadClickListener;
         return this;
+    }
+
+    public OnDownloadClickListener getDownloadClickListener() {
+        return downloadClickListener;
     }
 
     public OnOriginProgressListener getOnOriginProgressListener() {
@@ -478,6 +488,6 @@ public class ImagePreview {
     }
 
     private static class InnerClass {
-        private static ImagePreview instance = new ImagePreview();
+        private static final ImagePreview instance = new ImagePreview();
     }
 }
