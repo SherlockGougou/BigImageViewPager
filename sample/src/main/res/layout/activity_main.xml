@@ -78,7 +78,6 @@
           />
     </RelativeLayout>
 
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -94,6 +93,27 @@
 
       <androidx.appcompat.widget.SwitchCompat
           android:id="@+id/switchUpDragClose"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentRight="true"
+          />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        >
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerVertical="true"
+          android:text="开启或关闭忽略缩放启用拉动关闭功能"
+          />
+
+      <androidx.appcompat.widget.SwitchCompat
+          android:id="@+id/switchDragCloseIgnore"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_alignParentRight="true"

@@ -50,6 +50,7 @@ public class ImagePreview {
 
     private boolean isEnableDragClose = false;// 是否启用下拉关闭，默认不启用
     private boolean isEnableUpDragClose = false;// 是否启用上拉关闭，默认不启用
+    private boolean isEnableDragCloseIgnoreScale = false;// 是否忽略缩放启用拉动关闭，默认false，true即忽略
     private boolean isEnableClickClose = true;// 是否启用点击关闭，默认启用
     private boolean isShowErrorToast = false;// 是否在加载失败时显示toast
 
@@ -265,6 +266,15 @@ public class ImagePreview {
 
     public ImagePreview setEnableUpDragClose(boolean enableUpDragClose) {
         isEnableUpDragClose = enableUpDragClose;
+        return this;
+    }
+
+    public boolean isEnableDragCloseIgnoreScale() {
+        return isEnableDragCloseIgnoreScale;
+    }
+
+    public ImagePreview setEnableDragCloseIgnoreScale(boolean enableDragCloseIgnoreScale) {
+        isEnableDragCloseIgnoreScale = enableDragCloseIgnoreScale;
         return this;
     }
 

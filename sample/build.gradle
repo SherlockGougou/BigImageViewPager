@@ -7,8 +7,8 @@ android {
         applicationId "cc.shinichi.bigimageviewpager"
         minSdkVersion 14
         targetSdkVersion 29
-        versionCode 611
-        versionName "androidx-6.1.1"
+        versionCode 612
+        versionName "androidx-6.1.2"
     }
     buildTypes {
         release {
@@ -37,7 +37,7 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     // matisse
@@ -49,6 +49,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
     // library
-//   implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-6.1.1'
+//   implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-6.1.2'
     implementation project(':library')
 }

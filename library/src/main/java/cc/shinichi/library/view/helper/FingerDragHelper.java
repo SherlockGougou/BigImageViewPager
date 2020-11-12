@@ -80,10 +80,17 @@ public class FingerDragHelper extends LinearLayout {
                                 && (imageGif.getMaxTouchCount() == 0 || imageGif.getMaxTouchCount() == 1)
                                 && Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop;
                     } else if (imageView != null && imageView.getVisibility() == View.VISIBLE) {
-                        isIntercept = (imageView.getScale() <= (imageView.getMinScale() + 0.001F))
-                                && (imageView.getMaxTouchCount() == 0 || imageView.getMaxTouchCount() == 1)
-                                && Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop
-                                && imageView.atYEdge;
+                        // 如果设置了忽略缩放，即只要顶部或底部在边上都可拉动关闭
+                        if (ImagePreview.getInstance().isEnableDragCloseIgnoreScale()) {
+                            isIntercept = ((imageView.getScale() <= (imageView.getMinScale() + 0.001F)) || imageView.atYEdge)
+                                    && (imageView.getMaxTouchCount() == 0 || imageView.getMaxTouchCount() == 1)
+                                    && Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop;
+                        } else {
+                            isIntercept = (imageView.getScale() <= (imageView.getMinScale() + 0.001F))
+                                    && (imageView.getMaxTouchCount() == 0 || imageView.getMaxTouchCount() == 1)
+                                    && Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop
+                                    && imageView.atYEdge;
+                        }
                     }
                 }
                 break;
