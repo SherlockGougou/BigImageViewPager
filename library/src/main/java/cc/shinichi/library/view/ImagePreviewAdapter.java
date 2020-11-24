@@ -377,7 +377,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
         imageView.setImage(ImageSource.resource(ImagePreview.getInstance().getErrorPlaceHolder()));
 
         if (ImagePreview.getInstance().isShowErrorToast()) {
-            String errorMsg = "加载失败";
+            String errorMsg = activity.getString(R.string.toast_load_failed);
             if (e != null) {
                 errorMsg = errorMsg.concat(":\n").concat(e.getMessage());
             }

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import cc.shinichi.library.ImagePreview;
+import cc.shinichi.library.R;
 import cc.shinichi.library.glide.FileTarget;
 import cc.shinichi.library.tool.file.FileUtil;
 import cc.shinichi.library.tool.file.SingleMediaScanner;
@@ -40,14 +41,14 @@ public class DownloadPictureUtil {
             @Override
             public void onLoadStarted(@Nullable Drawable placeholder) {
                 super.onLoadStarted(placeholder);
-                ToastUtil.getInstance()._short(context, "开始下载...");
+                ToastUtil.getInstance()._short(context, context.getString(R.string.toast_start_download));
                 super.onLoadStarted(placeholder);
             }
 
             @Override
             public void onLoadFailed(@Nullable Drawable errorDrawable) {
                 super.onLoadFailed(errorDrawable);
-                ToastUtil.getInstance()._short(context, "保存失败");
+                ToastUtil.getInstance()._short(context, context.getString(R.string.toast_save_failed));
             }
 
             @Override
@@ -88,10 +89,10 @@ public class DownloadPictureUtil {
                             }
                             os.flush();
                         }
-                        ToastUtil.getInstance()._short(context, "成功保存到 ".concat(Environment.DIRECTORY_PICTURES + "/" + downloadFolderName));
+                        ToastUtil.getInstance()._short(context, context.getString(R.string.toast_save_success, Environment.DIRECTORY_PICTURES + "/" + downloadFolderName));
                     } catch (IOException e) {
                         e.printStackTrace();
-                        ToastUtil.getInstance()._short(context, "保存失败");
+                        ToastUtil.getInstance()._short(context, context.getString(R.string.toast_save_failed));
                     } finally {
                         try {
                             if (os != null) {
@@ -115,7 +116,7 @@ public class DownloadPictureUtil {
                     FileUtil.createFileByDeleteOldFile(path + name);
                     boolean result = FileUtil.copyFile(resource, path, name);
                     if (result) {
-                        ToastUtil.getInstance()._short(context, "成功保存到 ".concat(path));
+                        ToastUtil.getInstance()._short(context, context.getString(R.string.toast_save_success, path));
                         new SingleMediaScanner(context, path.concat(name), new SingleMediaScanner.ScanListener() {
                             @Override
                             public void onScanFinish() {
@@ -123,7 +124,7 @@ public class DownloadPictureUtil {
                             }
                         });
                     } else {
-                        ToastUtil.getInstance()._short(context, "保存失败");
+                        ToastUtil.getInstance()._short(context, context.getString(R.string.toast_save_failed));
                     }
                 }
             }

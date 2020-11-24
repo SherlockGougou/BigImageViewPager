@@ -12,10 +12,6 @@ public class ToastUtil {
 
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
-    public ToastUtil() {
-
-    }
-
     public static ToastUtil getInstance() {
         return InnerClass.instance;
     }

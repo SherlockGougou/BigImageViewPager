@@ -1,7 +1,7 @@
 ### BigImage + ImageView + ViewPager = BigImageViewPager
 
 一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。支持手势下拉退出。
-#### 注意：本框架支持网络图片、本地图片、支持gif动图、支持Android Q。
+#### 注意：本框架支持网络图片、本地图片、支持gif动图、支持Android 11。
 
 # 框架特性
 - 支持网络图片、本地图片；
@@ -19,22 +19,26 @@
 - 针对保存图片进行优化，文件扩展名使用文件头部Mime信息进行设置，不用担心gif保存成jpeg；
 - 支持自定义查看原图时的百分比View；
 - 支持BMP格式的图片；
-- 支持Android Q；
+- 支持Android 11；
 
 # 截图
 
 # 强烈推荐推荐扫描二维码进行安装体验：
+![扫码下载demo](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e50f06781ec248629b72d597183f5d2a~tplv-k3u1fbpfcp-watermark.image)
 
-![扫码下载demo](https://upload-images.jianshu.io/upload_images/1710902-0073c2f34a714fe2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![kpFnSO.gif](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bfd23ce0042e431bb200d7e5e2fca87d~tplv-k3u1fbpfcp-zoom-1.image)
 
-![kpFnSO.gif](https://s2.ax1x.com/2019/01/17/kpFnSO.gif)
-![kpFefK.jpg](https://s2.ax1x.com/2019/01/17/kpFefK.jpg)
+| 说明 | 截图 |
+| ------------ | ------------ |
+|主要功能|![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a045eaa577834b00a345b409b81826f8~tplv-k3u1fbpfcp-watermark.image)|
+|预览界面|![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a0a1125f397b46619c9beea59691eaf5~tplv-k3u1fbpfcp-watermark.image)|
+|下拉关闭|![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/414c415380f742c4918c4b705ffc2f4f~tplv-k3u1fbpfcp-watermark.image)|
+|查看原图|![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ffb4cfcbaecf43488d7ae671c7c02d3d~tplv-k3u1fbpfcp-watermark.image)|
 
-![主要功能概览](https://upload-images.jianshu.io/upload_images/1710902-2c4cae8d0ddaef1f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 # 用法
-#### 添加依赖
-##### Step 1. 在你project层级的build.gradle中，添加仓库地址:
+### 一、添加依赖
+#### Step 1. 在你project层级的build.gradle中，添加仓库地址:
 ```
 allprojects {
     repositories {
@@ -43,13 +47,13 @@ allprojects {
     }
 }
 ```
-##### Step 2. 在你主module的build.gradle中添加依赖：
+#### Step 2. 在你主module的build.gradle中添加依赖：
 
 ##### 此处显示的是本框架的最新版本号：
-##### ⚠️注意：v3版本不再维护，最终版本为v3_4.0.2。建议使用v4、androidx版本。
+##### ⚠️注意：glide v3版本不再维护，最终版本为v3_4.0.2。建议使用glide v4、androidx版本。
 ```
-androidx用户  :   使用  androidx-6.1.2
-对于glide4.x  :   使用        v4_6.1.2
+androidx用户  :   使用  androidx-6.1.3
+对于glide4.x  :   使用        v4_6.1.3
 
 对于glide3.x  :   使用        v3_4.0.2
 ```
@@ -57,56 +61,55 @@ androidx用户  :   使用  androidx-6.1.2
 ```
 dependencies {
 
-  // 针对androidx用户，需要添加以下依赖：
+  // ① 针对androidx用户，需要添加以下依赖：
 
   // glide
   implementation 'com.github.bumptech.glide:glide:4.11.0'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
   // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-6.1.2'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-6.1.3'
 
 ================================分割线==================================
 
-  // 针对glide v4 版本，需要添加以下依赖：
+  // ② 针对glide v4 版本，需要添加以下依赖：
 
   // glide
   implementation 'com.github.bumptech.glide:glide:4.9.0'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.9.0'
   // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_6.1.2'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_6.1.3'
 
 ================================分割线==================================
 
-  // 针对glide v3 版本，需要添加以下依赖：
+  // ③ 针对glide v3 版本，需要添加以下依赖：
 
   // 查看大图
   implementation 'com.github.SherlockGougou:BigImageViewPager:v3_4.0.2'
 }
 ```
 
-##### Step 3. 在您的主module里，添加自定义AppGlideModule
-######（注意！！！如果您用的是glide 3.x版本，不需要做这一步的操作，上一步的依赖后就完事儿了；
-###### 但如果您用的是glide 4.x版本，并且您的app中已经存在了自定义的GlideModule，您只需要把下面的那一行代码，添加到对应的重载方法中即可。）例如：
+#### Step 3. 在您的主module里，添加自定义AppGlideModule
+#####（注意！！！如果您用的是glide 3.x版本，不需要做这一步的操作，上一步的依赖后就完事儿了；
+##### 如果您用的是androidx版本，或者glide是4.x版本，您需要继承AppGlideModule并添加以下代码到对应的重载方法中。）例如：
 ```
 @GlideModule
 public class MyAppGlideModule extends AppGlideModule {
   @Override
-  public void registerComponents(@NonNull Context context, @NonNull Glide glide,
-      @NonNull Registry registry) {
+  public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
     super.registerComponents(context, glide, registry);
 
-    // 替换底层网络框架为okhttp3，这步很重要！如果不添加会无法显示原图的加载百分比
+    // 替换底层网络框架为okhttp3，这步很重要！如果不添加会无法正常显示原图的加载百分比，或者卡在1%
     // 如果您的app中已经存在了自定义的GlideModule，您只需要把这一行代码，添加到对应的重载方法中即可。
     registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(ProgressManager.getOkHttpClient()));
   }
 }
 ```
 
-##### Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project，等待重建完成，至此，框架添加完成。如遇到任何问题，请附带截图提issues，我会及时回复，或添加底部QQ群，进行交流。
+#### Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project，等待重建完成，至此，框架添加完成。如遇到任何问题，请附带截图提issues，我会及时回复，或添加底部QQ群，进行交流。
 
-## 调用方式
+## 二、调用方式
 
 #### 1：生成图片源：（如果你有缩略图和原图两种路径，请使用下面的方式，进行图片List的生成；如果你是本地图片或者没有原图缩略图之分，可以跳过这一步）
 ```
@@ -365,7 +368,7 @@ public class MyAppGlideModule extends AppGlideModule {
 详细操作请参考Demo：https://github.com/SherlockGougou/BigImageViewPager/blob/master/sample/src/main/java/cc/shinichi/bigimageviewpager/MainActivity.java#L291
 
 # DEMO体验
-![扫码下载demo](https://upload-images.jianshu.io/upload_images/1710902-0073c2f34a714fe2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![扫码下载demo](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0bc6607b402b4d0d9837fa44291cae43~tplv-k3u1fbpfcp-zoom-1.image)
 
 # GitHub源码
 https://github.com/SherlockGougou/BigImageViewPager
@@ -378,7 +381,7 @@ https://github.com/SherlockGougou/BigImageViewPager
 # Bug反馈、增加需求，加 QQ 交流群：271127803（大话安卓）
 ### 欢迎加入“大话安卓”技术交流群，一起分享，共同进步##
 
-![欢迎加入“大话安卓”技术交流群，互相学习提升](https://upload-images.jianshu.io/upload_images/1710902-5cdeb8c1f58dd425.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![欢迎加入“大话安卓”技术交流群，互相学习提升](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/516d83214bcd4db48e9b40798a945758~tplv-k3u1fbpfcp-zoom-1.image)
 
 # LICENSE
 ```

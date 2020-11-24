@@ -39,7 +39,7 @@
 		
 		<Button
 			android:id="@+id/btn_show_origin"
-			android:layout_width="100dp"
+			android:layout_width="wrap_content"
 			android:layout_height="30dp"
 			android:background="@drawable/gray_square_circle_bg_white_stroke"
 			android:gravity="center"
@@ -48,7 +48,8 @@
 			android:paddingTop="5dp"
 			android:paddingRight="10dp"
 			android:paddingBottom="5dp"
-			android:text="查看原图"
+			android:text="@string/btn_original"
+			android:textAllCaps="false"
 			android:textColor="#ffffff"
 			/>
 	</FrameLayout>

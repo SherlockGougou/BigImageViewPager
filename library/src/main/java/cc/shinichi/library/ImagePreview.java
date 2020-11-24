@@ -455,8 +455,7 @@ public class ImagePreview {
             }
         }
         if (imageInfoList == null || imageInfoList.size() == 0) {
-            throw new IllegalArgumentException(
-                    "Do you forget to call 'setImageInfoList(List<ImageInfo> imageInfoList)' ?");
+            throw new IllegalArgumentException("Do you forget to call 'setImageInfoList(List<ImageInfo> imageInfoList)' ?");
         }
         if (this.index >= imageInfoList.size()) {
             throw new IllegalArgumentException("index out of range!");

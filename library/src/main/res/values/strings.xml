@@ -1,4 +1,10 @@
 <resources>
-	<string name="app_name">library</string>
 	<string name="indicator">%1$s/%2$s</string>
+	<string name="btn_original">查看原图</string>
+
+	<string name="toast_start_download">开始下载</string>
+	<string name="toast_load_failed">加载失败</string>
+	<string name="toast_save_failed">保存失败</string>
+	<string name="toast_save_success">成功保存到：%1$s</string>
+	<string name="toast_deny_permission_save_failed">您拒绝了存储权限，下载失败！</string>
 </resources>
