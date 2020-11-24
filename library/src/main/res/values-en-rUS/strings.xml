@@ -1,0 +1,10 @@
+<resources>
+	<string name="indicator">%1$s/%2$s</string>
+	<string name="btn_original">Original image</string>
+
+	<string name="toast_start_download">Download start</string>
+	<string name="toast_load_failed">Load failed</string>
+	<string name="toast_save_failed">Save failed</string>
+	<string name="toast_save_success">Saved to：%1$s</string>
+	<string name="toast_deny_permission_save_failed">You denied the storage permission and the download failed!</string>
+</resources>

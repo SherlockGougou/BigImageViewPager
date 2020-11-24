@@ -377,7 +377,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
             }
         } else if (msg.what == 3) {
             // 隐藏查看原图按钮
-            btn_show_origin.setText("查看原图");
+            btn_show_origin.setText(R.string.btn_original);
             fm_image_show_origin_container.setVisibility(View.GONE);
             originalStatus = false;
         } else if (msg.what == 4) {
@@ -437,7 +437,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(ImagePreviewActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 // 拒绝权限
-                ToastUtil.getInstance()._short(context, "您拒绝了存储权限，下载失败！");
+                ToastUtil.getInstance()._short(context, getString(R.string.toast_deny_permission_save_failed));
             } else {
                 //申请权限
                 ActivityCompat.requestPermissions(ImagePreviewActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,}, 1);
@@ -456,7 +456,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
                 if (grantResults[i] == PERMISSION_GRANTED) {
                     downloadCurrentImg();
                 } else {
-                    ToastUtil.getInstance()._short(context, "您拒绝了存储权限，下载失败！");
+                    ToastUtil.getInstance()._short(context, getString(R.string.toast_deny_permission_save_failed));
                 }
             }
         }
