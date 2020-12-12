@@ -39,6 +39,7 @@ public class FingerDragHelper extends LinearLayout {
     private float mTranslationY;
     private float mLastTranslationY;
     private boolean isAnimate = false;
+    private boolean isFirstMoveAfterDown = true;
     private int mTouchslop;
     private onAlphaChangedListener mOnAlphaChangedListener;
 
@@ -73,6 +74,7 @@ public class FingerDragHelper extends LinearLayout {
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 mDownY = ev.getRawY();
+                isFirstMoveAfterDown = false;
             case MotionEvent.ACTION_MOVE:
                 if (ImagePreview.getInstance().isEnableDragClose()) {
                     if (imageGif != null && imageGif.getVisibility() == View.VISIBLE) {
@@ -91,6 +93,12 @@ public class FingerDragHelper extends LinearLayout {
                                     && Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop
                                     && imageView.atYEdge;
                         }
+                    }
+                    // 我的修改: 和微信表现一样：如果在放大模式并且不在顶部，滑动到顶部的时候这里可以拦截到事件
+                    // 此时mDownY应该重置为当前点，否则当前点离真正的按下点很远了直接view就被拖下来很远
+                    if (isIntercept && !isFirstMoveAfterDown) {
+                        mDownY = ev.getRawY();
+                        isFirstMoveAfterDown = true;
                     }
                 }
                 break;

@@ -29,11 +29,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
 
-import androidx.annotation.AnyThread;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.exifinterface.media.ExifInterface;
-
 import com.davemorrissey.labs.subscaleview.ImageViewState;
 import com.davemorrissey.labs.subscaleview.R.styleable;
 import com.davemorrissey.labs.subscaleview.decoder.CompatDecoderFactory;
@@ -53,6 +48,12 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import androidx.annotation.AnyThread;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.exifinterface.media.ExifInterface;
+import cc.shinichi.library.ImagePreview;
 
 /**
  * @author 工藤
@@ -910,9 +911,12 @@ public class SubsamplingScaleImageViewDragClose extends View {
                             float lastY = vTranslate.y;
                             fitToBounds(true);
                             atXEdge = lastX != vTranslate.x;
-                            atYEdge = lastY != vTranslate.y;
+                            boolean enableUpDragClose = ImagePreview.getInstance().isEnableUpDragClose();
+                            // 我的修改: 只允许从上面往下关闭，不允许往上滑关闭. 如果Y在边缘并且是向上滑动，则判断为Y不在边缘
+                            atYEdge = (lastY != vTranslate.y) && (enableUpDragClose || ((event.getY() - vCenterStart.y) > 0));
                             boolean edgeXSwipe = atXEdge && dx > dy && !isPanning;
-                            boolean edgeYSwipe = atYEdge && dy > dx && !isPanning;
+                            // 我的修改：仿微信，即使正在移动图像，如果到了顶部，也允许往下滑动关闭, 即对Y移动不判断是否在panning
+                            boolean edgeYSwipe = atYEdge && dy > dx;// && !isPanning;
                             boolean yPan = lastY == vTranslate.y && dy > offset * 3;
                             if (!edgeXSwipe && !edgeYSwipe && (!atXEdge || !atYEdge || yPan || isPanning)) {
                                 isPanning = true;
