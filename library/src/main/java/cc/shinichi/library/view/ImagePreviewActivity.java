@@ -2,6 +2,7 @@ package cc.shinichi.library.view;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -27,6 +28,8 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.material.transition.platform.MaterialContainerTransform;
+import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback;
 
 import java.io.File;
 import java.util.List;
@@ -95,14 +98,52 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         }
         Intent intent = new Intent();
         intent.setClass(context, ImagePreviewActivity.class);
-        context.startActivity(intent);
-        if (context instanceof Activity) {
-            ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
+        //过度动画效果只对安卓 5.0 以上有效
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            View transitionView = ImagePreview.getInstance().getTransitionView();
+            String transitionShareElementName = ImagePreview.getInstance().getTransitionShareElementName();
+            //如果未设置则使用默认动画
+            if (transitionView != null && transitionShareElementName != null) {
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(
+                        (Activity) context,
+                        transitionView,
+                        transitionShareElementName
+                );
+                context.startActivity(intent, options.toBundle());
+            }
+            else {
+                context.startActivity(intent);
+                if (context instanceof Activity) {
+                    ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                }
+            }
+        }
+        //低于 5.0 使用默认动画
+        else {
+            context.startActivity(intent);
+            if (context instanceof Activity) {
+                ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
         }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //只有安卓版本大于 5.0 才可使用过度动画
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+            findViewById(android.R.id.content).setTransitionName("shared_element_container");
+            setEnterSharedElementCallback(new MaterialContainerTransformSharedElementCallback());
+            getWindow().setSharedElementEnterTransition(new MaterialContainerTransform().
+                    addTarget(android.R.id.content).
+                    setDuration(300L));
+
+            getWindow().setSharedElementReturnTransition(new MaterialContainerTransform()
+                    .addTarget(android.R.id.content)
+                    .setDuration(250L));
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sh_layout_preview);
 

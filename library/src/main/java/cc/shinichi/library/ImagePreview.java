@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.LayoutRes;
@@ -37,6 +38,8 @@ public class ImagePreview {
     private static final int MIN_DOUBLE_CLICK_TIME = 1500;
     private WeakReference<Context> contextWeakReference;
     private List<ImageInfo> imageInfoList;// 图片数据集合
+    private View transitionView;   // 用于过度动画的 VIEW
+    private String transitionShareElementName;   // 过度动画的共享元素名
     private int index = 0;// 默认显示第几个
     private String folderName = "";// 下载到的文件夹名（根目录中）
     private float minScale = 1.0f;// 最小缩放倍数
@@ -87,6 +90,33 @@ public class ImagePreview {
     public ImagePreview setContext(@NonNull Context context) {
         this.contextWeakReference = new WeakReference<>(context);
         return this;
+    }
+
+    /**
+     * 设置用于过度动画的共享元素view<br/>
+     * 需要同时设置 {@link ImagePreview#setTransitionShareElementName(String)}
+     *
+     * */
+    public ImagePreview setTransitionView(View transitionView) {
+        this.transitionView = transitionView;
+        return this;
+    }
+
+    public View getTransitionView() {
+        return transitionView;
+    }
+
+    public String getTransitionShareElementName() {
+        return transitionShareElementName;
+    }
+
+    /**
+     * 设置用于过度动画的共享元素name <br/>
+     * 需要同时设置 {@link ImagePreview#setTransitionView(View)}
+     *
+     * */
+    public void setTransitionShareElementName(String transitionShareElementName) {
+        this.transitionShareElementName = transitionShareElementName;
     }
 
     public List<ImageInfo> getImageInfoList() {
@@ -398,6 +428,8 @@ public class ImagePreview {
 
     public void reset() {
         imageInfoList = null;
+        transitionView = null;
+        transitionShareElementName = null;
         index = 0;
         minScale = 1.0f;
         mediumScale = 3.0f;
