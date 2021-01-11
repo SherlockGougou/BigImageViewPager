@@ -99,11 +99,11 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
         Intent intent = new Intent();
         intent.setClass(context, ImagePreviewActivity.class);
 
-        //过度动画效果只对安卓 5.0 以上有效
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            // 过度动画效果只对安卓 5.0 以上有效
             View transitionView = ImagePreview.getInstance().getTransitionView();
             String transitionShareElementName = ImagePreview.getInstance().getTransitionShareElementName();
-            //如果未设置则使用默认动画
+            // 如果未设置则使用默认动画
             if (transitionView != null && transitionShareElementName != null) {
                 ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(
                         (Activity) context,
@@ -111,16 +111,14 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
                         transitionShareElementName
                 );
                 context.startActivity(intent, options.toBundle());
-            }
-            else {
+            } else {
                 context.startActivity(intent);
                 if (context instanceof Activity) {
                     ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 }
             }
-        }
-        //低于 5.0 使用默认动画
-        else {
+        } else {
+            // 低于 5.0 使用默认动画
             context.startActivity(intent);
             if (context instanceof Activity) {
                 ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -130,18 +128,13 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //只有安卓版本大于 5.0 才可使用过度动画
+        // 只有安卓版本大于 5.0 才可使用过度动画
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
             findViewById(android.R.id.content).setTransitionName("shared_element_container");
             setEnterSharedElementCallback(new MaterialContainerTransformSharedElementCallback());
-            getWindow().setSharedElementEnterTransition(new MaterialContainerTransform().
-                    addTarget(android.R.id.content).
-                    setDuration(300L));
-
-            getWindow().setSharedElementReturnTransition(new MaterialContainerTransform()
-                    .addTarget(android.R.id.content)
-                    .setDuration(250L));
+            getWindow().setSharedElementEnterTransition(new MaterialContainerTransform().addTarget(android.R.id.content).setDuration(300L));
+            getWindow().setSharedElementReturnTransition(new MaterialContainerTransform().addTarget(android.R.id.content).setDuration(250L));
         }
 
         super.onCreate(savedInstanceState);
@@ -316,7 +309,11 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
 
     @Override
     public void onBackPressed() {
-        finish();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            supportFinishAfterTransition();
+        } else {
+            finish();
+        }
     }
 
     @Override

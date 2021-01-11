@@ -95,8 +95,7 @@ public class ImagePreview {
     /**
      * 设置用于过度动画的共享元素view<br/>
      * 需要同时设置 {@link ImagePreview#setTransitionShareElementName(String)}
-     *
-     * */
+     */
     public ImagePreview setTransitionView(View transitionView) {
         this.transitionView = transitionView;
         return this;
@@ -113,10 +112,10 @@ public class ImagePreview {
     /**
      * 设置用于过度动画的共享元素name <br/>
      * 需要同时设置 {@link ImagePreview#setTransitionView(View)}
-     *
-     * */
-    public void setTransitionShareElementName(String transitionShareElementName) {
+     */
+    public ImagePreview setTransitionShareElementName(String transitionShareElementName) {
         this.transitionShareElementName = transitionShareElementName;
+        return this;
     }
 
     public List<ImageInfo> getImageInfoList() {

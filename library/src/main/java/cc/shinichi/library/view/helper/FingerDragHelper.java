@@ -172,8 +172,7 @@ public class FingerDragHelper extends LinearLayout {
                 public void onAnimationEnd(Animator animation) {
                     reset();
                     Activity activity = ((Activity) getContext());
-                    activity.finish();
-                    activity.overridePendingTransition(fadeIn, fadeOut);
+                    activity.onBackPressed();
                 }
 
                 @Override
@@ -207,8 +206,7 @@ public class FingerDragHelper extends LinearLayout {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     reset();
-                    ((Activity) getContext()).finish();
-                    ((Activity) getContext()).overridePendingTransition(fadeIn, fadeOut);
+                    ((Activity) getContext()).onBackPressed();
                 }
 
                 @Override

@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -21,6 +24,8 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
+import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
@@ -88,6 +93,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+            setExitSharedElementCallback(new MaterialContainerTransformSharedElementCallback());
+            getWindow().setSharedElementsUseOverlay(false);
+        }
+
         setContentView(R.layout.activity_main);
 
         SwitchCompat switchClickClose = findViewById(R.id.switchClickClose);
@@ -221,6 +233,56 @@ public class MainActivity extends AppCompatActivity {
 
                 // 一行代码即可实现大部分需求，如需定制，可参考下面自定义的代码：
                 ImagePreview.getInstance().setContext(MainActivity.this).setImageList(Arrays.asList(images)).start();
+            }
+        });
+
+        ImageView image1 = findViewById(R.id.image1);
+        ImageView image2 = findViewById(R.id.image2);
+        ImageView image3 = findViewById(R.id.image3);
+
+        List<String> list2 = new ArrayList<>();
+        list2.add("http://img6.16fan.com/201510/11/005258wdngg6rv0tpn8z9z.jpg");
+        list2.add("http://img6.16fan.com/201510/11/013553aj3kp9u6iuz6k9uj.jpg");
+        list2.add("http://img6.16fan.com/201510/11/011753fnanichdca0wbhxc.jpg");
+
+        Glide.with(this).load("http://img6.16fan.com/201510/11/005258wdngg6rv0tpn8z9z.jpg").into(image1);
+        Glide.with(this).load("http://img6.16fan.com/201510/11/013553aj3kp9u6iuz6k9uj.jpg").into(image2);
+        Glide.with(this).load("http://img6.16fan.com/201510/11/011753fnanichdca0wbhxc.jpg").into(image3);
+
+        image1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ImagePreview.getInstance()
+                        .setContext(MainActivity.this)
+                        .setImageList(list2)
+                        .setIndex(0)
+                        .setTransitionView(view)
+                        .setTransitionShareElementName("shared_element_container")
+                        .start();
+            }
+        });
+        image2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ImagePreview.getInstance()
+                        .setContext(MainActivity.this)
+                        .setImageList(list2)
+                        .setIndex(1)
+                        .setTransitionView(view)
+                        .setTransitionShareElementName("shared_element_container")
+                        .start();
+            }
+        });
+        image3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ImagePreview.getInstance()
+                        .setContext(MainActivity.this)
+                        .setImageList(list2)
+                        .setIndex(2)
+//                        .setTransitionView(view)
+//                        .setTransitionShareElementName("shared_element_container")
+                        .start();
             }
         });
 

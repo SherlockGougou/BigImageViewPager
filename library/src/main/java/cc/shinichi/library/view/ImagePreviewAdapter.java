@@ -207,7 +207,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 if (ImagePreview.getInstance().isEnableClickClose()) {
-                    activity.finish();
+                    activity.onBackPressed();
                 }
                 if (ImagePreview.getInstance().getBigImageClickListener() != null) {
                     ImagePreview.getInstance().getBigImageClickListener().onClick(activity, v, position);
@@ -218,7 +218,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 if (ImagePreview.getInstance().isEnableClickClose()) {
-                    activity.finish();
+                    activity.onBackPressed();
                 }
                 if (ImagePreview.getInstance().getBigImageClickListener() != null) {
                     ImagePreview.getInstance().getBigImageClickListener().onClick(activity, v, position);
