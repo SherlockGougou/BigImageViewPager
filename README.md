@@ -2,6 +2,7 @@
 
 一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。支持手势下拉退出。
 #### 注意：本框架支持网络图片、本地图片、支持gif动图、支持Android 11。
+#### 后续可能会仅维护androidx版本，support请尽快迁移到androidx。参考官方迁移文档：https://developer.android.google.cn/jetpack/androidx/migrate
 
 # 框架特性
 - 支持网络图片、本地图片；
@@ -72,7 +73,7 @@ dependencies {
 
 ================================分割线==================================
 
-  // ② 针对glide v4 版本，需要添加以下依赖：
+  // ② 针对glide v4 版本【建议项目尽快迁移到androix，后续此库的support版本会停更】，需要添加以下依赖：
 
   // glide
   implementation 'com.github.bumptech.glide:glide:4.9.0'
