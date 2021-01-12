@@ -1,8 +1,9 @@
 ### BigImage + ImageView + ViewPager = BigImageViewPager
 
 一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。支持手势下拉退出。
-#### 注意：本框架支持网络图片、本地图片、支持gif动图、支持Android 11。
-#### 后续可能会仅维护androidx版本，support请尽快迁移到androidx。参考官方迁移文档：https://developer.android.google.cn/jetpack/androidx/migrate
+### 注意：本框架支持网络图片、本地图片、支持gif动图、支持Android 11。
+### androidx分支：https://github.com/SherlockGougou/BigImageViewPager/tree/androidx
+### 后续可能会仅维护androidx版本，support请尽快迁移到androidx。参考官方迁移文档：https://developer.android.google.cn/jetpack/androidx/migrate
 
 # 框架特性
 - 支持网络图片、本地图片；
@@ -151,7 +152,7 @@ public class MyAppGlideModule extends AppGlideModule {
             // 开启预览
             .start();
 
-            // 仅需一行代码,默认配置为：
+            // 默认配置为：
             //      显示顶部进度指示器、
             //      显示右侧下载按钮、
             //      隐藏左侧关闭按钮、
@@ -194,149 +195,7 @@ public class MyAppGlideModule extends AppGlideModule {
 |start|开启看图|最后调用|
 
 ##### 3：自定义多种配置：
-```
-        // 完全自定义调用：
-        findViewById(R.id.buttonPreview).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                ImagePreview.getInstance()
-                    // 上下文，必须是activity，不需要担心内存泄漏，本框架已经处理好
-                    .setContext(MainActivity.this)
-                    // 从第几张图片开始，索引从0开始哦~
-                    .setIndex(0)
-
-                    //=================================================================================================
-                    // 有三种设置数据集合的方式，根据自己的需求进行三选一：
-                    // 1：第一步生成的imageInfo List
-                    .setImageInfoList(imageInfoList)
-
-                    // 2：直接传url List
-                    //.setImageList(List<String> imageList)
-
-                    // 3：只有一张图片的情况，可以直接传入这张图片的url
-                    //.setImage(String image)
-                    //=================================================================================================
-
-                    // 加载策略，默认为手动模式（具体可看下面加载策略的详细说明）
-                    .setLoadStrategy(loadStrategy)
-
-                    // 保存的文件夹名称，会在Picture目录进行文件夹的新建。比如："BigImageView"，会在Picture目录新建BigImageView文件夹)
-                    .setFolderName("BigImageView")
-
-                    // 缩放动画时长，单位ms
-                    .setZoomTransitionDuration(300)
-
-                    // 是否显示加载失败的Toast
-                    .setShowErrorToast(showErrorToast)
-
-                    // 是否启用点击图片关闭。默认启用
-                    .setEnableClickClose(enableClickClose)
-                    // 是否启用上拉/下拉关闭。默认不启用
-                    .setEnableDragClose(enableDragClose)
-                    // 是否忽略缩放启用拉动关闭。默认不忽略
-                    .setEnableDragCloseIgnoreScale(true)
-
-                    // 是否显示关闭页面按钮，在页面左下角。默认不显示
-                    .setShowCloseButton(showCloseButton)
-                    // 设置关闭按钮图片资源，可不填，默认为库中自带：R.drawable.ic_action_close
-                    .setCloseIconResId(R.drawable.ic_action_close)
-
-                    // 是否显示下载按钮，在页面右下角。默认显示
-                    .setShowDownButton(showDownButton)
-                    // 设置下载按钮图片资源，可不填，默认为库中自带：R.drawable.icon_download_new
-                    .setDownIconResId(R.drawable.icon_download_new)
-
-                    // 设置是否显示顶部的指示器（1/9）默认显示
-                    .setShowIndicator(showIndicator)
-
-                    // 设置失败时的占位图，默认为库中自带R.drawable.load_failed，设置为 0 时不显示
-                    .setErrorPlaceHolder(R.drawable.load_failed)
-
-                    // 点击回调
-                    .setBigImageClickListener(new OnBigImageClickListener() {
-                        @Override public void onClick(View view, int position) {
-                            // ...
-                            Log.d(TAG, "onClick: ");
-                        }
-                    })
-                    // 长按回调
-                    .setBigImageLongClickListener(new OnBigImageLongClickListener() {
-                        @Override public boolean onLongClick(View view, int position) {
-                            // ...
-                            Log.d(TAG, "onLongClick: ");
-                            return false;
-                        }
-                    })
-                    // 页面切换回调
-                    .setBigImagePageChangeListener(new OnBigImagePageChangeListener() {
-                        @Override
-                        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                            Log.d(TAG, "onPageScrolled: ");
-                        }
-
-                        @Override public void onPageSelected(int position) {
-                            Log.d(TAG, "onPageSelected: ");
-                        }
-
-                        @Override public void onPageScrollStateChanged(int state) {
-                            Log.d(TAG, "onPageScrollStateChanged: ");
-                        }
-                    })
-                    // 下载按钮点击回调，可以拦截下载逻辑，从而实现自己下载或埋点统计
-                    .setDownloadClickListener(new OnDownloadClickListener() {
-                        @Override
-                        public void onClick(Activity activity, View view, int position) {
-                            // 可以在此处执行您自己的下载逻辑、埋点统计等信息
-                            Log.d(TAG, "onClick: position = " + position);
-                        }
-
-                        @Override
-                        public boolean isInterceptDownload() {
-                            // return true 时, 需要自己实现下载
-                            // return false 时, 使用内置下载
-                            return false;
-                        }
-                    })
-
-                    //=================================================================================================
-                    // 设置查看原图时的百分比样式：库中带有一个样式：ImagePreview.PROGRESS_THEME_CIRCLE_TEXT，使用如下：
-                    .setProgressLayoutId(ImagePreview.PROGRESS_THEME_CIRCLE_TEXT, new OnOriginProgressListener() {
-                        @Override public void progress(View parentView, int progress) {
-                            Log.d(TAG, "progress: " + progress);
-
-                            // 需要找到进度控件并设置百分比，回调中的parentView即是传入的布局的根View，可通过parentView找到进度控件：
-                            ProgressBar progressBar = parentView.findViewById(R.id.sh_progress_view);
-                            TextView textView = parentView.findViewById(R.id.sh_progress_text);
-                            progressBar.setProgress(progress);
-                            String progressText = progress + "%";
-                            textView.setText(progressText);
-                        }
-
-                        @Override public void finish(View parentView) {
-                            Log.d(TAG, "finish: ");
-                        }
-                    })
-
-                    // 使用自定义百分比样式，传入自己的布局，并设置回调，再根据parentView找到进度控件进行百分比的设置：
-                    //.setProgressLayoutId(R.layout.image_progress_layout_theme_1, new OnOriginProgressListener() {
-                    //    @Override public void progress(View parentView, int progress) {
-                    //        Log.d(TAG, "progress: " + progress);
-                    //
-                    //        ProgressBar progressBar = parentView.findViewById(R.id.progress_horizontal);
-                    //        progressBar.setProgress(progress);
-                    //    }
-                    //
-                    //    @Override public void finish(View parentView) {
-                    //        Log.d(TAG, "finish: ");
-                    //    }
-                    //})
-                    //=================================================================================================
-
-                    // 开启预览
-                    .start();
-            }
-        });
-
-```
+请参考Demo：https://github.com/SherlockGougou/BigImageViewPager/blob/androidx/sample/src/main/java/cc/shinichi/bigimageviewpager/MainActivity.java#L289
 
 ##### 4：加载策略介绍
 ```
@@ -367,6 +226,12 @@ public class MyAppGlideModule extends AppGlideModule {
 
 ##### 5：自定义百分比View
 详细操作请参考Demo：https://github.com/SherlockGougou/BigImageViewPager/blob/master/sample/src/main/java/cc/shinichi/bigimageviewpager/MainActivity.java#L291
+
+##### 6：Q&A
+1.查看原图卡在1%？
+答：请仔细查看以上第三步的操作。
+2.多张重复图片，左右切换图片黑屏？
+答：请看issues：https://github.com/SherlockGougou/BigImageViewPager/issues/107
 
 # DEMO体验
 ![扫码下载demo](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0bc6607b402b4d0d9837fa44291cae43~tplv-k3u1fbpfcp-zoom-1.image)
