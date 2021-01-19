@@ -27,7 +27,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
-    implementation 'androidx.exifinterface:exifinterface:1.3.1'
+    implementation 'androidx.exifinterface:exifinterface:1.3.2'
     api 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     // glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'

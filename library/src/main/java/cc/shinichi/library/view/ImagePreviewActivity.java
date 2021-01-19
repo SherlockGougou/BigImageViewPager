@@ -320,6 +320,11 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
+        ImagePreview.getInstance().reset();
+        if (imagePreviewAdapter != null) {
+            imagePreviewAdapter.closePage();
+        }
     }
 
     public int convertPercentToBlackAlphaColor(float percent) {
@@ -497,15 +502,6 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
                     ToastUtil.getInstance()._short(context, getString(R.string.toast_deny_permission_save_failed));
                 }
             }
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ImagePreview.getInstance().reset();
-        if (imagePreviewAdapter != null) {
-            imagePreviewAdapter.closePage();
         }
     }
 
