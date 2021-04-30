@@ -274,10 +274,10 @@ public class ImagePreviewAdapter extends PagerAdapter {
         }
 
         imageGifHashMap.remove(originPathUrl);
-        imageGifHashMap.put(originPathUrl, imageGif);
+        imageGifHashMap.put(originPathUrl + "_" + position, imageGif);
 
         imageHashMap.remove(originPathUrl);
-        imageHashMap.put(originPathUrl, imageView);
+        imageHashMap.put(originPathUrl + "_" + position, imageView);
 
         ImagePreview.LoadStrategy loadStrategy = ImagePreview.getInstance().getLoadStrategy();
         // 根据当前加载策略判断，需要加载的url是哪一个
@@ -510,7 +510,7 @@ public class ImagePreviewAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        String originUrl = imageInfo.get(position).getOriginUrl();
+        String originUrl = imageInfo.get(position).getOriginUrl() + "_" + position;
         try {
             if (imageHashMap != null) {
                 SubsamplingScaleImageViewDragClose imageViewDragClose = imageHashMap.get(originUrl);

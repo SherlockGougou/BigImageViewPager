@@ -2,7 +2,6 @@
 
 一个图片浏览器，支持超大图、超长图、支持手势放大、支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。支持手势下拉退出。
 ### 注意：本框架支持网络图片、本地图片、支持gif动图、支持Android 11。
-### androidx分支：https://github.com/SherlockGougou/BigImageViewPager/tree/androidx
 ### 后续可能会仅维护androidx版本，support请尽快迁移到androidx。参考官方迁移文档：https://developer.android.google.cn/jetpack/androidx/migrate
 
 # 框架特性
@@ -52,12 +51,10 @@ allprojects {
 #### Step 2. 在你主module的build.gradle中添加依赖：
 
 ##### 此处显示的是本框架的最新版本号：
-##### ⚠️注意：glide v3版本不再维护，最终版本为v3_4.0.2。建议使用glide v4、androidx版本。
+##### ⚠️注意：glide v3版本不再维护，最终版本为v3_4.0.2。建议使用androidx版本。
 ```
-androidx用户  :   使用  androidx-6.1.3
+androidx用户  :   使用  androidx-6.1.5
 对于glide4.x  :   使用        v4_6.1.3
-
-对于glide3.x  :   使用        v3_4.0.2
 ```
 
 ```
@@ -70,7 +67,7 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
   // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-6.1.3'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-6.1.5'
 
 ================================分割线==================================
 
@@ -84,17 +81,10 @@ dependencies {
   implementation 'com.github.SherlockGougou:BigImageViewPager:v4_6.1.3'
 
 ================================分割线==================================
-
-  // ③ 针对glide v3 版本，需要添加以下依赖：
-
-  // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_4.0.2'
 }
 ```
 
-#### Step 3. 在您的主module里，添加自定义AppGlideModule
-#####（注意！！！如果您用的是glide 3.x版本，不需要做这一步的操作，上一步的依赖后就完事儿了；
-##### 如果您用的是androidx版本，或者glide是4.x版本，您需要继承AppGlideModule并添加以下代码到对应的重载方法中。）例如：
+#### Step 3. 在您的主module里，添加自定义AppGlideModule。您需要继承AppGlideModule并添加以下代码到对应的重载方法中，例如：
 ```
 @GlideModule
 public class MyAppGlideModule extends AppGlideModule {
@@ -230,8 +220,6 @@ public class MyAppGlideModule extends AppGlideModule {
 ##### 6：Q&A
 1.查看原图卡在1%？
 答：请仔细查看以上第三步的操作。
-2.多张重复图片，左右切换图片黑屏？
-答：请看issues：https://github.com/SherlockGougou/BigImageViewPager/issues/107
 
 # DEMO体验
 ![扫码下载demo](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0bc6607b402b4d0d9837fa44291cae43~tplv-k3u1fbpfcp-zoom-1.image)
