@@ -20,6 +20,7 @@ public abstract class OnDownloadClickListener {
 
     /**
      * 是否拦截下载
+     *
      * @return
      */
     public abstract boolean isInterceptDownload();

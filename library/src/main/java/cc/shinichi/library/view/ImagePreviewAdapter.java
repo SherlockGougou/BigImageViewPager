@@ -77,7 +77,6 @@ public class ImagePreviewAdapter extends PagerAdapter {
                     }
                 }
                 imageHashMap.clear();
-                imageHashMap = null;
             }
             if (imageGifHashMap != null && imageGifHashMap.size() > 0) {
                 for (Object o : imageGifHashMap.entrySet()) {
@@ -88,7 +87,6 @@ public class ImagePreviewAdapter extends PagerAdapter {
                     }
                 }
                 imageGifHashMap.clear();
-                imageGifHashMap = null;
             }
         } catch (Exception e) {
             e.printStackTrace();

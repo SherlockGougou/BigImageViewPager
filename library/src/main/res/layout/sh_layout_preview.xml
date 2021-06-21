@@ -44,14 +44,14 @@
 			android:layout_height="30dp"
 			android:background="@drawable/gray_square_circle_bg_white_stroke"
 			android:gravity="center"
+			android:includeFontPadding="false"
 			android:paddingLeft="10dp"
 			android:paddingTop="5dp"
 			android:paddingRight="10dp"
 			android:paddingBottom="5dp"
 			android:text="@string/btn_original"
-			android:textColor="#ffffff"
 			android:textAllCaps="false"
-			android:includeFontPadding="false"
+			android:textColor="#ffffff"
 			/>
 	</FrameLayout>
 

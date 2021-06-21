@@ -1,9 +1,9 @@
 package cc.shinichi.library.view.nine;
 
-import android.view.View;
-
 import static cc.shinichi.library.view.nine.AnimatorProxy.NEEDS_PROXY;
 import static cc.shinichi.library.view.nine.AnimatorProxy.wrap;
+
+import android.view.View;
 
 public final class ViewHelper {
     private ViewHelper() {

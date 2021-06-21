@@ -1,5 +1,7 @@
 package cc.shinichi.bigimageviewpager;
 
+import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
@@ -45,12 +47,17 @@ import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
 import cc.shinichi.library.view.listener.OnDownloadClickListener;
 import cc.shinichi.library.view.listener.OnOriginProgressListener;
 
-import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
-
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-
+    boolean enableClickClose = false;
+    boolean enableDragClose = false;
+    boolean enableUpDragClose = false;
+    boolean enableDragIgnoreScale = false;
+    boolean showIndicator = false;
+    boolean showCloseButton = false;
+    boolean showDownButton = false;
+    boolean showErrorToast = false;
     private String[] images = {
             // 六种格式的图片
             "https://aloss.11oi.com/app/img/temp/launch_top.bmp",
@@ -78,16 +85,6 @@ public class MainActivity extends AppCompatActivity {
             // 长图：2280 * 22116
             "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg"
     };
-
-    boolean enableClickClose = false;
-    boolean enableDragClose = false;
-    boolean enableUpDragClose = false;
-    boolean enableDragIgnoreScale = false;
-    boolean showIndicator = false;
-    boolean showCloseButton = false;
-    boolean showDownButton = false;
-    boolean showErrorToast = false;
-
     private ImagePreview.LoadStrategy loadStrategy = ImagePreview.LoadStrategy.Default;
 
     @Override

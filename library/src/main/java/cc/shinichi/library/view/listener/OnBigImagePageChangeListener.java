@@ -1,5 +1,7 @@
 package cc.shinichi.library.view.listener;
 
+import androidx.viewpager.widget.ViewPager;
+
 /**
  * @author 工藤
  * @email qinglingou@gmail.com

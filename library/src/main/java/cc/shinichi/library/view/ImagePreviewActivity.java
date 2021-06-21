@@ -1,5 +1,7 @@
 package cc.shinichi.library.view;
 
+import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityOptions;
@@ -45,8 +47,6 @@ import cc.shinichi.library.tool.common.HandlerUtils;
 import cc.shinichi.library.tool.image.DownloadPictureUtil;
 import cc.shinichi.library.tool.ui.ToastUtil;
 import cc.shinichi.library.view.listener.OnDownloadClickListener;
-
-import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 
 /**
  * @author 工藤

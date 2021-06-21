@@ -92,6 +92,10 @@ public class ImagePreview {
         return this;
     }
 
+    public View getTransitionView() {
+        return transitionView;
+    }
+
     /**
      * 设置用于过度动画的共享元素view<br/>
      * 需要同时设置 {@link ImagePreview#setTransitionShareElementName(String)}
@@ -99,10 +103,6 @@ public class ImagePreview {
     public ImagePreview setTransitionView(View transitionView) {
         this.transitionView = transitionView;
         return this;
-    }
-
-    public View getTransitionView() {
-        return transitionView;
     }
 
     public String getTransitionShareElementName() {
@@ -397,13 +397,13 @@ public class ImagePreview {
         return this;
     }
 
+    public OnDownloadClickListener getDownloadClickListener() {
+        return downloadClickListener;
+    }
+
     public ImagePreview setDownloadClickListener(OnDownloadClickListener downloadClickListener) {
         this.downloadClickListener = downloadClickListener;
         return this;
-    }
-
-    public OnDownloadClickListener getDownloadClickListener() {
-        return downloadClickListener;
     }
 
     public OnOriginProgressListener getOnOriginProgressListener() {
