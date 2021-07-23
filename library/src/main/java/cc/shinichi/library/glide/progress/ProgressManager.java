@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import cc.shinichi.library.glide.SSLSocketClient;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -43,9 +42,12 @@ public class ProgressManager {
 
     }
 
-    public static OkHttpClient getOkHttpClient() {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.addNetworkInterceptor(new Interceptor() {
+    /**
+     * 下载监听
+     * @return
+     */
+    public static Interceptor getNetWorkInterceptor(){
+       return new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 Request request = chain.request();
@@ -54,13 +56,7 @@ public class ProgressManager {
                         .body(new ProgressResponseBody(request.url().toString(), LISTENER, response.body()))
                         .build();
             }
-        })
-                .sslSocketFactory(SSLSocketClient.getSSLSocketFactory(), SSLSocketClient.geX509tTrustManager())
-                .hostnameVerifier(SSLSocketClient.getHostnameVerifier());
-        builder.connectTimeout(30, TimeUnit.SECONDS);
-        builder.writeTimeout(30, TimeUnit.SECONDS);
-        builder.readTimeout(30, TimeUnit.SECONDS);
-        return builder.build();
+        };
     }
 
     public static void addListener(String url, OnProgressListener listener) {
