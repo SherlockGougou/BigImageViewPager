@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -129,7 +130,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements Handler.C
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // 只有安卓版本大于 5.0 才可使用过度动画
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !TextUtils.isEmpty(ImagePreview.getInstance().getTransitionShareElementName())) {
             getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
             findViewById(android.R.id.content).setTransitionName("shared_element_container");
             setEnterSharedElementCallback(new MaterialContainerTransformSharedElementCallback());
