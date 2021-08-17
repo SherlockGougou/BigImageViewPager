@@ -31,7 +31,6 @@ import cc.shinichi.library.tool.ui.ToastUtil;
 /**
  * @author 工藤
  * @email qinglingou@gmail.com
- * com.fan16.cn.util.picture
  * create at 2018/5/4  16:34
  * description:图片下载工具类
  */

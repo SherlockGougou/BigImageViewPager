@@ -6,7 +6,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="../../../../../../layout/custom_preview.xml" value="0.390625" />
+        <entry key="../../../../../../layout/custom_preview.xml" value="0.30462962962962964" />
       </map>
     </option>
   </component>
@@ -15,7 +15,7 @@
   </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="org.jetbrains.annotations.Nullable" />
-    <option name="myDefaultNotNull" value="android.support.annotation.NonNull" />
+    <option name="myDefaultNotNull" value="android.annotation.NonNull" />
     <option name="myNullables">
       <value>
         <list size="15">

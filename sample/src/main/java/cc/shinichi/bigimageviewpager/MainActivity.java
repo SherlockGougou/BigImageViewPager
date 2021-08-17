@@ -58,8 +58,11 @@ public class MainActivity extends AppCompatActivity {
     boolean showCloseButton = false;
     boolean showDownButton = false;
     boolean showErrorToast = false;
+
+    private ImagePreview.LoadStrategy loadStrategy = ImagePreview.LoadStrategy.Default;
+
     private String[] images = {
-            // 六种格式的图片
+            // 不限于以下六种格式的图片
             "https://aloss.11oi.com/app/img/temp/launch_top.bmp",
             "https://aloss.11oi.com/app/img/temp/launch_top.gif",
             "https://aloss.11oi.com/app/img/temp/launch_top.jpeg",
@@ -85,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
             // 长图：2280 * 22116
             "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg"
     };
-    private ImagePreview.LoadStrategy loadStrategy = ImagePreview.LoadStrategy.Default;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
         });
         switchShowErrorToast.setChecked(false);
 
-        loadStrategy = ImagePreview.LoadStrategy.Default;
         radioGroupStrategy.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -214,7 +215,6 @@ public class MainActivity extends AppCompatActivity {
             imageInfoList.add(imageInfo);
         }
 
-
         // 最简单的调用：
         findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,7 +229,10 @@ public class MainActivity extends AppCompatActivity {
                 //      加载原图的百分比在底部
 
                 // 一行代码即可实现大部分需求，如需定制，可参考下面自定义的代码：
-                ImagePreview.getInstance().setContext(MainActivity.this).setImageList(Arrays.asList(images)).start();
+                ImagePreview.getInstance()
+                        .setContext(MainActivity.this)
+                        .setImageList(Arrays.asList(images))
+                        .start();
             }
         });
 
@@ -394,6 +397,10 @@ public class MainActivity extends AppCompatActivity {
                                 return false;
                             }
                         })
+                        // 设置自定义的GlideUrl类路径，对于那些地址中带有token等会变化的参数的图片，可能需要自定义的key计算规则。
+                        // 参考：https://blog.csdn.net/m0_37218227/article/details/83718505
+                        // 默认使用内置的GlideUrl.class
+//                        .setCustomGlideUrlClzPath("")
 
                         //=================================================================================================
                         // 设置查看原图时的百分比样式：库中带有一个样式：ImagePreview.PROGRESS_THEME_CIRCLE_TEXT，使用如下：
@@ -436,7 +443,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 通过相册选择图片，进行预览
+        // 通过相册选择图片进行预览
         findViewById(R.id.buttonChoose).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

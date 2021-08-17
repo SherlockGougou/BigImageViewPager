@@ -21,7 +21,6 @@ import cc.shinichi.library.view.photoview.PhotoView;
 /**
  * @author 工藤
  * @email qinglingou@gmail.com
- * com.fan16.cn.widget.ninegrid
  * create at 2018/10/19  11:22
  * description:辅助下拉关闭图片
  */

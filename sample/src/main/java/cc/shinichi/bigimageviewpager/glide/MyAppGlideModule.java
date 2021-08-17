@@ -17,6 +17,7 @@ import cc.shinichi.library.glide.progress.ProgressManager;
 
 @GlideModule
 public class MyAppGlideModule extends AppGlideModule {
+
     @Override
     public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
         super.registerComponents(context, glide, registry);

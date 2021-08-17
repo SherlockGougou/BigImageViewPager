@@ -13,7 +13,6 @@ import java.net.URLDecoder;
 /**
  * @author 工藤
  * @email qinglingou@gmail.com
- * com.fan16.cn.widget.ninegrid.preview
  * create at 2018/10/19  11:33
  * description:
  * <p>

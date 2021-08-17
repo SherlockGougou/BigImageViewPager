@@ -59,6 +59,8 @@ public class ImagePreview {
 
     private LoadStrategy loadStrategy = LoadStrategy.Default;// 加载策略
 
+    private String customGlideUrlClzPath = null;
+
     @DrawableRes
     private int indicatorShapeResId = R.drawable.shape_indicator_bg;
     @DrawableRes
@@ -422,6 +424,15 @@ public class ImagePreview {
     public ImagePreview setProgressLayoutId(int progressLayoutId, OnOriginProgressListener onOriginProgressListener) {
         setOnOriginProgressListener(onOriginProgressListener);
         this.progressLayoutId = progressLayoutId;
+        return this;
+    }
+
+    public String getCustomGlideUrlClzPath() {
+        return customGlideUrlClzPath;
+    }
+
+    public ImagePreview setCustomGlideUrlClzPath(String customGlideUrlClzPath) {
+        this.customGlideUrlClzPath = customGlideUrlClzPath;
         return this;
     }
 

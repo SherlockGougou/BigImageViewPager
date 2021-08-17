@@ -56,8 +56,8 @@ public class ImagePreviewAdapter extends PagerAdapter {
     private static final String TAG = "ImagePreview";
     private final AppCompatActivity activity;
     private final List<ImageInfo> imageInfo;
-    private HashMap<String, SubsamplingScaleImageViewDragClose> imageHashMap = new HashMap<>();
-    private HashMap<String, PhotoView> imageGifHashMap = new HashMap<>();
+    private final HashMap<String, SubsamplingScaleImageViewDragClose> imageHashMap = new HashMap<>();
+    private final HashMap<String, PhotoView> imageGifHashMap = new HashMap<>();
     private String finalLoadUrl = "";
 
     public ImagePreviewAdapter(AppCompatActivity activity, @NonNull List<ImageInfo> imageInfo) {
