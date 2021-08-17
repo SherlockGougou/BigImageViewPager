@@ -235,7 +235,7 @@ https://github.com/SherlockGougou/BigImageViewPager
 # Bug反馈、增加需求，加 QQ 交流群：271127803（大话安卓）
 ### 欢迎加入“大话安卓”技术交流群，一起分享，共同进步##
 
-![欢迎加入“大话安卓”技术交流群，互相学习提升](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/516d83214bcd4db48e9b40798a945758~tplv-k3u1fbpfcp-zoom-1.image)
+![欢迎加入官方技术交流群，互相学习提升](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/17de72a7d15445f3b9a9591647af3c9b~tplv-k3u1fbpfcp-watermark.image)
 
 # LICENSE
 ```
