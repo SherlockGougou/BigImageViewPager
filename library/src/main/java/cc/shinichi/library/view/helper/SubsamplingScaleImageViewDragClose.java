@@ -241,7 +241,7 @@ public class SubsamplingScaleImageViewDragClose extends View {
     // Screen coordinate of top-left corner of source image
     private PointF vTranslate;
     private PointF vTranslateStart;
-    private PointF vTranslateBefore;
+    private PointF vTranslateBefore = new PointF(0, 0);
     // Source coordinate to center on, used when new position is set externally before view is ready
     private Float pendingScale;
     private PointF sPendingCenter;
@@ -517,7 +517,7 @@ public class SubsamplingScaleImageViewDragClose extends View {
         scaleStart = 0f;
         vTranslate = null;
         vTranslateStart = null;
-        vTranslateBefore = null;
+        vTranslateBefore.set(0, 0);
         pendingScale = 0f;
         sPendingCenter = null;
         sRequestedCenter = null;
@@ -713,7 +713,8 @@ public class SubsamplingScaleImageViewDragClose extends View {
         }
 
         // Abort if not ready
-        if (vTranslate == null) {
+        PointF translate = vTranslate;
+        if (translate == null) {
             if (singleDetector != null) {
                 singleDetector.onTouchEvent(event);
             }
@@ -730,16 +731,13 @@ public class SubsamplingScaleImageViewDragClose extends View {
         if (vTranslateStart == null) {
             vTranslateStart = new PointF(0, 0);
         }
-        if (vTranslateBefore == null) {
-            vTranslateBefore = new PointF(0, 0);
-        }
         if (vCenterStart == null) {
             vCenterStart = new PointF(0, 0);
         }
 
         // Store current values so we can send an event if they change
         float scaleBefore = scale;
-        vTranslateBefore.set(vTranslate);
+        vTranslateBefore.set(translate);
 
         boolean handled = onTouchEventInternal(event);
         sendStateChanged(scaleBefore, vTranslateBefore, ORIGIN_TOUCH);
@@ -1057,9 +1055,6 @@ public class SubsamplingScaleImageViewDragClose extends View {
         if (anim != null && anim.vFocusStart != null) {
             // Store current values so we can send an event if they change
             float scaleBefore = scale;
-            if (vTranslateBefore == null) {
-                vTranslateBefore = new PointF(0, 0);
-            }
             vTranslateBefore.set(vTranslate);
 
             long scaleElapsed = System.currentTimeMillis() - anim.time;
