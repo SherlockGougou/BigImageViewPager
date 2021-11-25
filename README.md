@@ -209,17 +209,18 @@ public class MyAppGlideModule extends AppGlideModule {
 答：请仔细查看以上第三步的操作。
 
 # 推荐扫描二维码进行安装体验：
-![扫码下载demo](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e50f06781ec248629b72d597183f5d2a~tplv-k3u1fbpfcp-watermark.image)
+<p align="center">
+  <img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e50f06781ec248629b72d597183f5d2a~tplv-k3u1fbpfcp-watermark.image" width="200"/>
+  <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bfd23ce0042e431bb200d7e5e2fca87d~tplv-k3u1fbpfcp-zoom-1.image" width="200"/>
+</p>
 
-![kpFnSO.gif](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bfd23ce0042e431bb200d7e5e2fca87d~tplv-k3u1fbpfcp-zoom-1.image)
+<p align="center">
+  <img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a045eaa577834b00a345b409b81826f8~tplv-k3u1fbpfcp-watermark.image" width="200"/>
+  <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a0a1125f397b46619c9beea59691eaf5~tplv-k3u1fbpfcp-watermark.image" width="200"/>
+  <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/414c415380f742c4918c4b705ffc2f4f~tplv-k3u1fbpfcp-watermark.image" width="200"/>
+  <img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ffb4cfcbaecf43488d7ae671c7c02d3d~tplv-k3u1fbpfcp-watermark.image" width="200"/>
+</p>
 
-
-| 说明 | 截图 |
-| ------------ | ------------ |
-|主要功能|![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a045eaa577834b00a345b409b81826f8~tplv-k3u1fbpfcp-watermark.image)|
-|预览界面|![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a0a1125f397b46619c9beea59691eaf5~tplv-k3u1fbpfcp-watermark.image)|
-|下拉关闭|![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/414c415380f742c4918c4b705ffc2f4f~tplv-k3u1fbpfcp-watermark.image)|
-|查看原图|![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ffb4cfcbaecf43488d7ae671c7c02d3d~tplv-k3u1fbpfcp-watermark.image)|
 
 # GitHub源码
 https://github.com/SherlockGougou/BigImageViewPager
@@ -230,7 +231,9 @@ https://github.com/SherlockGougou/BigImageViewPager
 - okhttp 进度监听部分代码，借鉴使用了[GlideImageView](https://github.com/sunfusheng/GlideImageView)，在此对其表示感谢，喜欢其作品的可以移步去查看学习
 
 # Bug反馈、增加需求，加 QQ 交流群
-![欢迎加入官方技术交流群，互相学习提升](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/17de72a7d15445f3b9a9591647af3c9b~tplv-k3u1fbpfcp-watermark.image)
+<p align="center">
+  <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/17de72a7d15445f3b9a9591647af3c9b~tplv-k3u1fbpfcp-watermark.image" width="200"/>
+</p>
 
 # LICENSE
 ```
