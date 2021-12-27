@@ -737,7 +737,11 @@ public class SubsamplingScaleImageViewDragClose extends View {
 
         // Store current values so we can send an event if they change
         float scaleBefore = scale;
-        vTranslateBefore.set(translate);
+        if (vTranslateBefore == null) {
+            vTranslateBefore = new PointF(vTranslate.x, vTranslate.y);
+        } else {
+            vTranslateBefore.set(translate);
+        }
 
         boolean handled = onTouchEventInternal(event);
         sendStateChanged(scaleBefore, vTranslateBefore, ORIGIN_TOUCH);
