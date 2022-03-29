@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion '29.0.3'
     defaultConfig {
         applicationId "cc.shinichi.bigimageviewpager"
         minSdkVersion 14
@@ -24,6 +23,9 @@ android {
         main {
             jniLibs.srcDirs = ['libs']
         }
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 
