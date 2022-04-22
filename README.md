@@ -21,7 +21,6 @@
 - 支持自定义查看原图时的百分比View；
 - 支持BMP格式的图片；
 - 支持Android 12；
-- 支持自定义GlideUrl，对于变化的url也不用担心了；
 
 # 用法
 ### 一、添加依赖
@@ -52,7 +51,7 @@ dependencies {
   implementation 'com.github.bumptech.glide:glide:4.11.0'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
-  // 查看大图
+  // BigImageViewPager https://github.com/SherlockGougou/BigImageViewPager
   implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.0.0'
 
 ================================分割线==================================
@@ -63,7 +62,7 @@ dependencies {
   implementation 'com.github.bumptech.glide:glide:4.9.0'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.9.0'
-  // 查看大图
+  // BigImageViewPager https://github.com/SherlockGougou/BigImageViewPager
   implementation 'com.github.SherlockGougou:BigImageViewPager:v4_6.1.3'
 
 ================================分割线==================================
