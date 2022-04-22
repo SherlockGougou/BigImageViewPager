@@ -264,7 +264,7 @@ object ImageUtil {
     }
 
     private fun isPngImageWithMime(url: String, path: String?): Boolean {
-        return "png".equals(getImageTypeWithMime(path), ignoreCase = true) || url.lowercase(Locale.getDefault())
+        return "png".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.ROOT)
             .endsWith("png")
     }
 
@@ -273,22 +273,22 @@ object ImageUtil {
             getImageTypeWithMime(path),
             ignoreCase = true
         )
-                || url.lowercase(Locale.getDefault()).endsWith("jpeg") || url.lowercase(Locale.getDefault())
+                || url.toLowerCase(Locale.ROOT).endsWith("jpeg") || url.toLowerCase(Locale.ROOT)
             .endsWith("jpg"))
     }
 
     fun isBmpImageWithMime(url: String, path: String?): Boolean {
-        return "bmp".equals(getImageTypeWithMime(path), ignoreCase = true) || url.lowercase(Locale.getDefault())
+        return "bmp".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.ROOT)
             .endsWith("bmp")
     }
 
     fun isGifImageWithMime(url: String, path: String?): Boolean {
-        return "gif".equals(getImageTypeWithMime(path), ignoreCase = true) || url.lowercase(Locale.getDefault())
+        return "gif".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.ROOT)
             .endsWith("gif")
     }
 
     fun isWebpImageWithMime(url: String, path: String?): Boolean {
-        return "webp".equals(getImageTypeWithMime(path), ignoreCase = true) || url.lowercase(Locale.getDefault())
+        return "webp".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.ROOT)
             .endsWith("webp")
     }
 

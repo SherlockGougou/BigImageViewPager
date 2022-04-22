@@ -268,7 +268,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         var percent = percent
         percent = Math.min(1f, Math.max(0f, percent))
         val intAlpha = (percent * 255).toInt()
-        val stringAlpha = Integer.toHexString(intAlpha).lowercase(Locale.getDefault())
+        val stringAlpha = Integer.toHexString(intAlpha).toLowerCase(Locale.ROOT)
         val color = "#" + (if (stringAlpha.length < 2) "0" else "") + stringAlpha + "000000"
         return Color.parseColor(color)
     }
