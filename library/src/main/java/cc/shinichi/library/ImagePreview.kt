@@ -101,6 +101,10 @@ class ImagePreview {
     var loadStrategy = LoadStrategy.Default
         private set
 
+    @LayoutRes
+    var previewLayoutResId = R.layout.sh_layout_preview
+        private set
+
     @DrawableRes
     var indicatorShapeResId = R.drawable.shape_indicator_bg
         private set
@@ -365,6 +369,15 @@ class ImagePreview {
     fun setProgressLayoutId(progressLayoutId: Int, onOriginProgressListener: OnOriginProgressListener): ImagePreview {
         setOnOriginProgressListener(onOriginProgressListener)
         this.progressLayoutId = progressLayoutId
+        return this
+    }
+
+    /**
+     * 完全自定义预览界面，请参考：R.layout.sh_layout_preview
+     * 并保持控件类型、id和其中一致，否则会找不到控件而报错
+     */
+    fun setPreviewLayoutResId(previewLayoutResId: Int): ImagePreview {
+        this.previewLayoutResId = previewLayoutResId
         return this
     }
 

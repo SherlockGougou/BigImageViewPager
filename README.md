@@ -131,7 +131,7 @@ public class MyAppGlideModule extends AppGlideModule {
             // 默认配置为：
             //      显示顶部进度指示器、
             //      显示右侧下载按钮、
-            //      隐藏左侧关闭按钮、
+            //      隐藏关闭按钮、
             //      开启点击图片关闭、
             //      关闭下拉图片关闭、
             //      加载方式为手动模式

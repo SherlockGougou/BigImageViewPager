@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/rootView"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="#000000"
+	>
+
+	<cc.shinichi.library.view.HackyViewPager
+		android:id="@+id/viewPager"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		/>
+
+	<ImageView
+		android:id="@+id/imgCloseButton"
+		android:layout_width="35dp"
+		android:layout_height="35dp"
+		android:layout_alignParentStart="true"
+		android:layout_alignParentLeft="true"
+		android:layout_gravity="bottom|left"
+		android:layout_marginStart="20dp"
+		android:layout_marginLeft="20dp"
+		android:layout_marginTop="60dp"
+		android:layout_marginBottom="20dp"
+		android:padding="3dp"
+		app:srcCompat="@drawable/ic_action_close"
+		/>
+
+	<TextView
+		android:id="@+id/tv_indicator"
+		android:layout_width="wrap_content"
+		android:layout_height="20dp"
+		android:layout_alignParentTop="true"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="60dp"
+		android:background="@drawable/shape_indicator_bg"
+		android:gravity="center"
+		android:includeFontPadding="false"
+		android:text="1/9"
+		android:textColor="#ffffff"
+		android:textSize="15sp"
+		/>
+
+	<FrameLayout
+		android:id="@+id/fm_image_show_origin_container"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_centerHorizontal="true"
+		android:layout_marginBottom="20dp"
+		>
+
+		<Button
+			android:id="@+id/btn_show_origin"
+			android:layout_width="wrap_content"
+			android:layout_height="30dp"
+			android:background="@drawable/gray_square_circle_bg_white_stroke"
+			android:gravity="center"
+			android:includeFontPadding="false"
+			android:paddingLeft="10dp"
+			android:paddingTop="5dp"
+			android:paddingRight="10dp"
+			android:paddingBottom="5dp"
+			android:text="@string/btn_original"
+			android:textAllCaps="false"
+			android:textColor="#ffffff"
+			/>
+	</FrameLayout>
+
+	<FrameLayout
+		android:id="@+id/fm_center_progress_container"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerInParent="true"
+		>
+
+	</FrameLayout>
+
+	<ImageView
+		android:id="@+id/img_download"
+		android:layout_width="35dp"
+		android:layout_height="35dp"
+		android:layout_alignParentEnd="true"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentBottom="true"
+		android:layout_gravity="bottom|right"
+		android:layout_marginEnd="20dp"
+		android:layout_marginRight="20dp"
+		android:layout_marginBottom="20dp"
+		android:padding="3dp"
+		app:srcCompat="@drawable/icon_download_new"
+		/>
+</RelativeLayout>

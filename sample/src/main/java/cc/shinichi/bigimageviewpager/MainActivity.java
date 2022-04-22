@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                 // 仅需一行代码,默认配置为：
                 //      显示顶部进度指示器、
                 //      显示右侧下载按钮、
-                //      隐藏左侧关闭按钮、
+                //      隐藏关闭按钮、
                 //      开启点击图片关闭、
                 //      关闭下拉图片关闭、
                 //      加载方式为手动模式
@@ -260,8 +260,6 @@ public class MainActivity extends AppCompatActivity {
                         .setIndex(0)
                         .setTransitionView(view)
                         .setTransitionShareElementName("shared_element_container")
-                        .setEnableDragClose(true)
-                        .setEnableDragCloseIgnoreScale(true)
                         .start();
             }
         });
@@ -274,8 +272,6 @@ public class MainActivity extends AppCompatActivity {
                         .setIndex(1)
                         .setTransitionView(view)
                         .setTransitionShareElementName("shared_element_container")
-                        .setEnableDragClose(true)
-                        .setEnableDragCloseIgnoreScale(true)
                         .start();
             }
         });
@@ -442,6 +438,9 @@ public class MainActivity extends AppCompatActivity {
                         //})
                         //=================================================================================================
 
+                        // 完全自定义预览界面，请参考：R.layout.sh_layout_preview
+                        // 并保持控件类型、id和其中一致，否则会找不到控件而报错
+                        .setPreviewLayoutResId(R.layout.custom_layout_preview)
                         // 开启预览
                         .start();
             }

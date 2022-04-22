@@ -95,7 +95,10 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 MaterialContainerTransform().addTarget(android.R.id.content).setDuration(250L)
         }
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.sh_layout_preview)
+
+        // R.layout.sh_layout_preview
+        setContentView(ImagePreview.instance.previewLayoutResId)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val window = window
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
