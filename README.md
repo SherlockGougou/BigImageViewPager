@@ -21,6 +21,7 @@
 - 支持自定义查看原图时的百分比View；
 - 支持BMP格式的图片；
 - 支持Android 12；
+- 支持自定义预览界面；
 
 # 用法
 ### 一、添加依赖
@@ -167,6 +168,7 @@ public class MyAppGlideModule extends AppGlideModule {
 |setIndicatorShapeResId|设置顶部指示器背景shape|默认自带灰色圆角shape，设置为0时不显示背景|
 |setShowErrorToast|设置是否显示加载失败的Toast|默认false，不显示|
 |setZoomTransitionDuration|设置图片缩放动画时长|默认200ms|
+|setPreviewLayoutResId|设置自定义的预览页面布局id|默认R.layout.sh_layout_preview|
 |start|开启看图|最后调用|
 
 ##### 3：自定义多种配置：
