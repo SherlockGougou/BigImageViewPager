@@ -73,14 +73,14 @@ public class FingerDragHelper extends LinearLayout {
             case MotionEvent.ACTION_DOWN:
                 mDownY = ev.getRawY();
             case MotionEvent.ACTION_MOVE:
-                if (ImagePreview.getInstance().isEnableDragClose()) {
+                if (ImagePreview.Companion.getInstance().isEnableDragClose()) {
                     if (imageGif != null && imageGif.getVisibility() == View.VISIBLE) {
                         isIntercept = (imageGif.getScale() <= (imageGif.getMinimumScale() + 0.001F))
                                 && (imageGif.getMaxTouchCount() == 0 || imageGif.getMaxTouchCount() == 1)
                                 && Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop;
                     } else if (imageView != null && imageView.getVisibility() == View.VISIBLE) {
                         // 如果设置了忽略缩放，即只要顶部或底部在边上都可拉动关闭
-                        if (ImagePreview.getInstance().isEnableDragCloseIgnoreScale()) {
+                        if (ImagePreview.Companion.getInstance().isEnableDragCloseIgnoreScale()) {
                             isIntercept = ((imageView.getScale() <= (imageView.getMinScale() + 0.001F)) || imageView.atYEdge)
                                     && (imageView.getMaxTouchCount() == 0 || imageView.getMaxTouchCount() == 1)
                                     && Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop;
@@ -106,7 +106,7 @@ public class FingerDragHelper extends LinearLayout {
             case MotionEvent.ACTION_DOWN:
                 mDownY = event.getRawY();
             case MotionEvent.ACTION_MOVE:
-                if (ImagePreview.getInstance().isEnableDragClose()) {
+                if (ImagePreview.Companion.getInstance().isEnableDragClose()) {
                     if (imageGif != null && imageGif.getVisibility() == View.VISIBLE) {
                         onOneFingerPanActionMove(event);
                     } else if (imageView != null && imageView.getVisibility() == View.VISIBLE) {
@@ -135,7 +135,7 @@ public class FingerDragHelper extends LinearLayout {
 
     private void onActionUp() {
         // 是否启用上拉关闭
-        boolean enableUpDragClose = ImagePreview.getInstance().isEnableUpDragClose();
+        boolean enableUpDragClose = ImagePreview.Companion.getInstance().isEnableUpDragClose();
         if (enableUpDragClose) {
             if (Math.abs(mTranslationY) > MAX_EXIT_Y) {
                 exitWithTranslation(mTranslationY);

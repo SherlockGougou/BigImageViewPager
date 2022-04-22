@@ -15,6 +15,9 @@ import java.io.InputStream;
 
 import cc.shinichi.library.glide.progress.ProgressManager;
 
+/**
+ * @author kirito
+ */
 @GlideModule
 public class MyAppGlideModule extends AppGlideModule {
 

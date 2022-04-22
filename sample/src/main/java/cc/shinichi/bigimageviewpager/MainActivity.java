@@ -206,10 +206,10 @@ public class MainActivity extends AppCompatActivity {
             // 原图地址
             imageInfo.setOriginUrl(image);
             if (image.contains("16fan.com")) {
-                // 缩略图；实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样。
+                // 缩略图；实际使用中，根据需求传入缩略图路径。如果没有缩略图url，将两项设置为一样。
                 imageInfo.setThumbnailUrl(image.concat("-400"));
             } else {
-                // 缩略图；实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样。
+                // 缩略图；实际使用中，根据需求传入缩略图路径。如果没有缩略图url，将两项设置为一样。
                 imageInfo.setThumbnailUrl(image);
             }
             imageInfoList.add(imageInfo);
@@ -231,6 +231,8 @@ public class MainActivity extends AppCompatActivity {
                 // 一行代码即可实现大部分需求，如需定制，可参考下面自定义的代码：
                 ImagePreview.getInstance()
                         .setContext(MainActivity.this)
+                        .setEnableDragClose(true)
+                        .setEnableDragCloseIgnoreScale(true)
                         .setImageList(Arrays.asList(images))
                         .start();
             }
@@ -258,6 +260,8 @@ public class MainActivity extends AppCompatActivity {
                         .setIndex(0)
                         .setTransitionView(view)
                         .setTransitionShareElementName("shared_element_container")
+                        .setEnableDragClose(true)
+                        .setEnableDragCloseIgnoreScale(true)
                         .start();
             }
         });
@@ -270,6 +274,8 @@ public class MainActivity extends AppCompatActivity {
                         .setIndex(1)
                         .setTransitionView(view)
                         .setTransitionShareElementName("shared_element_container")
+                        .setEnableDragClose(true)
+                        .setEnableDragCloseIgnoreScale(true)
                         .start();
             }
         });
@@ -280,6 +286,8 @@ public class MainActivity extends AppCompatActivity {
                         .setContext(MainActivity.this)
                         .setImageList(list2)
                         .setIndex(2)
+                        .setEnableDragClose(true)
+                        .setEnableDragCloseIgnoreScale(true)
 //                        .setTransitionView(view)
 //                        .setTransitionShareElementName("shared_element_container")
                         .start();
@@ -397,10 +405,6 @@ public class MainActivity extends AppCompatActivity {
                                 return false;
                             }
                         })
-                        // 设置自定义的GlideUrl类路径，对于那些地址中带有token等会变化的参数的图片，可能需要自定义的key计算规则。
-                        // 参考：https://blog.csdn.net/m0_37218227/article/details/83718505
-                        // 默认使用内置的GlideUrl.class
-//                        .setCustomGlideUrlClzPath("")
 
                         //=================================================================================================
                         // 设置查看原图时的百分比样式：库中带有一个样式：ImagePreview.PROGRESS_THEME_CIRCLE_TEXT，使用如下：
@@ -452,7 +456,7 @@ public class MainActivity extends AppCompatActivity {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         // 拒绝权限
-                        ToastUtil.getInstance()._short(MainActivity.this.getApplicationContext(), "您拒绝了存储权限，无法读取图片！");
+                        ToastUtil.getInstance().showShort(MainActivity.this.getApplicationContext(), "您拒绝了存储权限，无法读取图片！");
                     } else {
                         // 申请权限
                         ActivityCompat.requestPermissions(MainActivity.this,
@@ -470,7 +474,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ImageLoader.cleanDiskCache(MainActivity.this);
-                ToastUtil.getInstance()._short(MainActivity.this, "磁盘缓存已成功清除");
+                ToastUtil.getInstance().showShort(MainActivity.this, "磁盘缓存已成功清除");
             }
         });
     }
@@ -478,12 +482,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1) {
             for (int i = 0; i < permissions.length; i++) {
                 if (grantResults[i] == PERMISSION_GRANTED) {
                     chooseImage();
                 } else {
-                    ToastUtil.getInstance()._short(MainActivity.this.getApplicationContext(), "您拒绝了存储权限，无法读取图片！");
+                    ToastUtil.getInstance().showShort(MainActivity.this.getApplicationContext(), "您拒绝了存储权限，无法读取图片！");
                 }
             }
         }

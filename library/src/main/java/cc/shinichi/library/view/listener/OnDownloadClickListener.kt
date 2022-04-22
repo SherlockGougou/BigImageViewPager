@@ -1,7 +1,7 @@
-package cc.shinichi.library.view.listener;
+package cc.shinichi.library.view.listener
 
-import android.app.Activity;
-import android.view.View;
+import android.app.Activity
+import android.view.View
 
 /**
  * @author 工藤
@@ -10,18 +10,17 @@ import android.view.View;
  * create at 2018/12/19  16:23
  * description:
  */
-public abstract class OnDownloadClickListener {
-
+abstract class OnDownloadClickListener {
     /**
      * 点击事件
      * 是否拦截下载行为
      */
-    public abstract void onClick(Activity activity, View view, int position);
+    abstract fun onClick(activity: Activity?, view: View?, position: Int)
 
     /**
      * 是否拦截下载
      *
      * @return
      */
-    public abstract boolean isInterceptDownload();
+    abstract val isInterceptDownload: Boolean
 }
