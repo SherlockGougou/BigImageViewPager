@@ -39,7 +39,7 @@ allprojects {
 ##### 此处显示的是本框架的最新版本号：
 ##### ⚠️注意：glide v3版本不再维护，最终版本为v3_4.0.2。建议使用androidx版本。
 ```
-androidx用户  :   使用  androidx-7.0.0
+androidx用户  :   使用  androidx-7.0.1
 对于glide4.x  :   使用        v4_6.1.3
 ```
 
@@ -53,7 +53,7 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
   // BigImageViewPager https://github.com/SherlockGougou/BigImageViewPager
-  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.0.0'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.0.1'
 
 ================================分割线==================================
 
@@ -196,6 +196,11 @@ public class MyAppGlideModule extends AppGlideModule {
      * 手动模式：默认普清，点击按钮再加载原图；会根据原图、缩略图url是否一样来判断是否显示查看原图按钮
      */
     Default
+
+    /**
+     * 全自动模式：WiFi原图，流量下默认普清，可点击按钮查看原图
+     */
+    Auto
   }
 
   注：以上所有方式，如果原图缓存存在的情况，会默认加载原图缓存保证清晰度；且原图缓存只要存在，就不会显示查看原图按钮。

@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -239,17 +240,24 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, private val i
 
         val loadStrategy = ImagePreview.instance.loadStrategy
         // 根据当前加载策略判断，需要加载的url是哪一个
-        when {
-            loadStrategy === LoadStrategy.Default -> {
+        when (loadStrategy) {
+            LoadStrategy.Default -> {
                 finalLoadUrl = thumbPathUrl
             }
-            loadStrategy === LoadStrategy.AlwaysOrigin -> {
+            LoadStrategy.AlwaysOrigin -> {
                 finalLoadUrl = originPathUrl
             }
-            loadStrategy === LoadStrategy.AlwaysThumb -> {
+            LoadStrategy.AlwaysThumb -> {
                 finalLoadUrl = thumbPathUrl
             }
-            loadStrategy === LoadStrategy.NetworkAuto -> {
+            LoadStrategy.NetworkAuto -> {
+                finalLoadUrl = if (isWiFi(activity)) {
+                    originPathUrl
+                } else {
+                    thumbPathUrl
+                }
+            }
+            LoadStrategy.Auto -> {
                 finalLoadUrl = if (isWiFi(activity)) {
                     originPathUrl
                 } else {
@@ -266,6 +274,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, private val i
         // 判断原图缓存是否存在，存在的话，直接显示原图缓存，优先保证清晰。
         val cacheFile = getGlideCacheFile(activity, originPathUrl)
         if (cacheFile != null && cacheFile.exists()) {
+            Log.d("instantiateItem", "原图缓存存在，直接显示")
             val imagePath = cacheFile.absolutePath
             val isStandardImage = originPathUrl?.let { isStandardImage(it, imagePath) }
             if (isStandardImage == true) {
@@ -274,6 +283,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, private val i
                 loadImageSpec(url, imagePath, imageView, imageGif, progressBar)
             }
         } else {
+            Log.d("instantiateItem", "原图缓存不存在，开始加载 url = $url")
             Glide.with(activity).downloadOnly().load(url).addListener(object : RequestListener<File> {
                 override fun onLoadFailed(
                     e: GlideException?, model: Any, target: Target<File>,

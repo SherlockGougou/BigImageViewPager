@@ -32,6 +32,7 @@ import cc.shinichi.library.glide.ImageLoader.getGlideCacheFile
 import cc.shinichi.library.glide.progress.OnProgressListener
 import cc.shinichi.library.glide.progress.ProgressManager.addListener
 import cc.shinichi.library.tool.common.HandlerHolder
+import cc.shinichi.library.tool.common.NetworkUtil
 import cc.shinichi.library.tool.image.DownloadPictureUtil.downloadPicture
 import cc.shinichi.library.tool.ui.ToastUtil
 import com.bumptech.glide.Glide
@@ -268,7 +269,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         var percent = percent
         percent = Math.min(1f, Math.max(0f, percent))
         val intAlpha = (percent * 255).toInt()
-        val stringAlpha = Integer.toHexString(intAlpha).toLowerCase(Locale.ROOT)
+        val stringAlpha = Integer.toHexString(intAlpha).toLowerCase(Locale.CHINA)
         val color = "#" + (if (stringAlpha.length < 2) "0" else "") + stringAlpha + "000000"
         return Color.parseColor(color)
     }
@@ -376,7 +377,13 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             gone()
             true
         } else {
-            visible()
+            // 缓存不存在
+            // 如果是全自动模式且当前是WiFi，就不显示查看原图按钮
+            if (ImagePreview.instance.loadStrategy == ImagePreview.LoadStrategy.Auto && NetworkUtil.isWiFi(context)) {
+                gone()
+            } else {
+                visible()
+            }
             false
         }
     }

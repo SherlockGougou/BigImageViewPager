@@ -61,14 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ImagePreview.LoadStrategy loadStrategy = ImagePreview.LoadStrategy.Default;
 
-    private String[] images = {
-            // 不限于以下六种格式的图片
-            "https://aloss.11oi.com/app/img/temp/launch_top.bmp",
-            "https://aloss.11oi.com/app/img/temp/launch_top.gif",
-            "https://aloss.11oi.com/app/img/temp/launch_top.jpeg",
-            "https://aloss.11oi.com/app/img/temp/launch_top.jpg",
-            "https://aloss.11oi.com/app/img/temp/launch_top.png",
-            "https://aloss.11oi.com/app/img/temp/launch_top.webp",
+    private final String[] images = {
             // 小尺寸图片
             "https://s1.ax1x.com/2020/10/16/0HXKv4.jpg",
             // 普通jpg图片
@@ -86,7 +79,14 @@ public class MainActivity extends AppCompatActivity {
             // 大图：5760 * 3840
             "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg",
             // 长图：2280 * 22116
-            "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg"
+            "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg",
+            // 支持且不限于以下六种格式的图片
+            "https://aloss.11oi.com/app/img/temp/launch_top.bmp",
+            "https://aloss.11oi.com/app/img/temp/launch_top.gif",
+            "https://aloss.11oi.com/app/img/temp/launch_top.jpeg",
+            "https://aloss.11oi.com/app/img/temp/launch_top.jpg",
+            "https://aloss.11oi.com/app/img/temp/launch_top.png",
+            "https://aloss.11oi.com/app/img/temp/launch_top.webp"
     };
 
     @Override
@@ -190,6 +190,9 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.radioNetAuto:
                         loadStrategy = ImagePreview.LoadStrategy.NetworkAuto;
+                        break;
+                    case R.id.radioAuto:
+                        loadStrategy = ImagePreview.LoadStrategy.Auto;
                         break;
                     default:
                         loadStrategy = ImagePreview.LoadStrategy.Default;

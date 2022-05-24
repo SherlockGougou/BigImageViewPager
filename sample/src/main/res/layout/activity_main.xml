@@ -305,7 +305,15 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:checked="false"
-					android:text="网络自适应（WiFi原图，流量普清）"
+					android:text="网络自适应（WiFi原图；流量普清、不可查看原图）"
+					/>
+
+				<RadioButton
+					android:id="@+id/radioAuto"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:checked="false"
+					android:text="完全自适应（WiFi原图；流量普清、可查看原图）"
 					/>
 			</RadioGroup>
 		</LinearLayout>

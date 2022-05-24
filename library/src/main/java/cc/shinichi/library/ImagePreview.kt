@@ -234,8 +234,8 @@ class ImagePreview {
             LoadStrategy.AlwaysOrigin -> {
                 false // 强制隐藏查看原图按钮
             }
-            else -> {
-                false
+            LoadStrategy.Auto -> {
+                true // 显示查看原图按钮
             }
         }
     }
@@ -453,7 +453,12 @@ class ImagePreview {
         /**
          * 手动模式：默认普清，点击按钮再加载原图；会根据原图、缩略图url是否一样来判断是否显示查看原图按钮
          */
-        Default
+        Default,
+
+        /**
+         * 全自动模式：WiFi原图，流量下默认普清，可点击按钮查看原图
+         */
+        Auto
     }
 
     private object InnerClass {
