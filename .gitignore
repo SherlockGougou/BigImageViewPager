@@ -10,3 +10,5 @@
 .externalNativeBuild
 .idea/
 /.idea/
+*/release/*
+*/debug/*
