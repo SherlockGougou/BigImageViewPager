@@ -215,7 +215,7 @@ public class MyAppGlideModule extends AppGlideModule {
 
 # 推荐扫描二维码进行安装体验：
 <p align="center">
-  <img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e50f06781ec248629b72d597183f5d2a~tplv-k3u1fbpfcp-watermark.image" width="200"/>
+  <img src="https://www.pgyer.com/app/qrcode/bigimageviewpager" width="200"/>
   <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bfd23ce0042e431bb200d7e5e2fca87d~tplv-k3u1fbpfcp-zoom-1.image" width="200"/>
 </p>
 
