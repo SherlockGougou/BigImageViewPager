@@ -14,13 +14,13 @@
 		>
 
 		<cc.shinichi.library.view.helper.SubsamplingScaleImageViewDragClose
-			android:id="@+id/photo_view"
+			android:id="@+id/static_view"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			/>
 
 		<cc.shinichi.library.view.photoview.PhotoView
-			android:id="@+id/gif_view"
+			android:id="@+id/anim_view"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:scaleType="centerInside"

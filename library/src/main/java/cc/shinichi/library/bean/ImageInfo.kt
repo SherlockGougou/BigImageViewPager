@@ -11,10 +11,10 @@ class ImageInfo : Serializable {
     /**
      * 缩略图
      */
-    var thumbnailUrl: String? = null
+    var thumbnailUrl: String = ""
 
     /**
      * 原图
      */
-    var originUrl: String? = null
+    var originUrl: String = ""
 }

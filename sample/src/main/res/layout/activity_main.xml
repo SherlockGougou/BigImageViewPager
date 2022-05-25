@@ -296,7 +296,7 @@
 					android:id="@+id/radioDefault"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:checked="true"
+					android:checked="false"
 					android:text="默认普清手动原图（默认模式）"
 					/>
 
@@ -312,7 +312,7 @@
 					android:id="@+id/radioAuto"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:checked="false"
+					android:checked="true"
 					android:text="完全自适应（WiFi原图；流量普清、可查看原图）"
 					/>
 			</RadioGroup>

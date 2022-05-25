@@ -34,7 +34,6 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import cc.shinichi.library.ImagePreview;
@@ -50,10 +49,12 @@ import cc.shinichi.library.view.listener.OnOriginProgressListener;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+
     boolean enableClickClose = false;
-    boolean enableDragClose = false;
+    boolean enableDragClose = true;
     boolean enableUpDragClose = false;
-    boolean enableDragIgnoreScale = false;
+    boolean enableDragIgnoreScale = true;
+
     boolean showIndicator = false;
     boolean showCloseButton = false;
     boolean showDownButton = false;
@@ -101,6 +102,11 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        initView();
+        initData();
+    }
+
+    private void initView() {
         SwitchCompat switchClickClose = findViewById(R.id.switchClickClose);
         SwitchCompat switchDragClose = findViewById(R.id.switchDragClose);
         SwitchCompat switchUpDragClose = findViewById(R.id.switchUpDragClose);
@@ -134,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                 enableUpDragClose = isChecked;
             }
         });
-        switchUpDragClose.setChecked(true);
+        switchUpDragClose.setChecked(false);
 
         switchDragCloseIgnore.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -142,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                 enableDragIgnoreScale = isChecked;
             }
         });
-        switchDragCloseIgnore.setChecked(false);
+        switchDragCloseIgnore.setChecked(true);
 
         switchShowIndicator.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -158,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                 showCloseButton = isChecked;
             }
         });
-        switchShowCloseButton.setChecked(false);
+        switchShowCloseButton.setChecked(true);
 
         switchShowDownButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -195,15 +201,17 @@ public class MainActivity extends AppCompatActivity {
                         loadStrategy = ImagePreview.LoadStrategy.Auto;
                         break;
                     default:
-                        loadStrategy = ImagePreview.LoadStrategy.Default;
+                        loadStrategy = ImagePreview.LoadStrategy.Auto;
                         break;
                 }
             }
         });
+    }
 
-        ImageInfo imageInfo;
+    private void initData() {
         final List<ImageInfo> imageInfoList = new ArrayList<>();
 
+        ImageInfo imageInfo;
         for (String image : images) {
             imageInfo = new ImageInfo();
             // 原图地址
@@ -218,29 +226,30 @@ public class MainActivity extends AppCompatActivity {
             imageInfoList.add(imageInfo);
         }
 
-        // 最简单的调用：
+        // 动图支持：
+        ImageInfo i = new ImageInfo();
+        i.setThumbnailUrl("https://qbapk.com/files/2022-05/c2677ee3e2abeefda68b1366448ebccaeeca660d0cc0fe9b9eee39d339a00cd6.webp");
+        i.setOriginUrl("https://qbapk.com/files/2022-05/f23b21d2b99c2d754d17f0d0d5c3fd9ee91ac0e70d7e6200a0c36342e0237fba.webp");
+        imageInfoList.add(i);
+
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://i.imgur.com/NEJHo0e.png");
+        i.setOriginUrl("https://i0.hdslb.com/bfs/article/4421aaa8a38beeda1b195b656c883c7508f9b13d.gif");
+        imageInfoList.add(i);
+
+
+        // 一、最简单的调用：
         findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 仅需一行代码,默认配置为：
-                //      显示顶部进度指示器、
-                //      显示右侧下载按钮、
-                //      隐藏关闭按钮、
-                //      开启点击图片关闭、
-                //      关闭下拉图片关闭、
-                //      加载方式为手动模式
-                //      加载原图的百分比在底部
-
-                // 一行代码即可实现大部分需求，如需定制，可参考下面自定义的代码：
-                ImagePreview.getInstance()
-                        .setContext(MainActivity.this)
-                        .setEnableDragClose(true)
-                        .setEnableDragCloseIgnoreScale(true)
-                        .setImageList(Arrays.asList(images))
-                        .start();
+                // 一行代码即可实现大部分需求。如需定制，可参考下面【三、完全自定义调用】自定义的代码：
+                ImagePreview.getInstance().setContext(MainActivity.this).setImageInfoList(imageInfoList).start();
             }
         });
 
+
+
+        // 二、共享元素动画
         ImageView image1 = findViewById(R.id.image1);
         ImageView image2 = findViewById(R.id.image2);
         ImageView image3 = findViewById(R.id.image3);
@@ -287,13 +296,15 @@ public class MainActivity extends AppCompatActivity {
                         .setIndex(2)
                         .setEnableDragClose(true)
                         .setEnableDragCloseIgnoreScale(true)
-//                        .setTransitionView(view)
-//                        .setTransitionShareElementName("shared_element_container")
+                        .setTransitionView(view)
+                        .setTransitionShareElementName("shared_element_container")
                         .start();
             }
         });
 
-        // 完全自定义调用：
+
+
+        // 三、完全自定义调用：
         findViewById(R.id.buttonPreview).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -449,7 +460,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 通过相册选择图片进行预览
+
+
+        // 四、通过相册选择图片进行预览
         findViewById(R.id.buttonChoose).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -470,6 +483,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+
 
         // 清除磁盘缓存
         findViewById(R.id.buttonClean).setOnClickListener(new View.OnClickListener() {

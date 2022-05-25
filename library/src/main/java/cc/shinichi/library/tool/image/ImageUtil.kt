@@ -9,7 +9,7 @@ import android.text.TextUtils
 import android.util.Log
 import cc.shinichi.library.tool.common.Print.d
 import cc.shinichi.library.tool.ui.PhoneUtil
-import java.io.IOException
+import java.io.*
 import java.util.*
 
 /**
@@ -247,7 +247,7 @@ object ImageUtil {
         return Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true)
     }
 
-    fun getImageTypeWithMime(path: String?): String {
+    fun getImageTypeWithMime(path: String): String {
         val options = BitmapFactory.Options()
         options.inJustDecodeBounds = true
         BitmapFactory.decodeFile(path, options)
@@ -263,36 +263,56 @@ object ImageUtil {
         return type
     }
 
-    fun isGifImageWithMime(url: String, path: String?): Boolean {
-        return "gif".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.CHINA)
-            .endsWith("gif")
+    fun isAnimWebp(url: String, path: String): Boolean {
+        if (!isWebpImageWithMime(url, path)) {
+            return false
+        }
+        var result = false
+        val br: BufferedReader
+        var line: String
+        // 读取path为InputStream
+        val `is`: InputStream = FileInputStream(path)
+        br = BufferedReader(InputStreamReader(`is`))
+        var count = 0
+        while (br.readLine().also { line = it } != null) {
+            // 读取5行，如果其中包含"ANIM"则为动图
+            if (line.contains("ANIM")) {
+                result = true
+            }
+            if (count++ >= 5) {
+                break
+            }
+        }
+        Log.d(TAG, "isAnimWebp: result = $result")
+        return result
     }
 
-    fun isPngImageWithMime(url: String, path: String?): Boolean {
-        return "png".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.CHINA)
-            .endsWith("png")
+    fun isAnimImageWithMime(url: String, path: String): Boolean {
+        return "gif".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.CHINA).endsWith("gif")
+                || isAnimWebp(url, path)
     }
 
-    fun isJpegImageWithMime(url: String, path: String?): Boolean {
-        return ("jpeg".equals(getImageTypeWithMime(path), ignoreCase = true) || "jpg".equals(
-            getImageTypeWithMime(path),
-            ignoreCase = true
-        )
-                || url.toLowerCase(Locale.CHINA).endsWith("jpeg") || url.toLowerCase(Locale.CHINA)
-            .endsWith("jpg"))
+    fun isPngImageWithMime(url: String, path: String): Boolean {
+        return "png".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.CHINA).endsWith("png")
     }
 
-    fun isBmpImageWithMime(url: String, path: String?): Boolean {
-        return "bmp".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.CHINA)
-            .endsWith("bmp")
+    fun isJpegImageWithMime(url: String, path: String): Boolean {
+        return ("jpeg".equals(getImageTypeWithMime(path), ignoreCase = true) || "jpg".equals(getImageTypeWithMime(path), ignoreCase = true)
+                || url.toLowerCase(Locale.CHINA).endsWith("jpeg") || url.toLowerCase(Locale.CHINA).endsWith("jpg"))
     }
 
-    fun isWebpImageWithMime(url: String, path: String?): Boolean {
-        return "webp".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.CHINA)
-            .endsWith("webp")
+    fun isBmpImageWithMime(url: String, path: String): Boolean {
+        return "bmp".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.CHINA).endsWith("bmp")
     }
 
-    fun isStandardImage(url: String, path: String?): Boolean {
-        return isJpegImageWithMime(url, path) || isPngImageWithMime(url, path) || isBmpImageWithMime(url, path) || isWebpImageWithMime(url, path)
+    fun isWebpImageWithMime(url: String, path: String): Boolean {
+        return "webp".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.CHINA).endsWith("webp")
+    }
+
+    fun isStaticImage(url: String, path: String): Boolean {
+        return isJpegImageWithMime(url, path)// jpeg
+                || isPngImageWithMime(url, path)// png
+                || isBmpImageWithMime(url, path)// bmp
+                || !isAnimImageWithMime(url, path)// 不是动图(不是webp动图、gif动图)
     }
 }

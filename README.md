@@ -39,7 +39,7 @@ allprojects {
 ##### 此处显示的是本框架的最新版本号：
 ##### ⚠️注意：glide v3版本不再维护，最终版本为v3_4.0.2。建议使用androidx版本。
 ```
-androidx用户  :   使用  androidx-7.0.2
+androidx用户  :   使用  androidx-7.0.3
 对于glide4.x  :   使用        v4_6.1.3
 ```
 
@@ -53,7 +53,7 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
   // BigImageViewPager https://github.com/SherlockGougou/BigImageViewPager
-  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.0.2'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.0.3'
 
 ================================分割线==================================
 
@@ -133,9 +133,8 @@ public class MyAppGlideModule extends AppGlideModule {
             //      显示右侧下载按钮、
             //      隐藏关闭按钮、
             //      开启点击图片关闭、
-            //      关闭下拉图片关闭、
-            //      加载方式为手动模式
-            //      加载原图的百分比在底部
+            //      开启下拉图片关闭、
+            //      加载策略为全自动
 ```
 
 ##### 接口说明：
@@ -150,9 +149,9 @@ public class MyAppGlideModule extends AppGlideModule {
 |setContext|设置上下文|不允许为空|
 |setDownIconResId|设置下载按钮的Drawable资源id|R.drawable.icon_download_new|
 |setEnableClickClose|设置是否开启点击图片退出|默认true|
-|setEnableDragClose|设置是否开启下拉图片退出|默认false|
+|setEnableDragClose|设置是否开启下拉图片退出|默认true|
 |setEnableUpDragClose|设置是否开启上拉图片退出|默认false|
-|setEnableDragCloseIgnoreScale|是否忽略缩放启用拉动关闭|默认false|
+|setEnableDragCloseIgnoreScale|是否忽略缩放启用拉动关闭|默认true|
 |setErrorPlaceHolder|设置加载失败的占位图资源id|默认内置R.drawable.load_failed|
 |setFolderName|设置下载到的文件夹名称|默认保存Picture文件夹中|
 |setImage|设置单张图片地址|三选一|

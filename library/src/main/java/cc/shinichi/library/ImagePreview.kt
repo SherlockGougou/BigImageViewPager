@@ -78,7 +78,7 @@ class ImagePreview {
         private set
 
     // 是否启用下拉关闭，默认不启用
-    var isEnableDragClose = false
+    var isEnableDragClose = true
         private set
 
     // 是否启用上拉关闭，默认不启用
@@ -86,7 +86,7 @@ class ImagePreview {
         private set
 
     // 是否忽略缩放启用拉动关闭，默认false，true即忽略
-    var isEnableDragCloseIgnoreScale = false
+    var isEnableDragCloseIgnoreScale = true
         private set
 
     // 是否启用点击关闭，默认启用
@@ -98,7 +98,7 @@ class ImagePreview {
         private set
 
     // 加载策略
-    var loadStrategy = LoadStrategy.Default
+    var loadStrategy = LoadStrategy.Auto
         private set
 
     @LayoutRes
@@ -174,7 +174,7 @@ class ImagePreview {
         return this
     }
 
-    fun setImageList(imageList: MutableList<String?>): ImagePreview {
+    fun setImageList(imageList: MutableList<String>): ImagePreview {
         var imageInfo: ImageInfo
         imageInfoList.clear()
         for (i in imageList.indices) {
