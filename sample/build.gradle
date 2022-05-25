@@ -8,8 +8,8 @@ android {
         applicationId "cc.shinichi.bigimageviewpager"
         minSdkVersion 14
         targetSdkVersion 32
-        versionCode 700
-        versionName "androidx-7.0.2"
+        versionCode 703
+        versionName "androidx-7.0.3"
     }
     buildTypes {
         release {
