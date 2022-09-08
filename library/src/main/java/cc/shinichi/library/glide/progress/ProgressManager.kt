@@ -3,6 +3,7 @@ package cc.shinichi.library.glide.progress
 import android.text.TextUtils
 import cc.shinichi.library.glide.SSLSocketClient
 import cc.shinichi.library.glide.progress.ProgressResponseBody.InternalProgressListener
+import cc.shinichi.library.tool.common.HttpUtil
 import okhttp3.OkHttpClient
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -63,6 +64,6 @@ object ProgressManager {
     private fun getProgressListener(url: String?): OnProgressListener? {
         return if (TextUtils.isEmpty(url) || listenersMap.isEmpty()) {
             null
-        } else listenersMap[url]
+        } else listenersMap[url?.let { HttpUtil.decode(it) }]
     }
 }

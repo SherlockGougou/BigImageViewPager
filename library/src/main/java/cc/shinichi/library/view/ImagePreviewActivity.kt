@@ -32,6 +32,7 @@ import cc.shinichi.library.glide.ImageLoader.getGlideCacheFile
 import cc.shinichi.library.glide.progress.OnProgressListener
 import cc.shinichi.library.glide.progress.ProgressManager.addListener
 import cc.shinichi.library.tool.common.HandlerHolder
+import cc.shinichi.library.tool.common.HttpUtil
 import cc.shinichi.library.tool.common.NetworkUtil
 import cc.shinichi.library.tool.image.DownloadPictureUtil.downloadPicture
 import cc.shinichi.library.tool.ui.ToastUtil
@@ -321,7 +322,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         } else if (msg.what == 1) {
             // 加载完成
             val bundle = msg.obj as Bundle
-            val url = bundle.getString("url")
+            val url = HttpUtil.decode(bundle.getString("url", ""))
             gone()
             if (currentItem == getRealIndexWithPath(url)) {
                 if (isUserCustomProgressView) {
@@ -336,7 +337,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         } else if (msg.what == 2) {
             // 加载中
             val bundle = msg.obj as Bundle
-            val url = bundle.getString("url")
+            val url = HttpUtil.decode(bundle.getString("url", ""))
             val progress = bundle.getInt("progress")
             if (currentItem == getRealIndexWithPath(url)) {
                 if (isUserCustomProgressView) {
@@ -464,8 +465,6 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     private fun loadOriginImage(path: String?) {
-        Glide.with(context).downloadOnly().load(path).into(object : FileTarget() {
-        })
         addListener(path, object : OnProgressListener {
             override fun onProgress(
                 url: String?,
@@ -495,6 +494,8 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                     handlerHolder.sendMessage(message)
                 }
             }
+        })
+        Glide.with(context).downloadOnly().load(path).into(object : FileTarget() {
         })
     }
 

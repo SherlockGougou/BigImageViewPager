@@ -22,6 +22,7 @@
 - 支持BMP格式的图片；
 - 支持Android 12；
 - 支持自定义预览界面；
+- 支持平板等横屏设备显示；
 
 # 用法
 ### 一、添加依赖
@@ -39,7 +40,7 @@ allprojects {
 ##### 此处显示的是本框架的最新版本号：
 ##### ⚠️注意：glide v3版本不再维护，最终版本为v3_4.0.2。建议使用androidx版本。
 ```
-androidx用户  :   使用  androidx-7.0.3
+androidx用户  :   使用  androidx-7.0.4
 对于glide4.x  :   使用        v4_6.1.3
 ```
 
@@ -53,7 +54,7 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
   // BigImageViewPager https://github.com/SherlockGougou/BigImageViewPager
-  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.0.3'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.0.4'
 
 ================================分割线==================================
 

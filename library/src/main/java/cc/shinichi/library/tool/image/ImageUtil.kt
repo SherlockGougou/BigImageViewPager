@@ -1,6 +1,7 @@
 package cc.shinichi.library.tool.image
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -125,6 +126,20 @@ object ImageUtil {
         return if (orient == 90 || orient == 270) {
             intArrayOf(srcHeight, srcWidth)
         } else intArrayOf(srcWidth, srcHeight)
+    }
+
+    fun isTablet(context: Context): Boolean {
+        return context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_LARGE
+    }
+
+
+    fun isLandscape(context: Context): Boolean {
+        val phoneRatio = PhoneUtil.getPhoneRatio(context.applicationContext)
+        return phoneRatio <= 1f
+    }
+
+    fun isTabletOrLandscape(context: Context): Boolean {
+        return isTablet(context) or isLandscape(context)
     }
 
     fun isLongImage(context: Context, imagePath: String): Boolean {

@@ -80,14 +80,14 @@ public class MainActivity extends AppCompatActivity {
             // 大图：5760 * 3840
             "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg",
             // 长图：2280 * 22116
-            "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg",
+            "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg"
             // 支持且不限于以下六种格式的图片
-            "https://aloss.11oi.com/app/img/temp/launch_top.bmp",
-            "https://aloss.11oi.com/app/img/temp/launch_top.gif",
-            "https://aloss.11oi.com/app/img/temp/launch_top.jpeg",
-            "https://aloss.11oi.com/app/img/temp/launch_top.jpg",
-            "https://aloss.11oi.com/app/img/temp/launch_top.png",
-            "https://aloss.11oi.com/app/img/temp/launch_top.webp"
+//            "https://aloss.11oi.com/app/img/temp/launch_top.bmp",
+//            "https://aloss.11oi.com/app/img/temp/launch_top.gif",
+//            "https://aloss.11oi.com/app/img/temp/launch_top.jpeg",
+//            "https://aloss.11oi.com/app/img/temp/launch_top.jpg",
+//            "https://aloss.11oi.com/app/img/temp/launch_top.png",
+//            "https://aloss.11oi.com/app/img/temp/launch_top.webp"
     };
 
     @Override
@@ -228,8 +228,8 @@ public class MainActivity extends AppCompatActivity {
 
         // 动图支持：
         ImageInfo i = new ImageInfo();
-        i.setThumbnailUrl("https://qbapk.com/files/2022-05/c2677ee3e2abeefda68b1366448ebccaeeca660d0cc0fe9b9eee39d339a00cd6.webp");
-        i.setOriginUrl("https://qbapk.com/files/2022-05/f23b21d2b99c2d754d17f0d0d5c3fd9ee91ac0e70d7e6200a0c36342e0237fba.webp");
+        i.setThumbnailUrl("https://media3.giphy.com/media/l41lXnhesd96Aa9os/giphy_s.gif?cid=790b76119dc3904439a5a6dc0a25713aeb5f65b3133f46d5&rid=giphy_s.gif&ct=g");
+        i.setOriginUrl("https://i.giphy.com/media/l41lXnhesd96Aa9os/giphy.webp");
         imageInfoList.add(i);
 
         i = new ImageInfo();
@@ -237,6 +237,11 @@ public class MainActivity extends AppCompatActivity {
         i.setOriginUrl("https://i0.hdslb.com/bfs/article/4421aaa8a38beeda1b195b656c883c7508f9b13d.gif");
         imageInfoList.add(i);
 
+        // 中文url的原图加载
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://test-houbo-homework.oss-cn-shanghai.aliyuncs.com/fdf556b61ea58156ff30f54502125e20.jpg");
+        i.setOriginUrl("https://test-houbo-homework.oss-cn-shanghai.aliyuncs.com/第2课测试-画鸡蛋测试-111-1553831-1662516935.jpg");
+        imageInfoList.add(i);
 
         // 一、最简单的调用：
         findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {

@@ -35,6 +35,7 @@ import cc.shinichi.library.tool.image.ImageUtil.isBmpImageWithMime
 import cc.shinichi.library.tool.image.ImageUtil.isLongImage
 import cc.shinichi.library.tool.image.ImageUtil.isSmallImage
 import cc.shinichi.library.tool.image.ImageUtil.isStaticImage
+import cc.shinichi.library.tool.image.ImageUtil.isTabletOrLandscape
 import cc.shinichi.library.tool.image.ImageUtil.isWideImage
 import cc.shinichi.library.tool.ui.PhoneUtil.getPhoneHei
 import cc.shinichi.library.tool.ui.ToastUtil
@@ -372,7 +373,44 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
     }
 
     private fun setImageStatic(imagePath: String, imageStatic: SubsamplingScaleImageViewDragClose) {
+        val tabletOrLandscape = isTabletOrLandscape(activity)
         val isLongImage = isLongImage(activity, imagePath)
+        if (tabletOrLandscape) {
+            imageStatic.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_CENTER_INSIDE)
+            imageStatic.minScale = ImagePreview.instance.minScale
+            imageStatic.maxScale = ImagePreview.instance.maxScale
+            imageStatic.setDoubleTapZoomScale(ImagePreview.instance.mediumScale)
+//            if (isLongImage) {
+//                imageStatic.minScale = getLongImageMinScale(activity, imagePath)
+//                imageStatic.maxScale = getLongImageMaxScale(activity, imagePath)
+//                imageStatic.setDoubleTapZoomScale(getLongImageMaxScale(activity, imagePath))
+//            } else {
+//                val isWideImage = isWideImage(activity, imagePath)
+//                val isSmallImage = isSmallImage(activity, imagePath)
+//                when {
+//                    isWideImage -> {
+//                        imageStatic.minScale = ImagePreview.instance.minScale
+//                        imageStatic.maxScale = ImagePreview.instance.maxScale
+//                        imageStatic.setDoubleTapZoomScale(
+//                            getWideImageDoubleScale(
+//                                activity, imagePath
+//                            )
+//                        )
+//                    }
+//                    isSmallImage -> {
+//                        imageStatic.minScale = getSmallImageMinScale(activity, imagePath)
+//                        imageStatic.maxScale = getSmallImageMaxScale(activity, imagePath)
+//                        imageStatic.setDoubleTapZoomScale(getSmallImageMaxScale(activity, imagePath))
+//                    }
+//                    else -> {
+//                        imageStatic.minScale = ImagePreview.instance.minScale
+//                        imageStatic.maxScale = ImagePreview.instance.maxScale
+//                        imageStatic.setDoubleTapZoomScale(ImagePreview.instance.mediumScale)
+//                    }
+//                }
+//            }
+            return
+        }
         if (isLongImage) {
             imageStatic.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_START)
             imageStatic.minScale = getLongImageMinScale(activity, imagePath)
