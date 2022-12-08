@@ -8,8 +8,8 @@ android {
         applicationId "cc.shinichi.bigimageviewpager"
         minSdkVersion 14
         targetSdkVersion 32
-        versionCode 704
-        versionName "androidx-7.0.4"
+        versionCode 705
+        versionName "androidx-7.0.5"
     }
     buildTypes {
         release {
@@ -57,6 +57,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
     // library
-//   implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.0.4'
+//   implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.0.5'
     implementation project(':library')
 }

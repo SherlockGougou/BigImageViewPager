@@ -63,12 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private ImagePreview.LoadStrategy loadStrategy = ImagePreview.LoadStrategy.Default;
 
     private final String[] images = {
-            // 小尺寸图片
-            "https://s1.ax1x.com/2020/10/16/0HXKv4.jpg",
             // 普通jpg图片
-            "http://img6.16fan.com/201510/11/005258wdngg6rv0tpn8z9z.jpg",
-            "http://img6.16fan.com/201510/11/013553aj3kp9u6iuz6k9uj.jpg",
-            "http://img6.16fan.com/201510/11/011753fnanichdca0wbhxc.jpg",
             "http://img6.16fan.com/201510/11/011819zbzbciir9ctn295o.jpg",
             "http://img6.16fan.com/201510/11/004847l7w568jc5n5wn385.jpg",
             "http://img6.16fan.com/201510/11/004906z0a0a0e0hs56ce0t.jpg",
@@ -77,6 +72,11 @@ public class MainActivity extends AppCompatActivity {
             "http://img6.16fan.com/201510/11/004955d8ftz3t1sttt7ft7.jpg",
             "http://img6.16fan.com/201510/11/005027qy2g55yyglb59zdu.jpg",
             "http://img6.16fan.com/201510/11/005229bbtxkczcl0btmw8e.jpg",
+            "http://img6.16fan.com/201510/11/005258wdngg6rv0tpn8z9z.jpg",
+            "http://img6.16fan.com/201510/11/013553aj3kp9u6iuz6k9uj.jpg",
+            "http://img6.16fan.com/201510/11/011753fnanichdca0wbhxc.jpg",
+            // 小尺寸图片
+            "https://s1.ax1x.com/2020/10/16/0HXKv4.jpg",
             // 大图：5760 * 3840
             "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg",
             // 长图：2280 * 22116
@@ -243,6 +243,14 @@ public class MainActivity extends AppCompatActivity {
         i.setOriginUrl("https://test-houbo-homework.oss-cn-shanghai.aliyuncs.com/第2课测试-画鸡蛋测试-111-1553831-1662516935.jpg");
         imageInfoList.add(i);
 
+        // todo 测试带重定向的地址
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://im.api.ovivas.cn/rest/v1/im/file/download?fileId=2022%2F12%2F05%2Fb22d9ae0-32a6-4420-b0ca-b1f79cac7aca%2Fthumbnail%2Fwx_camera_1670145692581%282%29.jpg");
+        i.setOriginUrl("https://im.api.ovivas.cn/rest/v1/im/file/download?fileId=2022%2F12%2F05%2Fb22d9ae0-32a6-4420-b0ca-b1f79cac7aca%2Fwx_camera_1670145692581%282%29.jpg");
+        imageInfoList.add(i);
+
+
+
         // 一、最简单的调用：
         findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -260,13 +268,13 @@ public class MainActivity extends AppCompatActivity {
         ImageView image3 = findViewById(R.id.image3);
 
         List<String> list2 = new ArrayList<>();
-        list2.add("http://img6.16fan.com/201510/11/005258wdngg6rv0tpn8z9z.jpg");
-        list2.add("http://img6.16fan.com/201510/11/013553aj3kp9u6iuz6k9uj.jpg");
-        list2.add("http://img6.16fan.com/201510/11/011753fnanichdca0wbhxc.jpg");
+        list2.add("http://img6.16fan.com/201510/11/005258wdngg6rv0tpn8z9z.jpg-400");
+        list2.add("http://img6.16fan.com/201510/11/013553aj3kp9u6iuz6k9uj.jpg-400");
+        list2.add("http://img6.16fan.com/201510/11/011753fnanichdca0wbhxc.jpg-400");
 
-        Glide.with(this).load("http://img6.16fan.com/201510/11/005258wdngg6rv0tpn8z9z.jpg").into(image1);
-        Glide.with(this).load("http://img6.16fan.com/201510/11/013553aj3kp9u6iuz6k9uj.jpg").into(image2);
-        Glide.with(this).load("http://img6.16fan.com/201510/11/011753fnanichdca0wbhxc.jpg").into(image3);
+        Glide.with(this).load("http://img6.16fan.com/201510/11/005258wdngg6rv0tpn8z9z.jpg-400").into(image1);
+        Glide.with(this).load("http://img6.16fan.com/201510/11/013553aj3kp9u6iuz6k9uj.jpg-400").into(image2);
+        Glide.with(this).load("http://img6.16fan.com/201510/11/011753fnanichdca0wbhxc.jpg-400").into(image3);
 
         image1.setOnClickListener(new View.OnClickListener() {
             @Override

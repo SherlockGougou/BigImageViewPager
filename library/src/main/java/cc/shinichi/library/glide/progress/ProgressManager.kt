@@ -21,7 +21,11 @@ object ProgressManager {
             val onProgressListener = getProgressListener(url)
             val percentage = (bytesRead * 1f / totalBytes * 100f).toInt()
             val isComplete = percentage >= 100
-            onProgressListener?.onProgress(url, isComplete, percentage, bytesRead, totalBytes)
+            listenersMap.let {
+                for (listener in it.values) {
+                    listener.onProgress(url, isComplete, percentage, bytesRead, totalBytes)
+                }
+            }
             if (isComplete) {
                 removeListener(url)
             }
