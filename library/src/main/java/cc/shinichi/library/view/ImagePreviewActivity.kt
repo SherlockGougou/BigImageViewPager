@@ -58,7 +58,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     private var isShowOriginButton = false
     private var isShowIndicator = false
 
-    private lateinit var imagePreviewAdapter: ImagePreviewAdapter
+    private var imagePreviewAdapter: ImagePreviewAdapter? = null
     private lateinit var viewPager: HackyViewPager
     private lateinit var tv_indicator: TextView
     private lateinit var fm_image_show_origin_container: FrameLayout
@@ -263,7 +263,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         super.finish()
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         ImagePreview.instance.reset()
-        imagePreviewAdapter.closePage()
+        imagePreviewAdapter?.closePage()
     }
 
     private fun convertPercentToBlackAlphaColor(percent: Float): Int {
@@ -329,9 +329,9 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                     fm_center_progress_container.visibility = View.GONE
                     progressParentLayout.visibility = View.GONE
                     ImagePreview.instance.onOriginProgressListener?.finish(progressParentLayout)
-                    imagePreviewAdapter.loadOrigin(imageInfoList[currentItem])
+                    imagePreviewAdapter?.loadOrigin(imageInfoList[currentItem])
                 } else {
-                    imagePreviewAdapter.loadOrigin(imageInfoList[currentItem])
+                    imagePreviewAdapter?.loadOrigin(imageInfoList[currentItem])
                 }
             }
         } else if (msg.what == 2) {
