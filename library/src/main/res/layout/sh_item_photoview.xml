@@ -1,37 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	>
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
 
-	<cc.shinichi.library.view.helper.FingerDragHelper
-		android:id="@+id/fingerDragHelper"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:gravity="center"
-		android:orientation="vertical"
-		>
+    <cc.shinichi.library.view.helper.FingerDragHelper
+        android:id="@+id/fingerDragHelper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        >
 
-		<cc.shinichi.library.view.helper.SubsamplingScaleImageViewDragClose
-			android:id="@+id/static_view"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			/>
+        <cc.shinichi.library.view.subsampling.SubsamplingScaleImageView
+            android:id="@+id/static_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
 
-		<cc.shinichi.library.view.photoview.PhotoView
-			android:id="@+id/anim_view"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:scaleType="centerInside"
-			android:visibility="gone"
-			/>
-	</cc.shinichi.library.view.helper.FingerDragHelper>
+        <cc.shinichi.library.view.photoview.PhotoView
+            android:id="@+id/anim_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:visibility="gone"
+            />
+    </cc.shinichi.library.view.helper.FingerDragHelper>
 
-	<ProgressBar
-		android:id="@+id/progress_view"
-		android:layout_width="60dp"
-		android:layout_height="60dp"
-		android:layout_gravity="center"
-		/>
+    <ProgressBar
+        android:id="@+id/progress_view"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        />
 </FrameLayout>

@@ -26,7 +26,7 @@ class ToastUtil {
     companion object {
         private val HANDLER = Handler(Looper.getMainLooper())
 
-        @kotlin.jvm.JvmStatic
+        @JvmStatic
         val instance: ToastUtil
             get() = InnerClass.instance
     }

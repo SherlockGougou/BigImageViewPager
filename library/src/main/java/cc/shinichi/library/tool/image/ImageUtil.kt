@@ -5,13 +5,14 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.media.ExifInterface
 import android.text.TextUtils
 import android.util.Log
+import androidx.exifinterface.media.ExifInterface
 import cc.shinichi.library.tool.common.Print.d
 import cc.shinichi.library.tool.ui.PhoneUtil
 import java.io.*
 import java.util.*
+import kotlin.text.Typography.degree
 
 /**
  * @author 工藤
@@ -23,12 +24,11 @@ import java.util.*
 object ImageUtil {
     private const val TAG = "ImageUtil"
 
-    fun getBitmapDegree(path: String?): Int {
+    fun getBitmapDegree(path: String): Int {
         var degree = 0
         try {
-            val exifInterface = path?.let { ExifInterface(it) }
-            val orientation =
-                exifInterface?.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+            val exifInterface = ExifInterface(path)
+            val orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
             degree = when (orientation) {
                 ExifInterface.ORIENTATION_ROTATE_90 -> 90
                 ExifInterface.ORIENTATION_ROTATE_180 -> 180
@@ -60,7 +60,6 @@ object ImageUtil {
     }
 
     private fun getOrientation(imagePath: String): Int {
-        val degree = 0
         try {
             val exifInterface = ExifInterface(imagePath)
             return when (exifInterface.getAttributeInt(
@@ -82,26 +81,29 @@ object ImageUtil {
         if (imagePath.isEmpty()) {
             return intArrayOf(0, 0)
         }
+        var srcWidth = -1
+        var srcHeight = -1
+
+        // 使用第一种方式获取原始图片的宽高
         val options = BitmapFactory.Options()
         options.inJustDecodeBounds = true
         try {
             val originBitmap = BitmapFactory.decodeFile(imagePath, options)
+            srcWidth = options.outWidth
+            srcHeight = options.outHeight
+            if (originBitmap != null && !originBitmap.isRecycled) {
+                originBitmap.recycle()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
-        // 使用第一种方式获取原始图片的宽高
-        var srcWidth = options.outWidth
-        var srcHeight = options.outHeight
-
         // 使用第二种方式获取原始图片的宽高
-        if (srcHeight == -1 || srcWidth == -1) {
+        if (srcWidth <= 0 || srcHeight <= 0) {
             try {
                 val exifInterface = ExifInterface(imagePath)
-                srcHeight =
-                    exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, ExifInterface.ORIENTATION_NORMAL)
-                srcWidth =
-                    exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, ExifInterface.ORIENTATION_NORMAL)
+                srcHeight = exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, ExifInterface.ORIENTATION_NORMAL)
+                srcWidth = exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, ExifInterface.ORIENTATION_NORMAL)
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -122,6 +124,7 @@ object ImageUtil {
                 }
             }
         }
+
         val orient = getOrientation(imagePath)
         return if (orient == 90 || orient == 270) {
             intArrayOf(srcHeight, srcWidth)
@@ -131,7 +134,6 @@ object ImageUtil {
     fun isTablet(context: Context): Boolean {
         return context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_LARGE
     }
-
 
     fun isLandscape(context: Context): Boolean {
         val phoneRatio = PhoneUtil.getPhoneRatio(context.applicationContext)
@@ -158,7 +160,7 @@ object ImageUtil {
         val w = wh[0].toFloat()
         val h = wh[1].toFloat()
         val imageRatio = w / h
-        //float phoneRatio = PhoneUtil.getPhoneRatio(context.getApplicationContext()) + 0.1F;
+        // float phoneRatio = PhoneUtil.getPhoneRatio(context.getApplicationContext()) + 0.1F;
         val isWideImage = w > 0 && h > 0 && w > h && imageRatio >= 2
         d(TAG, "isWideImage = $isWideImage")
         return isWideImage
@@ -171,15 +173,11 @@ object ImageUtil {
         return isSmallImage
     }
 
-    fun getLongImageMinScale(context: Context, imagePath: String): Float {
+    fun getLongImageDoubleZoomScale(context: Context, imagePath: String): Float {
         val wh = getWidthHeight(imagePath)
         val imageWid = wh[0].toFloat()
         val phoneWid = PhoneUtil.getPhoneWid(context.applicationContext).toFloat()
         return phoneWid / imageWid
-    }
-
-    fun getLongImageMaxScale(context: Context, imagePath: String): Float {
-        return getLongImageMinScale(context, imagePath) * 2
     }
 
     fun getWideImageDoubleScale(context: Context, imagePath: String): Float {
@@ -322,6 +320,11 @@ object ImageUtil {
 
     fun isWebpImageWithMime(url: String, path: String): Boolean {
         return "webp".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.CHINA).endsWith("webp")
+    }
+
+    fun isHeifImageWithMime(url: String, path: String): Boolean {
+        return "heif".equals(getImageTypeWithMime(path), ignoreCase = true)
+                || url.toLowerCase(Locale.CHINA).endsWith("heif") || url.toLowerCase(Locale.CHINA).endsWith("heic")
     }
 
     fun isStaticImage(url: String, path: String): Boolean {

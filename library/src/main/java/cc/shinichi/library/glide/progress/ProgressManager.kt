@@ -18,7 +18,6 @@ object ProgressManager {
 
     private val LISTENER = object : InternalProgressListener {
         override fun onProgress(url: String?, bytesRead: Long, totalBytes: Long) {
-            val onProgressListener = getProgressListener(url)
             val percentage = (bytesRead * 1f / totalBytes * 100f).toInt()
             val isComplete = percentage >= 100
             listenersMap.let {
@@ -63,11 +62,5 @@ object ProgressManager {
         if (!TextUtils.isEmpty(url)) {
             listenersMap.remove(url)
         }
-    }
-
-    private fun getProgressListener(url: String?): OnProgressListener? {
-        return if (TextUtils.isEmpty(url) || listenersMap.isEmpty()) {
-            null
-        } else listenersMap[url?.let { HttpUtil.decode(it) }]
     }
 }

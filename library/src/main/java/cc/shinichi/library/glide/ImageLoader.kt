@@ -27,7 +27,6 @@ object ImageLoader {
      * 获取是否有某张原图的缓存
      * 缓存模式必须是：DiskCacheStrategy.SOURCE 才能获取到缓存文件
      */
-    @JvmStatic
     fun getGlideCacheFile(context: Context, url: String?): File? {
         try {
             val dataCacheKey = DataCacheKey(GlideUrl(url), EmptySignature.obtain())

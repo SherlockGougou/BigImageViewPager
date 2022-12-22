@@ -1,8 +1,8 @@
 package cc.shinichi.library.view.listener
 
-import cc.shinichi.library.view.helper.SubsamplingScaleImageViewDragClose
+import cc.shinichi.library.view.subsampling.SubsamplingScaleImageView
 
-open class SimpleOnImageEventListener : SubsamplingScaleImageViewDragClose.OnImageEventListener {
+open class SimpleOnImageEventListener : SubsamplingScaleImageView.OnImageEventListener {
 
     override fun onReady() {}
 

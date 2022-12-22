@@ -24,14 +24,14 @@ import cc.shinichi.library.tool.common.NetworkUtil.isWiFi
 import cc.shinichi.library.tool.file.FileUtil.Companion.getAvailableCacheDir
 import cc.shinichi.library.tool.image.ImageUtil.getBitmapDegree
 import cc.shinichi.library.tool.image.ImageUtil.getImageBitmap
-import cc.shinichi.library.tool.image.ImageUtil.getLongImageMaxScale
-import cc.shinichi.library.tool.image.ImageUtil.getLongImageMinScale
+import cc.shinichi.library.tool.image.ImageUtil.getLongImageDoubleZoomScale
 import cc.shinichi.library.tool.image.ImageUtil.getSmallImageMaxScale
 import cc.shinichi.library.tool.image.ImageUtil.getSmallImageMinScale
 import cc.shinichi.library.tool.image.ImageUtil.getWideImageDoubleScale
 import cc.shinichi.library.tool.image.ImageUtil.getWidthHeight
 import cc.shinichi.library.tool.image.ImageUtil.isAnimWebp
 import cc.shinichi.library.tool.image.ImageUtil.isBmpImageWithMime
+import cc.shinichi.library.tool.image.ImageUtil.isHeifImageWithMime
 import cc.shinichi.library.tool.image.ImageUtil.isLongImage
 import cc.shinichi.library.tool.image.ImageUtil.isSmallImage
 import cc.shinichi.library.tool.image.ImageUtil.isStaticImage
@@ -40,10 +40,10 @@ import cc.shinichi.library.tool.image.ImageUtil.isWideImage
 import cc.shinichi.library.tool.ui.PhoneUtil.getPhoneHei
 import cc.shinichi.library.tool.ui.ToastUtil
 import cc.shinichi.library.view.helper.FingerDragHelper
-import cc.shinichi.library.view.helper.ImageSource
-import cc.shinichi.library.view.helper.SubsamplingScaleImageViewDragClose
 import cc.shinichi.library.view.listener.SimpleOnImageEventListener
 import cc.shinichi.library.view.photoview.PhotoView
+import cc.shinichi.library.view.subsampling.ImageSource
+import cc.shinichi.library.view.subsampling.SubsamplingScaleImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -59,7 +59,6 @@ import com.bumptech.glide.request.target.Target
 import java.io.File
 import kotlin.math.abs
 
-
 /**
  * @author 工藤
  * @email qinglingou@gmail.com
@@ -68,7 +67,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
     PagerAdapter() {
 
     private val imageMyList: MutableList<ImageInfo> = mutableListOf()
-    private val imageStaticHashMap: HashMap<String, SubsamplingScaleImageViewDragClose?> = HashMap()
+    private val imageStaticHashMap: HashMap<String, SubsamplingScaleImageView?> = HashMap()
     private val imageAnimHashMap: HashMap<String, PhotoView?> = HashMap()
     private var finalLoadUrl: String = ""
 
@@ -82,8 +81,8 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                 for (o in imageStaticHashMap.entries) {
                     val entry = o as Map.Entry<*, *>
                     if (entry.value != null) {
-                        (entry.value as SubsamplingScaleImageViewDragClose).destroyDrawingCache()
-                        (entry.value as SubsamplingScaleImageViewDragClose).recycle()
+                        (entry.value as SubsamplingScaleImageView).destroyDrawingCache()
+                        (entry.value as SubsamplingScaleImageView).recycle()
                     }
                 }
                 imageStaticHashMap.clear()
@@ -111,15 +110,15 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
         val convertView = View.inflate(activity, R.layout.sh_item_photoview, null)
         val progressBar = convertView.findViewById<ProgressBar>(R.id.progress_view)
         val fingerDragHelper: FingerDragHelper = convertView.findViewById(R.id.fingerDragHelper)
-        val imageStatic: SubsamplingScaleImageViewDragClose = convertView.findViewById(R.id.static_view)
+        val imageStatic: SubsamplingScaleImageView = convertView.findViewById(R.id.static_view)
         val imageAnim: PhotoView = convertView.findViewById(R.id.anim_view)
 
         val info = imageMyList[position]
         val originPathUrl = info.originUrl
         val thumbPathUrl = info.thumbnailUrl
 
-        imageStatic.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_CENTER_INSIDE)
-        imageStatic.setDoubleTapZoomStyle(SubsamplingScaleImageViewDragClose.ZOOM_FOCUS_CENTER)
+        imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
+        imageStatic.setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER)
         imageStatic.setDoubleTapZoomDuration(ImagePreview.instance.zoomTransitionDuration)
         imageStatic.minScale = ImagePreview.instance.minScale
         imageStatic.maxScale = ImagePreview.instance.maxScale
@@ -218,7 +217,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
             val imagePath = cacheFile.absolutePath
             val isStatic = isStaticImage(originPathUrl, imagePath)
             if (isStatic) {
-                loadImageStatic(originPathUrl, imagePath, imageStatic, imageAnim, progressBar)
+                loadImageStatic(imagePath, imageStatic, imageAnim, progressBar)
             } else {
                 loadImageAnim(originPathUrl, imagePath, imageStatic, imageAnim, progressBar)
             }
@@ -283,6 +282,10 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
             if (cacheFile != null && cacheFile.exists()) {
                 val isStatic = isStaticImage(originalUrl, cacheFile.absolutePath)
                 if (isStatic) {
+                    val isHeifImageWithMime = isHeifImageWithMime(imageInfo.originUrl, cacheFile.absolutePath)
+                    if (isHeifImageWithMime) {
+                        SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
+                    }
                     imageAnim?.visibility = View.GONE
                     imageStatic?.visibility = View.VISIBLE
                     imageStatic?.let {
@@ -310,7 +313,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                         }
                         origin.dimensions(widOrigin, heiOrigin)
                         setImageStatic(imagePath, imageStatic)
-                        imageStatic.orientation = SubsamplingScaleImageViewDragClose.ORIENTATION_USE_EXIF
+                        imageStatic.orientation = SubsamplingScaleImageView.ORIENTATION_USE_EXIF
                         imageStatic.setImage(origin, small)
                     }
                 } else {
@@ -336,13 +339,13 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
     }
 
     private fun loadSuccess(
-        imageUrl: String, resource: File, imageStatic: SubsamplingScaleImageViewDragClose, imageAnim: ImageView,
+        imageUrl: String, resource: File, imageStatic: SubsamplingScaleImageView, imageAnim: ImageView,
         progressBar: ProgressBar
     ) {
         val imagePath = resource.absolutePath
         val isStatic = isStaticImage(imageUrl, imagePath)
         if (isStatic) {
-            loadImageStatic(imageUrl, imagePath, imageStatic, imageAnim, progressBar)
+            loadImageStatic(imagePath, imageStatic, imageAnim, progressBar)
         } else {
             loadImageAnim(imageUrl, imagePath, imageStatic, imageAnim, progressBar)
         }
@@ -352,7 +355,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
      * 加载失败的处理
      */
     private fun loadFailed(
-        imageStatic: SubsamplingScaleImageViewDragClose, imageAnim: ImageView, progressBar: ProgressBar,
+        imageStatic: SubsamplingScaleImageView, imageAnim: ImageView, progressBar: ProgressBar,
         e: GlideException?
     ) {
         progressBar.visibility = View.GONE
@@ -372,11 +375,16 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
         }
     }
 
-    private fun setImageStatic(imagePath: String, imageStatic: SubsamplingScaleImageViewDragClose) {
+    private fun setImageStatic(imagePath: String, imageStatic: SubsamplingScaleImageView) {
         val tabletOrLandscape = isTabletOrLandscape(activity)
         val isLongImage = isLongImage(activity, imagePath)
+        val isHeifImageWithMime = isHeifImageWithMime("", imagePath)
+        if (isHeifImageWithMime) {
+            SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
+        }
         if (tabletOrLandscape) {
-            imageStatic.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_CENTER_INSIDE)
+            // Tablet
+            imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
             imageStatic.minScale = ImagePreview.instance.minScale
             imageStatic.maxScale = ImagePreview.instance.maxScale
             imageStatic.setDoubleTapZoomScale(ImagePreview.instance.mediumScale)
@@ -409,38 +417,35 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
 //                    }
 //                }
 //            }
-            return
-        }
-        if (isLongImage) {
-            imageStatic.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_START)
-            imageStatic.minScale = getLongImageMinScale(activity, imagePath)
-            imageStatic.maxScale = getLongImageMaxScale(activity, imagePath)
-            imageStatic.setDoubleTapZoomScale(getLongImageMaxScale(activity, imagePath))
         } else {
-            val isWideImage = isWideImage(activity, imagePath)
-            val isSmallImage = isSmallImage(activity, imagePath)
-            when {
-                isWideImage -> {
-                    imageStatic.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_CENTER_INSIDE)
-                    imageStatic.minScale = ImagePreview.instance.minScale
-                    imageStatic.maxScale = ImagePreview.instance.maxScale
-                    imageStatic.setDoubleTapZoomScale(
-                        getWideImageDoubleScale(
-                            activity, imagePath
-                        )
-                    )
-                }
-                isSmallImage -> {
-                    imageStatic.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_CUSTOM)
-                    imageStatic.minScale = getSmallImageMinScale(activity, imagePath)
-                    imageStatic.maxScale = getSmallImageMaxScale(activity, imagePath)
-                    imageStatic.setDoubleTapZoomScale(getSmallImageMaxScale(activity, imagePath))
-                }
-                else -> {
-                    imageStatic.setMinimumScaleType(SubsamplingScaleImageViewDragClose.SCALE_TYPE_CENTER_INSIDE)
-                    imageStatic.minScale = ImagePreview.instance.minScale
-                    imageStatic.maxScale = ImagePreview.instance.maxScale
-                    imageStatic.setDoubleTapZoomScale(ImagePreview.instance.mediumScale)
+            // Phone
+            if (isLongImage) {
+                imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
+                imageStatic.minScale = ImagePreview.instance.minScale
+                imageStatic.maxScale = ImagePreview.instance.maxScale
+                imageStatic.setDoubleTapZoomScale(getLongImageDoubleZoomScale(activity, imagePath))
+            } else {
+                val isWideImage = isWideImage(activity, imagePath)
+                val isSmallImage = isSmallImage(activity, imagePath)
+                when {
+                    isWideImage -> {
+                        imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
+                        imageStatic.minScale = ImagePreview.instance.minScale
+                        imageStatic.maxScale = ImagePreview.instance.maxScale
+                        imageStatic.setDoubleTapZoomScale(getWideImageDoubleScale(activity, imagePath))
+                    }
+                    isSmallImage -> {
+                        imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM)
+                        imageStatic.minScale = getSmallImageMinScale(activity, imagePath)
+                        imageStatic.maxScale = getSmallImageMaxScale(activity, imagePath)
+                        imageStatic.setDoubleTapZoomScale(getSmallImageMaxScale(activity, imagePath))
+                    }
+                    else -> {
+                        imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
+                        imageStatic.minScale = ImagePreview.instance.minScale
+                        imageStatic.maxScale = ImagePreview.instance.maxScale
+                        imageStatic.setDoubleTapZoomScale(getWideImageDoubleScale(activity, imagePath))
+                    }
                 }
             }
         }
@@ -450,13 +455,13 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
      * 加载静态图片
      */
     private fun loadImageStatic(
-        imageUrl: String, imagePath: String, imageStatic: SubsamplingScaleImageViewDragClose,
-        imageAnim: ImageView, progressBar: ProgressBar
+        imagePath: String, imageStatic: SubsamplingScaleImageView, imageAnim: ImageView,
+        progressBar: ProgressBar
     ) {
         imageAnim.visibility = View.GONE
         imageStatic.visibility = View.VISIBLE
         setImageStatic(imagePath, imageStatic)
-        imageStatic.orientation = SubsamplingScaleImageViewDragClose.ORIENTATION_USE_EXIF
+        imageStatic.orientation = SubsamplingScaleImageView.ORIENTATION_USE_EXIF
         val imageSource = ImageSource.uri(Uri.fromFile(File(imagePath)))
         if (isBmpImageWithMime(imagePath, imagePath)) {
             imageSource.tilingDisabled()
@@ -473,7 +478,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
      * 加载动图
      */
     private fun loadImageAnim(
-        imageUrl: String, imagePath: String, imageStatic: SubsamplingScaleImageViewDragClose,
+        imageUrl: String, imagePath: String, imageStatic: SubsamplingScaleImageView,
         imageAnim: ImageView, progressBar: ProgressBar
     ) {
         imageAnim.visibility = View.VISIBLE

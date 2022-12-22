@@ -28,7 +28,7 @@ import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.R
 import cc.shinichi.library.bean.ImageInfo
 import cc.shinichi.library.glide.FileTarget
-import cc.shinichi.library.glide.ImageLoader.getGlideCacheFile
+import cc.shinichi.library.glide.ImageLoader
 import cc.shinichi.library.glide.progress.OnProgressListener
 import cc.shinichi.library.glide.progress.ProgressManager.addListener
 import cc.shinichi.library.tool.common.HandlerHolder
@@ -48,40 +48,31 @@ import java.util.*
 class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClickListener {
 
     private lateinit var context: Activity
-
     private lateinit var handlerHolder: HandlerHolder
     private lateinit var imageInfoList: MutableList<ImageInfo>
-    private var currentItem = 0
+    private lateinit var viewPager: HackyViewPager
+    private lateinit var tvIndicator: TextView
+    private lateinit var fmImageShowOriginContainer: FrameLayout
+    private lateinit var fmCenterProgressContainer: FrameLayout
+    private lateinit var btnShowOrigin: Button
+    private lateinit var imgDownload: ImageView
+    private lateinit var imgCloseButton: ImageView
+    private lateinit var rootView: View
+    private lateinit var progressParentLayout: View
+
+    private var imagePreviewAdapter: ImagePreviewAdapter? = null
 
     private var isShowDownButton = false
     private var isShowCloseButton = false
     private var isShowOriginButton = false
     private var isShowIndicator = false
-
-    private var imagePreviewAdapter: ImagePreviewAdapter? = null
-    private lateinit var viewPager: HackyViewPager
-    private lateinit var tv_indicator: TextView
-    private lateinit var fm_image_show_origin_container: FrameLayout
-    private lateinit var fm_center_progress_container: FrameLayout
-    private lateinit var btn_show_origin: Button
-    private lateinit var img_download: ImageView
-    private lateinit var imgCloseButton: ImageView
-    private lateinit var rootView: View
-    private lateinit var progressParentLayout: View
-
     private var isUserCustomProgressView = false
-
-    // 指示器显示状态
     private var indicatorStatus = false
-
-    // 原图按钮显示状态
     private var originalStatus = false
-
-    // 下载按钮显示状态
     private var downloadButtonStatus = false
-
-    // 关闭按钮显示状态
     private var closeButtonStatus = false
+
+    private var currentItem = 0
     private var currentItemOriginPathUrl: String? = ""
     private var lastProgress = 0
 
@@ -130,58 +121,56 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         }
         rootView = findViewById(R.id.rootView)
         viewPager = findViewById(R.id.viewPager)
-        tv_indicator = findViewById(R.id.tv_indicator)
-        fm_image_show_origin_container = findViewById(R.id.fm_image_show_origin_container)
-        fm_center_progress_container = findViewById(R.id.fm_center_progress_container)
-        fm_image_show_origin_container.visibility = View.GONE
-        fm_center_progress_container.visibility = View.GONE
+        tvIndicator = findViewById(R.id.tv_indicator)
+        fmImageShowOriginContainer = findViewById(R.id.fm_image_show_origin_container)
+        fmCenterProgressContainer = findViewById(R.id.fm_center_progress_container)
+        fmImageShowOriginContainer.visibility = View.GONE
+        fmCenterProgressContainer.visibility = View.GONE
         val progressLayoutId = ImagePreview.instance.progressLayoutId
         // != -1 即用户自定义了view
         if (progressLayoutId != -1) {
             // add用户自定义的view到frameLayout中，回调进度和view
             progressParentLayout = View.inflate(context, ImagePreview.instance.progressLayoutId, null)
-            isUserCustomProgressView = run {
-                fm_center_progress_container.removeAllViews()
-                fm_center_progress_container.addView(progressParentLayout)
-                true
-            }
+            fmCenterProgressContainer.removeAllViews()
+            fmCenterProgressContainer.addView(progressParentLayout)
+            isUserCustomProgressView = true
         } else {
             // 使用默认的textView进行百分比的显示
             isUserCustomProgressView = false
         }
-        btn_show_origin = findViewById(R.id.btn_show_origin)
-        img_download = findViewById(R.id.img_download)
+        btnShowOrigin = findViewById(R.id.btn_show_origin)
+        imgDownload = findViewById(R.id.img_download)
         imgCloseButton = findViewById(R.id.imgCloseButton)
-        img_download.setImageResource(ImagePreview.instance.downIconResId)
+        imgDownload.setImageResource(ImagePreview.instance.downIconResId)
         imgCloseButton.setImageResource(ImagePreview.instance.closeIconResId)
 
         // 关闭页面按钮
         imgCloseButton.setOnClickListener(this)
         // 查看与原图按钮
-        btn_show_origin.setOnClickListener(this)
+        btnShowOrigin.setOnClickListener(this)
         // 下载图片按钮
-        img_download.setOnClickListener(this)
+        imgDownload.setOnClickListener(this)
         indicatorStatus = if (!isShowIndicator) {
-            tv_indicator.visibility = View.GONE
+            tvIndicator.visibility = View.GONE
             false
         } else {
             if (imageInfoList.size > 1) {
-                tv_indicator.visibility = View.VISIBLE
+                tvIndicator.visibility = View.VISIBLE
                 true
             } else {
-                tv_indicator.visibility = View.GONE
+                tvIndicator.visibility = View.GONE
                 false
             }
         }
         // 设置顶部指示器背景shape
         if (ImagePreview.instance.indicatorShapeResId > 0) {
-            tv_indicator.setBackgroundResource(ImagePreview.instance.indicatorShapeResId)
+            tvIndicator.setBackgroundResource(ImagePreview.instance.indicatorShapeResId)
         }
         downloadButtonStatus = if (isShowDownButton) {
-            img_download.visibility = View.VISIBLE
+            imgDownload.visibility = View.VISIBLE
             true
         } else {
-            img_download.visibility = View.GONE
+            imgDownload.visibility = View.GONE
             false
         }
         closeButtonStatus = if (isShowCloseButton) {
@@ -193,7 +182,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         }
 
         // 更新进度指示器
-        tv_indicator.text = String.format(
+        tvIndicator.text = String.format(
             getString(R.string.indicator),
             (currentItem + 1).toString(),
             (imageInfoList.size).toString()
@@ -205,9 +194,9 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         viewPager.addOnPageChangeListener(object : SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                ImagePreview.instance.bigImagePageChangeListener?.onPageSelected(position)
                 currentItem = position
-                currentItemOriginPathUrl = imageInfoList[position].originUrl
+                ImagePreview.instance.bigImagePageChangeListener?.onPageSelected(currentItem)
+                currentItemOriginPathUrl = imageInfoList[currentItem].originUrl
                 isShowOriginButton = ImagePreview.instance.isShowOriginButton(currentItem)
                 if (isShowOriginButton) {
                     // 检查缓存是否存在
@@ -216,14 +205,14 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                     gone()
                 }
                 // 更新进度指示器
-                tv_indicator.text = String.format(
+                tvIndicator.text = String.format(
                     getString(R.string.indicator),
                     (currentItem + 1).toString(),
                     (imageInfoList.size).toString()
                 )
                 // 如果是自定义百分比进度view，每次切换都先隐藏，并重置百分比
                 if (isUserCustomProgressView) {
-                    fm_center_progress_container.visibility = View.GONE
+                    fmCenterProgressContainer.visibility = View.GONE
                     lastProgress = 0
                 }
             }
@@ -267,9 +256,8 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     private fun convertPercentToBlackAlphaColor(percent: Float): Int {
-        var percent = percent
-        percent = Math.min(1f, Math.max(0f, percent))
-        val intAlpha = (percent * 255).toInt()
+        val realPercent = 1f.coerceAtMost(0f.coerceAtLeast(percent))
+        val intAlpha = (realPercent * 255).toInt()
         val stringAlpha = Integer.toHexString(intAlpha).toLowerCase(Locale.CHINA)
         val color = "#" + (if (stringAlpha.length < 2) "0" else "") + stringAlpha + "000000"
         return Color.parseColor(color)
@@ -280,21 +268,21 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         rootView.setBackgroundColor(colorId)
         if (alpha >= 1) {
             if (indicatorStatus) {
-                tv_indicator.visibility = View.VISIBLE
+                tvIndicator.visibility = View.VISIBLE
             }
             if (originalStatus) {
-                fm_image_show_origin_container.visibility = View.VISIBLE
+                fmImageShowOriginContainer.visibility = View.VISIBLE
             }
             if (downloadButtonStatus) {
-                img_download.visibility = View.VISIBLE
+                imgDownload.visibility = View.VISIBLE
             }
             if (closeButtonStatus) {
                 imgCloseButton.visibility = View.VISIBLE
             }
         } else {
-            tv_indicator.visibility = View.GONE
-            fm_image_show_origin_container.visibility = View.GONE
-            img_download.visibility = View.GONE
+            tvIndicator.visibility = View.GONE
+            fmImageShowOriginContainer.visibility = View.GONE
+            imgDownload.visibility = View.GONE
             imgCloseButton.visibility = View.GONE
         }
     }
@@ -307,7 +295,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             if (isUserCustomProgressView) {
                 gone()
             } else {
-                btn_show_origin.text = "0 %"
+                btnShowOrigin.text = "0 %"
             }
             if (checkCache(path)) {
                 val message = handlerHolder.obtainMessage()
@@ -326,13 +314,11 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             gone()
             if (currentItem == getRealIndexWithPath(url)) {
                 if (isUserCustomProgressView) {
-                    fm_center_progress_container.visibility = View.GONE
+                    fmCenterProgressContainer.visibility = View.GONE
                     progressParentLayout.visibility = View.GONE
                     ImagePreview.instance.onOriginProgressListener?.finish(progressParentLayout)
-                    imagePreviewAdapter?.loadOrigin(imageInfoList[currentItem])
-                } else {
-                    imagePreviewAdapter?.loadOrigin(imageInfoList[currentItem])
                 }
+                imagePreviewAdapter?.loadOrigin(imageInfoList[currentItem])
             }
         } else if (msg.what == 2) {
             // 加载中
@@ -342,22 +328,22 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             if (currentItem == getRealIndexWithPath(url)) {
                 if (isUserCustomProgressView) {
                     gone()
-                    fm_center_progress_container.visibility = View.VISIBLE
+                    fmCenterProgressContainer.visibility = View.VISIBLE
                     progressParentLayout.visibility = View.VISIBLE
                     ImagePreview.instance.onOriginProgressListener?.progress(progressParentLayout, progress)
                 } else {
                     visible()
-                    btn_show_origin.text = String.format("%s %%", progress)
+                    btnShowOrigin.text = String.format("%s %%", progress)
                 }
             }
         } else if (msg.what == 3) {
             // 隐藏查看原图按钮
-            btn_show_origin.setText(R.string.btn_original)
-            fm_image_show_origin_container.visibility = View.GONE
+            btnShowOrigin.setText(R.string.btn_original)
+            fmImageShowOriginContainer.visibility = View.GONE
             originalStatus = false
         } else if (msg.what == 4) {
             // 显示查看原图按钮
-            fm_image_show_origin_container.visibility = View.VISIBLE
+            fmImageShowOriginContainer.visibility = View.VISIBLE
             originalStatus = true
         }
         return true
@@ -373,7 +359,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     private fun checkCache(url: String?): Boolean {
-        val cacheFile = getGlideCacheFile(context, url)
+        val cacheFile = ImageLoader.getGlideCacheFile(context, url)
         return if (cacheFile != null && cacheFile.exists()) {
             gone()
             true

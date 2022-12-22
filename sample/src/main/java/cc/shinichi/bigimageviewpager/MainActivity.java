@@ -62,34 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ImagePreview.LoadStrategy loadStrategy = ImagePreview.LoadStrategy.Default;
 
-    private final String[] images = {
-            // 普通jpg图片
-            "http://img6.16fan.com/201510/11/011819zbzbciir9ctn295o.jpg",
-            "http://img6.16fan.com/201510/11/004847l7w568jc5n5wn385.jpg",
-            "http://img6.16fan.com/201510/11/004906z0a0a0e0hs56ce0t.jpg",
-            "http://img6.16fan.com/201510/11/004937pwttwjt0bgtoton7.jpg",
-            "http://img6.16fan.com/201510/11/004946t38ybzt8bq8c838y.jpg",
-            "http://img6.16fan.com/201510/11/004955d8ftz3t1sttt7ft7.jpg",
-            "http://img6.16fan.com/201510/11/005027qy2g55yyglb59zdu.jpg",
-            "http://img6.16fan.com/201510/11/005229bbtxkczcl0btmw8e.jpg",
-            "http://img6.16fan.com/201510/11/005258wdngg6rv0tpn8z9z.jpg",
-            "http://img6.16fan.com/201510/11/013553aj3kp9u6iuz6k9uj.jpg",
-            "http://img6.16fan.com/201510/11/011753fnanichdca0wbhxc.jpg",
-            // 小尺寸图片
-            "https://s1.ax1x.com/2020/10/16/0HXKv4.jpg",
-            // 大图：5760 * 3840
-            "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg",
-            // 长图：2280 * 22116
-            "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg"
-            // 支持且不限于以下六种格式的图片
-//            "https://aloss.11oi.com/app/img/temp/launch_top.bmp",
-//            "https://aloss.11oi.com/app/img/temp/launch_top.gif",
-//            "https://aloss.11oi.com/app/img/temp/launch_top.jpeg",
-//            "https://aloss.11oi.com/app/img/temp/launch_top.jpg",
-//            "https://aloss.11oi.com/app/img/temp/launch_top.png",
-//            "https://aloss.11oi.com/app/img/temp/launch_top.webp"
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
         SwitchCompat switchShowCloseButton = findViewById(R.id.switchShowCloseButton);
         SwitchCompat switchShowDownButton = findViewById(R.id.switchShowDownButton);
         SwitchCompat switchShowErrorToast = findViewById(R.id.switchShowErrorToast);
-
         RadioGroup radioGroupStrategy = findViewById(R.id.radioGroupStrategy);
 
         switchClickClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -210,47 +181,70 @@ public class MainActivity extends AppCompatActivity {
 
     private void initData() {
         final List<ImageInfo> imageInfoList = new ArrayList<>();
+        ImageInfo i;
 
-        ImageInfo imageInfo;
-        for (String image : images) {
-            imageInfo = new ImageInfo();
-            // 原图地址
-            imageInfo.setOriginUrl(image);
-            if (image.contains("16fan.com")) {
-                // 缩略图；实际使用中，根据需求传入缩略图路径。如果没有缩略图url，将两项设置为一样。
-                imageInfo.setThumbnailUrl(image.concat("-400"));
-            } else {
-                // 缩略图；实际使用中，根据需求传入缩略图路径。如果没有缩略图url，将两项设置为一样。
-                imageInfo.setThumbnailUrl(image);
-            }
-            imageInfoList.add(imageInfo);
-        }
-
-        // 动图支持：
-        ImageInfo i = new ImageInfo();
-        i.setThumbnailUrl("https://media3.giphy.com/media/l41lXnhesd96Aa9os/giphy_s.gif?cid=790b76119dc3904439a5a6dc0a25713aeb5f65b3133f46d5&rid=giphy_s.gif&ct=g");
-        i.setOriginUrl("https://i.giphy.com/media/l41lXnhesd96Aa9os/giphy.webp");
+        // 普通图片1：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://i.328888.xyz/2022/12/21/ArGOV.md.jpeg");
+        i.setOriginUrl("https://i.328888.xyz/2022/12/21/ArGOV.jpeg");
         imageInfoList.add(i);
 
+        // 普通图片2：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://i.328888.xyz/2022/12/21/Arded.md.jpeg");
+        i.setOriginUrl("https://i.328888.xyz/2022/12/21/Arded.jpeg");
+        imageInfoList.add(i);
+
+        // 大尺寸图片：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://i.328888.xyz/2022/12/21/A3ZD8.md.jpeg");
+        i.setOriginUrl("https://i.328888.xyz/2022/12/21/A3ZD8.jpeg");
+        imageInfoList.add(i);
+
+        // 长截图：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://i.328888.xyz/2022/12/21/ArQ03.md.jpeg");
+        i.setOriginUrl("https://i.328888.xyz/2022/12/21/ArQ03.jpeg");
+        imageInfoList.add(i);
+
+        // 全景图片1：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://i.328888.xyz/2022/12/21/ArFZN.md.jpeg");
+        i.setOriginUrl("https://i.328888.xyz/2022/12/21/ArFZN.jpeg");
+        imageInfoList.add(i);
+
+        // 全景图片2：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://i.328888.xyz/2022/12/21/ArsJw.md.jpeg");
+        i.setOriginUrl("https://i.328888.xyz/2022/12/21/ArsJw.jpeg");
+        imageInfoList.add(i);
+
+        // 动图：
         i = new ImageInfo();
         i.setThumbnailUrl("https://i.imgur.com/NEJHo0e.png");
         i.setOriginUrl("https://i0.hdslb.com/bfs/article/4421aaa8a38beeda1b195b656c883c7508f9b13d.gif");
         imageInfoList.add(i);
 
-        // 中文url的原图加载
+        // HEIC1：
         i = new ImageInfo();
-        i.setThumbnailUrl("https://test-houbo-homework.oss-cn-shanghai.aliyuncs.com/fdf556b61ea58156ff30f54502125e20.jpg");
-        i.setOriginUrl("https://test-houbo-homework.oss-cn-shanghai.aliyuncs.com/第2课测试-画鸡蛋测试-111-1553831-1662516935.jpg");
+        i.setThumbnailUrl("https://rexu-forum-1308280730.cos.ap-shanghai.myqcloud.com/image/2022/11/09/89be250d8fa24248aa8104816819a805.heic");
+        i.setOriginUrl("https://rexu-forum-1308280730.cos.ap-shanghai.myqcloud.com/image/2022/11/09/89be250d8fa24248aa8104816819a805.heic");
         imageInfoList.add(i);
 
-        // todo 测试带重定向的地址
+        // HEIC2：
         i = new ImageInfo();
-        i.setThumbnailUrl("https://im.api.ovivas.cn/rest/v1/im/file/download?fileId=2022%2F12%2F05%2Fb22d9ae0-32a6-4420-b0ca-b1f79cac7aca%2Fthumbnail%2Fwx_camera_1670145692581%282%29.jpg");
-        i.setOriginUrl("https://im.api.ovivas.cn/rest/v1/im/file/download?fileId=2022%2F12%2F05%2Fb22d9ae0-32a6-4420-b0ca-b1f79cac7aca%2Fwx_camera_1670145692581%282%29.jpg");
+        i.setThumbnailUrl("https://rexu-forum-1308280730.cos.ap-shanghai.myqcloud.com/image/2022/11/09/b7ee61002e974ee7b693e7471351d108.heic");
+        i.setOriginUrl("https://rexu-forum-1308280730.cos.ap-shanghai.myqcloud.com/image/2022/11/09/b7ee61002e974ee7b693e7471351d108.heic");
+        imageInfoList.add(i);
+
+        // HEIC3：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://rexu-forum-1308280730.cos.ap-shanghai.myqcloud.com/image/2022/11/09/d36ea9faffb246809ba11b535182e7d1.heic");
+        i.setOriginUrl("https://rexu-forum-1308280730.cos.ap-shanghai.myqcloud.com/image/2022/11/09/d36ea9faffb246809ba11b535182e7d1.heic");
         imageInfoList.add(i);
 
 
-
+        // ==============================================================================================================
         // 一、最简单的调用：
         findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -259,9 +253,10 @@ public class MainActivity extends AppCompatActivity {
                 ImagePreview.getInstance().setContext(MainActivity.this).setImageInfoList(imageInfoList).start();
             }
         });
+        // ==============================================================================================================
 
 
-
+        // ==============================================================================================================
         // 二、共享元素动画
         ImageView image1 = findViewById(R.id.image1);
         ImageView image2 = findViewById(R.id.image2);
@@ -314,9 +309,11 @@ public class MainActivity extends AppCompatActivity {
                         .start();
             }
         });
+        // ==============================================================================================================
 
 
 
+        // ==============================================================================================================
         // 三、完全自定义调用：
         findViewById(R.id.buttonPreview).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -472,9 +469,11 @@ public class MainActivity extends AppCompatActivity {
                         .start();
             }
         });
+        // ==============================================================================================================
 
 
 
+        // ==============================================================================================================
         // 四、通过相册选择图片进行预览
         findViewById(R.id.buttonChoose).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -496,9 +495,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        // ==============================================================================================================
 
 
 
+        // ==============================================================================================================
         // 清除磁盘缓存
         findViewById(R.id.buttonClean).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -507,6 +508,7 @@ public class MainActivity extends AppCompatActivity {
                 ToastUtil.getInstance().showShort(MainActivity.this, "磁盘缓存已成功清除");
             }
         });
+        // ==============================================================================================================
     }
 
     @Override
