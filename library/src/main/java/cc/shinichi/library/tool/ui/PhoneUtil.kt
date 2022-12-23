@@ -1,8 +1,8 @@
 package cc.shinichi.library.tool.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.util.DisplayMetrics
-import android.view.WindowManager
+import android.content.res.Resources
 
 /**
  * @author 工藤
@@ -14,21 +14,26 @@ import android.view.WindowManager
 object PhoneUtil {
 
     fun getPhoneWid(context: Context): Int {
-        val windowManager = context.applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val metric = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(metric)
-        return metric.widthPixels
+        val resources: Resources = context.applicationContext.resources
+        val dm = resources.displayMetrics
+        return dm.widthPixels
     }
 
     fun getPhoneHei(context: Context): Int {
-        val windowManager = context.applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val metric = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(metric)
-        return metric.heightPixels
+        val resources: Resources = context.applicationContext.resources
+        val dm = resources.displayMetrics
+        return dm.heightPixels
     }
 
     fun getPhoneRatio(context: Context): Float {
         return getPhoneHei(context).toFloat() / getPhoneWid(context).toFloat()
+    }
+
+    @SuppressLint("InternalInsetResource")
+    fun getNavBarHeight(context: Context): Int {
+        val resources: Resources = context.resources
+        val resourceId: Int = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        return resources.getDimensionPixelSize(resourceId)
     }
 
     fun px2dp(context: Context, pxValue: Float): Int {

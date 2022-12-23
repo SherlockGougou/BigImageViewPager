@@ -3,6 +3,7 @@ package cc.shinichi.library.view
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -19,6 +20,7 @@ import cc.shinichi.library.bean.ImageInfo
 import cc.shinichi.library.glide.FileTarget
 import cc.shinichi.library.glide.ImageLoader.clearMemory
 import cc.shinichi.library.glide.ImageLoader.getGlideCacheFile
+import cc.shinichi.library.glide.progress.ProgressManager.addListener
 import cc.shinichi.library.tool.common.HttpUtil.downloadFile
 import cc.shinichi.library.tool.common.NetworkUtil.isWiFi
 import cc.shinichi.library.tool.file.FileUtil.Companion.getAvailableCacheDir
@@ -284,7 +286,11 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                 if (isStatic) {
                     val isHeifImageWithMime = isHeifImageWithMime(imageInfo.originUrl, cacheFile.absolutePath)
                     if (isHeifImageWithMime) {
-                        SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.HARDWARE)
+                        } else {
+                            SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
+                        }
                     }
                     imageAnim?.visibility = View.GONE
                     imageStatic?.visibility = View.VISIBLE
@@ -324,7 +330,8 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                             .asGif()
                             .load(cacheFile)
                             .apply(
-                                RequestOptions().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                                RequestOptions()
+                                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                                     .error(ImagePreview.instance.errorPlaceHolder)
                             )
                             .into(imageAnim)
@@ -380,7 +387,11 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
         val isLongImage = isLongImage(activity, imagePath)
         val isHeifImageWithMime = isHeifImageWithMime("", imagePath)
         if (isHeifImageWithMime) {
-            SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.HARDWARE)
+            } else {
+                SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
+            }
         }
         if (tabletOrLandscape) {
             // Tablet

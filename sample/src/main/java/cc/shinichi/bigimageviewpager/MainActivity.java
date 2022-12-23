@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 动图：
         i = new ImageInfo();
-        i.setThumbnailUrl("https://i.imgur.com/NEJHo0e.png");
+        i.setThumbnailUrl("https://i.328888.xyz/2022/12/23/AQKsV.png");
         i.setOriginUrl("https://i0.hdslb.com/bfs/article/4421aaa8a38beeda1b195b656c883c7508f9b13d.gif");
         imageInfoList.add(i);
 
