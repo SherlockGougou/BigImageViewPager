@@ -12,7 +12,6 @@ import cc.shinichi.library.tool.common.Print.d
 import cc.shinichi.library.tool.ui.PhoneUtil
 import java.io.*
 import java.util.*
-import kotlin.text.Typography.degree
 
 /**
  * @author 工藤
@@ -131,11 +130,11 @@ object ImageUtil {
         } else intArrayOf(srcWidth, srcHeight)
     }
 
-    fun isTablet(context: Context): Boolean {
+    private fun isTablet(context: Context): Boolean {
         return context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_LARGE
     }
 
-    fun isLandscape(context: Context): Boolean {
+    private fun isLandscape(context: Context): Boolean {
         val phoneRatio = PhoneUtil.getPhoneRatio(context.applicationContext)
         return phoneRatio <= 1f
     }
@@ -149,35 +148,55 @@ object ImageUtil {
         val w = wh[0].toFloat()
         val h = wh[1].toFloat()
         val imageRatio = h / w
-        val phoneRatio = PhoneUtil.getPhoneRatio(context.applicationContext) + 0.1f
-        val isLongImage = w > 0 && h > 0 && h > w && imageRatio >= phoneRatio
+        val phoneRatio = PhoneUtil.getPhoneRatio(context)
+        val isLongImage = h > w && imageRatio > phoneRatio
         d(TAG, "isLongImage = $isLongImage")
         return isLongImage
     }
 
-    fun isWideImage(context: Context?, imagePath: String): Boolean {
+    fun isWideImage(imagePath: String): Boolean {
         val wh = getWidthHeight(imagePath)
         val w = wh[0].toFloat()
         val h = wh[1].toFloat()
         val imageRatio = w / h
-        // float phoneRatio = PhoneUtil.getPhoneRatio(context.getApplicationContext()) + 0.1F;
-        val isWideImage = w > 0 && h > 0 && w > h && imageRatio >= 2
+        val isWideImage = w > h && imageRatio >= 2
         d(TAG, "isWideImage = $isWideImage")
         return isWideImage
     }
 
-    fun isSmallImage(context: Context, imagePath: String): Boolean {
+    fun getImageMaxZoomScale(context: Context, imagePath: String): Float {
         val wh = getWidthHeight(imagePath)
-        val isSmallImage = wh[0] < PhoneUtil.getPhoneWid(context.applicationContext)
-        d(TAG, "isSmallImage = $isSmallImage")
-        return isSmallImage
+        val imageHei = wh[1].toFloat()
+        val phoneHei = PhoneUtil.getPhoneHei(context.applicationContext).toFloat()
+        return phoneHei * 2f / imageHei
+    }
+
+    fun getImageDoubleScale(context: Context, imagePath: String): Float {
+        val wh = getWidthHeight(imagePath)
+        val imageHei = wh[1].toFloat()
+        val phoneHei = PhoneUtil.getPhoneHei(context.applicationContext).toFloat()
+        return phoneHei / imageHei
+    }
+
+    fun getLongImageMaxZoomScale(context: Context, imagePath: String): Float {
+        val wh = getWidthHeight(imagePath)
+        val imageWid = wh[0].toFloat()
+        val phoneWid = PhoneUtil.getPhoneWid(context.applicationContext).toFloat()
+        return phoneWid * 2f / imageWid
     }
 
     fun getLongImageDoubleZoomScale(context: Context, imagePath: String): Float {
         val wh = getWidthHeight(imagePath)
-        val imageWid = wh[0].toFloat()
-        val phoneWid = PhoneUtil.getPhoneWid(context.applicationContext).toFloat()
-        return phoneWid / imageWid
+        val imageWid = wh[0].toDouble()
+        val phoneWid = PhoneUtil.getPhoneWid(context.applicationContext).toDouble()
+        return (phoneWid / imageWid).toFloat()
+    }
+
+    fun getWideImageMaxZoomScale(context: Context, imagePath: String): Float {
+        val wh = getWidthHeight(imagePath)
+        val imageHei = wh[1].toFloat()
+        val phoneHei = PhoneUtil.getPhoneHei(context.applicationContext).toFloat()
+        return phoneHei * 2f / imageHei
     }
 
     fun getWideImageDoubleScale(context: Context, imagePath: String): Float {
@@ -185,20 +204,6 @@ object ImageUtil {
         val imageHei = wh[1].toFloat()
         val phoneHei = PhoneUtil.getPhoneHei(context.applicationContext).toFloat()
         return phoneHei / imageHei
-    }
-
-    fun getSmallImageMinScale(context: Context, imagePath: String): Float {
-        val wh = getWidthHeight(imagePath)
-        val imageWid = wh[0].toFloat()
-        val phoneWid = PhoneUtil.getPhoneWid(context.applicationContext).toFloat()
-        return phoneWid / imageWid
-    }
-
-    fun getSmallImageMaxScale(context: Context, imagePath: String): Float {
-        val wh = getWidthHeight(imagePath)
-        val imageWid = wh[0].toFloat()
-        val phoneWid = PhoneUtil.getPhoneWid(context.applicationContext).toFloat()
-        return phoneWid * 2 / imageWid
     }
 
     fun getImageBitmap(srcPath: String?, degree: Int): Bitmap? {

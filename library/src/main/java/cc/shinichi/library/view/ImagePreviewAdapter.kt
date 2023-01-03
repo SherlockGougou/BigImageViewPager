@@ -20,22 +20,20 @@ import cc.shinichi.library.bean.ImageInfo
 import cc.shinichi.library.glide.FileTarget
 import cc.shinichi.library.glide.ImageLoader.clearMemory
 import cc.shinichi.library.glide.ImageLoader.getGlideCacheFile
-import cc.shinichi.library.glide.progress.ProgressManager.addListener
 import cc.shinichi.library.tool.common.HttpUtil.downloadFile
 import cc.shinichi.library.tool.common.NetworkUtil.isWiFi
 import cc.shinichi.library.tool.file.FileUtil.Companion.getAvailableCacheDir
+import cc.shinichi.library.tool.image.ImageUtil
 import cc.shinichi.library.tool.image.ImageUtil.getBitmapDegree
 import cc.shinichi.library.tool.image.ImageUtil.getImageBitmap
+import cc.shinichi.library.tool.image.ImageUtil.getImageDoubleScale
 import cc.shinichi.library.tool.image.ImageUtil.getLongImageDoubleZoomScale
-import cc.shinichi.library.tool.image.ImageUtil.getSmallImageMaxScale
-import cc.shinichi.library.tool.image.ImageUtil.getSmallImageMinScale
 import cc.shinichi.library.tool.image.ImageUtil.getWideImageDoubleScale
 import cc.shinichi.library.tool.image.ImageUtil.getWidthHeight
 import cc.shinichi.library.tool.image.ImageUtil.isAnimWebp
 import cc.shinichi.library.tool.image.ImageUtil.isBmpImageWithMime
 import cc.shinichi.library.tool.image.ImageUtil.isHeifImageWithMime
 import cc.shinichi.library.tool.image.ImageUtil.isLongImage
-import cc.shinichi.library.tool.image.ImageUtil.isSmallImage
 import cc.shinichi.library.tool.image.ImageUtil.isStaticImage
 import cc.shinichi.library.tool.image.ImageUtil.isTabletOrLandscape
 import cc.shinichi.library.tool.image.ImageUtil.isWideImage
@@ -122,9 +120,6 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
         imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
         imageStatic.setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER)
         imageStatic.setDoubleTapZoomDuration(ImagePreview.instance.zoomTransitionDuration)
-        imageStatic.minScale = ImagePreview.instance.minScale
-        imageStatic.maxScale = ImagePreview.instance.maxScale
-        imageStatic.setDoubleTapZoomScale(ImagePreview.instance.mediumScale)
 
         imageAnim.setZoomTransitionDuration(ImagePreview.instance.zoomTransitionDuration)
         imageAnim.minimumScale = ImagePreview.instance.minScale
@@ -260,10 +255,6 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
         return convertView
     }
 
-    override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
-        super.setPrimaryItem(container, position, `object`)
-    }
-
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
         return view === `object`
     }
@@ -287,7 +278,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                     val isHeifImageWithMime = isHeifImageWithMime(imageInfo.originUrl, cacheFile.absolutePath)
                     if (isHeifImageWithMime) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.HARDWARE)
+                            SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ALPHA_8)
                         } else {
                             SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
                         }
@@ -383,80 +374,40 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
     }
 
     private fun setImageStatic(imagePath: String, imageStatic: SubsamplingScaleImageView) {
-        val tabletOrLandscape = isTabletOrLandscape(activity)
-        val isLongImage = isLongImage(activity, imagePath)
         val isHeifImageWithMime = isHeifImageWithMime("", imagePath)
         if (isHeifImageWithMime) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.HARDWARE)
+                SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ALPHA_8)
             } else {
                 SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
             }
         }
+        val tabletOrLandscape = isTabletOrLandscape(activity)
         if (tabletOrLandscape) {
             // Tablet
             imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
             imageStatic.minScale = ImagePreview.instance.minScale
             imageStatic.maxScale = ImagePreview.instance.maxScale
             imageStatic.setDoubleTapZoomScale(ImagePreview.instance.mediumScale)
-//            if (isLongImage) {
-//                imageStatic.minScale = getLongImageMinScale(activity, imagePath)
-//                imageStatic.maxScale = getLongImageMaxScale(activity, imagePath)
-//                imageStatic.setDoubleTapZoomScale(getLongImageMaxScale(activity, imagePath))
-//            } else {
-//                val isWideImage = isWideImage(activity, imagePath)
-//                val isSmallImage = isSmallImage(activity, imagePath)
-//                when {
-//                    isWideImage -> {
-//                        imageStatic.minScale = ImagePreview.instance.minScale
-//                        imageStatic.maxScale = ImagePreview.instance.maxScale
-//                        imageStatic.setDoubleTapZoomScale(
-//                            getWideImageDoubleScale(
-//                                activity, imagePath
-//                            )
-//                        )
-//                    }
-//                    isSmallImage -> {
-//                        imageStatic.minScale = getSmallImageMinScale(activity, imagePath)
-//                        imageStatic.maxScale = getSmallImageMaxScale(activity, imagePath)
-//                        imageStatic.setDoubleTapZoomScale(getSmallImageMaxScale(activity, imagePath))
-//                    }
-//                    else -> {
-//                        imageStatic.minScale = ImagePreview.instance.minScale
-//                        imageStatic.maxScale = ImagePreview.instance.maxScale
-//                        imageStatic.setDoubleTapZoomScale(ImagePreview.instance.mediumScale)
-//                    }
-//                }
-//            }
         } else {
             // Phone
+            imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
+            imageStatic.minScale = 1f
+            val isLongImage = isLongImage(activity, imagePath)
             if (isLongImage) {
-                imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
-                imageStatic.minScale = ImagePreview.instance.minScale
-                imageStatic.maxScale = ImagePreview.instance.maxScale
+                // 长图
+                imageStatic.maxScale = ImageUtil.getLongImageMaxZoomScale(activity, imagePath)
                 imageStatic.setDoubleTapZoomScale(getLongImageDoubleZoomScale(activity, imagePath))
             } else {
-                val isWideImage = isWideImage(activity, imagePath)
-                val isSmallImage = isSmallImage(activity, imagePath)
-                when {
-                    isWideImage -> {
-                        imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
-                        imageStatic.minScale = ImagePreview.instance.minScale
-                        imageStatic.maxScale = ImagePreview.instance.maxScale
-                        imageStatic.setDoubleTapZoomScale(getWideImageDoubleScale(activity, imagePath))
-                    }
-                    isSmallImage -> {
-                        imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM)
-                        imageStatic.minScale = getSmallImageMinScale(activity, imagePath)
-                        imageStatic.maxScale = getSmallImageMaxScale(activity, imagePath)
-                        imageStatic.setDoubleTapZoomScale(getSmallImageMaxScale(activity, imagePath))
-                    }
-                    else -> {
-                        imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
-                        imageStatic.minScale = ImagePreview.instance.minScale
-                        imageStatic.maxScale = ImagePreview.instance.maxScale
-                        imageStatic.setDoubleTapZoomScale(getWideImageDoubleScale(activity, imagePath))
-                    }
+                val isWideImage = isWideImage(imagePath)
+                if (isWideImage) {
+                    // 宽图
+                    imageStatic.maxScale = ImageUtil.getWideImageMaxZoomScale(activity, imagePath)
+                    imageStatic.setDoubleTapZoomScale(getWideImageDoubleScale(activity, imagePath))
+                } else {
+                    // 普通图片
+                    imageStatic.maxScale = ImageUtil.getImageMaxZoomScale(activity, imagePath)
+                    imageStatic.setDoubleTapZoomScale(getImageDoubleScale(activity, imagePath))
                 }
             }
         }

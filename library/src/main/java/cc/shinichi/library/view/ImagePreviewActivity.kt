@@ -41,6 +41,7 @@ import com.google.android.material.transition.platform.MaterialContainerTransfor
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import java.util.*
 
+
 /**
  * @author 工藤
  * @email qinglingou@gmail.com
@@ -92,16 +93,9 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         // R.layout.sh_layout_preview
         setContentView(ImagePreview.instance.previewLayoutResId)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val window = window
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.decorView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = Color.TRANSPARENT
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        }
+        transparentStatusBar(this)
+        transparentNavBar(this)
+
         context = this
         handlerHolder = HandlerHolder(this)
         imageInfoList = ImagePreview.instance.getImageInfoList()
@@ -483,6 +477,47 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         })
         Glide.with(context).downloadOnly().load(path).into(object : FileTarget() {
         })
+    }
+
+    private fun transparentStatusBar(activity: Activity) {
+        transparentStatusBar(activity.window)
+    }
+
+    private fun transparentStatusBar(window: Window) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            val option = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            val vis = window.decorView.systemUiVisibility
+            window.decorView.systemUiVisibility = option or vis
+            window.statusBarColor = Color.TRANSPARENT
+        } else {
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        }
+    }
+
+    private fun transparentNavBar(activity: Activity) {
+        transparentNavBar(activity.window)
+    }
+
+    private fun transparentNavBar(window: Window) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.navigationBarColor = Color.TRANSPARENT
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (window.attributes.flags and WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION == 0) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+            }
+        }
+        val decorView = window.decorView
+        val vis = decorView.systemUiVisibility
+        val option =
+            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        decorView.systemUiVisibility = vis or option
     }
 
     companion object {

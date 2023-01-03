@@ -268,7 +268,7 @@ class ImagePreview {
         return this
     }
 
-    @Deprecated("")
+    @Deprecated("不再支持，每张图片的缩放由本身的尺寸决定")
     fun setScaleLevel(min: Int, medium: Int, max: Int): ImagePreview {
         if (medium in (min + 1) until max && min > 0) {
             minScale = min.toFloat()
