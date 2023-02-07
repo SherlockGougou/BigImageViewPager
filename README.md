@@ -40,7 +40,7 @@ allprojects {
 ##### 此处显示的是本框架的最新版本号：
 ##### ⚠️注意：glide v3版本不再维护，最终版本为v3_4.0.2。建议使用androidx版本。
 ```
-androidx用户  :   使用  androidx-7.1.1
+androidx用户  :   使用  androidx-7.1.2
 对于glide4.x  :   使用        v4_6.1.3
 ```
 
@@ -54,7 +54,7 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
   // BigImageViewPager https://github.com/SherlockGougou/BigImageViewPager
-  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.1.1'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.1.2'
 
 ================================分割线==================================
 

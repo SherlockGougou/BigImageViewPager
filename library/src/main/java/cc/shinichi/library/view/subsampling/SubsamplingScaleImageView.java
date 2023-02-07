@@ -755,7 +755,9 @@ public class SubsamplingScaleImageView extends View {
 
         // Store current values so we can send an event if they change
         float scaleBefore = scale;
-        vTranslateBefore.set(vTranslate);
+        if (vTranslateBefore != null && vTranslate != null) {
+            vTranslateBefore.set(vTranslate);
+        }
 
         boolean handled = onTouchEventInternal(event);
         sendStateChanged(scaleBefore, vTranslateBefore, ORIGIN_TOUCH);
