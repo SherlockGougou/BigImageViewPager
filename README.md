@@ -4,6 +4,21 @@
 ### 注意：本框架支持网络图片、本地图片、支持gif动图、支持Android 12。
 ### 后续可能会仅维护androidx版本，support请尽快迁移到androidx。参考官方迁移文档：https://developer.android.google.cn/jetpack/androidx/migrate
 
+
+# 推荐扫描二维码进行安装体验：
+<p align="center">
+  <img src="https://www.pgyer.com/app/qrcode/bigimageviewpager" width="200"/>
+  <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bfd23ce0042e431bb200d7e5e2fca87d~tplv-k3u1fbpfcp-zoom-1.image" width="200"/>
+</p>
+
+<p align="center">
+  <img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a045eaa577834b00a345b409b81826f8~tplv-k3u1fbpfcp-watermark.image" width="200"/>
+  <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a0a1125f397b46619c9beea59691eaf5~tplv-k3u1fbpfcp-watermark.image" width="200"/>
+  <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/414c415380f742c4918c4b705ffc2f4f~tplv-k3u1fbpfcp-watermark.image" width="200"/>
+  <img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ffb4cfcbaecf43488d7ae671c7c02d3d~tplv-k3u1fbpfcp-watermark.image" width="200"/>
+</p>
+
+
 # 框架特性
 - 支持网络图片、本地图片；
 - 支持https图片；
@@ -212,20 +227,6 @@ public class MyAppGlideModule extends AppGlideModule {
 ##### 6：Q&A
 1.查看原图卡在1%？
 答：请仔细查看以上第三步的操作。
-
-# 推荐扫描二维码进行安装体验：
-<p align="center">
-  <img src="https://www.pgyer.com/app/qrcode/bigimageviewpager" width="200"/>
-  <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bfd23ce0042e431bb200d7e5e2fca87d~tplv-k3u1fbpfcp-zoom-1.image" width="200"/>
-</p>
-
-<p align="center">
-  <img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a045eaa577834b00a345b409b81826f8~tplv-k3u1fbpfcp-watermark.image" width="200"/>
-  <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a0a1125f397b46619c9beea59691eaf5~tplv-k3u1fbpfcp-watermark.image" width="200"/>
-  <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/414c415380f742c4918c4b705ffc2f4f~tplv-k3u1fbpfcp-watermark.image" width="200"/>
-  <img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ffb4cfcbaecf43488d7ae671c7c02d3d~tplv-k3u1fbpfcp-watermark.image" width="200"/>
-</p>
-
 
 # GitHub源码
 https://github.com/SherlockGougou/BigImageViewPager
