@@ -181,8 +181,8 @@ object ImageUtil {
     fun getLongImageMaxZoomScale(context: Context, imagePath: String): Float {
         val wh = getWidthHeight(imagePath)
         val imageWid = wh[0].toFloat()
-        val phoneWid = PhoneUtil.getPhoneWid(context.applicationContext).toFloat()
-        return phoneWid * 2f / imageWid
+        val imageHei = wh[1].toFloat()
+        return imageHei / imageWid
     }
 
     fun getLongImageDoubleZoomScale(context: Context, imagePath: String): Float {
@@ -194,9 +194,9 @@ object ImageUtil {
 
     fun getWideImageMaxZoomScale(context: Context, imagePath: String): Float {
         val wh = getWidthHeight(imagePath)
+        val imageWid = wh[0].toFloat()
         val imageHei = wh[1].toFloat()
-        val phoneHei = PhoneUtil.getPhoneHei(context.applicationContext).toFloat()
-        return phoneHei * 2f / imageHei
+        return imageWid / imageHei
     }
 
     fun getWideImageDoubleScale(context: Context, imagePath: String): Float {

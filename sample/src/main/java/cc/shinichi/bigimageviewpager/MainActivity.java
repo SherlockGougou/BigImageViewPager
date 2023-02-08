@@ -201,10 +201,16 @@ public class MainActivity extends AppCompatActivity {
         i.setOriginUrl("https://i.328888.xyz/2022/12/21/A3ZD8.jpeg");
         imageInfoList.add(i);
 
-        // 长截图：
+        // 长截图1：
         i = new ImageInfo();
         i.setThumbnailUrl("https://i.328888.xyz/2022/12/21/ArQ03.md.jpeg");
         i.setOriginUrl("https://i.328888.xyz/2022/12/21/ArQ03.jpeg");
+        imageInfoList.add(i);
+
+        // 长截图2：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://images.zhishen.net.cn/xueshuzhi/images/problemImage/20230205/20230205235755802.png");
+        i.setOriginUrl("https://images.zhishen.net.cn/xueshuzhi/images/problemImage/20230205/20230205235755802.png");
         imageInfoList.add(i);
 
         // 全景图片1：
