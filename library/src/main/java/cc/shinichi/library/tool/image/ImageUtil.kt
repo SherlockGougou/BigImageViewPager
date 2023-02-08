@@ -12,6 +12,7 @@ import cc.shinichi.library.tool.common.Print.d
 import cc.shinichi.library.tool.ui.PhoneUtil
 import java.io.*
 import java.util.*
+import kotlin.math.max
 
 /**
  * @author 工藤
@@ -166,8 +167,12 @@ object ImageUtil {
 
     fun getImageMaxZoomScale(context: Context, imagePath: String): Float {
         val wh = getWidthHeight(imagePath)
+        val imageWid = wh[0].toFloat()
         val imageHei = wh[1].toFloat()
         val phoneHei = PhoneUtil.getPhoneHei(context.applicationContext).toFloat()
+        if (imageWid >= 2560) {
+            return phoneHei * 4f / imageHei
+        }
         return phoneHei * 2f / imageHei
     }
 
@@ -182,7 +187,8 @@ object ImageUtil {
         val wh = getWidthHeight(imagePath)
         val imageWid = wh[0].toFloat()
         val imageHei = wh[1].toFloat()
-        return imageHei / imageWid
+        val phoneWid = PhoneUtil.getPhoneWid(context.applicationContext).toFloat()
+        return max(imageHei / imageWid, phoneWid * 2f / imageWid)
     }
 
     fun getLongImageDoubleZoomScale(context: Context, imagePath: String): Float {
@@ -196,7 +202,8 @@ object ImageUtil {
         val wh = getWidthHeight(imagePath)
         val imageWid = wh[0].toFloat()
         val imageHei = wh[1].toFloat()
-        return imageWid / imageHei
+        val phoneHei = PhoneUtil.getPhoneHei(context.applicationContext).toFloat()
+        return max(imageWid / imageHei, phoneHei * 2f / imageHei)
     }
 
     fun getWideImageDoubleScale(context: Context, imagePath: String): Float {
