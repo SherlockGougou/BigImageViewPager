@@ -18,9 +18,9 @@
 </p>
 
 
-## ⭐️⭐️star数量曲线⭐️⭐️
+## ⭐️⭐️Star数量曲线⭐️⭐️
 
-[![Stargazers over time](https://starchart.cc/SherlockGougou/BigImageViewPager.svg)](https://starchart.cc/SherlockGougou/BigImageViewPager)
+[![Star History Chart](https://api.star-history.com/svg?repos=SherlockGougou/BigImageViewPager&type=Date)](https://star-history.com/#SherlockGougou/BigImageViewPager&Date)
 
 
 # 框架特性
