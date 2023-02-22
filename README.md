@@ -18,6 +18,11 @@
 </p>
 
 
+## ⭐️⭐️star数量曲线⭐️⭐️
+
+[![Stargazers over time](https://starchart.cc/SherlockGougou/BigImageViewPager.svg)](https://starchart.cc/SherlockGougou/BigImageViewPager)
+
+
 # 框架特性
 - 支持网络图片、本地图片；
 - 支持https图片；
