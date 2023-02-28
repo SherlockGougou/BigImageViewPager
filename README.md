@@ -59,7 +59,7 @@ allprojects {
 ##### 此处显示的是本框架的最新版本号：
 ##### ⚠️注意：glide v3版本不再维护，最终版本为v3_4.0.2。建议使用androidx版本。
 ```
-androidx用户  :   使用  androidx-7.1.4
+androidx用户  :   使用  androidx-7.1.5
 对于glide4.x  :   使用        v4_6.1.3
 ```
 
@@ -73,7 +73,7 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
   // BigImageViewPager https://github.com/SherlockGougou/BigImageViewPager
-  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.1.4'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.1.5'
 
 ================================分割线==================================
 
@@ -165,6 +165,7 @@ public class MyAppGlideModule extends AppGlideModule {
 |setBigImageLongClickListener|设置图片长按事件|默认null|
 |setBigImagePageChangeListener|设置页面切换监听|默认null|
 |setDownloadClickListener|设置点击下载监听|默认null，可选是否拦截下载行为|
+|setDownloadListener|设置下载过程toast|不设置时使用默认toast|
 |setCloseIconResId|设置关闭按钮的Drawable资源id|默认内置R.drawable.ic_action_close|
 |setContext|设置上下文|不允许为空|
 |setDownIconResId|设置下载按钮的Drawable资源id|R.drawable.icon_download_new|

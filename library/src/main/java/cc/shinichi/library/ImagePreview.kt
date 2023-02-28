@@ -131,6 +131,8 @@ class ImagePreview {
         private set
     var downloadClickListener: OnDownloadClickListener? = null
         private set
+    var downloadListener: OnDownloadListener? = null
+        private set
     var onOriginProgressListener: OnOriginProgressListener? = null
         private set
 
@@ -358,6 +360,11 @@ class ImagePreview {
 
     fun setDownloadClickListener(downloadClickListener: OnDownloadClickListener?): ImagePreview {
         this.downloadClickListener = downloadClickListener
+        return this
+    }
+
+    fun setDownloadListener(downloadListener: OnDownloadListener?): ImagePreview {
+        this.downloadListener = downloadListener
         return this
     }
 

@@ -1,5 +1,6 @@
 package cc.shinichi.library.tool.image
 
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -25,17 +26,25 @@ import java.io.*
  */
 object DownloadPictureUtil {
 
-    fun downloadPicture(context: Context, url: String?) {
+    fun downloadPicture(context: Activity, currentItem: Int, url: String?) {
         Glide.with(context).downloadOnly().load(url).into(object : FileTarget() {
             override fun onLoadStarted(placeholder: Drawable?) {
                 super.onLoadStarted(placeholder)
-                ToastUtil.instance.showShort(context, context.getString(R.string.toast_start_download))
+                if (ImagePreview.instance.downloadListener != null) {
+                    ImagePreview.instance.downloadListener?.onDownloadStart(context, currentItem)
+                } else {
+                    ToastUtil.instance.showShort(context, context.getString(R.string.toast_start_download))
+                }
                 super.onLoadStarted(placeholder)
             }
 
             override fun onLoadFailed(errorDrawable: Drawable?) {
                 super.onLoadFailed(errorDrawable)
-                ToastUtil.instance.showShort(context, context.getString(R.string.toast_save_failed))
+                if (ImagePreview.instance.downloadListener != null) {
+                    ImagePreview.instance.downloadListener?.onDownloadFailed(context, currentItem)
+                } else {
+                    ToastUtil.instance.showShort(context, context.getString(R.string.toast_save_failed))
+                }
             }
 
             override fun onResourceReady(resource: File, transition: Transition<in File>?) {
@@ -72,16 +81,24 @@ object DownloadPictureUtil {
                             }
                             os.flush()
                         }
-                        ToastUtil.instance.showShort(
-                            context,
-                            context.getString(
-                                R.string.toast_save_success,
-                                Environment.DIRECTORY_PICTURES + "/" + downloadFolderName
+                        if (ImagePreview.instance.downloadListener != null) {
+                            ImagePreview.instance.downloadListener?.onDownloadSuccess(context, currentItem)
+                        } else {
+                            ToastUtil.instance.showShort(
+                                context,
+                                context.getString(
+                                    R.string.toast_save_success,
+                                    Environment.DIRECTORY_PICTURES + "/" + downloadFolderName
+                                )
                             )
-                        )
+                        }
                     } catch (e: IOException) {
                         e.printStackTrace()
-                        ToastUtil.instance.showShort(context, context.getString(R.string.toast_save_failed))
+                        if (ImagePreview.instance.downloadListener != null) {
+                            ImagePreview.instance.downloadListener?.onDownloadFailed(context, currentItem)
+                        } else {
+                            ToastUtil.instance.showShort(context, context.getString(R.string.toast_save_failed))
+                        }
                     } finally {
                         try {
                             os?.close()
@@ -100,14 +117,22 @@ object DownloadPictureUtil {
                     createFileByDeleteOldFile(path + name)
                     val result = copyFile(resource, path, name)
                     if (result) {
-                        ToastUtil.instance.showShort(context, context.getString(R.string.toast_save_success, path))
+                        if (ImagePreview.instance.downloadListener != null) {
+                            ImagePreview.instance.downloadListener?.onDownloadSuccess(context, currentItem)
+                        } else {
+                            ToastUtil.instance.showShort(context, context.getString(R.string.toast_save_success, path))
+                        }
                         SingleMediaScanner(context, path + name, object : SingleMediaScanner.ScanListener {
                             override fun onScanFinish() {
                                 // scanning...
                             }
                         })
                     } else {
-                        ToastUtil.instance.showShort(context, context.getString(R.string.toast_save_failed))
+                        if (ImagePreview.instance.downloadListener != null) {
+                            ImagePreview.instance.downloadListener?.onDownloadFailed(context, currentItem)
+                        } else {
+                            ToastUtil.instance.showShort(context, context.getString(R.string.toast_save_failed))
+                        }
                     }
                 }
             }

@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +28,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -44,6 +46,7 @@ import cc.shinichi.library.view.listener.OnBigImageClickListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
 import cc.shinichi.library.view.listener.OnDownloadClickListener;
+import cc.shinichi.library.view.listener.OnDownloadListener;
 import cc.shinichi.library.view.listener.OnOriginProgressListener;
 
 public class MainActivity extends AppCompatActivity {
@@ -429,6 +432,24 @@ public class MainActivity extends AppCompatActivity {
                                 // return true 时, 需要自己实现下载
                                 // return false 时, 使用内置下载
                                 return false;
+                            }
+                        })
+
+                        // 下载过程回调，可自定义toast，如果不设置此回调会使用默认的toast内容
+                        .setDownloadListener(new OnDownloadListener() {
+                            @Override
+                            public void onDownloadStart(Activity activity, int position) {
+                                Toast.makeText(activity, "开始下载", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onDownloadSuccess(Activity activity, int position) {
+                                Toast.makeText(activity, "下载成功", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onDownloadFailed(Activity activity, int position) {
+                                Toast.makeText(activity, "下载失败", Toast.LENGTH_SHORT).show();
                             }
                         })
 
