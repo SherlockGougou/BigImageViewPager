@@ -56,37 +56,19 @@ allprojects {
 ```
 #### Step 2. 在你主module的build.gradle中添加依赖：
 
-##### 此处显示的是本框架的最新版本号：
-##### ⚠️注意：glide v3版本不再维护，最终版本为v3_4.0.2。建议使用androidx版本。
-```
-androidx用户  :   使用  androidx-7.1.5
-对于glide4.x  :   使用        v4_6.1.3
-```
-
 ```
 dependencies {
-
-  // ① 针对androidx用户，需要添加以下依赖：
-
-  // glide
-  implementation 'com.github.bumptech.glide:glide:4.11.0'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-  implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
-  // BigImageViewPager https://github.com/SherlockGougou/BigImageViewPager
+  // 添加本框架 BigImageViewPager https://github.com/SherlockGougou/BigImageViewPager
   implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.1.5'
-
-================================分割线==================================
-
-  // ② 针对glide v4 版本【建议项目尽快迁移到androix，后续此库的support版本会停更】，需要添加以下依赖：
-
-  // glide
-  implementation 'com.github.bumptech.glide:glide:4.9.0'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
-  implementation 'com.github.bumptech.glide:okhttp3-integration:4.9.0'
-  // BigImageViewPager https://github.com/SherlockGougou/BigImageViewPager
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_6.1.3'
-
-================================分割线==================================
+  
+  // 另外还需要依赖 glide
+  implementation 'com.github.bumptech.glide:glide:4.11.0'
+  implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
+  
+  // java用户:
+  annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+  // kotlin用户:
+  kapt 'com.github.bumptech.glide:compiler:4.11.0'
 }
 ```
 
