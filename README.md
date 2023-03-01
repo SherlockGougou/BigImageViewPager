@@ -59,7 +59,7 @@ allprojects {
 ```
 dependencies {
   // 添加本框架 BigImageViewPager https://github.com/SherlockGougou/BigImageViewPager
-  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.1.5'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.1.6'
   
   // 另外还需要依赖 glide
   implementation 'com.github.bumptech.glide:glide:4.11.0'

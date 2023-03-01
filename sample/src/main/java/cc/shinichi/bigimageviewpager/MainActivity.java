@@ -188,14 +188,14 @@ public class MainActivity extends AppCompatActivity {
 
         // 普通图片1：
         i = new ImageInfo();
-        i.setThumbnailUrl("https://i.328888.xyz/2022/12/21/ArGOV.md.jpeg");
-        i.setOriginUrl("https://i.328888.xyz/2022/12/21/ArGOV.jpeg");
+        i.setThumbnailUrl("https://star.sea.img.one/2023/03/01/63fef5545d6b6.jpg");
+        i.setOriginUrl("https://star.sea.img.one/2023/03/01/63fef3fe5a07c.jpg");
         imageInfoList.add(i);
 
         // 普通图片2：
         i = new ImageInfo();
-        i.setThumbnailUrl("https://i.328888.xyz/2022/12/21/Arded.md.jpeg");
-        i.setOriginUrl("https://i.328888.xyz/2022/12/21/Arded.jpeg");
+        i.setThumbnailUrl("https://star.sea.img.one/2023/03/01/63fef554e6408.jpg");
+        i.setOriginUrl("https://star.sea.img.one/2023/03/01/63fef3ff0cdfc.jpg");
         imageInfoList.add(i);
 
         // 大尺寸图片：
@@ -206,26 +206,20 @@ public class MainActivity extends AppCompatActivity {
 
         // 长截图1：
         i = new ImageInfo();
-        i.setThumbnailUrl("https://i.328888.xyz/2022/12/21/ArQ03.md.jpeg");
-        i.setOriginUrl("https://i.328888.xyz/2022/12/21/ArQ03.jpeg");
-        imageInfoList.add(i);
-
-        // 长截图2：
-        i = new ImageInfo();
-        i.setThumbnailUrl("https://images.zhishen.net.cn/xueshuzhi/images/problemImage/20230205/20230205235755802.png");
-        i.setOriginUrl("https://images.zhishen.net.cn/xueshuzhi/images/problemImage/20230205/20230205235755802.png");
+        i.setThumbnailUrl("https://star.sea.img.one/2023/03/01/63fef5d3374d2.jpg");
+        i.setOriginUrl("https://star.sea.img.one/2023/03/01/63fef5db1046e.jpg");
         imageInfoList.add(i);
 
         // 全景图片1：
         i = new ImageInfo();
-        i.setThumbnailUrl("https://i.328888.xyz/2022/12/21/ArFZN.md.jpeg");
-        i.setOriginUrl("https://i.328888.xyz/2022/12/21/ArFZN.jpeg");
+        i.setThumbnailUrl("https://star.sea.img.one/2023/03/01/63fef55653a50.jpg");
+        i.setOriginUrl("https://star.sea.img.one/2023/03/01/63fef40fb5cf9.jpg");
         imageInfoList.add(i);
 
         // 全景图片2：
         i = new ImageInfo();
-        i.setThumbnailUrl("https://i.328888.xyz/2022/12/21/ArsJw.md.jpeg");
-        i.setOriginUrl("https://i.328888.xyz/2022/12/21/ArsJw.jpeg");
+        i.setThumbnailUrl("https://star.sea.img.one/2023/03/01/63fef556078ff.jpg");
+        i.setOriginUrl("https://star.sea.img.one/2023/03/01/63fef40388f58.jpg");
         imageInfoList.add(i);
 
         // 动图：
@@ -234,22 +228,10 @@ public class MainActivity extends AppCompatActivity {
         i.setOriginUrl("https://i0.hdslb.com/bfs/article/4421aaa8a38beeda1b195b656c883c7508f9b13d.gif");
         imageInfoList.add(i);
 
-        // HEIC1：
+        // 动图：
         i = new ImageInfo();
-        i.setThumbnailUrl("https://rexu-forum-1308280730.cos.ap-shanghai.myqcloud.com/image/2022/11/09/89be250d8fa24248aa8104816819a805.heic");
-        i.setOriginUrl("https://rexu-forum-1308280730.cos.ap-shanghai.myqcloud.com/image/2022/11/09/89be250d8fa24248aa8104816819a805.heic");
-        imageInfoList.add(i);
-
-        // HEIC2：
-        i = new ImageInfo();
-        i.setThumbnailUrl("https://rexu-forum-1308280730.cos.ap-shanghai.myqcloud.com/image/2022/11/09/b7ee61002e974ee7b693e7471351d108.heic");
-        i.setOriginUrl("https://rexu-forum-1308280730.cos.ap-shanghai.myqcloud.com/image/2022/11/09/b7ee61002e974ee7b693e7471351d108.heic");
-        imageInfoList.add(i);
-
-        // HEIC3：
-        i = new ImageInfo();
-        i.setThumbnailUrl("https://rexu-forum-1308280730.cos.ap-shanghai.myqcloud.com/image/2022/11/09/d36ea9faffb246809ba11b535182e7d1.heic");
-        i.setOriginUrl("https://rexu-forum-1308280730.cos.ap-shanghai.myqcloud.com/image/2022/11/09/d36ea9faffb246809ba11b535182e7d1.heic");
+        i.setThumbnailUrl("https://i.328888.xyz/2022/12/23/AQKsV.png");
+        i.setOriginUrl("https://s3.bmp.ovh/imgs/2023/03/01/219a4fef0bae6867.jpg");
         imageInfoList.add(i);
 
 

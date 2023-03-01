@@ -340,9 +340,9 @@ object ImageUtil {
     }
 
     fun isStaticImage(url: String, path: String): Boolean {
-        return isJpegImageWithMime(url, path)// jpeg
+        return (isJpegImageWithMime(url, path)// jpeg
                 || isPngImageWithMime(url, path)// png
-                || isBmpImageWithMime(url, path)// bmp
-                || !isAnimImageWithMime(url, path)// 不是动图(不是webp动图、gif动图)
+                || isBmpImageWithMime(url, path))// bmp
+                && !isAnimImageWithMime(url, path)// 不是动图(不是webp动图、gif动图)
     }
 }
