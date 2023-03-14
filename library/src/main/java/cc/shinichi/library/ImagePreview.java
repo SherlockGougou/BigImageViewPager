@@ -19,7 +19,9 @@ import cc.shinichi.library.view.listener.OnBigImageClickListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
 import cc.shinichi.library.view.listener.OnDownloadClickListener;
+import cc.shinichi.library.view.listener.OnDownloadStateListener;
 import cc.shinichi.library.view.listener.OnOriginProgressListener;
+import cc.shinichi.library.view.listener.OnPageFinishListener;
 
 /**
  * @author 工藤
@@ -71,7 +73,9 @@ public class ImagePreview {
     private OnBigImageLongClickListener bigImageLongClickListener;
     private OnBigImagePageChangeListener bigImagePageChangeListener;
     private OnDownloadClickListener downloadClickListener;
+    private OnDownloadStateListener onDownloadStateListener;
     private OnOriginProgressListener onOriginProgressListener;
+    private OnPageFinishListener onPageFinishListener;
 
     // 自定义百分比布局layout id
     @LayoutRes
@@ -376,6 +380,24 @@ public class ImagePreview {
         return downloadClickListener;
     }
 
+    public OnDownloadStateListener getOnDownloadStateListener() {
+        return onDownloadStateListener;
+    }
+
+    public ImagePreview setOnDownloadStateListener(OnDownloadStateListener onDownloadStateListener) {
+        this.onDownloadStateListener = onDownloadStateListener;
+        return this;
+    }
+
+    public OnPageFinishListener getOnPageFinishListener() {
+        return onPageFinishListener;
+    }
+
+    public ImagePreview setOnPageFinishListener(OnPageFinishListener onPageFinishListener) {
+        this.onPageFinishListener = onPageFinishListener;
+        return this;
+    }
+
     public OnOriginProgressListener getOnOriginProgressListener() {
         return onOriginProgressListener;
     }
@@ -462,6 +484,23 @@ public class ImagePreview {
         }
         lastClickTime = System.currentTimeMillis();
         ImagePreviewActivity.activityStart(context);
+    }
+
+    public void finish() {
+        Context context = contextWeakReference.get();
+        if (!(context instanceof Activity)) {
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            if (((Activity) context).isFinishing() || ((Activity) context).isDestroyed()) {
+                return;
+            }
+        } else {
+            if (((Activity) context).isFinishing()) {
+                return;
+            }
+        }
+        ((Activity) context).finish();
     }
 
     public enum LoadStrategy {

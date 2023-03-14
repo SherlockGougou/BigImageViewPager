@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "cc.shinichi.bigimageviewpager",
+  "variantName": "release",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 720,
+      "versionName": "androidx-7.2.0",
+      "outputFile": "sample-release.apk"
+    }
+  ],
+  "elementType": "File"
+}

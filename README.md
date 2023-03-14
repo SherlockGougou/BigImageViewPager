@@ -50,45 +50,15 @@ allprojects {
 }
 ```
 #### Step 2. 在你主module的build.gradle中添加依赖：
-
-##### 此处显示的是本框架的最新版本号：
-##### ⚠️注意：glide v3版本不再维护，最终版本为v3_4.0.2。建议使用glide v4、androidx版本。
-```
-androidx用户  :   使用  androidx-6.1.3
-对于glide4.x  :   使用        v4_6.1.3
-
-对于glide3.x  :   使用        v3_4.0.2
-```
-
 ```
 dependencies {
-
-  // ① 针对androidx用户，需要添加以下依赖：
-
-  // glide
-  implementation 'com.github.bumptech.glide:glide:4.11.0'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-  implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
-  // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-6.1.3'
-
-================================分割线==================================
-
-  // ② 针对glide v4 版本【建议项目尽快迁移到androix，后续此库的support版本会停更】，需要添加以下依赖：
-
+  // 针对glide v4 版本【建议项目尽快迁移到androix，此库的support版本已经停更】，需要添加以下依赖：
   // glide
   implementation 'com.github.bumptech.glide:glide:4.9.0'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.9.0'
   // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_6.1.3'
-
-================================分割线==================================
-
-  // ③ 针对glide v3 版本，需要添加以下依赖：
-
-  // 查看大图
-  implementation 'com.github.SherlockGougou:BigImageViewPager:v3_4.0.2'
+  implementation 'com.github.SherlockGougou:BigImageViewPager:v4_6.2.0'
 }
 ```
 
@@ -170,6 +140,7 @@ public class MyAppGlideModule extends AppGlideModule {
 |setBigImageLongClickListener|设置图片长按事件|默认null|
 |setBigImagePageChangeListener|设置页面切换监听|默认null|
 |setDownloadClickListener|设置点击下载监听|默认null，可选是否拦截下载行为|
+|setDownloadListener|设置下载过程toast|不设置时使用默认toast|
 |setCloseIconResId|设置关闭按钮的Drawable资源id|默认内置R.drawable.ic_action_close|
 |setContext|设置上下文|不允许为空|
 |setDownIconResId|设置下载按钮的Drawable资源id|R.drawable.icon_download_new|
@@ -192,6 +163,8 @@ public class MyAppGlideModule extends AppGlideModule {
 |setIndicatorShapeResId|设置顶部指示器背景shape|默认自带灰色圆角shape，设置为0时不显示背景|
 |setShowErrorToast|设置是否显示加载失败的Toast|默认false，不显示|
 |setZoomTransitionDuration|设置图片缩放动画时长|默认200ms|
+|setOnPageFinishListener|页面关闭回调|默认null|
+|finish|关闭页面|自主控制关闭页面|
 |start|开启看图|最后调用|
 
 ##### 3：自定义多种配置：

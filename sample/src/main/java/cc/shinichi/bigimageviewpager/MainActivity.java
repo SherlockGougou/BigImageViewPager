@@ -19,6 +19,7 @@ import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -26,7 +27,6 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import cc.shinichi.library.ImagePreview;
@@ -37,7 +37,9 @@ import cc.shinichi.library.view.listener.OnBigImageClickListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
 import cc.shinichi.library.view.listener.OnDownloadClickListener;
+import cc.shinichi.library.view.listener.OnDownloadStateListener;
 import cc.shinichi.library.view.listener.OnOriginProgressListener;
+import cc.shinichi.library.view.listener.OnPageFinishListener;
 
 import static android.support.v4.content.PermissionChecker.PERMISSION_GRANTED;
 
@@ -45,38 +47,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    private String[] images = {
-            // 六种格式的图片
-            "https://aloss.11oi.com/app/img/temp/launch_top.bmp",
-            "https://aloss.11oi.com/app/img/temp/launch_top.gif",
-            "https://aloss.11oi.com/app/img/temp/launch_top.jpeg",
-            "https://aloss.11oi.com/app/img/temp/launch_top.jpg",
-            "https://aloss.11oi.com/app/img/temp/launch_top.png",
-            "https://aloss.11oi.com/app/img/temp/launch_top.webp",
-            // 小尺寸图片
-            "https://s1.ax1x.com/2020/10/16/0HXKv4.jpg",
-            // 普通jpg图片
-            "http://img6.16fan.com/201510/11/005258wdngg6rv0tpn8z9z.jpg",
-            "http://img6.16fan.com/201510/11/013553aj3kp9u6iuz6k9uj.jpg",
-            "http://img6.16fan.com/201510/11/011753fnanichdca0wbhxc.jpg",
-            "http://img6.16fan.com/201510/11/011819zbzbciir9ctn295o.jpg",
-            "http://img6.16fan.com/201510/11/004847l7w568jc5n5wn385.jpg",
-            "http://img6.16fan.com/201510/11/004906z0a0a0e0hs56ce0t.jpg",
-            "http://img6.16fan.com/201510/11/004937pwttwjt0bgtoton7.jpg",
-            "http://img6.16fan.com/201510/11/004946t38ybzt8bq8c838y.jpg",
-            "http://img6.16fan.com/201510/11/004955d8ftz3t1sttt7ft7.jpg",
-            "http://img6.16fan.com/201510/11/005027qy2g55yyglb59zdu.jpg",
-            "http://img6.16fan.com/201510/11/005229bbtxkczcl0btmw8e.jpg",
-            // 大图：5760 * 3840
-            "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg",
-            // 长图：2280 * 22116
-            "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818716180ge.jpeg"
-    };
-
     boolean enableClickClose = false;
-    boolean enableDragClose = false;
+    boolean enableDragClose = true;
     boolean enableUpDragClose = false;
-    boolean enableDragIgnoreScale = false;
+    boolean enableDragIgnoreScale = true;
+
     boolean showIndicator = false;
     boolean showCloseButton = false;
     boolean showDownButton = false;
@@ -89,6 +64,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initView();
+        initData();
+    }
+
+    private void initView() {
         SwitchCompat switchClickClose = findViewById(R.id.switchClickClose);
         SwitchCompat switchDragClose = findViewById(R.id.switchDragClose);
         SwitchCompat switchUpDragClose = findViewById(R.id.switchUpDragClose);
@@ -97,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
         SwitchCompat switchShowCloseButton = findViewById(R.id.switchShowCloseButton);
         SwitchCompat switchShowDownButton = findViewById(R.id.switchShowDownButton);
         SwitchCompat switchShowErrorToast = findViewById(R.id.switchShowErrorToast);
-
         RadioGroup radioGroupStrategy = findViewById(R.id.radioGroupStrategy);
 
         switchClickClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -122,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 enableUpDragClose = isChecked;
             }
         });
-        switchUpDragClose.setChecked(true);
+        switchUpDragClose.setChecked(false);
 
         switchDragCloseIgnore.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -130,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 enableDragIgnoreScale = isChecked;
             }
         });
-        switchDragCloseIgnore.setChecked(false);
+        switchDragCloseIgnore.setChecked(true);
 
         switchShowIndicator.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -146,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 showCloseButton = isChecked;
             }
         });
-        switchShowCloseButton.setChecked(false);
+        switchShowCloseButton.setChecked(true);
 
         switchShowDownButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -163,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
         });
         switchShowErrorToast.setChecked(false);
 
-        loadStrategy = ImagePreview.LoadStrategy.Default;
         radioGroupStrategy.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -186,44 +164,77 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
-        ImageInfo imageInfo;
+    private void initData() {
         final List<ImageInfo> imageInfoList = new ArrayList<>();
+        ImageInfo i;
 
-        for (String image : images) {
-            imageInfo = new ImageInfo();
-            // 原图地址
-            imageInfo.setOriginUrl(image);
-            if (image.contains("16fan.com")) {
-                // 缩略图；实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样。
-                imageInfo.setThumbnailUrl(image.concat("-400"));
-            } else {
-                // 缩略图；实际使用中，根据需求传入缩略图路径。如果没有缩略图url，可以将两项设置为一样。
-                imageInfo.setThumbnailUrl(image);
-            }
-            imageInfoList.add(imageInfo);
-        }
+        // 普通图片1：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://star.sea.img.one/2023/03/01/63fef5545d6b6.jpg");
+        i.setOriginUrl("https://star.sea.img.one/2023/03/01/63fef3fe5a07c.jpg");
+        imageInfoList.add(i);
+
+        // 普通图片2：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://star.sea.img.one/2023/03/01/63fef554e6408.jpg");
+        i.setOriginUrl("https://star.sea.img.one/2023/03/01/63fef3ff0cdfc.jpg");
+        imageInfoList.add(i);
+
+        // 大尺寸图片：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://i.328888.xyz/2022/12/21/A3ZD8.md.jpeg");
+        i.setOriginUrl("https://i.328888.xyz/2022/12/21/A3ZD8.jpeg");
+        imageInfoList.add(i);
+
+        // 长截图1：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://star.sea.img.one/2023/03/01/63fef5d3374d2.jpg");
+        i.setOriginUrl("https://star.sea.img.one/2023/03/01/63fef5db1046e.jpg");
+        imageInfoList.add(i);
+
+        // 全景图片1：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://star.sea.img.one/2023/03/01/63fef55653a50.jpg");
+        i.setOriginUrl("https://star.sea.img.one/2023/03/01/63fef40fb5cf9.jpg");
+        imageInfoList.add(i);
+
+        // 全景图片2：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://star.sea.img.one/2023/03/01/63fef556078ff.jpg");
+        i.setOriginUrl("https://star.sea.img.one/2023/03/01/63fef40388f58.jpg");
+        imageInfoList.add(i);
+
+        // 动图：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://i.328888.xyz/2022/12/23/AQKsV.png");
+        i.setOriginUrl("https://i0.hdslb.com/bfs/article/4421aaa8a38beeda1b195b656c883c7508f9b13d.gif");
+        imageInfoList.add(i);
+
+        // 动图：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://i.328888.xyz/2022/12/23/AQKsV.png");
+        i.setOriginUrl("https://s3.bmp.ovh/imgs/2023/03/01/219a4fef0bae6867.jpg");
+        imageInfoList.add(i);
 
 
-        // 最简单的调用：
+        // ==============================================================================================================
+        // 一、最简单的调用：
         findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 仅需一行代码,默认配置为：
-                //      显示顶部进度指示器、
-                //      显示右侧下载按钮、
-                //      隐藏左侧关闭按钮、
-                //      开启点击图片关闭、
-                //      关闭下拉图片关闭、
-                //      加载方式为手动模式
-                //      加载原图的百分比在底部
-
-                // 一行代码即可实现大部分需求，如需定制，可参考下面自定义的代码：
-                ImagePreview.getInstance().setContext(MainActivity.this).setImageList(Arrays.asList(images)).start();
+                // 一行代码即可实现大部分需求。如需定制，可参考下面【三、完全自定义调用】自定义的代码：
+                ImagePreview.getInstance().setContext(MainActivity.this).setImageInfoList(imageInfoList).start();
             }
         });
+        // ==============================================================================================================
 
-        // 完全自定义调用：
+
+
+
+        // ==============================================================================================================
+        // 二、完全自定义调用：
         findViewById(R.id.buttonPreview).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -324,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(Activity activity, View view, int position) {
                                 // 可以在此处执行您自己的下载逻辑、埋点统计等信息
-                                Log.d(TAG, "onClick: position = " + position);
+                                Log.d(TAG, "onDownloadClick: position = " + position);
                             }
 
                             @Override
@@ -332,6 +343,31 @@ public class MainActivity extends AppCompatActivity {
                                 // return true 时, 需要自己实现下载
                                 // return false 时, 使用内置下载
                                 return false;
+                            }
+                        })
+                        // 下载过程回调，可自定义toast，如果不设置此回调会使用默认的toast内容
+                        .setOnDownloadStateListener(new OnDownloadStateListener() {
+                            @Override
+                            public void onDownloadStart(Activity activity, int position) {
+                                Toast.makeText(activity, "开始下载", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onDownloadSuccess(Activity activity, int position) {
+                                Toast.makeText(activity, "下载成功", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onDownloadFailed(Activity activity, int position) {
+                                Toast.makeText(activity, "下载失败", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        // 页面关闭回调
+                        .setOnPageFinishListener(new OnPageFinishListener() {
+                            @Override
+                            public void onFinish(@NonNull Activity activity) {
+                                // ...
+                                Log.d(TAG, "onFinish: ");
                             }
                         })
 
@@ -375,8 +411,12 @@ public class MainActivity extends AppCompatActivity {
                         .start();
             }
         });
+        // ==============================================================================================================
 
-        // 通过相册选择图片，进行预览
+
+
+        // ==============================================================================================================
+        // 四、通过相册选择图片进行预览
         findViewById(R.id.buttonChoose).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -397,7 +437,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        // ==============================================================================================================
 
+
+
+        // ==============================================================================================================
         // 清除磁盘缓存
         findViewById(R.id.buttonClean).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -406,11 +450,13 @@ public class MainActivity extends AppCompatActivity {
                 ToastUtil.getInstance()._short(MainActivity.this, "磁盘缓存已成功清除");
             }
         });
+        // ==============================================================================================================
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1) {
             for (int i = 0; i < permissions.length; i++) {
                 if (grantResults[i] == PERMISSION_GRANTED) {

@@ -1,8 +1,8 @@
 package cc.shinichi.library.tool.image;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -36,19 +36,27 @@ import cc.shinichi.library.tool.ui.ToastUtil;
  */
 public class DownloadPictureUtil {
 
-    public static void downloadPicture(final Context context, final String url) {
+    public static void downloadPicture(final Activity context, final int position, final String url) {
         Glide.with(context).downloadOnly().load(url).into(new FileTarget() {
             @Override
             public void onLoadStarted(@Nullable Drawable placeholder) {
                 super.onLoadStarted(placeholder);
-                ToastUtil.getInstance()._short(context, context.getString(R.string.toast_start_download));
+                if (ImagePreview.getInstance().getOnDownloadStateListener() != null) {
+                    ImagePreview.getInstance().getOnDownloadStateListener().onDownloadStart(context, position);
+                } else {
+                    ToastUtil.getInstance()._short(context, context.getString(R.string.toast_start_download));
+                }
                 super.onLoadStarted(placeholder);
             }
 
             @Override
             public void onLoadFailed(@Nullable Drawable errorDrawable) {
                 super.onLoadFailed(errorDrawable);
-                ToastUtil.getInstance()._short(context, context.getString(R.string.toast_save_failed));
+                if (ImagePreview.getInstance().getOnDownloadStateListener() != null) {
+                    ImagePreview.getInstance().getOnDownloadStateListener().onDownloadFailed(context, position);
+                } else {
+                    ToastUtil.getInstance()._short(context, context.getString(R.string.toast_save_failed));
+                }
             }
 
             @Override
@@ -89,10 +97,18 @@ public class DownloadPictureUtil {
                             }
                             os.flush();
                         }
-                        ToastUtil.getInstance()._short(context, context.getString(R.string.toast_save_success, Environment.DIRECTORY_PICTURES + "/" + downloadFolderName));
+                        if (ImagePreview.getInstance().getOnDownloadStateListener() != null) {
+                            ImagePreview.getInstance().getOnDownloadStateListener().onDownloadSuccess(context, position);
+                        } else {
+                            ToastUtil.getInstance()._short(context, context.getString(R.string.toast_save_success, Environment.DIRECTORY_PICTURES + "/" + downloadFolderName));
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
-                        ToastUtil.getInstance()._short(context, context.getString(R.string.toast_save_failed));
+                        if (ImagePreview.getInstance().getOnDownloadStateListener() != null) {
+                            ImagePreview.getInstance().getOnDownloadStateListener().onDownloadFailed(context, position);
+                        } else {
+                            ToastUtil.getInstance()._short(context, context.getString(R.string.toast_save_failed));
+                        }
                     } finally {
                         try {
                             if (os != null) {
@@ -116,7 +132,11 @@ public class DownloadPictureUtil {
                     FileUtil.createFileByDeleteOldFile(path + name);
                     boolean result = FileUtil.copyFile(resource, path, name);
                     if (result) {
-                        ToastUtil.getInstance()._short(context, context.getString(R.string.toast_save_success, path));
+                        if (ImagePreview.getInstance().getOnDownloadStateListener() != null) {
+                            ImagePreview.getInstance().getOnDownloadStateListener().onDownloadSuccess(context, position);
+                        } else {
+                            ToastUtil.getInstance()._short(context, context.getString(R.string.toast_save_success, path));
+                        }
                         new SingleMediaScanner(context, path.concat(name), new SingleMediaScanner.ScanListener() {
                             @Override
                             public void onScanFinish() {
@@ -124,7 +144,11 @@ public class DownloadPictureUtil {
                             }
                         });
                     } else {
-                        ToastUtil.getInstance()._short(context, context.getString(R.string.toast_save_failed));
+                        if (ImagePreview.getInstance().getOnDownloadStateListener() != null) {
+                            ImagePreview.getInstance().getOnDownloadStateListener().onDownloadFailed(context, position);
+                        } else {
+                            ToastUtil.getInstance()._short(context, context.getString(R.string.toast_save_failed));
+                        }
                     }
                 }
             }
