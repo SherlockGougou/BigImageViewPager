@@ -135,6 +135,8 @@ class ImagePreview {
         private set
     var onOriginProgressListener: OnOriginProgressListener? = null
         private set
+    var onPageFinishListener: OnPageFinishListener? = null
+        private set
 
     // 自定义百分比布局layout id
     @LayoutRes
@@ -368,6 +370,11 @@ class ImagePreview {
         return this
     }
 
+    fun setOnPageFinishListener(onPageFinishListener: OnPageFinishListener): ImagePreview {
+        this.onPageFinishListener = onPageFinishListener
+        return this
+    }
+
     private fun setOnOriginProgressListener(onOriginProgressListener: OnOriginProgressListener): ImagePreview {
         this.onOriginProgressListener = onOriginProgressListener
         return this
@@ -439,6 +446,26 @@ class ImagePreview {
         require(index < imageInfoList.size) { "index out of range!" }
         lastClickTime = System.currentTimeMillis()
         ImagePreviewActivity.activityStart(context)
+    }
+
+    /**
+     * 主动关闭页面
+     */
+    fun finish() {
+        val context = contextWeakReference.get()
+        if (context !is Activity) {
+            return
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            if (context.isFinishing || context.isDestroyed) {
+                return
+            }
+        } else {
+            if (context.isFinishing) {
+                return
+            }
+        }
+        context.finish()
     }
 
     enum class LoadStrategy {

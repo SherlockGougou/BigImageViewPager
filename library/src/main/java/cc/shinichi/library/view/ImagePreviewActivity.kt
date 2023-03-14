@@ -245,6 +245,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     override fun finish() {
         super.finish()
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+        ImagePreview.instance.onPageFinishListener?.onFinish(this)
         ImagePreview.instance.reset()
         imagePreviewAdapter?.closePage()
     }

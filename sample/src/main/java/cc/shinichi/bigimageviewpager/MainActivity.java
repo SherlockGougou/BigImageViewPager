@@ -48,6 +48,7 @@ import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
 import cc.shinichi.library.view.listener.OnDownloadClickListener;
 import cc.shinichi.library.view.listener.OnDownloadListener;
 import cc.shinichi.library.view.listener.OnOriginProgressListener;
+import cc.shinichi.library.view.listener.OnPageFinishListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -406,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(Activity activity, View view, int position) {
                                 // 可以在此处执行您自己的下载逻辑、埋点统计等信息
-                                Log.d(TAG, "onClick: position = " + position);
+                                Log.d(TAG, "onDownloadClick: position = " + position);
                             }
 
                             @Override
@@ -416,7 +417,6 @@ public class MainActivity extends AppCompatActivity {
                                 return false;
                             }
                         })
-
                         // 下载过程回调，可自定义toast，如果不设置此回调会使用默认的toast内容
                         .setDownloadListener(new OnDownloadListener() {
                             @Override
@@ -432,6 +432,14 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onDownloadFailed(Activity activity, int position) {
                                 Toast.makeText(activity, "下载失败", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        // 页面关闭回调
+                        .setOnPageFinishListener(new OnPageFinishListener() {
+                            @Override
+                            public void onFinish(@NonNull Activity activity) {
+                                // ...
+                                Log.d(TAG, "onFinish: ");
                             }
                         })
 
