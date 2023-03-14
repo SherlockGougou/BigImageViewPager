@@ -171,6 +171,8 @@ public class MyAppGlideModule extends AppGlideModule {
 |setShowErrorToast|设置是否显示加载失败的Toast|默认false，不显示|
 |setZoomTransitionDuration|设置图片缩放动画时长|默认200ms|
 |setPreviewLayoutResId|设置自定义的预览页面布局id|默认R.layout.sh_layout_preview|
+|setOnPageFinishListener|页面关闭回调|默认null|
+|finish|关闭页面|自主控制关闭页面|
 |start|开启看图|最后调用|
 
 ##### 3：自定义多种配置：
