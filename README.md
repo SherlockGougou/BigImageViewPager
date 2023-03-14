@@ -52,7 +52,7 @@ allprojects {
 #### Step 2. 在你主module的build.gradle中添加依赖：
 ```
 dependencies {
-  // 针对glide v4 版本【建议项目尽快迁移到androix，此库的support版本已经停更】，需要添加以下依赖：
+  // 针对glide v4 版本【建议项目尽快迁移到androidx，此库的support版本已经停更】，需要添加以下依赖：
   // glide
   implementation 'com.github.bumptech.glide:glide:4.9.0'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
