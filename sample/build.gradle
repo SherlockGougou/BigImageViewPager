@@ -48,7 +48,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     // PictureSelector basic (Necessary)
-    implementation 'io.github.lucksiege:pictureselector:v3.10.8'
+    implementation 'io.github.lucksiege:pictureselector:v3.11.0'
 
     // glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'

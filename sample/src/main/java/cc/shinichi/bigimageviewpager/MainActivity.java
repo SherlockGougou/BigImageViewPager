@@ -2,6 +2,7 @@ package cc.shinichi.bigimageviewpager;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -181,50 +182,44 @@ public class MainActivity extends AppCompatActivity {
 
         // 普通图片1：
         i = new ImageInfo();
-        i.setThumbnailUrl("https://star.sea.img.one/2023/03/01/63fef5545d6b6.jpg");
-        i.setOriginUrl("https://star.sea.img.one/2023/03/01/63fef3fe5a07c.jpg");
+        i.setThumbnailUrl("http://image.coolapk.com/picture/2023/0331/15/804026_4012f28c_8643_0867_309@1440x2560.jpeg.m.jpg");
+        i.setOriginUrl("http://image.coolapk.com/picture/2023/0331/15/804026_4012f28c_8643_0867_309@1440x2560.jpeg");
         imageInfoList.add(i);
 
         // 普通图片2：
         i = new ImageInfo();
-        i.setThumbnailUrl("https://star.sea.img.one/2023/03/01/63fef554e6408.jpg");
-        i.setOriginUrl("https://star.sea.img.one/2023/03/01/63fef3ff0cdfc.jpg");
+        i.setThumbnailUrl("http://image.coolapk.com/picture/2023/0406/08/736620_39842c8b_0392_4907_446@2160x3840.jpeg.m.jpg");
+        i.setOriginUrl("http://image.coolapk.com/picture/2023/0406/08/736620_39842c8b_0392_4907_446@2160x3840.jpeg");
         imageInfoList.add(i);
 
         // 大尺寸图片：
         i = new ImageInfo();
-        i.setThumbnailUrl("https://i.328888.xyz/2022/12/21/A3ZD8.md.jpeg");
-        i.setOriginUrl("https://i.328888.xyz/2022/12/21/A3ZD8.jpeg");
+        i.setThumbnailUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/A3ZD8.md.jpg");
+        i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/A3ZD8.jpg");
         imageInfoList.add(i);
 
         // 长截图1：
         i = new ImageInfo();
-        i.setThumbnailUrl("https://star.sea.img.one/2023/03/01/63fef5d3374d2.jpg");
-        i.setOriginUrl("https://star.sea.img.one/2023/03/01/63fef5db1046e.jpg");
+        i.setThumbnailUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/llong1thubm.jpg");
+        i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/llong1.jpg");
         imageInfoList.add(i);
 
         // 全景图片1：
         i = new ImageInfo();
-        i.setThumbnailUrl("https://star.sea.img.one/2023/03/01/63fef55653a50.jpg");
-        i.setOriginUrl("https://star.sea.img.one/2023/03/01/63fef40fb5cf9.jpg");
+        i.setThumbnailUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/heng1thumb.jpg");
+        i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/heng1.jpg");
         imageInfoList.add(i);
 
         // 全景图片2：
         i = new ImageInfo();
-        i.setThumbnailUrl("https://star.sea.img.one/2023/03/01/63fef556078ff.jpg");
-        i.setOriginUrl("https://star.sea.img.one/2023/03/01/63fef40388f58.jpg");
+        i.setThumbnailUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/heng2thumb.jpg");
+        i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/heng2.jpg");
         imageInfoList.add(i);
 
         // 动图：
         i = new ImageInfo();
-        i.setThumbnailUrl("https://i.328888.xyz/2022/12/23/AQKsV.png");
-        i.setOriginUrl("https://i0.hdslb.com/bfs/article/4421aaa8a38beeda1b195b656c883c7508f9b13d.gif");
-        imageInfoList.add(i);
-
-        // 动图：
-        i = new ImageInfo();
-        i.setThumbnailUrl("https://i.328888.xyz/2022/12/23/AQKsV.png");
-        i.setOriginUrl("https://s3.bmp.ovh/imgs/2023/03/01/219a4fef0bae6867.jpg");
+        i.setThumbnailUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/gif1thumb.png");
+        i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/gif1.gif");
         imageInfoList.add(i);
 
 
@@ -485,34 +480,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.buttonChoose).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 根据不同的系统版本，申请读取图片的权限
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    // 判断系统版本是否大于等于33
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
-                                || checkSelfPermission(Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED
-                        ) {
-                            requestPermissions(new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO}, 1);
-                        } else {
-                            // 选择图片
-                            chooseImage();
-                        }
-                    } else {
-                        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-                                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                            requestPermissions(new String[]{
-                                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            }, 1);
-                        } else {
-                            // 选择图片
-                            chooseImage();
-                        }
-                    }
-                } else {
-                    // 选择图片
-                    chooseImage();
-                }
+                // 选择图片
+                chooseImage();
             }
         });
         // ==============================================================================================================
@@ -528,28 +497,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         // ==============================================================================================================
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        boolean isAllGranted = true;
-        if (requestCode == 1) {
-            for (int i = 0; i < permissions.length; i++) {
-                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "onRequestPermissionsResult: " + permissions[i] + " is not granted!");
-                    isAllGranted = false;
-                    break;
-                }
-            }
-            if (isAllGranted) {
-                // 选择图片
-                chooseImage();
-            } else {
-                ToastUtil.getInstance().showShort(MainActivity.this, "您拒绝了存储权限，无法读取图片！");
-            }
-        }
     }
 
     private void chooseImage() {
