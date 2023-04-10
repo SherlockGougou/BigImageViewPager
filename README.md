@@ -1,6 +1,8 @@
+<img src="https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/cover.png"/>
+
 ### BigImage + ImageView + ViewPager = BigImageViewPager
 
-BigImageViewPage是一个图片浏览器框架，支持超大图、超长图、动图，支持手势，支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。
+BigImageViewPager是一个图片浏览器框架，支持超大图、超长图、动图，支持手势，支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。
 ### 注意：本框架支持网络图片、本地图片、支持gif动图、支持Android 13。
 
 
@@ -22,26 +24,6 @@ BigImageViewPage是一个图片浏览器框架，支持超大图、超长图、�
 
 [![Star History Chart](https://api.star-history.com/svg?repos=SherlockGougou/BigImageViewPager&type=Date)](https://star-history.com/#SherlockGougou/BigImageViewPager&Date)
 
-
-# 框架特性
-- 支持网络图片、本地图片；
-- 支持https图片；
-- 支持缩放比例、缩放动画时间的设置；
-- 支持手势下拉关闭；
-- 支持多种加载策略：（仅普清、仅原图、手动模式、网络自适应）
-- 支持多种类型图片（超大图、超长图、超宽图、小图、gif动图）
-- 支持查看原图，支持查看原图时百分比进度的展示；
-- 看图体验优化：长图拉到屏幕宽度显示、宽图双击放大到屏幕高度显示、gif图放大到屏幕宽度显示；
-- 自动根据Exif信息旋转图片进行显示；
-- 支持图片的下载，可设置保存到的路径（默认在存储根目录新建文件夹）
-- 支持多种界面的自定义（具体可查看Demo）
-- 支持加载失败时占位图的设置；
-- 针对保存图片进行优化，文件扩展名使用文件头部Mime信息进行设置，不用担心gif保存成jpeg；
-- 支持自定义查看原图时的百分比View；
-- 支持BMP格式的图片；
-- 支持Android 13；
-- 支持自定义预览界面；
-- 支持平板等横屏设备显示；
 
 # 用法
 ### 一、添加依赖
@@ -65,6 +47,7 @@ dependencies {
   implementation 'com.github.bumptech.glide:glide:4.11.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
   
+  // 下面两个根据自己的语言二选一：
   // java用户:
   annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
   // kotlin用户:
