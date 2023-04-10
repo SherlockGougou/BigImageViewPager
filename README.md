@@ -159,7 +159,7 @@ public class MyAppGlideModule extends AppGlideModule {
 |start|开启看图|最后调用|
 
 ##### 3：自定义多种配置：
-请参考Demo：https://github.com/SherlockGougou/BigImageViewPager/blob/androidx/sample/src/main/java/cc/shinichi/bigimageviewpager/MainActivity.java#L289
+请参考Demo：https://github.com/SherlockGougou/BigImageViewPager/blob/master/sample/src/main/java/cc/shinichi/bigimageviewpager/MainActivity.java#L299
 
 ##### 4：加载策略介绍
 ```
@@ -193,8 +193,8 @@ public class MyAppGlideModule extends AppGlideModule {
   注：以上所有方式，如果原图缓存存在的情况，会默认加载原图缓存保证清晰度；且原图缓存只要存在，就不会显示查看原图按钮。
 ```
 
-##### 5：自定义百分比View
-详细操作请参考Demo：https://github.com/SherlockGougou/BigImageViewPager/blob/master/sample/src/main/java/cc/shinichi/bigimageviewpager/MainActivity.java#L291
+##### 5：完全自定义预览界面布局：
+详细操作请参考Demo：https://github.com/SherlockGougou/BigImageViewPager/blob/master/sample/src/main/java/cc/shinichi/bigimageviewpager/MainActivity.java#L470
 
 ##### 6：Q&A
 1.查看原图卡在1%？
