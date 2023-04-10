@@ -3,6 +3,7 @@ package cc.shinichi.library.view.subsampling.decoder;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+
 import androidx.annotation.NonNull;
 
 /**

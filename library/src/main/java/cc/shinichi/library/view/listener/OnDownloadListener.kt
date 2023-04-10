@@ -1,7 +1,6 @@
 package cc.shinichi.library.view.listener
 
 import android.app.Activity
-import android.view.View
 
 /**
  * @author 工藤

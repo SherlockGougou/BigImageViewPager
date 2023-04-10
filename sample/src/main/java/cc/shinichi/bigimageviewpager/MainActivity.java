@@ -1,13 +1,8 @@
 package cc.shinichi.bigimageviewpager;
 
-import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
-
 import android.Manifest;
 import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,23 +16,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback;
-import com.zhihu.matisse.Matisse;
-import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.engine.impl.GlideEngine;
-import com.zhihu.matisse.internal.entity.CaptureStrategy;
+import com.luck.picture.lib.basic.PictureSelector;
+import com.luck.picture.lib.config.SelectMimeType;
+import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.interfaces.OnResultCallbackListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cc.shinichi.bigimageviewpager.glide.GlideEngine;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.glide.ImageLoader;
@@ -304,7 +296,6 @@ public class MainActivity extends AppCompatActivity {
         // ==============================================================================================================
 
 
-
         // ==============================================================================================================
         // 三、完全自定义调用：
         findViewById(R.id.buttonPreview).setOnClickListener(new View.OnClickListener() {
@@ -489,22 +480,34 @@ public class MainActivity extends AppCompatActivity {
         // ==============================================================================================================
 
 
-
         // ==============================================================================================================
         // 四、通过相册选择图片进行预览
         findViewById(R.id.buttonChoose).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(MainActivity.this.getApplicationContext(),
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                        // 拒绝权限
-                        ToastUtil.getInstance().showShort(MainActivity.this.getApplicationContext(), "您拒绝了存储权限，无法读取图片！");
+                // 根据不同的系统版本，申请读取图片的权限
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    // 判断系统版本是否大于等于33
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
+                                || checkSelfPermission(Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            requestPermissions(new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO}, 1);
+                        } else {
+                            // 选择图片
+                            chooseImage();
+                        }
                     } else {
-                        // 申请权限
-                        ActivityCompat.requestPermissions(MainActivity.this,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,}, 1);
+                        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{
+                                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            }, 1);
+                        } else {
+                            // 选择图片
+                            chooseImage();
+                        }
                     }
                 } else {
                     // 选择图片
@@ -513,7 +516,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         // ==============================================================================================================
-
 
 
         // ==============================================================================================================
@@ -532,53 +534,49 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean isAllGranted = true;
         if (requestCode == 1) {
             for (int i = 0; i < permissions.length; i++) {
-                if (grantResults[i] == PERMISSION_GRANTED) {
-                    chooseImage();
-                } else {
-                    ToastUtil.getInstance().showShort(MainActivity.this.getApplicationContext(), "您拒绝了存储权限，无法读取图片！");
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "onRequestPermissionsResult: " + permissions[i] + " is not granted!");
+                    isAllGranted = false;
+                    break;
                 }
+            }
+            if (isAllGranted) {
+                // 选择图片
+                chooseImage();
+            } else {
+                ToastUtil.getInstance().showShort(MainActivity.this, "您拒绝了存储权限，无法读取图片！");
             }
         }
     }
 
-    // 去选择图片
     private void chooseImage() {
-        Matisse.from(MainActivity.this)
-                .choose(MimeType.ofImage())
-                .capture(true)
-                .captureStrategy(new CaptureStrategy(true, "cc.shinichi.bigimageviewpager.fileprovider", "BigImage"))
-                .countable(true)
-                .maxSelectable(30)
-                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-                .thumbnailScale(0.85f)
-                .imageEngine(new GlideEngine())
-                .theme(com.zhihu.matisse.R.style.Matisse_Zhihu)
-                .showSingleMediaType(true)
-                .originalEnable(true)
-                .forResult(1);
-    }
+        PictureSelector.create(this)
+                .openGallery(SelectMimeType.ofImage())
+                .isDisplayCamera(false)
+                .setImageEngine(GlideEngine.createGlideEngine())
+                .forResult(new OnResultCallbackListener<LocalMedia>() {
+                    @Override
+                    public void onResult(ArrayList<LocalMedia> result) {
+                        List<String> urlList = new ArrayList<>();
+                        for (LocalMedia localMedia : result) {
+                            urlList.add(localMedia.getPath());
+                        }
+                        ImagePreview.getInstance()
+                                .setContext(MainActivity.this)
+                                .setImageList(urlList)
+                                .setShowDownButton(false)
+                                .setShowCloseButton(false)
+                                .setEnableDragClose(true)
+                                .setEnableClickClose(false)
+                                .start();
+                    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK && data != null) {
-                List<Uri> uriList = Matisse.obtainResult(data);
-                List<String> urlList = new ArrayList<>();
-                for (Uri uri : uriList) {
-                    urlList.add(uri.toString());
-                }
-                ImagePreview.getInstance()
-                        .setContext(MainActivity.this)
-                        .setImageList(urlList)
-                        .setShowDownButton(false)
-                        .setShowCloseButton(false)
-                        .setEnableDragClose(true)
-                        .setEnableClickClose(false)
-                        .start();
-            }
-        }
+                    @Override
+                    public void onCancel() {
+                    }
+                });
     }
 }

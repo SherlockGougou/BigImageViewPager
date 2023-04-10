@@ -2,11 +2,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 32
+        minSdkVersion 19
+        targetSdkVersion 33
     }
 
     buildTypes {
@@ -20,8 +20,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
-
-ext.supportLibVersion = '32.0.0'
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')

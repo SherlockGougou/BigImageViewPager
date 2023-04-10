@@ -1,6 +1,7 @@
 package cc.shinichi.library.view.subsampling.decoder;
 
 import android.graphics.Bitmap;
+
 import androidx.annotation.NonNull;
 
 import java.lang.reflect.Constructor;

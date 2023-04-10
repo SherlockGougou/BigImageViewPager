@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
 
     defaultConfig {
         applicationId "cc.shinichi.bigimageviewpager"
-        minSdkVersion 14
-        targetSdkVersion 32
-        versionCode 720
-        versionName "androidx-7.2.0"
+        minSdkVersion 19
+        targetSdkVersion 33
+        versionCode 721
+        versionName "androidx-7.2.1"
     }
     buildTypes {
         release {
@@ -31,8 +31,6 @@ android {
     }
 }
 
-ext.supportLibVersion = '32.0.0'
-
 repositories {
     flatDir {
         dirs 'libs'
@@ -48,10 +46,10 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation "androidx.core:core-ktx:1.7.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    // matisse
-    implementation("com.zhihu.android:matisse:0.5.3-beta3") {
-        exclude group: 'com.github.bumptech.glide'
-    }
+
+    // PictureSelector basic (Necessary)
+    implementation 'io.github.lucksiege:pictureselector:v3.10.8'
+
     // glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'

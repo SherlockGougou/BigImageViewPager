@@ -3,6 +3,7 @@ package cc.shinichi.library.view.subsampling;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.net.Uri;
+
 import androidx.annotation.NonNull;
 
 import java.io.File;

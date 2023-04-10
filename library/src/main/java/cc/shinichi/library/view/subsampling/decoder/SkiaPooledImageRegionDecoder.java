@@ -1,5 +1,7 @@
 package cc.shinichi.library.view.subsampling.decoder;
 
+import static android.content.Context.ACTIVITY_SERVICE;
+
 import android.app.ActivityManager;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -14,11 +16,12 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
+import android.text.TextUtils;
+import android.util.Log;
+
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -32,8 +35,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Pattern;
-
-import static android.content.Context.ACTIVITY_SERVICE;
 
 import cc.shinichi.library.view.subsampling.SubsamplingScaleImageView;
 

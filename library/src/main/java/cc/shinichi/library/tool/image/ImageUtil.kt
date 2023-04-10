@@ -1,12 +1,18 @@
 package cc.shinichi.library.tool.image
 
+import android.content.ContentResolver
+import android.content.ContentValues
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.exifinterface.media.ExifInterface
 import cc.shinichi.library.tool.common.Print.d
 import cc.shinichi.library.tool.ui.PhoneUtil
@@ -23,6 +29,16 @@ import kotlin.math.max
  */
 object ImageUtil {
     private const val TAG = "ImageUtil"
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun Uri.refresh(
+        resolver: ContentResolver,
+    ) {
+        val imageValues = ContentValues()
+        // Android Q添加了IS_PENDING状态，为0时其他应用才可见
+        imageValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+        resolver.update(this, imageValues, null, null)
+    }
 
     fun getBitmapDegree(path: String): Int {
         var degree = 0

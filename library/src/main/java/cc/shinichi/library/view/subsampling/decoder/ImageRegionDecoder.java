@@ -5,10 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
-import androidx.annotation.NonNull;
 
-import cc.shinichi.library.view.subsampling.decoder.SkiaImageRegionDecoder;
-import cc.shinichi.library.view.subsampling.decoder.SkiaPooledImageRegionDecoder;
+import androidx.annotation.NonNull;
 
 /**
  * Interface for image decoding classes, allowing the default {@link android.graphics.BitmapRegionDecoder}

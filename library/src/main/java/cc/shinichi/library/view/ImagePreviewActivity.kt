@@ -22,7 +22,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker
 import androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.R
@@ -83,10 +82,8 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
             findViewById<View>(android.R.id.content).transitionName = "shared_element_container"
             setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-            window.sharedElementEnterTransition =
-                MaterialContainerTransform().addTarget(android.R.id.content).setDuration(300L)
-            window.sharedElementReturnTransition =
-                MaterialContainerTransform().addTarget(android.R.id.content).setDuration(250L)
+            window.sharedElementEnterTransition = MaterialContainerTransform().addTarget(android.R.id.content).setDuration(300L)
+            window.sharedElementReturnTransition = MaterialContainerTransform().addTarget(android.R.id.content).setDuration(250L)
         }
         super.onCreate(savedInstanceState)
 
@@ -394,26 +391,12 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     private fun checkAndDownload() {
-        // 检查权限
-        if (ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this@ImagePreviewActivity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-            ) {
-                // 拒绝权限
-                ToastUtil.instance.showShort(context, getString(R.string.toast_deny_permission_save_failed))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(context, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
             } else {
-                //申请权限
-                ActivityCompat.requestPermissions(
-                    this@ImagePreviewActivity,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    1
-                )
+                // 下载当前图片
+                downloadCurrentImg()
             }
         } else {
             // 下载当前图片
@@ -422,17 +405,20 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>,
+        requestCode: Int,
+        permissions: Array<out String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 1) {
-            for (i in permissions.indices) {
-                if (grantResults[i] == PermissionChecker.PERMISSION_GRANTED) {
-                    downloadCurrentImg()
-                } else {
-                    ToastUtil.instance.showShort(context, getString(R.string.toast_deny_permission_save_failed))
-                }
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 下载当前图片
+                downloadCurrentImg()
+            } else {
+                ToastUtil.instance.showShort(
+                    context,
+                    getString(R.string.toast_deny_permission_save_failed)
+                )
             }
         }
     }
