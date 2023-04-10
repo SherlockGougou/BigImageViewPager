@@ -2,6 +2,8 @@ package cc.shinichi.bigimageviewpager;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -354,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
                         // 设置失败时的占位图，默认为库中自带R.drawable.load_failed，设置为 0 时不显示
                         .setErrorPlaceHolder(R.drawable.load_failed)
 
-                        // 点击回调
+                        // 点击图片回调
                         .setBigImageClickListener(new OnBigImageClickListener() {
                             @Override
                             public void onClick(Activity activity, View view, int position) {
@@ -362,13 +364,20 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d(TAG, "onClick: ");
                             }
                         })
-                        // 长按回调
+                        // 长按图片回调
                         .setBigImageLongClickListener(new OnBigImageLongClickListener() {
                             @Override
                             public boolean onLongClick(Activity activity, View view, int position) {
-                                // ...
+                                // ...请使用该方法提供的activity，否则弹窗会被覆盖
                                 Log.d(TAG, "onLongClick: ");
-                                return false;
+                                AlertDialog dialog = new AlertDialog.Builder(activity)
+                                        .setTitle("提示")
+                                        .setMessage("这里是提示")
+                                        .setPositiveButton("确定", null)
+                                        .setNegativeButton("取消", null)
+                                        .create();
+                                dialog.show();
+                                return true;
                             }
                         })
                         // 页面切换回调
@@ -407,16 +416,19 @@ public class MainActivity extends AppCompatActivity {
                         .setDownloadListener(new OnDownloadListener() {
                             @Override
                             public void onDownloadStart(Activity activity, int position) {
+                                // 此处可以设置自己的开始下载的toast，仅仅在使用内置下载时失效
                                 Toast.makeText(activity, "开始下载", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
                             public void onDownloadSuccess(Activity activity, int position) {
+                                // 此处可以设置自己的下载成功的toast，仅仅在使用内置下载时失效
                                 Toast.makeText(activity, "下载成功", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
                             public void onDownloadFailed(Activity activity, int position) {
+                                // 此处可以设置自己的下载失败的toast，仅仅在使用内置下载时失效
                                 Toast.makeText(activity, "下载失败", Toast.LENGTH_SHORT).show();
                             }
                         })
@@ -449,24 +461,7 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d(TAG, "finish: ");
                             }
                         })
-
-                        // 使用自定义百分比样式，传入自己的布局，并设置回调，再根据parentView找到进度控件进行百分比的设置：
-                        //.setProgressLayoutId(R.layout.image_progress_layout_theme_1, new OnOriginProgressListener() {
-                        //    @Override public void progress(View parentView, int progress) {
-                        //        Log.d(TAG, "progress: " + progress);
-                        //
-                        //        ProgressBar progressBar = parentView.findViewById(R.id.progress_horizontal);
-                        //        progressBar.setProgress(progress);
-                        //    }
-                        //
-                        //    @Override public void finish(View parentView) {
-                        //        Log.d(TAG, "finish: ");
-                        //    }
-                        //})
-                        //=================================================================================================
-
-                        // 完全自定义预览界面，请参考：R.layout.sh_layout_preview
-                        // 并保持控件类型、id和其中一致，否则会找不到控件而报错
+                        // 完全自定义预览界面，请参考这个布局（R.layout.sh_layout_preview），需要保持控件类型、id和其中的一致，否则会找不到控件而报错
                         .setPreviewLayoutResId(R.layout.custom_layout_preview)
                         // 开启预览
                         .start();
