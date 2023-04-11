@@ -224,6 +224,11 @@ public class MainActivity extends AppCompatActivity {
         i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/gif1.gif");
         imageInfoList.add(i);
 
+        // 测试：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://switch-cdn.vgjump.com/Android_1681181317625_d2959134-f14b-4b7b-9f41-5c08fb72c4cb?imageView2/2/w/1080/h/0/format/webp/q/75|imageslim");
+        i.setOriginUrl("https://switch-cdn.vgjump.com/Android_1681181317625_d2959134-f14b-4b7b-9f41-5c08fb72c4cb");
+        imageInfoList.add(i);
 
         // ==============================================================================================================
         // 一、最简单的调用：

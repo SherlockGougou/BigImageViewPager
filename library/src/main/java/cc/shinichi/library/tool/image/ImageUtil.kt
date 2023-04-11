@@ -293,14 +293,14 @@ object ImageUtil {
         options.inJustDecodeBounds = true
         BitmapFactory.decodeFile(path, options)
         var type = options.outMimeType
-        Log.d(TAG, "getImageTypeWithMime: type1 = $type")
+        Log.d(TAG, "getImageTypeWithMime: path = $path, type1 = $type")
         // ”image/png”、”image/jpeg”、”image/gif”
         type = if (TextUtils.isEmpty(type)) {
             ""
         } else {
             type.substring(6)
         }
-        Log.d(TAG, "getImageTypeWithMime: type2 = $type")
+        Log.d(TAG, "getImageTypeWithMime: path = $path, type2 = $type")
         return type
     }
 
@@ -356,9 +356,23 @@ object ImageUtil {
     }
 
     fun isStaticImage(url: String, path: String): Boolean {
-        return (isJpegImageWithMime(url, path)// jpeg
-                || isPngImageWithMime(url, path)// png
-                || isBmpImageWithMime(url, path))// bmp
-                && !isAnimImageWithMime(url, path)// 不是动图(不是webp动图、gif动图)
+        val isWebpImageWithMime = isWebpImageWithMime(url, path)
+        Log.d(TAG, "isStaticImage: isWebpImageWithMime = $isWebpImageWithMime")
+        if (isWebpImageWithMime) {
+            val animWebp = isAnimWebp(url, path)
+            Log.d(TAG, "isStaticImage: animWebp = $animWebp")
+            return !animWebp
+        }
+        val jpegImageWithMime = isJpegImageWithMime(url, path)
+        Log.d(TAG, "isStaticImage: jpegImageWithMime = $jpegImageWithMime")
+        val pngImageWithMime = isPngImageWithMime(url, path)
+        Log.d(TAG, "isStaticImage: pngImageWithMime = $pngImageWithMime")
+        val bmpImageWithMime = isBmpImageWithMime(url, path)
+        Log.d(TAG, "isStaticImage: bmpImageWithMime = $bmpImageWithMime")
+        val heifImageWithMime = isHeifImageWithMime(url, path)
+        Log.d(TAG, "isStaticImage: heifImageWithMime = $heifImageWithMime")
+        val animImageWithMime = isAnimImageWithMime(url, path)
+        Log.d(TAG, "isStaticImage: animImageWithMime = $animImageWithMime")
+        return (jpegImageWithMime || pngImageWithMime || bmpImageWithMime || heifImageWithMime) && !animImageWithMime
     }
 }

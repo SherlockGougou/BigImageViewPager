@@ -214,8 +214,10 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
             val imagePath = cacheFile.absolutePath
             val isStatic = isStaticImage(originPathUrl, imagePath)
             if (isStatic) {
+                Log.d("instantiateItem", "动静判断: 静态图")
                 loadImageStatic(imagePath, imageStatic, imageAnim, progressBar)
             } else {
+                Log.d("instantiateItem", "动静判断: 动态图")
                 loadImageAnim(originPathUrl, imagePath, imageStatic, imageAnim, progressBar)
             }
         } else {
@@ -275,6 +277,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
             if (cacheFile != null && cacheFile.exists()) {
                 val isStatic = isStaticImage(originalUrl, cacheFile.absolutePath)
                 if (isStatic) {
+                    Log.d("loadOrigin", "动静判断: 静态图")
                     val isHeifImageWithMime = isHeifImageWithMime(imageInfo.originUrl, cacheFile.absolutePath)
                     if (isHeifImageWithMime) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -314,6 +317,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                         imageStatic.setImage(origin, small)
                     }
                 } else {
+                    Log.d("loadOrigin", "动静判断: 动态图")
                     imageStatic?.visibility = View.GONE
                     imageAnim?.visibility = View.VISIBLE
                     imageAnim?.let {
@@ -343,8 +347,10 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
         val imagePath = resource.absolutePath
         val isStatic = isStaticImage(imageUrl, imagePath)
         if (isStatic) {
+            Log.d("loadSuccess", "动静判断: 静态图")
             loadImageStatic(imagePath, imageStatic, imageAnim, progressBar)
         } else {
+            Log.d("loadSuccess", "动静判断: 动态图")
             loadImageAnim(imageUrl, imagePath, imageStatic, imageAnim, progressBar)
         }
     }
