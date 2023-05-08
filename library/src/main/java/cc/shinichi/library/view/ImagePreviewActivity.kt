@@ -10,8 +10,10 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -30,6 +32,7 @@ import cc.shinichi.library.glide.FileTarget
 import cc.shinichi.library.glide.ImageLoader
 import cc.shinichi.library.glide.progress.OnProgressListener
 import cc.shinichi.library.glide.progress.ProgressManager.addListener
+import cc.shinichi.library.tool.common.DeviceUtil
 import cc.shinichi.library.tool.common.HandlerHolder
 import cc.shinichi.library.tool.common.HttpUtil
 import cc.shinichi.library.tool.common.NetworkUtil
@@ -391,16 +394,33 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     private fun checkAndDownload() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(context, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+        if (DeviceUtil.isHarmonyOs()) {
+            val harmonyVersion = DeviceUtil.getHarmonyVersionCode()
+            Log.d("checkAndDownload", "是鸿蒙系统, harmonyVersion:$harmonyVersion")
+            if (harmonyVersion < 6) {
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(context, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+                } else {
+                    // 下载当前图片
+                    downloadCurrentImg()
+                }
             } else {
                 // 下载当前图片
                 downloadCurrentImg()
             }
         } else {
-            // 下载当前图片
-            downloadCurrentImg()
+            Log.d("checkAndDownload", "不是鸿蒙系统")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(context, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+                } else {
+                    // 下载当前图片
+                    downloadCurrentImg()
+                }
+            } else {
+                // 下载当前图片
+                downloadCurrentImg()
+            }
         }
     }
 

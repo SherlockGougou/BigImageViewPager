@@ -14,7 +14,6 @@ import android.text.TextUtils
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.exifinterface.media.ExifInterface
-import cc.shinichi.library.tool.common.Print.d
 import cc.shinichi.library.tool.ui.PhoneUtil
 import java.io.*
 import java.util.*
@@ -167,7 +166,7 @@ object ImageUtil {
         val imageRatio = h / w
         val phoneRatio = PhoneUtil.getPhoneRatio(context)
         val isLongImage = h > w && imageRatio > phoneRatio
-        d(TAG, "isLongImage = $isLongImage")
+        Log.d(TAG, "isLongImage = $isLongImage")
         return isLongImage
     }
 
@@ -177,7 +176,7 @@ object ImageUtil {
         val h = wh[1].toFloat()
         val imageRatio = w / h
         val isWideImage = w > h && imageRatio >= 2
-        d(TAG, "isWideImage = $isWideImage")
+        Log.d(TAG, "isWideImage = $isWideImage")
         return isWideImage
     }
 

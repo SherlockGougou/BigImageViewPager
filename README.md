@@ -41,16 +41,17 @@ allprojects {
 ```
 dependencies {
   // 添加本框架 BigImageViewPager https://github.com/SherlockGougou/BigImageViewPager
-  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.2.3'
+  // 此处展示的是最新版本
+  implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.2.4'
   
   // 另外还需要依赖 glide
   implementation 'com.github.bumptech.glide:glide:4.11.0'
   implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
   
   // 下面两个根据自己的语言二选一：
-  // java用户:
+  // 纯java用户:
   annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-  // kotlin用户:
+  // 纯kotlin、或者kotlin、java混编用户:
   kapt 'com.github.bumptech.glide:compiler:4.11.0'
 }
 ```
