@@ -24,3 +24,9 @@ jobs:
       run: chmod +x gradlew
     - name: Build AndroidX with Gradle
       run: ./gradlew assembleRelease
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: BigImageViewPager
+        path: app/build/outputs/apk/release/BigImageViewPager.apk
+        
