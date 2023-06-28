@@ -30,4 +30,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: BigImageViewPager
-        path: sample/build/outputs/apk/debug/app-release.apk
+        path: sample/build/outputs/apk/release/app-release.apk
