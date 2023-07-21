@@ -214,6 +214,12 @@ https://github.com/SherlockGougou/BigImageViewPager
   <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/17de72a7d15445f3b9a9591647af3c9b~tplv-k3u1fbpfcp-watermark.image" width="200"/>
 </p>
 
+# 如果有帮助到你，欢迎请我喝杯☕️：
+<p align="center">
+  <img src="https://github.com/SherlockGougou/BigImageViewPager/assets/17920617/ad358723-6c5c-4878-81b9-ec77b17cda09" width="400"/>
+  <img src="https://github.com/SherlockGougou/BigImageViewPager/assets/17920617/507f28d2-c5d0-449c-bbe6-a5e022484130" width="400"/>
+</p>
+
 # LICENSE
 ```
 Copyright (C) 2018 SherlockGougou qinglingou@gmail.com
