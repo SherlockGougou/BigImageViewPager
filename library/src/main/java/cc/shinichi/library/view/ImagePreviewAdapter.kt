@@ -326,7 +326,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                             .load(cacheFile)
                             .apply(
                                 RequestOptions()
-                                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                                     .error(ImagePreview.instance.errorPlaceHolder)
                             )
                             .into(imageAnim)
@@ -456,7 +456,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
             Glide.with(activity)
                 .load(imagePath)
                 .apply(
-                    RequestOptions().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
                         .error(ImagePreview.instance.errorPlaceHolder)
                 )
                 .optionalTransform(fitCenter)
@@ -489,7 +489,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                 .asGif()
                 .load(imagePath)
                 .apply(
-                    RequestOptions().diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
                         .error(ImagePreview.instance.errorPlaceHolder)
                 )
                 .listener(object : RequestListener<GifDrawable?> {
