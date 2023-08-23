@@ -1,6 +1,7 @@
 package cc.shinichi.library.view
 
 import android.graphics.Bitmap
+import android.graphics.PointF
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
@@ -315,6 +316,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                         setImageStatic(imagePath, imageStatic)
                         imageStatic.orientation = SubsamplingScaleImageView.ORIENTATION_USE_EXIF
                         imageStatic.setImage(origin, small)
+                        scaleLongPic(imageStatic, imagePath)
                     }
                 } else {
                     Log.d("loadOrigin", "动静判断: 动态图")
@@ -419,6 +421,19 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
         }
     }
 
+    private fun scaleLongPic(imageStatic: SubsamplingScaleImageView, imagePath: String) {
+        val isLongImage = isLongImage(this.activity, imagePath)
+        if (isLongImage) {
+            when (ImagePreview.instance.longPicDisplayMode) {
+                ImagePreview.LongPicDisplayMode.Default -> {
+                }
+                ImagePreview.LongPicDisplayMode.FillWidth -> {
+                    imageStatic.setScaleAndCenter(ImageUtil.getLongImageFillWidthScale(this.activity, imagePath), PointF(0f, 0f))
+                }
+            }
+        }
+    }
+
     /**
      * 加载静态图片
      */
@@ -440,6 +455,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                 progressBar.visibility = View.GONE
             }
         })
+        scaleLongPic(imageStatic, imagePath)
     }
 
     /**

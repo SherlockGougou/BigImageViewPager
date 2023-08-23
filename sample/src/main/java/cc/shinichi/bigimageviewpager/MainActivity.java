@@ -1,11 +1,7 @@
 package cc.shinichi.bigimageviewpager;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -324,6 +320,9 @@ public class MainActivity extends AppCompatActivity {
 
                         // 加载策略，默认为手动模式
                         .setLoadStrategy(loadStrategy)
+
+                        // 长图的展示模式，默认是SCALE_TYPE_CENTER_INSIDE，缩小到内部居中：
+                        .setLongPicDisplayMode(ImagePreview.LongPicDisplayMode.FillWidth)
 
                         // 保存的文件夹名称，会在Picture目录进行文件夹的新建。比如："BigImageView"，会在Picture目录新建BigImageView文件夹)
                         .setFolderName("BigImageView")
