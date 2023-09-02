@@ -109,6 +109,9 @@ class ImagePreview {
     var previewLayoutResId = R.layout.sh_layout_preview
         private set
 
+    var onCustomLayoutCallback: OnCustomLayoutCallback? = null
+        private set
+
     @DrawableRes
     var indicatorShapeResId = R.drawable.shape_indicator_bg
         private set
@@ -399,8 +402,9 @@ class ImagePreview {
      * 完全自定义预览界面，请参考：R.layout.sh_layout_preview
      * 并保持控件类型、id和其中一致，否则会找不到控件而报错
      */
-    fun setPreviewLayoutResId(previewLayoutResId: Int): ImagePreview {
+    fun setPreviewLayoutResId(previewLayoutResId: Int, onCustomLayoutCallback: OnCustomLayoutCallback?): ImagePreview {
         this.previewLayoutResId = previewLayoutResId
+        this.onCustomLayoutCallback = onCustomLayoutCallback
         return this
     }
 

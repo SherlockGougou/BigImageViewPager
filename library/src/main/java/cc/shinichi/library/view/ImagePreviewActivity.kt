@@ -91,7 +91,10 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         super.onCreate(savedInstanceState)
 
         // R.layout.sh_layout_preview
-        setContentView(ImagePreview.instance.previewLayoutResId)
+        // inflate ImagePreview.instance.previewLayoutResId
+        val parentView = View.inflate(this, ImagePreview.instance.previewLayoutResId, null)
+        setContentView(parentView)
+        ImagePreview.instance.onCustomLayoutCallback?.onLayout(parentView)
 
         transparentStatusBar(this)
         transparentNavBar(this)

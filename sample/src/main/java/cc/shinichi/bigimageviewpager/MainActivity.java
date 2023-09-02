@@ -36,6 +36,7 @@ import cc.shinichi.library.tool.ui.ToastUtil;
 import cc.shinichi.library.view.listener.OnBigImageClickListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
+import cc.shinichi.library.view.listener.OnCustomLayoutCallback;
 import cc.shinichi.library.view.listener.OnDownloadClickListener;
 import cc.shinichi.library.view.listener.OnDownloadListener;
 import cc.shinichi.library.view.listener.OnOriginProgressListener;
@@ -466,7 +467,12 @@ public class MainActivity extends AppCompatActivity {
                             }
                         })
                         // 完全自定义预览界面，请参考这个布局（R.layout.sh_layout_preview），需要保持控件类型、id和其中的一致，否则会找不到控件而报错
-                        .setPreviewLayoutResId(R.layout.custom_layout_preview)
+                        .setPreviewLayoutResId(R.layout.custom_layout_preview, new OnCustomLayoutCallback() {
+                            @Override
+                            public void onLayout(@NonNull View parentView) {
+                                // 自定义控件事件处理
+                            }
+                        })
                         // 开启预览
                         .start();
             }
