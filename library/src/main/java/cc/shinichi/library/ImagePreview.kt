@@ -144,6 +144,8 @@ class ImagePreview {
         private set
     var onPageFinishListener: OnPageFinishListener? = null
         private set
+    var onPageDragListener: OnPageDragListener? = null
+        private set
 
     // 自定义百分比布局layout id
     @LayoutRes
@@ -384,6 +386,11 @@ class ImagePreview {
 
     fun setOnPageFinishListener(onPageFinishListener: OnPageFinishListener): ImagePreview {
         this.onPageFinishListener = onPageFinishListener
+        return this
+    }
+
+    fun setOnPageDragListener(onPageDragListener: OnPageDragListener): ImagePreview {
+        this.onPageDragListener = onPageDragListener
         return this
     }
 

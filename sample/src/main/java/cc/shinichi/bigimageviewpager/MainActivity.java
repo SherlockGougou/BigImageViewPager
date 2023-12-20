@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.CompoundButton;
@@ -40,6 +41,7 @@ import cc.shinichi.library.view.listener.OnCustomLayoutCallback;
 import cc.shinichi.library.view.listener.OnDownloadClickListener;
 import cc.shinichi.library.view.listener.OnDownloadListener;
 import cc.shinichi.library.view.listener.OnOriginProgressListener;
+import cc.shinichi.library.view.listener.OnPageDragListener;
 import cc.shinichi.library.view.listener.OnPageFinishListener;
 
 public class MainActivity extends AppCompatActivity {
@@ -471,6 +473,13 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onLayout(@NonNull View parentView) {
                                 // 自定义控件事件处理
+                            }
+                        })
+                        // 监听页面拖动(自定义布局可以根据是否拖动进行隐藏或者展示)
+                        .setOnPageDragListener(new OnPageDragListener() {
+                            @Override
+                            public void onDrag(MotionEvent event, float translationY) {
+                                Log.d(TAG, "onDrag: translationY = " + translationY);
                             }
                         })
                         // 开启预览

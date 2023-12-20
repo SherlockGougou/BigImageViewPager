@@ -153,7 +153,8 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
         }
 
         if (ImagePreview.instance.isEnableDragClose) {
-            fingerDragHelper.setOnAlphaChangeListener { _, translationY ->
+            fingerDragHelper.setOnAlphaChangeListener { event, translationY ->
+                ImagePreview.instance.onPageDragListener?.onDrag(event, translationY)
                 val yAbs = abs(translationY)
                 val percent = yAbs / getPhoneHei(activity.applicationContext)
                 val number = 1.0f - percent
