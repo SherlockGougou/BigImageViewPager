@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 33
-
+    namespace 'cc.shinichi.bigimageviewpager'
+    compileSdkVersion 34
     defaultConfig {
         applicationId "cc.shinichi.bigimageviewpager"
-        minSdkVersion 19
-        targetSdkVersion 33
-        versionCode 730
-        versionName "androidx-7.3.0"
+        minSdkVersion 24
+        targetSdkVersion 34
+        versionCode 800
+        versionName "androidx-8.0.0"
     }
     buildTypes {
         release {
@@ -18,15 +18,15 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     sourceSets {
         main {
             jniLibs.srcDirs = ['libs']
         }
     }
-    lintOptions {
+    lint {
         abortOnError false
     }
 }
@@ -51,9 +51,9 @@ dependencies {
     implementation 'io.github.lucksiege:pictureselector:v3.11.0'
 
     // glide
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-    implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+    implementation 'com.github.bumptech.glide:okhttp3-integration:4.16.0'
 
     // library
     // implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-7.3.0'

@@ -3,7 +3,6 @@ package cc.shinichi.library.tool.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
-import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Display
@@ -25,19 +24,9 @@ object PhoneUtil {
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val display: Display = wm.defaultDisplay
         var screenWidth = 0
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            val dm = DisplayMetrics()
-            display.getRealMetrics(dm)
-            screenWidth = dm.widthPixels
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            screenWidth = try {
-                Display::class.java.getMethod("getRawWidth").invoke(display) as Int
-            } catch (e: Exception) {
-                val dm = DisplayMetrics()
-                display.getMetrics(dm)
-                dm.widthPixels
-            }
-        }
+        val dm = DisplayMetrics()
+        display.getRealMetrics(dm)
+        screenWidth = dm.widthPixels
         return screenWidth.apply {
             Log.d(TAG, "getPhoneWid: $this")
         }
@@ -48,19 +37,9 @@ object PhoneUtil {
         val display = wm.defaultDisplay
         var screenHeight = 0
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            val dm = DisplayMetrics()
-            display.getRealMetrics(dm)
-            screenHeight = dm.heightPixels
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            screenHeight = try {
-                Display::class.java.getMethod("getRawHeight").invoke(display) as Int
-            } catch (e: java.lang.Exception) {
-                val dm = DisplayMetrics()
-                display.getMetrics(dm)
-                dm.heightPixels
-            }
-        }
+        val dm = DisplayMetrics()
+        display.getRealMetrics(dm)
+        screenHeight = dm.heightPixels
         return screenHeight.apply {
             Log.d(TAG, "getPhoneHei: $this")
         }

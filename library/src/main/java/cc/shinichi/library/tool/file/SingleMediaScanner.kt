@@ -11,7 +11,11 @@ import android.net.Uri
  * create at 2018/5/4  16:50
  * description:媒体扫描
  */
-class SingleMediaScanner(context: Context?, private val path: String, private val listener: ScanListener?) :
+class SingleMediaScanner(
+    context: Context?,
+    private val path: String,
+    private val listener: ScanListener?
+) :
     MediaScannerConnectionClient {
 
     private val mMs: MediaScannerConnection = MediaScannerConnection(context, this)

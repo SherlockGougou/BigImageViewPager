@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<style name="Theme.ImagePreview" parent="Theme.AppCompat.NoActionBar">
-		<item name="windowNoTitle">true</item>
-		<item name="android:windowFullscreen">false</item>
+    <style name="Theme.ImagePreview" parent="Theme.AppCompat.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
 
-		<item name="android:windowContentOverlay">@null</item>
-		<item name="background">@null</item>
-		<item name="android:windowBackground">@android:color/transparent</item>
-		<item name="android:windowIsTranslucent">true</item>
-	</style>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="background">@null</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
 </resources>

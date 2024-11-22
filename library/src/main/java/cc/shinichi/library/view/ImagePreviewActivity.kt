@@ -10,7 +10,6 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.os.Message
 import android.text.TextUtils
 import android.util.Log
@@ -81,12 +80,14 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // 只有安卓版本大于 5.0 才可使用过度动画
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !TextUtils.isEmpty(ImagePreview.instance.transitionShareElementName)) {
+        if (!TextUtils.isEmpty(ImagePreview.instance.transitionShareElementName)) {
             window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
             findViewById<View>(android.R.id.content).transitionName = "shared_element_container"
             setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-            window.sharedElementEnterTransition = MaterialContainerTransform().addTarget(android.R.id.content).setDuration(300L)
-            window.sharedElementReturnTransition = MaterialContainerTransform().addTarget(android.R.id.content).setDuration(250L)
+            window.sharedElementEnterTransition =
+                MaterialContainerTransform().addTarget(android.R.id.content).setDuration(300L)
+            window.sharedElementReturnTransition =
+                MaterialContainerTransform().addTarget(android.R.id.content).setDuration(250L)
         }
         super.onCreate(savedInstanceState)
 
@@ -127,7 +128,8 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         // != -1 即用户自定义了view
         if (progressLayoutId != -1) {
             // add用户自定义的view到frameLayout中，回调进度和view
-            progressParentLayout = View.inflate(context, ImagePreview.instance.progressLayoutId, null)
+            progressParentLayout =
+                View.inflate(context, ImagePreview.instance.progressLayoutId, null)
             fmCenterProgressContainer.removeAllViews()
             fmCenterProgressContainer.addView(progressParentLayout)
             isUserCustomProgressView = true
@@ -214,7 +216,11 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 }
             }
 
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels)
                 ImagePreview.instance.bigImagePageChangeListener?.onPageScrolled(
                     position,
@@ -238,11 +244,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     override fun onBackPressed() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            supportFinishAfterTransition()
-        } else {
-            finish()
-        }
+        supportFinishAfterTransition()
     }
 
     override fun finish() {
@@ -328,7 +330,10 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                     gone()
                     fmCenterProgressContainer.visibility = View.VISIBLE
                     progressParentLayout.visibility = View.VISIBLE
-                    ImagePreview.instance.onOriginProgressListener?.progress(progressParentLayout, progress)
+                    ImagePreview.instance.onOriginProgressListener?.progress(
+                        progressParentLayout,
+                        progress
+                    )
                 } else {
                     visible()
                     btnShowOrigin.text = String.format("%s %%", progress)
@@ -364,7 +369,10 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         } else {
             // 缓存不存在
             // 如果是全自动模式且当前是WiFi，就不显示查看原图按钮
-            if (ImagePreview.instance.loadStrategy == ImagePreview.LoadStrategy.Auto && NetworkUtil.isWiFi(context)) {
+            if (ImagePreview.instance.loadStrategy == ImagePreview.LoadStrategy.Auto && NetworkUtil.isWiFi(
+                    context
+                )
+            ) {
                 gone()
             } else {
                 visible()
@@ -401,8 +409,16 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             val harmonyVersion = DeviceUtil.getHarmonyVersionCode()
             Log.d("checkAndDownload", "是鸿蒙系统, harmonyVersion:$harmonyVersion")
             if (harmonyVersion < 6) {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(context, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+                if (ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(
+                        context,
+                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                        1
+                    )
                 } else {
                     // 下载当前图片
                     downloadCurrentImg()
@@ -414,8 +430,16 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         } else {
             Log.d("checkAndDownload", "不是鸿蒙系统")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(context, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+                if (ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(
+                        context,
+                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                        1
+                    )
                 } else {
                     // 下载当前图片
                     downloadCurrentImg()
@@ -494,17 +518,12 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     private fun transparentStatusBar(window: Window) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            val option = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            val vis = window.decorView.systemUiVisibility
-            window.decorView.systemUiVisibility = option or vis
-            window.statusBarColor = Color.TRANSPARENT
-        } else {
-            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        }
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        val option = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        val vis = window.decorView.systemUiVisibility
+        window.decorView.systemUiVisibility = option or vis
+        window.statusBarColor = Color.TRANSPARENT
     }
 
     private fun transparentNavBar(activity: Activity) {
@@ -512,17 +531,10 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     private fun transparentNavBar(window: Window) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.navigationBarColor = Color.TRANSPARENT
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (window.attributes.flags and WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION == 0) {
-                window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
-            }
-        }
+        window.navigationBarColor = Color.TRANSPARENT
         val decorView = window.decorView
         val vis = decorView.systemUiVisibility
         val option =
@@ -537,26 +549,18 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             }
             val intent = Intent()
             intent.setClass(context, ImagePreviewActivity::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                // 过度动画效果只对安卓 5.0 以上有效
-                val transitionView = ImagePreview.instance.transitionView
-                val transitionShareElementName = ImagePreview.instance.transitionShareElementName
-                // 如果未设置则使用默认动画
-                if (transitionView != null && transitionShareElementName != null) {
-                    val options = ActivityOptions.makeSceneTransitionAnimation(
-                        context as Activity?,
-                        transitionView,
-                        transitionShareElementName
-                    )
-                    context.startActivity(intent, options.toBundle())
-                } else {
-                    context.startActivity(intent)
-                    if (context is Activity) {
-                        context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-                    }
-                }
+            // 过度动画效果只对安卓 5.0 以上有效
+            val transitionView = ImagePreview.instance.transitionView
+            val transitionShareElementName = ImagePreview.instance.transitionShareElementName
+            // 如果未设置则使用默认动画
+            if (transitionView != null && transitionShareElementName != null) {
+                val options = ActivityOptions.makeSceneTransitionAnimation(
+                    context as Activity?,
+                    transitionView,
+                    transitionShareElementName
+                )
+                context.startActivity(intent, options.toBundle())
             } else {
-                // 低于 5.0 使用默认动画
                 context.startActivity(intent)
                 if (context is Activity) {
                     context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)

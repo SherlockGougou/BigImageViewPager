@@ -16,8 +16,6 @@
 package cc.shinichi.library.view.photoview;
 
 import android.annotation.TargetApi;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.view.View;
 
 class Compat {
@@ -25,11 +23,7 @@ class Compat {
     private static final int SIXTY_FPS_INTERVAL = 1000 / 60;
 
     public static void postOnAnimation(View view, Runnable runnable) {
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            postOnAnimationJellyBean(view, runnable);
-        } else {
-            view.postDelayed(runnable, SIXTY_FPS_INTERVAL);
-        }
+        postOnAnimationJellyBean(view, runnable);
     }
 
     @TargetApi(16)

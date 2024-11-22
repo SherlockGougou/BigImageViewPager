@@ -2,7 +2,6 @@ package cc.shinichi.bigimageviewpager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -64,11 +63,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
-            setExitSharedElementCallback(new MaterialContainerTransformSharedElementCallback());
-            getWindow().setSharedElementsUseOverlay(false);
-        }
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        setExitSharedElementCallback(new MaterialContainerTransformSharedElementCallback());
+        getWindow().setSharedElementsUseOverlay(false);
 
         setContentView(R.layout.activity_main);
 
@@ -183,14 +180,14 @@ public class MainActivity extends AppCompatActivity {
 
         // 普通图片1：
         i = new ImageInfo();
-        i.setThumbnailUrl("http://image.coolapk.com/picture/2023/0331/15/804026_4012f28c_8643_0867_309@1440x2560.jpeg.m.jpg");
-        i.setOriginUrl("http://image.coolapk.com/picture/2023/0331/15/804026_4012f28c_8643_0867_309@1440x2560.jpeg");
+        i.setThumbnailUrl("http://img3.16fan.com/static/live/origin/202104/20/9a7d0915c91b.jpg-200fang");
+        i.setOriginUrl("http://img3.16fan.com/static/live/origin/202104/20/9a7d0915c91b.jpg");
         imageInfoList.add(i);
 
         // 普通图片2：
         i = new ImageInfo();
-        i.setThumbnailUrl("http://image.coolapk.com/picture/2023/0406/08/736620_39842c8b_0392_4907_446@2160x3840.jpeg.m.jpg");
-        i.setOriginUrl("http://image.coolapk.com/picture/2023/0406/08/736620_39842c8b_0392_4907_446@2160x3840.jpeg");
+        i.setThumbnailUrl("http://img3.16fan.com/static/live/origin/202104/20/96247e9c3757.jpg-200fang");
+        i.setOriginUrl("http://img3.16fan.com/static/live/origin/202104/20/96247e9c3757.jpg");
         imageInfoList.add(i);
 
         // 大尺寸图片：
@@ -223,12 +220,6 @@ public class MainActivity extends AppCompatActivity {
         i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/gif1.gif");
         imageInfoList.add(i);
 
-        // 测试：
-        i = new ImageInfo();
-        i.setThumbnailUrl("https://switch-cdn.vgjump.com/Android_1681181317625_d2959134-f14b-4b7b-9f41-5c08fb72c4cb?imageView2/2/w/1080/h/0/format/webp/q/75|imageslim");
-        i.setOriginUrl("https://switch-cdn.vgjump.com/Android_1681181317625_d2959134-f14b-4b7b-9f41-5c08fb72c4cb");
-        imageInfoList.add(i);
-
         // ==============================================================================================================
         // 一、最简单的调用：
         findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
@@ -247,21 +238,26 @@ public class MainActivity extends AppCompatActivity {
         ImageView image2 = findViewById(R.id.image2);
         ImageView image3 = findViewById(R.id.image3);
 
-        List<String> list2 = new ArrayList<>();
-        list2.add("http://img6.16fan.com/201510/11/005258wdngg6rv0tpn8z9z.jpg-400");
-        list2.add("http://img6.16fan.com/201510/11/013553aj3kp9u6iuz6k9uj.jpg-400");
-        list2.add("http://img6.16fan.com/201510/11/011753fnanichdca0wbhxc.jpg-400");
+        List<Integer> list2 = new ArrayList<>();
+        list2.add(R.mipmap.ic_launcher);
+        list2.add(R.mipmap.ic_launcher_foreground);
+        list2.add(R.mipmap.ic_launcher_round);
 
-        Glide.with(this).load("http://img6.16fan.com/201510/11/005258wdngg6rv0tpn8z9z.jpg-400").into(image1);
-        Glide.with(this).load("http://img6.16fan.com/201510/11/013553aj3kp9u6iuz6k9uj.jpg-400").into(image2);
-        Glide.with(this).load("http://img6.16fan.com/201510/11/011753fnanichdca0wbhxc.jpg-400").into(image3);
+        List<String> list3 = new ArrayList<>();
+        list3.add("http://img3.16fan.com/static/live/origin/202104/20/b915013fa0b8.jpg");
+        list3.add("http://img3.16fan.com/static/live/origin/202104/20/81c3475f8a1c.jpg");
+        list3.add("http://img3.16fan.com/static/live/origin/202104/20/fd0525cefbc0.jpg");
+
+        Glide.with(this).load("http://img3.16fan.com/static/live/origin/202104/20/b915013fa0b8.jpg-200fang").into(image1);
+        Glide.with(this).load("http://img3.16fan.com/static/live/origin/202104/20/81c3475f8a1c.jpg-200fang").into(image2);
+        Glide.with(this).load("http://img3.16fan.com/static/live/origin/202104/20/fd0525cefbc0.jpg-200fang").into(image3);
 
         image1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ImagePreview.getInstance()
                         .setContext(MainActivity.this)
-                        .setImageList(list2)
+                        .setImageList(list3)
                         .setIndex(0)
                         .setTransitionView(view)
                         .setTransitionShareElementName("shared_element_container")
@@ -273,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ImagePreview.getInstance()
                         .setContext(MainActivity.this)
-                        .setImageList(list2)
+                        .setImageList(list3)
                         .setIndex(1)
                         .setTransitionView(view)
                         .setTransitionShareElementName("shared_element_container")
@@ -285,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ImagePreview.getInstance()
                         .setContext(MainActivity.this)
-                        .setImageList(list2)
+                        .setImageList(list3)
                         .setIndex(2)
                         .setEnableDragClose(true)
                         .setEnableDragCloseIgnoreScale(true)

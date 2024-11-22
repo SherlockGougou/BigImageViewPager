@@ -1,13 +1,11 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="cc.shinichi.library">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-	<application>
-		<activity
-			android:name=".view.ImagePreviewActivity"
-			android:theme="@style/Theme.ImagePreview"
-			/>
-	</application>
+    <application>
+        <activity
+            android:name=".view.ImagePreviewActivity"
+            android:theme="@style/Theme.ImagePreview" />
+    </application>
 </manifest>

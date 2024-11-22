@@ -18,6 +18,13 @@ import cc.shinichi.bigimageviewpager.R;
  */
 public class GlideEngine implements ImageEngine {
 
+    private GlideEngine() {
+    }
+
+    public static GlideEngine createGlideEngine() {
+        return InstanceHolder.instance;
+    }
+
     /**
      * 加载图片
      *
@@ -68,7 +75,6 @@ public class GlideEngine implements ImageEngine {
                 .into(imageView);
     }
 
-
     /**
      * 加载图片列表图片
      *
@@ -105,14 +111,7 @@ public class GlideEngine implements ImageEngine {
         Glide.with(context).resumeRequests();
     }
 
-    private GlideEngine() {
-    }
-
     private static final class InstanceHolder {
         static final GlideEngine instance = new GlideEngine();
-    }
-
-    public static GlideEngine createGlideEngine() {
-        return InstanceHolder.instance;
     }
 }

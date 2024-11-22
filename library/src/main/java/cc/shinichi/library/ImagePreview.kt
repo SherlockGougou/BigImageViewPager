@@ -3,7 +3,6 @@ package cc.shinichi.library
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.os.Build
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -77,12 +76,12 @@ class ImagePreview {
     var zoomTransitionDuration = 200
         private set
 
-    // 是否启用下拉关闭，默认不启用
+    // 是否启用下拉关闭，默认启用
     var isEnableDragClose = true
         private set
 
-    // 是否启用上拉关闭，默认不启用
-    var isEnableUpDragClose = false
+    // 是否启用上拉关闭，默认启用
+    var isEnableUpDragClose = true
         private set
 
     // 是否忽略缩放启用拉动关闭，默认false，true即忽略
@@ -208,6 +207,27 @@ class ImagePreview {
         return this
     }
 
+//    fun setImageRes(imageResId: Int): ImagePreview {
+//        imageInfoList.clear()
+//        val imageInfo = ImageInfo()
+//        imageInfo.thumbnailUrl = "res://$imageResId"
+//        imageInfo.originUrl = "res://$imageResId"
+//        imageInfoList.add(imageInfo)
+//        return this
+//    }
+
+//    fun setImageResList(imageResIdList: MutableList<Int>): ImagePreview {
+//        imageInfoList.clear()
+//        var imageInfo: ImageInfo
+//        for (i in imageResIdList.indices) {
+//            imageInfo = ImageInfo()
+//            imageInfo.thumbnailUrl = "res://" + imageResIdList[i].toString()
+//            imageInfo.originUrl = "res://" + imageResIdList[i].toString()
+//            imageInfoList.add(imageInfo)
+//        }
+//        return this
+//    }
+
     fun setIndex(index: Int): ImagePreview {
         this.index = index
         return this
@@ -238,15 +258,19 @@ class ImagePreview {
             LoadStrategy.Default -> {
                 true // 手动模式时，根据是否有原图缓存来决定是否显示查看原图按钮
             }
+
             LoadStrategy.NetworkAuto -> {
                 false // 强制隐藏查看原图按钮
             }
+
             LoadStrategy.AlwaysThumb -> {
                 false // 强制隐藏查看原图按钮
             }
+
             LoadStrategy.AlwaysOrigin -> {
                 false // 强制隐藏查看原图按钮
             }
+
             LoadStrategy.Auto -> {
                 true // 显示查看原图按钮
             }
@@ -399,7 +423,10 @@ class ImagePreview {
         return this
     }
 
-    fun setProgressLayoutId(progressLayoutId: Int, onOriginProgressListener: OnOriginProgressListener): ImagePreview {
+    fun setProgressLayoutId(
+        progressLayoutId: Int,
+        onOriginProgressListener: OnOriginProgressListener
+    ): ImagePreview {
         setOnOriginProgressListener(onOriginProgressListener)
         this.progressLayoutId = progressLayoutId
         return this
@@ -409,7 +436,10 @@ class ImagePreview {
      * 完全自定义预览界面，请参考：R.layout.sh_layout_preview
      * 并保持控件类型、id和其中一致，否则会找不到控件而报错
      */
-    fun setPreviewLayoutResId(previewLayoutResId: Int, onCustomLayoutCallback: OnCustomLayoutCallback?): ImagePreview {
+    fun setPreviewLayoutResId(
+        previewLayoutResId: Int,
+        onCustomLayoutCallback: OnCustomLayoutCallback?
+    ): ImagePreview {
         this.previewLayoutResId = previewLayoutResId
         this.onCustomLayoutCallback = onCustomLayoutCallback
         return this
@@ -426,7 +456,8 @@ class ImagePreview {
         zoomTransitionDuration = 200
         isShowDownButton = true
         isShowCloseButton = false
-        isEnableDragClose = false
+        isEnableDragClose = true
+        isEnableUpDragClose = true
         isEnableClickClose = true
         isShowIndicator = true
         isShowErrorToast = false
@@ -452,18 +483,11 @@ class ImagePreview {
         val context = contextWeakReference.get()
             ?: throw IllegalArgumentException("You must call 'setContext(Context context)' first!")
         require(context is Activity) { "context must be a Activity!" }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            if (context.isFinishing || context.isDestroyed) {
-                reset()
-                return
-            }
-        } else {
-            if (context.isFinishing) {
-                reset()
-                return
-            }
+        if (context.isFinishing || context.isDestroyed) {
+            reset()
+            return
         }
-        require(imageInfoList.size != 0) { "Do you forget to call 'setImageInfoList(List<ImageInfo> imageInfoList)' ?" }
+        require(imageInfoList.isNotEmpty()) { "Do you forget to call 'setImageInfoList(List<ImageInfo> imageInfoList)' ?" }
         require(index < imageInfoList.size) { "index out of range!" }
         lastClickTime = System.currentTimeMillis()
         ImagePreviewActivity.activityStart(context)
@@ -477,14 +501,8 @@ class ImagePreview {
         if (context !is Activity) {
             return
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            if (context.isFinishing || context.isDestroyed) {
-                return
-            }
-        } else {
-            if (context.isFinishing) {
-                return
-            }
+        if (context.isFinishing || context.isDestroyed) {
+            return
         }
         context.finish()
     }

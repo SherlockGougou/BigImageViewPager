@@ -1,90 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:id="@+id/rootView"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="#000000"
-	>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
 
-	<cc.shinichi.library.view.HackyViewPager
-		android:id="@+id/viewPager"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		/>
+    <cc.shinichi.library.view.HackyViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-	<FrameLayout
-		android:id="@+id/fm_center_progress_container"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_centerInParent="true"
-		>
+    <FrameLayout
+        android:id="@+id/fm_center_progress_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
 
-	</FrameLayout>
+    </FrameLayout>
 
-	<TextView
-		android:id="@+id/tv_indicator"
-		android:layout_width="wrap_content"
-		android:layout_height="20dp"
-		android:layout_alignParentTop="true"
-		android:layout_centerHorizontal="true"
-		android:layout_marginTop="40dp"
-		android:background="@drawable/shape_indicator_bg"
-		android:gravity="center"
-		android:includeFontPadding="false"
-		android:text="1/9"
-		android:textColor="#ffffff"
-		android:textSize="15sp"
-		/>
+    <TextView
+        android:id="@+id/tv_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/shape_indicator_bg"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="1/9"
+        android:textColor="#ffffff"
+        android:textSize="15sp" />
 
-	<ImageView
-		android:id="@+id/imgCloseButton"
-		android:layout_width="60dp"
-		android:layout_height="60dp"
-		android:layout_alignParentStart="true"
-		android:layout_alignParentBottom="true"
-		android:layout_gravity="bottom|start"
-		android:layout_marginBottom="40dp"
-		android:padding="3dp"
-		android:scaleType="centerInside"
-		app:srcCompat="@drawable/ic_action_close"
-		/>
+    <ImageView
+        android:id="@+id/imgCloseButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom|start"
+        android:layout_marginBottom="40dp"
+        android:padding="3dp"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/ic_action_close" />
 
-	<FrameLayout
-		android:id="@+id/fm_image_show_origin_container"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
-		android:layout_centerHorizontal="true"
-		android:layout_marginBottom="40dp"
-		>
+    <FrameLayout
+        android:id="@+id/fm_image_show_origin_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40dp">
 
-		<Button
-			android:id="@+id/btn_show_origin"
-			android:layout_width="wrap_content"
-			android:layout_height="35dp"
-			android:background="@drawable/gray_square_circle_bg_white_stroke"
-			android:gravity="center"
-			android:includeFontPadding="false"
-			android:paddingHorizontal="10dp"
-			android:text="@string/btn_original"
-			android:textAllCaps="false"
-			android:textColor="#ffffff"
-			android:textSize="12sp"
-			/>
-	</FrameLayout>
+        <Button
+            android:id="@+id/btn_show_origin"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:background="@drawable/gray_square_circle_bg_white_stroke"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:paddingHorizontal="10dp"
+            android:text="@string/btn_original"
+            android:textAllCaps="false"
+            android:textColor="#ffffff"
+            android:textSize="12sp" />
+    </FrameLayout>
 
-	<ImageView
-		android:id="@+id/img_download"
-		android:layout_width="60dp"
-		android:layout_height="60dp"
-		android:layout_alignParentEnd="true"
-		android:layout_alignParentBottom="true"
-		android:layout_gravity="bottom|end"
-		android:layout_marginBottom="40dp"
-		android:padding="3dp"
-		android:scaleType="centerInside"
-		app:srcCompat="@drawable/icon_download_new"
-		/>
+    <ImageView
+        android:id="@+id/img_download"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="40dp"
+        android:padding="3dp"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/icon_download_new" />
 </RelativeLayout>

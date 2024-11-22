@@ -64,7 +64,10 @@ import kotlin.math.abs
  * @author 工藤
  * @email qinglingou@gmail.com
  */
-class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: MutableList<ImageInfo>) :
+class ImagePreviewAdapter(
+    private val activity: AppCompatActivity,
+    imageList: MutableList<ImageInfo>
+) :
     PagerAdapter() {
 
     private val imageMyList: MutableList<ImageInfo> = mutableListOf()
@@ -182,12 +185,15 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
             LoadStrategy.Default -> {
                 finalLoadUrl = thumbPathUrl
             }
+
             LoadStrategy.AlwaysOrigin -> {
                 finalLoadUrl = originPathUrl
             }
+
             LoadStrategy.AlwaysThumb -> {
                 finalLoadUrl = thumbPathUrl
             }
+
             LoadStrategy.NetworkAuto -> {
                 finalLoadUrl = if (isWiFi(activity)) {
                     originPathUrl
@@ -195,6 +201,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                     thumbPathUrl
                 }
             }
+
             LoadStrategy.Auto -> {
                 finalLoadUrl = if (isWiFi(activity)) {
                     originPathUrl
@@ -224,36 +231,81 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
             }
         } else {
             Log.d("instantiateItem", "原图缓存不存在，开始加载 url = $url")
-            Glide.with(activity).downloadOnly().load(url).addListener(object : RequestListener<File> {
-                override fun onLoadFailed(
-                    e: GlideException?, model: Any, target: Target<File>,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    Thread {
-                        val fileFullName = System.currentTimeMillis().toString()
-                        val saveDir = getAvailableCacheDir(activity)?.absolutePath + File.separator + "image/"
-                        val downloadFile = downloadFile(url, fileFullName, saveDir)
-                        Handler(Looper.getMainLooper()).post {
-                            if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
-                                // 通过urlConn下载完成
-                                loadSuccess(originPathUrl, downloadFile, imageStatic, imageAnim, progressBar)
-                            } else {
-                                loadFailed(imageStatic, imageAnim, progressBar, e)
-                            }
+            // 判断url是否是res资源 R.mipmap.xxx
+            if (url.startsWith("res://")) {
+                Log.d("instantiateItem", "instantiateItem: res资源")
+                val resId = url.split("/")[2].toInt()
+                Glide.with(activity).load(R.drawable.icon_download_new)
+                    .addListener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable?>,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            loadFailed(imageStatic, imageAnim, progressBar, e)
+                            return true
                         }
-                    }.start()
-                    return true
-                }
 
-                override fun onResourceReady(
-                    resource: File, model: Any, target: Target<File>, dataSource: DataSource,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    loadSuccess(url, resource, imageStatic, imageAnim, progressBar)
-                    return true
-                }
-            }).into(object : FileTarget() {
-            })
+                        override fun onResourceReady(
+                            resource: Drawable,
+                            model: Any,
+                            target: Target<Drawable>,
+                            dataSource: DataSource,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            progressBar.visibility = View.GONE
+                            imageAnim.visibility = View.GONE
+                            imageStatic.visibility = View.VISIBLE
+                            imageStatic.setImage(ImageSource.resource(R.drawable.icon_download_new))
+                            return true
+                        }
+                    }).into(imageAnim)
+            } else {
+                Glide.with(activity).downloadOnly().load(url)
+                    .addListener(object : RequestListener<File> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<File?>,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            Thread {
+                                val fileFullName = System.currentTimeMillis().toString()
+                                val saveDir =
+                                    getAvailableCacheDir(activity)?.absolutePath + File.separator + "image/"
+                                val downloadFile = downloadFile(url, fileFullName, saveDir)
+                                Handler(Looper.getMainLooper()).post {
+                                    if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
+                                        // 通过urlConn下载完成
+                                        loadSuccess(
+                                            originPathUrl,
+                                            downloadFile,
+                                            imageStatic,
+                                            imageAnim,
+                                            progressBar
+                                        )
+                                    } else {
+                                        loadFailed(imageStatic, imageAnim, progressBar, e)
+                                    }
+                                }
+                            }.start()
+                            return true
+                        }
+
+                        override fun onResourceReady(
+                            resource: File,
+                            model: Any,
+                            target: Target<File>,
+                            dataSource: DataSource,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            loadSuccess(url, resource, imageStatic, imageAnim, progressBar)
+                            return true
+                        }
+                    }).into(object : FileTarget() {
+                })
+            }
         }
         container.addView(convertView)
         return convertView
@@ -280,7 +332,8 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                 val isStatic = isStaticImage(originalUrl, cacheFile.absolutePath)
                 if (isStatic) {
                     Log.d("loadOrigin", "动静判断: 静态图")
-                    val isHeifImageWithMime = isHeifImageWithMime(imageInfo.originUrl, cacheFile.absolutePath)
+                    val isHeifImageWithMime =
+                        isHeifImageWithMime(imageInfo.originUrl, cacheFile.absolutePath)
                     if (isHeifImageWithMime) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ALPHA_8)
@@ -296,7 +349,10 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                         var small: ImageSource? = null
                         if (smallCacheFile != null && smallCacheFile.exists()) {
                             val smallImagePath = smallCacheFile.absolutePath
-                            small = getImageBitmap(smallImagePath, getBitmapDegree(smallImagePath))?.let {
+                            small = getImageBitmap(
+                                smallImagePath,
+                                getBitmapDegree(smallImagePath)
+                            )?.let {
                                 ImageSource.bitmap(it)
                             }
                             val widSmall = getWidthHeight(smallImagePath)[0]
@@ -344,7 +400,10 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
     }
 
     private fun loadSuccess(
-        imageUrl: String, resource: File, imageStatic: SubsamplingScaleImageView, imageAnim: ImageView,
+        imageUrl: String,
+        resource: File,
+        imageStatic: SubsamplingScaleImageView,
+        imageAnim: ImageView,
         progressBar: ProgressBar
     ) {
         val imagePath = resource.absolutePath
@@ -428,8 +487,14 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
             when (ImagePreview.instance.longPicDisplayMode) {
                 ImagePreview.LongPicDisplayMode.Default -> {
                 }
+
                 ImagePreview.LongPicDisplayMode.FillWidth -> {
-                    imageStatic.setScaleAndCenter(ImageUtil.getLongImageFillWidthScale(this.activity, imagePath), PointF(0f, 0f))
+                    imageStatic.setScaleAndCenter(
+                        ImageUtil.getLongImageFillWidthScale(
+                            this.activity,
+                            imagePath
+                        ), PointF(0f, 0f)
+                    )
                 }
             }
         }
@@ -482,7 +547,7 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                     override fun onLoadFailed(
                         e: GlideException?,
                         model: Any?,
-                        target: Target<Drawable>?,
+                        target: Target<Drawable?>,
                         isFirstResource: Boolean
                     ): Boolean {
                         progressBar.visibility = View.GONE
@@ -490,10 +555,10 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                     }
 
                     override fun onResourceReady(
-                        resource: Drawable?,
-                        model: Any?,
-                        target: Target<Drawable>?,
-                        dataSource: DataSource?,
+                        resource: Drawable,
+                        model: Any,
+                        target: Target<Drawable?>?,
+                        dataSource: DataSource,
                         isFirstResource: Boolean
                     ): Boolean {
                         progressBar.visibility = View.GONE
@@ -511,7 +576,9 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                 )
                 .listener(object : RequestListener<GifDrawable?> {
                     override fun onLoadFailed(
-                        e: GlideException?, model: Any, target: Target<GifDrawable?>,
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<GifDrawable?>,
                         isFirstResource: Boolean
                     ): Boolean {
                         progressBar.visibility = View.GONE
@@ -520,8 +587,11 @@ class ImagePreviewAdapter(private val activity: AppCompatActivity, imageList: Mu
                     }
 
                     override fun onResourceReady(
-                        resource: GifDrawable?, model: Any, target: Target<GifDrawable?>,
-                        dataSource: DataSource, isFirstResource: Boolean
+                        resource: GifDrawable,
+                        model: Any,
+                        target: Target<GifDrawable?>?,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
                     ): Boolean {
                         progressBar.visibility = View.GONE
                         return false

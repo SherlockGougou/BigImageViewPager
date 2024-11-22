@@ -94,7 +94,9 @@ public class SkiaImageDecoder implements ImageDecoder {
                 bitmap = BitmapFactory.decodeStream(inputStream, null, options);
             } finally {
                 if (inputStream != null) {
-                    try { inputStream.close(); } catch (Exception e) { /* Ignore */ }
+                    try {
+                        inputStream.close();
+                    } catch (Exception e) { /* Ignore */ }
                 }
             }
         }

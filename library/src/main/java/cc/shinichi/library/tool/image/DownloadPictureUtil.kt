@@ -33,7 +33,10 @@ object DownloadPictureUtil {
                 if (ImagePreview.instance.downloadListener != null) {
                     ImagePreview.instance.downloadListener?.onDownloadStart(context, currentItem)
                 } else {
-                    ToastUtil.instance.showShort(context, context.getString(R.string.toast_start_download))
+                    ToastUtil.instance.showShort(
+                        context,
+                        context.getString(R.string.toast_start_download)
+                    )
                 }
                 super.onLoadStarted(placeholder)
             }
@@ -43,7 +46,10 @@ object DownloadPictureUtil {
                 if (ImagePreview.instance.downloadListener != null) {
                     ImagePreview.instance.downloadListener?.onDownloadFailed(context, currentItem)
                 } else {
-                    ToastUtil.instance.showShort(context, context.getString(R.string.toast_save_failed))
+                    ToastUtil.instance.showShort(
+                        context,
+                        context.getString(R.string.toast_save_failed)
+                    )
                 }
             }
 
@@ -104,7 +110,10 @@ object DownloadPictureUtil {
                 if (ImagePreview.instance.downloadListener != null) {
                     ImagePreview.instance.downloadListener?.onDownloadFailed(context, currentItem)
                 } else {
-                    ToastUtil.instance.showShort(context, context.getString(R.string.toast_save_failed))
+                    ToastUtil.instance.showShort(
+                        context,
+                        context.getString(R.string.toast_save_failed)
+                    )
                 }
             } finally {
                 try {
@@ -120,14 +129,18 @@ object DownloadPictureUtil {
             }
         } else {
             // 低于29版本的保存方法
-            val path = Environment.getExternalStorageDirectory().toString() + "/" + downloadFolderName + "/"
+            val path = Environment.getExternalStorageDirectory()
+                .toString() + "/" + downloadFolderName + "/"
             createFileByDeleteOldFile(path + name)
             val result = copyFile(resource, path, name)
             if (result) {
                 if (ImagePreview.instance.downloadListener != null) {
                     ImagePreview.instance.downloadListener?.onDownloadSuccess(context, currentItem)
                 } else {
-                    ToastUtil.instance.showShort(context, context.getString(R.string.toast_save_success, path))
+                    ToastUtil.instance.showShort(
+                        context,
+                        context.getString(R.string.toast_save_success, path)
+                    )
                 }
                 SingleMediaScanner(context, path + name, object : SingleMediaScanner.ScanListener {
                     override fun onScanFinish() {
@@ -138,7 +151,10 @@ object DownloadPictureUtil {
                 if (ImagePreview.instance.downloadListener != null) {
                     ImagePreview.instance.downloadListener?.onDownloadFailed(context, currentItem)
                 } else {
-                    ToastUtil.instance.showShort(context, context.getString(R.string.toast_save_failed))
+                    ToastUtil.instance.showShort(
+                        context,
+                        context.getString(R.string.toast_save_failed)
+                    )
                 }
             }
         }

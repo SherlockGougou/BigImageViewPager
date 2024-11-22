@@ -43,7 +43,10 @@ object ImageUtil {
         var degree = 0
         try {
             val exifInterface = ExifInterface(path)
-            val orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+            val orientation = exifInterface.getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL
+            )
             degree = when (orientation) {
                 ExifInterface.ORIENTATION_ROTATE_90 -> 90
                 ExifInterface.ORIENTATION_ROTATE_180 -> 180
@@ -117,8 +120,14 @@ object ImageUtil {
         if (srcWidth <= 0 || srcHeight <= 0) {
             try {
                 val exifInterface = ExifInterface(imagePath)
-                srcHeight = exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, ExifInterface.ORIENTATION_NORMAL)
-                srcWidth = exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, ExifInterface.ORIENTATION_NORMAL)
+                srcHeight = exifInterface.getAttributeInt(
+                    ExifInterface.TAG_IMAGE_LENGTH,
+                    ExifInterface.ORIENTATION_NORMAL
+                )
+                srcWidth = exifInterface.getAttributeInt(
+                    ExifInterface.TAG_IMAGE_WIDTH,
+                    ExifInterface.ORIENTATION_NORMAL
+                )
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -335,30 +344,46 @@ object ImageUtil {
     }
 
     fun isAnimImageWithMime(url: String, path: String): Boolean {
-        return "gif".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.CHINA).endsWith("gif")
+        return "gif".equals(
+            getImageTypeWithMime(path),
+            ignoreCase = true
+        ) || url.toLowerCase(Locale.CHINA).endsWith("gif")
                 || isAnimWebp(url, path)
     }
 
     fun isPngImageWithMime(url: String, path: String): Boolean {
-        return "png".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.CHINA).endsWith("png")
+        return "png".equals(
+            getImageTypeWithMime(path),
+            ignoreCase = true
+        ) || url.toLowerCase(Locale.CHINA).endsWith("png")
     }
 
     fun isJpegImageWithMime(url: String, path: String): Boolean {
-        return ("jpeg".equals(getImageTypeWithMime(path), ignoreCase = true) || "jpg".equals(getImageTypeWithMime(path), ignoreCase = true)
-                || url.toLowerCase(Locale.CHINA).endsWith("jpeg") || url.toLowerCase(Locale.CHINA).endsWith("jpg"))
+        return ("jpeg".equals(getImageTypeWithMime(path), ignoreCase = true) || "jpg".equals(
+            getImageTypeWithMime(path),
+            ignoreCase = true
+        )
+                || url.toLowerCase(Locale.CHINA).endsWith("jpeg") || url.toLowerCase(Locale.CHINA)
+            .endsWith("jpg"))
     }
 
     fun isBmpImageWithMime(url: String, path: String): Boolean {
-        return "bmp".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.CHINA).endsWith("bmp")
+        return "bmp".equals(
+            getImageTypeWithMime(path),
+            ignoreCase = true
+        ) || url.toLowerCase(Locale.CHINA).endsWith("bmp")
     }
 
     fun isWebpImageWithMime(url: String, path: String): Boolean {
-        return "webp".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(Locale.CHINA).endsWith("webp")
+        return "webp".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(
+            Locale.CHINA
+        ).endsWith("webp")
     }
 
     fun isHeifImageWithMime(url: String, path: String): Boolean {
         return "heif".equals(getImageTypeWithMime(path), ignoreCase = true)
-                || url.toLowerCase(Locale.CHINA).endsWith("heif") || url.toLowerCase(Locale.CHINA).endsWith("heic")
+                || url.toLowerCase(Locale.CHINA).endsWith("heif") || url.toLowerCase(Locale.CHINA)
+            .endsWith("heic")
     }
 
     fun isStaticImage(url: String, path: String): Boolean {
