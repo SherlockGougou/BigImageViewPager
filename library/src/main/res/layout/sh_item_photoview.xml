@@ -21,6 +21,7 @@
             android:layout_height="match_parent"
             android:scaleType="centerInside"
             android:visibility="gone" />
+
     </cc.shinichi.library.view.helper.FingerDragHelper>
 
     <ProgressBar
@@ -29,4 +30,5 @@
         android:layout_height="60dp"
         android:layout_gravity="center"
         android:visibility="gone" />
+
 </FrameLayout>

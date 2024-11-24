@@ -11,9 +11,9 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.text.TextUtils
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.exifinterface.media.ExifInterface
+import cc.shinichi.library.tool.common.SLog
 import cc.shinichi.library.tool.ui.PhoneUtil
 import java.io.*
 import java.util.*
@@ -175,7 +175,7 @@ object ImageUtil {
         val imageRatio = h / w
         val phoneRatio = PhoneUtil.getPhoneRatio(context)
         val isLongImage = h > w && imageRatio > phoneRatio
-        Log.d(TAG, "isLongImage = $isLongImage")
+        SLog.d(TAG, "isLongImage = $isLongImage")
         return isLongImage
     }
 
@@ -185,7 +185,7 @@ object ImageUtil {
         val h = wh[1].toFloat()
         val imageRatio = w / h
         val isWideImage = w > h && imageRatio >= 2
-        Log.d(TAG, "isWideImage = $isWideImage")
+        SLog.d(TAG, "isWideImage = $isWideImage")
         return isWideImage
     }
 
@@ -308,14 +308,14 @@ object ImageUtil {
         options.inJustDecodeBounds = true
         BitmapFactory.decodeFile(path, options)
         var type = options.outMimeType
-        Log.d(TAG, "getImageTypeWithMime: path = $path, type1 = $type")
+        SLog.d(TAG, "getImageTypeWithMime: path = $path, type1 = $type")
         // ”image/png”、”image/jpeg”、”image/gif”
         type = if (TextUtils.isEmpty(type)) {
             ""
         } else {
             type.substring(6)
         }
-        Log.d(TAG, "getImageTypeWithMime: path = $path, type2 = $type")
+        SLog.d(TAG, "getImageTypeWithMime: path = $path, type2 = $type")
         return type
     }
 
@@ -339,7 +339,7 @@ object ImageUtil {
                 break
             }
         }
-        Log.d(TAG, "isAnimWebp: result = $result")
+        SLog.d(TAG, "isAnimWebp: result = $result")
         return result
     }
 
@@ -388,22 +388,22 @@ object ImageUtil {
 
     fun isStaticImage(url: String, path: String): Boolean {
         val isWebpImageWithMime = isWebpImageWithMime(url, path)
-        Log.d(TAG, "isStaticImage: isWebpImageWithMime = $isWebpImageWithMime")
+        SLog.d(TAG, "isStaticImage: isWebpImageWithMime = $isWebpImageWithMime")
         if (isWebpImageWithMime) {
             val animWebp = isAnimWebp(url, path)
-            Log.d(TAG, "isStaticImage: animWebp = $animWebp")
+            SLog.d(TAG, "isStaticImage: animWebp = $animWebp")
             return !animWebp
         }
         val jpegImageWithMime = isJpegImageWithMime(url, path)
-        Log.d(TAG, "isStaticImage: jpegImageWithMime = $jpegImageWithMime")
+        SLog.d(TAG, "isStaticImage: jpegImageWithMime = $jpegImageWithMime")
         val pngImageWithMime = isPngImageWithMime(url, path)
-        Log.d(TAG, "isStaticImage: pngImageWithMime = $pngImageWithMime")
+        SLog.d(TAG, "isStaticImage: pngImageWithMime = $pngImageWithMime")
         val bmpImageWithMime = isBmpImageWithMime(url, path)
-        Log.d(TAG, "isStaticImage: bmpImageWithMime = $bmpImageWithMime")
+        SLog.d(TAG, "isStaticImage: bmpImageWithMime = $bmpImageWithMime")
         val heifImageWithMime = isHeifImageWithMime(url, path)
-        Log.d(TAG, "isStaticImage: heifImageWithMime = $heifImageWithMime")
+        SLog.d(TAG, "isStaticImage: heifImageWithMime = $heifImageWithMime")
         val animImageWithMime = isAnimImageWithMime(url, path)
-        Log.d(TAG, "isStaticImage: animImageWithMime = $animImageWithMime")
+        SLog.d(TAG, "isStaticImage: animImageWithMime = $animImageWithMime")
         return (jpegImageWithMime || pngImageWithMime || bmpImageWithMime || heifImageWithMime) && !animImageWithMime
     }
 }

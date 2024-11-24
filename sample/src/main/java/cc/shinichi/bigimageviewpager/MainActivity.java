@@ -3,6 +3,7 @@ package cc.shinichi.bigimageviewpager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -63,9 +64,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
-        setExitSharedElementCallback(new MaterialContainerTransformSharedElementCallback());
-        getWindow().setSharedElementsUseOverlay(false);
+        getWindow().setSharedElementEnterTransition(TransitionInflater.from(this).inflateTransition(R.transition.change_image_transform));
+        getWindow().setSharedElementReturnTransition(TransitionInflater.from(this).inflateTransition(R.transition.change_image_transform));
 
         setContentView(R.layout.activity_main);
 
@@ -180,13 +180,13 @@ public class MainActivity extends AppCompatActivity {
 
         // 普通图片1：
         i = new ImageInfo();
-        i.setThumbnailUrl("http://img3.16fan.com/static/live/origin/202104/20/9a7d0915c91b.jpg-200fang");
+        i.setThumbnailUrl("http://img3.16fan.com/static/live/origin/202104/20/9a7d0915c91b.jpg-600");
         i.setOriginUrl("http://img3.16fan.com/static/live/origin/202104/20/9a7d0915c91b.jpg");
         imageInfoList.add(i);
 
         // 普通图片2：
         i = new ImageInfo();
-        i.setThumbnailUrl("http://img3.16fan.com/static/live/origin/202104/20/96247e9c3757.jpg-200fang");
+        i.setThumbnailUrl("http://img3.16fan.com/static/live/origin/202104/20/96247e9c3757.jpg-600");
         i.setOriginUrl("http://img3.16fan.com/static/live/origin/202104/20/96247e9c3757.jpg");
         imageInfoList.add(i);
 
@@ -248,9 +248,9 @@ public class MainActivity extends AppCompatActivity {
         list3.add("http://img3.16fan.com/static/live/origin/202104/20/81c3475f8a1c.jpg");
         list3.add("http://img3.16fan.com/static/live/origin/202104/20/fd0525cefbc0.jpg");
 
-        Glide.with(this).load("http://img3.16fan.com/static/live/origin/202104/20/b915013fa0b8.jpg-200fang").into(image1);
-        Glide.with(this).load("http://img3.16fan.com/static/live/origin/202104/20/81c3475f8a1c.jpg-200fang").into(image2);
-        Glide.with(this).load("http://img3.16fan.com/static/live/origin/202104/20/fd0525cefbc0.jpg-200fang").into(image3);
+        Glide.with(this).load("http://img3.16fan.com/static/live/origin/202104/20/b915013fa0b8.jpg-600").into(image1);
+        Glide.with(this).load("http://img3.16fan.com/static/live/origin/202104/20/81c3475f8a1c.jpg-600").into(image2);
+        Glide.with(this).load("http://img3.16fan.com/static/live/origin/202104/20/fd0525cefbc0.jpg-600").into(image3);
 
         image1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -259,8 +259,8 @@ public class MainActivity extends AppCompatActivity {
                         .setContext(MainActivity.this)
                         .setImageList(list3)
                         .setIndex(0)
-                        .setTransitionView(view)
-                        .setTransitionShareElementName("shared_element_container")
+                        .setEnableDragClose(true)
+                        .setEnableDragCloseIgnoreScale(true)
                         .start();
             }
         });
@@ -271,8 +271,8 @@ public class MainActivity extends AppCompatActivity {
                         .setContext(MainActivity.this)
                         .setImageList(list3)
                         .setIndex(1)
-                        .setTransitionView(view)
-                        .setTransitionShareElementName("shared_element_container")
+                        .setEnableDragClose(true)
+                        .setEnableDragCloseIgnoreScale(true)
                         .start();
             }
         });
@@ -285,8 +285,6 @@ public class MainActivity extends AppCompatActivity {
                         .setIndex(2)
                         .setEnableDragClose(true)
                         .setEnableDragCloseIgnoreScale(true)
-                        .setTransitionView(view)
-                        .setTransitionShareElementName("shared_element_container")
                         .start();
             }
         });

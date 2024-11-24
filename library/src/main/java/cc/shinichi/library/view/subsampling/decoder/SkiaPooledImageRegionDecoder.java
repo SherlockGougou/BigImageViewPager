@@ -16,7 +16,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -35,6 +34,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Pattern;
 
+import cc.shinichi.library.tool.common.SLog;
 import cc.shinichi.library.view.subsampling.SubsamplingScaleImageView;
 
 /**
@@ -374,7 +374,7 @@ public class SkiaPooledImageRegionDecoder implements ImageRegionDecoder {
 
     private void debug(String message) {
         if (debug) {
-            Log.d(TAG, message);
+            SLog.INSTANCE.d(TAG, message);
         }
     }
 

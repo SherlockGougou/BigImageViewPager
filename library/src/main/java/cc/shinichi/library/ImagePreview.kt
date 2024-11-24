@@ -4,11 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import cc.shinichi.library.bean.ImageInfo
+import cc.shinichi.library.tool.common.SLog
 import cc.shinichi.library.view.ImagePreviewActivity
 import cc.shinichi.library.view.listener.*
 import java.lang.ref.WeakReference
@@ -25,14 +25,6 @@ class ImagePreview {
 
     // 图片数据集合
     private var imageInfoList: MutableList<ImageInfo> = mutableListOf()
-
-    // 用于过度动画的 VIEW
-    var transitionView: View? = null
-        private set
-
-    // 过度动画的共享元素名
-    var transitionShareElementName: String? = null
-        private set
 
     // 默认显示第几个
     var index = 0
@@ -158,24 +150,6 @@ class ImagePreview {
         return this
     }
 
-    /**
-     * 设置用于过度动画的共享元素view<br></br>
-     * 需要同时设置 [ImagePreview.setTransitionShareElementName]
-     */
-    fun setTransitionView(transitionView: View?): ImagePreview {
-        this.transitionView = transitionView
-        return this
-    }
-
-    /**
-     * 设置用于过度动画的共享元素name <br></br>
-     * 需要同时设置 [ImagePreview.setTransitionView]
-     */
-    fun setTransitionShareElementName(transitionShareElementName: String?): ImagePreview {
-        this.transitionShareElementName = transitionShareElementName
-        return this
-    }
-
     fun getImageInfoList(): MutableList<ImageInfo> {
         return imageInfoList
     }
@@ -207,26 +181,26 @@ class ImagePreview {
         return this
     }
 
-//    fun setImageRes(imageResId: Int): ImagePreview {
-//        imageInfoList.clear()
-//        val imageInfo = ImageInfo()
-//        imageInfo.thumbnailUrl = "res://$imageResId"
-//        imageInfo.originUrl = "res://$imageResId"
-//        imageInfoList.add(imageInfo)
-//        return this
-//    }
+    fun setImageRes(imageResId: Int): ImagePreview {
+        imageInfoList.clear()
+        val imageInfo = ImageInfo()
+        imageInfo.thumbnailUrl = "res://$imageResId"
+        imageInfo.originUrl = "res://$imageResId"
+        imageInfoList.add(imageInfo)
+        return this
+    }
 
-//    fun setImageResList(imageResIdList: MutableList<Int>): ImagePreview {
-//        imageInfoList.clear()
-//        var imageInfo: ImageInfo
-//        for (i in imageResIdList.indices) {
-//            imageInfo = ImageInfo()
-//            imageInfo.thumbnailUrl = "res://" + imageResIdList[i].toString()
-//            imageInfo.originUrl = "res://" + imageResIdList[i].toString()
-//            imageInfoList.add(imageInfo)
-//        }
-//        return this
-//    }
+    fun setImageResList(imageResIdList: MutableList<Int>): ImagePreview {
+        imageInfoList.clear()
+        var imageInfo: ImageInfo
+        for (i in imageResIdList.indices) {
+            imageInfo = ImageInfo()
+            imageInfo.thumbnailUrl = "res://" + imageResIdList[i].toString()
+            imageInfo.originUrl = "res://" + imageResIdList[i].toString()
+            imageInfoList.add(imageInfo)
+        }
+        return this
+    }
 
     fun setIndex(index: Int): ImagePreview {
         this.index = index
@@ -447,8 +421,6 @@ class ImagePreview {
 
     fun reset() {
         imageInfoList.clear()
-        transitionView = null
-        transitionShareElementName = null
         index = 0
         minScale = 1.0f
         mediumScale = 3.0f
@@ -477,7 +449,7 @@ class ImagePreview {
 
     fun start() {
         if (System.currentTimeMillis() - lastClickTime <= MIN_DOUBLE_CLICK_TIME) {
-            Log.e("ImagePreview", "---忽略多次快速点击---")
+            SLog.e("ImagePreview", "---忽略多次快速点击---")
             return
         }
         val context = contextWeakReference.get()

@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -23,6 +22,7 @@ import cc.shinichi.library.glide.ImageLoader.clearMemory
 import cc.shinichi.library.glide.ImageLoader.getGlideCacheFile
 import cc.shinichi.library.tool.common.HttpUtil.downloadFile
 import cc.shinichi.library.tool.common.NetworkUtil.isWiFi
+import cc.shinichi.library.tool.common.SLog
 import cc.shinichi.library.tool.file.FileUtil.Companion.getAvailableCacheDir
 import cc.shinichi.library.tool.image.ImageUtil
 import cc.shinichi.library.tool.image.ImageUtil.getBitmapDegree
@@ -81,7 +81,7 @@ class ImagePreviewAdapter(
 
     fun closePage() {
         try {
-            if (imageStaticHashMap.size > 0) {
+            if (imageStaticHashMap.isNotEmpty()) {
                 for (o in imageStaticHashMap.entries) {
                     val entry = o as Map.Entry<*, *>
                     if (entry.value != null) {
@@ -91,7 +91,7 @@ class ImagePreviewAdapter(
                 }
                 imageStaticHashMap.clear()
             }
-            if (imageAnimHashMap.size > 0) {
+            if (imageAnimHashMap.isNotEmpty()) {
                 for (o in imageAnimHashMap.entries) {
                     val entry = o as Map.Entry<*, *>
                     if (entry.value != null) {
@@ -214,101 +214,116 @@ class ImagePreviewAdapter(
         val url: String = finalLoadUrl
 
         // 显示加载圈圈
-        progressBar.visibility = View.VISIBLE
+        // progressBar.visibility = View.VISIBLE
 
         // 判断原图缓存是否存在，存在的话，直接显示原图缓存，优先保证清晰。
         val cacheFile = getGlideCacheFile(activity, originPathUrl)
         if (cacheFile != null && cacheFile.exists()) {
-            Log.d("instantiateItem", "原图缓存存在，直接显示 originPathUrl = $originPathUrl")
-            val imagePath = cacheFile.absolutePath
-            val isStatic = isStaticImage(originPathUrl, imagePath)
-            if (isStatic) {
-                Log.d("instantiateItem", "动静判断: 静态图")
-                loadImageStatic(imagePath, imageStatic, imageAnim, progressBar)
-            } else {
-                Log.d("instantiateItem", "动静判断: 动态图")
-                loadImageAnim(originPathUrl, imagePath, imageStatic, imageAnim, progressBar)
-            }
+            SLog.d("instantiateItem", "原图缓存存在，直接显示 originPathUrl = $originPathUrl")
+            loadSuccess(originPathUrl, cacheFile, imageStatic, imageAnim, progressBar, position)
         } else {
-            Log.d("instantiateItem", "原图缓存不存在，开始加载 url = $url")
+            SLog.d("instantiateItem", "原图缓存不存在，开始加载 url = $url")
             // 判断url是否是res资源 R.mipmap.xxx
             if (url.startsWith("res://")) {
-                Log.d("instantiateItem", "instantiateItem: res资源")
-                val resId = url.split("/")[2].toInt()
-                Glide.with(activity).load(R.drawable.icon_download_new)
-                    .addListener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable?>,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            loadFailed(imageStatic, imageAnim, progressBar, e)
-                            return true
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable,
-                            model: Any,
-                            target: Target<Drawable>,
-                            dataSource: DataSource,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            progressBar.visibility = View.GONE
-                            imageAnim.visibility = View.GONE
-                            imageStatic.visibility = View.VISIBLE
-                            imageStatic.setImage(ImageSource.resource(R.drawable.icon_download_new))
-                            return true
-                        }
-                    }).into(imageAnim)
+                SLog.d("instantiateItem", "instantiateItem: res资源")
+                loadResImage(url, originPathUrl, imageStatic, imageAnim, progressBar, position)
             } else {
-                Glide.with(activity).downloadOnly().load(url)
-                    .addListener(object : RequestListener<File> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<File?>,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            Thread {
-                                val fileFullName = System.currentTimeMillis().toString()
-                                val saveDir =
-                                    getAvailableCacheDir(activity)?.absolutePath + File.separator + "image/"
-                                val downloadFile = downloadFile(url, fileFullName, saveDir)
-                                Handler(Looper.getMainLooper()).post {
-                                    if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
-                                        // 通过urlConn下载完成
-                                        loadSuccess(
-                                            originPathUrl,
-                                            downloadFile,
-                                            imageStatic,
-                                            imageAnim,
-                                            progressBar
-                                        )
-                                    } else {
-                                        loadFailed(imageStatic, imageAnim, progressBar, e)
-                                    }
-                                }
-                            }.start()
-                            return true
-                        }
-
-                        override fun onResourceReady(
-                            resource: File,
-                            model: Any,
-                            target: Target<File>,
-                            dataSource: DataSource,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            loadSuccess(url, resource, imageStatic, imageAnim, progressBar)
-                            return true
-                        }
-                    }).into(object : FileTarget() {
-                })
+                SLog.d("instantiateItem", "instantiateItem: url资源")
+                loadUrlImage(url, originPathUrl, imageStatic, imageAnim, progressBar, position)
             }
         }
         container.addView(convertView)
         return convertView
+    }
+
+    private fun loadResImage(
+        url: String,
+        originPathUrl: String,
+        imageStatic: SubsamplingScaleImageView,
+        imageAnim: PhotoView,
+        progressBar: ProgressBar,
+        position: Int
+    ) {
+        Glide.with(activity).load(R.drawable.icon_download_new)
+            .addListener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable?>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    loadFailed(imageStatic, imageAnim, progressBar, e)
+                    return true
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any,
+                    target: Target<Drawable>,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    progressBar.visibility = View.GONE
+                    imageAnim.visibility = View.GONE
+                    imageStatic.visibility = View.VISIBLE
+                    imageStatic.setImage(ImageSource.resource(R.drawable.icon_download_new))
+                    return true
+                }
+            }).into(imageAnim)
+    }
+
+    private fun loadUrlImage(
+        url: String,
+        originPathUrl: String,
+        imageStatic: SubsamplingScaleImageView,
+        imageAnim: PhotoView,
+        progressBar: ProgressBar,
+        position: Int
+    ) {
+        Glide.with(activity).downloadOnly().load(url)
+            .addListener(object : RequestListener<File> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<File?>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    // glide加载失败，使用http下载后再次加载
+                    Thread {
+                        val fileFullName = System.currentTimeMillis().toString()
+                        val saveDir = getAvailableCacheDir(activity)?.absolutePath + File.separator + "image/"
+                        val downloadFile = downloadFile(url, fileFullName, saveDir)
+                        Handler(Looper.getMainLooper()).post {
+                            if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
+                                // 通过urlConn下载完成
+                                loadSuccess(
+                                    originPathUrl,
+                                    downloadFile,
+                                    imageStatic,
+                                    imageAnim,
+                                    progressBar,
+                                    position
+                                )
+                            } else {
+                                loadFailed(imageStatic, imageAnim, progressBar, e)
+                            }
+                        }
+                    }.start()
+                    return true
+                }
+
+                override fun onResourceReady(
+                    resource: File,
+                    model: Any,
+                    target: Target<File>,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    loadSuccess(url, resource, imageStatic, imageAnim, progressBar, position)
+                    return true
+                }
+            }).into(object : FileTarget() {
+            })
     }
 
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
@@ -331,9 +346,8 @@ class ImagePreviewAdapter(
             if (cacheFile != null && cacheFile.exists()) {
                 val isStatic = isStaticImage(originalUrl, cacheFile.absolutePath)
                 if (isStatic) {
-                    Log.d("loadOrigin", "动静判断: 静态图")
-                    val isHeifImageWithMime =
-                        isHeifImageWithMime(imageInfo.originUrl, cacheFile.absolutePath)
+                    SLog.d("loadOrigin", "动静判断: 静态图")
+                    val isHeifImageWithMime = isHeifImageWithMime(imageInfo.originUrl, cacheFile.absolutePath)
                     if (isHeifImageWithMime) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ALPHA_8)
@@ -371,12 +385,11 @@ class ImagePreviewAdapter(
                         }
                         origin.dimensions(widOrigin, heiOrigin)
                         setImageStatic(imagePath, imageStatic)
-                        imageStatic.orientation = SubsamplingScaleImageView.ORIENTATION_USE_EXIF
                         imageStatic.setImage(origin, small)
                         scaleLongPic(imageStatic, imagePath)
                     }
                 } else {
-                    Log.d("loadOrigin", "动静判断: 动态图")
+                    SLog.d("loadOrigin", "动静判断: 动态图")
                     imageStatic?.visibility = View.GONE
                     imageAnim?.visibility = View.VISIBLE
                     imageAnim?.let {
@@ -404,16 +417,17 @@ class ImagePreviewAdapter(
         resource: File,
         imageStatic: SubsamplingScaleImageView,
         imageAnim: ImageView,
-        progressBar: ProgressBar
+        progressBar: ProgressBar,
+        position: Int
     ) {
         val imagePath = resource.absolutePath
         val isStatic = isStaticImage(imageUrl, imagePath)
         if (isStatic) {
-            Log.d("loadSuccess", "动静判断: 静态图")
-            loadImageStatic(imagePath, imageStatic, imageAnim, progressBar)
+            SLog.d("loadSuccess", "动静判断: 静态图")
+            loadImageStatic(imagePath, imageStatic, imageAnim, progressBar, position)
         } else {
-            Log.d("loadSuccess", "动静判断: 动态图")
-            loadImageAnim(imageUrl, imagePath, imageStatic, imageAnim, progressBar)
+            SLog.d("loadSuccess", "动静判断: 动态图")
+            loadImageAnim(imageUrl, imagePath, imageStatic, imageAnim, progressBar, position)
         }
     }
 
@@ -442,6 +456,7 @@ class ImagePreviewAdapter(
     }
 
     private fun setImageStatic(imagePath: String, imageStatic: SubsamplingScaleImageView) {
+        imageStatic.orientation = SubsamplingScaleImageView.ORIENTATION_USE_EXIF
         val isHeifImageWithMime = isHeifImageWithMime("", imagePath)
         if (isHeifImageWithMime) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -505,12 +520,14 @@ class ImagePreviewAdapter(
      */
     private fun loadImageStatic(
         imagePath: String, imageStatic: SubsamplingScaleImageView, imageAnim: ImageView,
-        progressBar: ProgressBar
+        progressBar: ProgressBar,
+        position: Int
     ) {
         imageAnim.visibility = View.GONE
         imageStatic.visibility = View.VISIBLE
+
         setImageStatic(imagePath, imageStatic)
-        imageStatic.orientation = SubsamplingScaleImageView.ORIENTATION_USE_EXIF
+
         val imageSource = ImageSource.uri(Uri.fromFile(File(imagePath)))
         if (isBmpImageWithMime(imagePath, imagePath)) {
             imageSource.tilingDisabled()
@@ -529,10 +546,11 @@ class ImagePreviewAdapter(
      */
     private fun loadImageAnim(
         imageUrl: String, imagePath: String, imageStatic: SubsamplingScaleImageView,
-        imageAnim: ImageView, progressBar: ProgressBar
+        imageAnim: ImageView, progressBar: ProgressBar, position: Int
     ) {
-        imageAnim.visibility = View.VISIBLE
         imageStatic.visibility = View.GONE
+        imageAnim.visibility = View.VISIBLE
+
         if (isAnimWebp(imageUrl, imagePath)) {
             val fitCenter: Transformation<Bitmap> = FitCenter()
             Glide.with(activity)

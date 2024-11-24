@@ -3,7 +3,6 @@ package cc.shinichi.library.tool.common
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import android.util.Log
 
 /**
  * @author 工藤
@@ -16,7 +15,7 @@ object NetworkUtil {
     fun isWiFi(context: Context): Boolean {
         val info = getActiveNetworkInfo(context)
         val isWifi = info != null && info.isAvailable && info.type == ConnectivityManager.TYPE_WIFI
-        Log.d(TAG, "isWiFi: $isWifi")
+        SLog.d(TAG, "isWiFi: $isWifi")
         return isWifi
     }
 

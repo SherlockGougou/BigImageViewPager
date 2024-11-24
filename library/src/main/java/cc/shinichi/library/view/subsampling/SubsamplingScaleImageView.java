@@ -21,7 +21,6 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -45,6 +44,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import cc.shinichi.library.R;
+import cc.shinichi.library.tool.common.SLog;
 import cc.shinichi.library.view.subsampling.decoder.CompatDecoderFactory;
 import cc.shinichi.library.view.subsampling.decoder.DecoderFactory;
 import cc.shinichi.library.view.subsampling.decoder.ImageDecoder;
@@ -652,7 +652,7 @@ public class SubsamplingScaleImageView extends View {
                 try {
                     anim.listener.onInterruptedByUser();
                 } catch (Exception e) {
-                    Log.w(TAG, "Error thrown by animation listener", e);
+                    SLog.INSTANCE.w(TAG, "Error thrown by animation listener", e);
                 }
             }
             anim = null;
@@ -1018,7 +1018,7 @@ public class SubsamplingScaleImageView extends View {
                     try {
                         anim.listener.onComplete();
                     } catch (Exception e) {
-                        Log.w(TAG, "Error thrown by animation listener", e);
+                        SLog.INSTANCE.w(TAG, "Error thrown by animation listener", e);
                     }
                 }
                 anim = null;
@@ -1661,12 +1661,12 @@ public class SubsamplingScaleImageView extends View {
                         if (VALID_ORIENTATIONS.contains(orientation) && orientation != ORIENTATION_USE_EXIF) {
                             exifOrientation = orientation;
                         } else {
-                            Log.w(TAG, "Unsupported orientation: " + orientation);
+                            SLog.INSTANCE.w(TAG, "Unsupported orientation: " + orientation);
                         }
                     }
                 }
             } catch (Exception e) {
-                Log.w(TAG, "Could not get orientation of image from media store");
+                SLog.INSTANCE.w(TAG, "Could not get orientation of image from media store");
             } finally {
                 if (cursor != null) {
                     cursor.close();
@@ -1685,10 +1685,10 @@ public class SubsamplingScaleImageView extends View {
                 } else if (orientationAttr == ExifInterface.ORIENTATION_ROTATE_270) {
                     exifOrientation = ORIENTATION_270;
                 } else {
-                    Log.w(TAG, "Unsupported EXIF orientation: " + orientationAttr);
+                    SLog.INSTANCE.w(TAG, "Unsupported EXIF orientation: " + orientationAttr);
                 }
             } catch (Exception e) {
-                Log.w(TAG, "Could not get EXIF orientation of image");
+                SLog.INSTANCE.w(TAG, "Could not get EXIF orientation of image");
             }
         }
         return exifOrientation;
@@ -2140,7 +2140,7 @@ public class SubsamplingScaleImageView extends View {
     @AnyThread
     private void debug(String message, Object... args) {
         if (debug) {
-            Log.d(TAG, String.format(message, args));
+            SLog.INSTANCE.d(TAG, String.format(message, args));
         }
     }
 
@@ -2955,7 +2955,7 @@ public class SubsamplingScaleImageView extends View {
                     return new int[]{sWidth, sHeight, exifOrientation};
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Failed to initialise bitmap decoder", e);
+                SLog.INSTANCE.e(TAG, "Failed to initialise bitmap decoder", e);
                 this.exception = e;
             }
             return null;
@@ -3017,10 +3017,10 @@ public class SubsamplingScaleImageView extends View {
                     tile.loading = false;
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Failed to decode tile", e);
+                SLog.INSTANCE.e(TAG, "Failed to decode tile", e);
                 this.exception = e;
             } catch (OutOfMemoryError e) {
-                Log.e(TAG, "Failed to decode tile - OutOfMemoryError", e);
+                SLog.INSTANCE.e(TAG, "Failed to decode tile - OutOfMemoryError", e);
                 this.exception = new RuntimeException(e);
             }
             return null;
@@ -3075,10 +3075,10 @@ public class SubsamplingScaleImageView extends View {
                     return view.getExifOrientation(context, sourceUri);
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Failed to load bitmap", e);
+                SLog.INSTANCE.e(TAG, "Failed to load bitmap", e);
                 this.exception = e;
             } catch (OutOfMemoryError e) {
-                Log.e(TAG, "Failed to load bitmap - OutOfMemoryError", e);
+                SLog.INSTANCE.e(TAG, "Failed to load bitmap - OutOfMemoryError", e);
                 this.exception = new RuntimeException(e);
             }
             return null;
@@ -3331,7 +3331,7 @@ public class SubsamplingScaleImageView extends View {
                 try {
                     anim.listener.onInterruptedByNewAnim();
                 } catch (Exception e) {
-                    Log.w(TAG, "Error thrown by animation listener", e);
+                    SLog.INSTANCE.w(TAG, "Error thrown by animation listener", e);
                 }
             }
 

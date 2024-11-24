@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.Display
 import android.view.WindowManager
+import cc.shinichi.library.tool.common.SLog
 
 
 /**
@@ -28,7 +28,7 @@ object PhoneUtil {
         display.getRealMetrics(dm)
         screenWidth = dm.widthPixels
         return screenWidth.apply {
-            Log.d(TAG, "getPhoneWid: $this")
+            SLog.d(TAG, "getPhoneWid: $this")
         }
     }
 
@@ -41,13 +41,13 @@ object PhoneUtil {
         display.getRealMetrics(dm)
         screenHeight = dm.heightPixels
         return screenHeight.apply {
-            Log.d(TAG, "getPhoneHei: $this")
+            SLog.d(TAG, "getPhoneHei: $this")
         }
     }
 
     fun getPhoneRatio(context: Context): Float {
         return (getPhoneHei(context).toFloat() / getPhoneWid(context).toFloat()).apply {
-            Log.d(TAG, "getPhoneRatio: $this")
+            SLog.d(TAG, "getPhoneRatio: $this")
         }
     }
 

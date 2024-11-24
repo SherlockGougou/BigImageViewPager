@@ -65,6 +65,7 @@
             android:textAllCaps="false"
             android:textColor="#ffffff"
             android:textSize="12sp" />
+
     </FrameLayout>
 
     <ImageView
@@ -78,4 +79,5 @@
         android:padding="3dp"
         android:scaleType="centerInside"
         app:srcCompat="@drawable/icon_download_new" />
+
 </RelativeLayout>

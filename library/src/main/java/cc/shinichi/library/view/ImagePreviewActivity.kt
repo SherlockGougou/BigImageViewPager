@@ -1,6 +1,7 @@
 package cc.shinichi.library.view
 
 import android.Manifest
+import android.R.attr.visible
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Context
@@ -12,7 +13,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.text.TextUtils
-import android.util.Log
+import android.transition.TransitionInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -23,6 +24,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.get
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.R
@@ -35,13 +39,15 @@ import cc.shinichi.library.tool.common.DeviceUtil
 import cc.shinichi.library.tool.common.HandlerHolder
 import cc.shinichi.library.tool.common.HttpUtil
 import cc.shinichi.library.tool.common.NetworkUtil
+import cc.shinichi.library.tool.common.SLog
 import cc.shinichi.library.tool.image.DownloadPictureUtil.downloadPicture
 import cc.shinichi.library.tool.ui.ToastUtil
+import cc.shinichi.library.view.photoview.PhotoView
+import cc.shinichi.library.view.subsampling.SubsamplingScaleImageView
 import com.bumptech.glide.Glide
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import java.util.*
-
 
 /**
  * @author 工藤
@@ -79,20 +85,13 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     private var lastProgress = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // 只有安卓版本大于 5.0 才可使用过度动画
-        if (!TextUtils.isEmpty(ImagePreview.instance.transitionShareElementName)) {
-            window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
-            findViewById<View>(android.R.id.content).transitionName = "shared_element_container"
-            setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-            window.sharedElementEnterTransition =
-                MaterialContainerTransform().addTarget(android.R.id.content).setDuration(300L)
-            window.sharedElementReturnTransition =
-                MaterialContainerTransform().addTarget(android.R.id.content).setDuration(250L)
-        }
         super.onCreate(savedInstanceState)
 
-        // R.layout.sh_layout_preview
-        // inflate ImagePreview.instance.previewLayoutResId
+        window.sharedElementEnterTransition = TransitionInflater.from(this)
+            .inflateTransition(R.transition.change_image_transform)
+        window.sharedElementReturnTransition = TransitionInflater.from(this)
+            .inflateTransition(R.transition.change_image_transform)
+
         val parentView = View.inflate(this, ImagePreview.instance.previewLayoutResId, null)
         setContentView(parentView)
         ImagePreview.instance.onCustomLayoutCallback?.onLayout(parentView)
@@ -128,8 +127,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         // != -1 即用户自定义了view
         if (progressLayoutId != -1) {
             // add用户自定义的view到frameLayout中，回调进度和view
-            progressParentLayout =
-                View.inflate(context, ImagePreview.instance.progressLayoutId, null)
+            progressParentLayout = View.inflate(context, ImagePreview.instance.progressLayoutId, null)
             fmCenterProgressContainer.removeAllViews()
             fmCenterProgressContainer.addView(progressParentLayout)
             isUserCustomProgressView = true
@@ -234,6 +232,13 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 ImagePreview.instance.bigImagePageChangeListener?.onPageScrollStateChanged(state)
             }
         })
+
+        // 推迟过渡动画，等待视图加载完成
+        postponeEnterTransition()
+        // 设置共享元素标记
+        viewPager.post {
+            supportStartPostponedEnterTransition()
+        }
     }
 
     /**
@@ -243,13 +248,12 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         downloadPicture(context, currentItem, currentItemOriginPathUrl)
     }
 
-    override fun onBackPressed() {
-        supportFinishAfterTransition()
-    }
+//    override fun onBackPressed() {
+//        supportFinishAfterTransition()
+//    }
 
     override fun finish() {
         super.finish()
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         ImagePreview.instance.onPageFinishListener?.onFinish(this)
         ImagePreview.instance.reset()
         imagePreviewAdapter?.closePage()
@@ -258,7 +262,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     private fun convertPercentToBlackAlphaColor(percent: Float): Int {
         val realPercent = 1f.coerceAtMost(0f.coerceAtLeast(percent))
         val intAlpha = (realPercent * 255).toInt()
-        val stringAlpha = Integer.toHexString(intAlpha).toLowerCase(Locale.CHINA)
+        val stringAlpha = Integer.toHexString(intAlpha).lowercase()
         val color = "#" + (if (stringAlpha.length < 2) "0" else "") + stringAlpha + "000000"
         return Color.parseColor(color)
     }
@@ -407,7 +411,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     private fun checkAndDownload() {
         if (DeviceUtil.isHarmonyOs()) {
             val harmonyVersion = DeviceUtil.getHarmonyVersionCode()
-            Log.d("checkAndDownload", "是鸿蒙系统, harmonyVersion:$harmonyVersion")
+            SLog.d("checkAndDownload", "是鸿蒙系统, harmonyVersion:$harmonyVersion")
             if (harmonyVersion < 6) {
                 if (ContextCompat.checkSelfPermission(
                         context,
@@ -428,8 +432,9 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 downloadCurrentImg()
             }
         } else {
-            Log.d("checkAndDownload", "不是鸿蒙系统")
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            SLog.d("checkAndDownload", "不是鸿蒙系统")
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                // Android 10 以下，需要动态申请权限
                 if (ContextCompat.checkSelfPermission(
                         context,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -445,6 +450,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                     downloadCurrentImg()
                 }
             } else {
+                // Android 10 及以上，保存图片不需要权限
                 // 下载当前图片
                 downloadCurrentImg()
             }
@@ -537,8 +543,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         window.navigationBarColor = Color.TRANSPARENT
         val decorView = window.decorView
         val vis = decorView.systemUiVisibility
-        val option =
-            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        val option = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         decorView.systemUiVisibility = vis or option
     }
 
@@ -549,22 +554,10 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             }
             val intent = Intent()
             intent.setClass(context, ImagePreviewActivity::class.java)
-            // 过度动画效果只对安卓 5.0 以上有效
-            val transitionView = ImagePreview.instance.transitionView
-            val transitionShareElementName = ImagePreview.instance.transitionShareElementName
-            // 如果未设置则使用默认动画
-            if (transitionView != null && transitionShareElementName != null) {
-                val options = ActivityOptions.makeSceneTransitionAnimation(
-                    context as Activity?,
-                    transitionView,
-                    transitionShareElementName
-                )
-                context.startActivity(intent, options.toBundle())
-            } else {
-                context.startActivity(intent)
-                if (context is Activity) {
-                    context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-                }
+            // 默认动画
+            context.startActivity(intent)
+            if (context is Activity) {
+                context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
             }
         }
     }

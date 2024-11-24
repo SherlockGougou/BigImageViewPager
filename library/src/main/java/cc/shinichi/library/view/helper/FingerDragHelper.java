@@ -2,8 +2,10 @@ package cc.shinichi.library.view.helper;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,10 +13,10 @@ import android.view.ViewConfiguration;
 import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import cc.shinichi.library.ImagePreview;
-import cc.shinichi.library.R;
 import cc.shinichi.library.view.nine.ViewHelper;
 import cc.shinichi.library.view.photoview.PhotoView;
 import cc.shinichi.library.view.subsampling.SubsamplingScaleImageView;
@@ -28,18 +30,17 @@ import cc.shinichi.library.view.subsampling.SubsamplingScaleImageView;
 public class FingerDragHelper extends LinearLayout {
 
     private static final String TAG = FingerDragHelper.class.getSimpleName();
+
     private final static int MAX_EXIT_Y = 500;
     private final static long DURATION = 200;
-    private static final int MAX_TRANSLATE_Y = 500;
-    private final int fadeIn = R.anim.fade_in_150;
-    private final int fadeOut = R.anim.fade_out_150;
-    private SubsamplingScaleImageView imageView;
-    private PhotoView imageGif;
+
+    private SubsamplingScaleImageView imageStatic;
+    private PhotoView imageAnime;
+
     private float mDownY;
     private float mTranslationY;
-    private float mLastTranslationY;
-    private boolean isAnimate = false;
-    private int mTouchslop;
+    private int mTouchSlop;
+
     private onAlphaChangedListener mOnAlphaChangedListener;
 
     public FingerDragHelper(Context context) {
@@ -56,50 +57,47 @@ public class FingerDragHelper extends LinearLayout {
     }
 
     private void initViews() {
-        mTouchslop = ViewConfiguration.getTouchSlop();
+        mTouchSlop = ViewConfiguration.getTouchSlop();
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        imageView = (SubsamplingScaleImageView) getChildAt(0);
-        imageGif = (PhotoView) getChildAt(1);
+        imageStatic = (SubsamplingScaleImageView) getChildAt(0);
+        imageAnime = (PhotoView) getChildAt(1);
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        boolean isIntercept = false;
-        int action = ev.getAction() & ev.getActionMasked();
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
+        if (ImagePreview.Companion.getInstance().isEnableDragClose()) {
+            int action = ev.getActionMasked();
+            if (action == MotionEvent.ACTION_DOWN) {
                 mDownY = ev.getRawY();
-            case MotionEvent.ACTION_MOVE:
-                if (ImagePreview.Companion.getInstance().isEnableDragClose()) {
-                    if (imageGif != null && imageGif.getVisibility() == View.VISIBLE) {
-                        isIntercept = (imageGif.getScale() <= (imageGif.getMinimumScale() + 0.001F))
-                                && (imageGif.getMaxTouchCount() == 0 || imageGif.getMaxTouchCount() == 1)
-                                && Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop;
-                    } else if (imageView != null && imageView.getVisibility() == View.VISIBLE) {
-                        // 如果设置了忽略缩放，即只要顶部或底部在边上都可拉动关闭
-                        if (ImagePreview.Companion.getInstance().isEnableDragCloseIgnoreScale()) {
-                            isIntercept = ((imageView.getScale() <= (imageView.getMinScale() + 0.001F)) || imageView.isAtYEdge())
-                                    && (imageView.getMaxTouchCount() == 0 || imageView.getMaxTouchCount() == 1)
-                                    && Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop;
-                        } else {
-                            isIntercept = (imageView.getScale() <= (imageView.getMinScale() + 0.001F))
-                                    && (imageView.getMaxTouchCount() == 0 || imageView.getMaxTouchCount() == 1)
-                                    && Math.abs(ev.getRawY() - mDownY) > 2 * mTouchslop
-                                    && imageView.isAtYEdge();
-                        }
-                    }
-                }
-                break;
-            default:
-                break;
+            } else if (action == MotionEvent.ACTION_MOVE) {
+                return canInterceptDrag(ev);
+            }
         }
-        return isIntercept;
+        return false;
     }
 
+    private boolean canInterceptDrag(MotionEvent ev) {
+        float diffY = Math.abs(ev.getRawY() - mDownY);
+        if (diffY <= 2 * mTouchSlop) {
+            return false;
+        }
+        if (imageAnime != null && imageAnime.getVisibility() == View.VISIBLE) {
+            return imageAnime.getScale() <= (imageAnime.getMinimumScale() + 0.001F) &&
+                    (imageAnime.getMaxTouchCount() == 0 || imageAnime.getMaxTouchCount() == 1);
+        } else if (imageStatic != null && imageStatic.getVisibility() == View.VISIBLE) {
+            boolean isAtEdge = ImagePreview.Companion.getInstance().isEnableDragCloseIgnoreScale()
+                    ? imageStatic.getScale() <= (imageStatic.getMinScale() + 0.001F) || imageStatic.isAtYEdge()
+                    : imageStatic.getScale() <= (imageStatic.getMinScale() + 0.001F) && imageStatic.isAtYEdge();
+            return isAtEdge && (imageStatic.getMaxTouchCount() == 0 || imageStatic.getMaxTouchCount() == 1);
+        }
+        return false;
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction() & event.getActionMasked();
@@ -108,9 +106,8 @@ public class FingerDragHelper extends LinearLayout {
                 mDownY = event.getRawY();
             case MotionEvent.ACTION_MOVE:
                 if (ImagePreview.Companion.getInstance().isEnableDragClose()) {
-                    if (imageGif != null && imageGif.getVisibility() == View.VISIBLE) {
-                        onOneFingerPanActionMove(event);
-                    } else if (imageView != null && imageView.getVisibility() == View.VISIBLE) {
+                    if ((imageAnime != null && imageAnime.getVisibility() == View.VISIBLE)
+                            || (imageStatic != null && imageStatic.getVisibility() == View.VISIBLE)) {
                         onOneFingerPanActionMove(event);
                     }
                 }
@@ -126,12 +123,11 @@ public class FingerDragHelper extends LinearLayout {
 
     private void onOneFingerPanActionMove(MotionEvent event) {
         float moveY = event.getRawY();
-        mTranslationY = moveY - mDownY + mLastTranslationY;
-        //触发回调 根据距离处理其他控件的透明度 显示或者隐藏角标，文字信息等
-        if (null != mOnAlphaChangedListener) {
+        mTranslationY = moveY - mDownY;
+        if (mOnAlphaChangedListener != null) {
             mOnAlphaChangedListener.onTranslationYChanged(event, mTranslationY);
         }
-        ViewHelper.setScrollY(this, -(int) mTranslationY);
+        setTranslationY(mTranslationY);
     }
 
     private void onActionUp() {
@@ -139,132 +135,77 @@ public class FingerDragHelper extends LinearLayout {
         boolean enableUpDragClose = ImagePreview.Companion.getInstance().isEnableUpDragClose();
         if (enableUpDragClose) {
             if (Math.abs(mTranslationY) > MAX_EXIT_Y) {
-                exitWithTranslation(mTranslationY);
+                exit(mTranslationY);
             } else {
                 resetCallBackAnimation();
             }
         } else {
             if (mTranslationY > MAX_EXIT_Y) {
-                exitWithTranslation(mTranslationY);
+                exit(mTranslationY);
             } else {
                 resetCallBackAnimation();
             }
-        }
-    }
-
-    public void exitWithTranslation(float currentY) {
-        if (currentY > 0) {
-            ValueAnimator animDown = ValueAnimator.ofFloat(mTranslationY, getHeight());
-            animDown.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    float fraction = (float) animation.getAnimatedValue();
-                    ViewHelper.setScrollY(FingerDragHelper.this, -(int) fraction);
-                }
-            });
-            animDown.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    reset();
-                    Activity activity = ((Activity) getContext());
-                    activity.onBackPressed();
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-
-                }
-            });
-            animDown.setDuration(DURATION);
-            animDown.setInterpolator(new LinearInterpolator());
-            animDown.start();
-        } else {
-            ValueAnimator animUp = ValueAnimator.ofFloat(mTranslationY, -getHeight());
-            animUp.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    float fraction = (float) animation.getAnimatedValue();
-                    ViewHelper.setScrollY(FingerDragHelper.this, -(int) fraction);
-                }
-            });
-            animUp.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    reset();
-                    ((Activity) getContext()).onBackPressed();
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-
-                }
-            });
-            animUp.setDuration(DURATION);
-            animUp.setInterpolator(new LinearInterpolator());
-            animUp.start();
         }
     }
 
     private void resetCallBackAnimation() {
         ValueAnimator animatorY = ValueAnimator.ofFloat(mTranslationY, 0);
         animatorY.setDuration(DURATION);
-        animatorY.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                if (isAnimate) {
-                    mTranslationY = (float) valueAnimator.getAnimatedValue();
-                    mLastTranslationY = mTranslationY;
-                    ViewHelper.setScrollY(FingerDragHelper.this, -(int) mTranslationY);
-                }
-            }
+        animatorY.addUpdateListener(animation -> {
+            mTranslationY = (float) animation.getAnimatedValue();
+            setTranslationY(mTranslationY);
         });
-        animatorY.addListener(new Animator.AnimatorListener() {
+        animatorY.addListener(new SimpleAnimatorListener() {
             @Override
-            public void onAnimationStart(Animator animation) {
-                isAnimate = true;
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (isAnimate) {
-                    mTranslationY = 0;
-                    invalidate();
-                    reset();
-                }
-                isAnimate = false;
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
+            public void onAnimationEnd(@NonNull Animator animation) {
+                mTranslationY = 0;
+                reset();
             }
         });
         animatorY.start();
+    }
+
+    public void exit(float currentY) {
+        exitDefault(currentY);
+    }
+
+    private void exitDefault(float currentY) {
+        // 默认的退出动画
+        ValueAnimator animatorExit;
+        if (currentY > 0) {
+            animatorExit = ValueAnimator.ofFloat(mTranslationY, getHeight());
+        } else {
+            animatorExit = ValueAnimator.ofFloat(mTranslationY, -getHeight());
+        }
+        animatorExit.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(@NonNull ValueAnimator animation) {
+                float fraction = (float) animation.getAnimatedValue();
+                ViewHelper.setScrollY(FingerDragHelper.this, -(int) fraction);
+            }
+        });
+        animatorExit.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(@NonNull Animator animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(@NonNull Animator animation) {
+                reset();
+                ((Activity) getContext()).finish();
+            }
+
+            @Override
+            public void onAnimationCancel(@NonNull Animator animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(@NonNull Animator animation) {
+            }
+        });
+        animatorExit.setDuration(DURATION);
+        animatorExit.setInterpolator(new LinearInterpolator());
+        animatorExit.start();
     }
 
     /**
@@ -277,6 +218,20 @@ public class FingerDragHelper extends LinearLayout {
     private void reset() {
         if (null != mOnAlphaChangedListener) {
             mOnAlphaChangedListener.onTranslationYChanged(null, mTranslationY);
+        }
+    }
+
+    public abstract class SimpleAnimatorListener implements Animator.AnimatorListener {
+        @Override
+        public void onAnimationStart(@NonNull Animator animation) {
+        }
+
+        @Override
+        public void onAnimationCancel(@NonNull Animator animation) {
+        }
+
+        @Override
+        public void onAnimationRepeat(@NonNull Animator animation) {
         }
     }
 
