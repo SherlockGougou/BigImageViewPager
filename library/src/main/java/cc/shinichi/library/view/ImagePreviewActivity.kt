@@ -25,6 +25,7 @@ import androidx.viewpager2.widget.ViewPager2
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.R
 import cc.shinichi.library.bean.ImageInfo
+import cc.shinichi.library.bean.Type
 import cc.shinichi.library.glide.FileTarget
 import cc.shinichi.library.glide.ImageLoader
 import cc.shinichi.library.glide.progress.OnProgressListener
@@ -34,7 +35,7 @@ import cc.shinichi.library.tool.common.HandlerHolder
 import cc.shinichi.library.tool.common.HttpUtil
 import cc.shinichi.library.tool.common.NetworkUtil
 import cc.shinichi.library.tool.common.SLog
-import cc.shinichi.library.tool.image.DownloadPictureUtil.downloadPicture
+import cc.shinichi.library.tool.image.DownloadUtil
 import cc.shinichi.library.tool.ui.PhoneUtil
 import cc.shinichi.library.tool.ui.ToastUtil
 import cc.shinichi.library.tool.ui.UIUtil
@@ -203,6 +204,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         imagePreviewAdapter = ImagePreviewAdapter2(this, fragmentList)
         viewPager2.adapter = imagePreviewAdapter
         viewPager2.setCurrentItem(currentItem, false)
+        viewPager2.offscreenPageLimit = 1
 
         viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -212,32 +214,40 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 ImagePreview.instance.bigImagePageChangeListener?.onPageSelected(currentItem)
 
                 // 判断是否展示查看原图按钮
-                currentItemOriginPathUrl = imageInfoList[currentItem].originUrl
-                isShowOriginButton = ImagePreview.instance.isShowOriginButton(currentItem)
-                if (isShowOriginButton) {
-                    // 检查缓存是否存在
-                    checkCache(currentItemOriginPathUrl)
+                if (imageInfoList[currentItem].type == Type.IMAGE) {
+                    currentItemOriginPathUrl = imageInfoList[currentItem].originUrl
+                    isShowOriginButton = ImagePreview.instance.isShowOriginButton(currentItem)
+                    if (isShowOriginButton) {
+                        // 检查缓存是否存在
+                        checkCache(currentItemOriginPathUrl)
+                    } else {
+                        gone()
+                    }
                 } else {
                     gone()
                 }
+
                 // 更新进度指示器
                 tvIndicator.text = String.format(
                     getString(R.string.indicator),
                     (currentItem + 1).toString(),
                     (imageInfoList.size).toString()
                 )
+
                 // 如果是自定义百分比进度view，每次切换都先隐藏，并重置百分比
                 if (isUserCustomProgressView) {
                     fmCenterProgressContainer.visibility = View.GONE
                     lastProgress = 0
                 }
-                for ((index, fragment) in fragmentList.withIndex()) {
-                    if (index == currentItem) {
-                        fragment.onSelected()
-                    } else {
-                        fragment.onUnSelected()
-                    }
-                }
+
+                // fragment事件
+//                for ((index, fragment) in fragmentList.withIndex()) {
+//                    if (index == currentItem) {
+//                        fragment.onSelected()
+//                    } else {
+//                        fragment.onUnSelected()
+//                    }
+//                }
             }
 
             override fun onPageScrolled(
@@ -261,10 +271,14 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     /**
-     * 下载当前图片到SD卡
+     * 下载当前图片/视频到SD卡
      */
     private fun downloadCurrentImg() {
-        downloadPicture(context, currentItem, currentItemOriginPathUrl)
+        if (imageInfoList[currentItem].type == Type.IMAGE) {
+            DownloadUtil.downloadPicture(context, currentItem, currentItemOriginPathUrl)
+        } else if (imageInfoList[currentItem].type == Type.VIDEO) {
+            DownloadUtil.downloadVideo(context, currentItem, currentItemOriginPathUrl)
+        }
     }
 
     override fun finish() {

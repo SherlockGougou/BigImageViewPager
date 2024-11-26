@@ -94,8 +94,7 @@ public class DragCloseView extends RelativeLayout {
             return isAtEdge && (imageStatic.getMaxTouchCount() == 0 || imageStatic.getMaxTouchCount() == 1);
         } else if (imageAnime != null && imageAnime.getVisibility() == View.VISIBLE) {
             // 动图
-            return imageAnime.getScale() <= (imageAnime.getMinimumScale() + 0.001F) &&
-                    (imageAnime.getMaxTouchCount() == 0 || imageAnime.getMaxTouchCount() == 1);
+            return imageAnime.getScale() <= (imageAnime.getMinimumScale() + 0.001F) && (imageAnime.getMaxTouchCount() == 0 || imageAnime.getMaxTouchCount() == 1);
         } else if (videoView != null && videoView.getVisibility() == View.VISIBLE) {
             // 视频
             return true;

@@ -15,6 +15,15 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.common.text.CueGroup
+import androidx.media3.database.StandaloneDatabaseProvider
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.cache.CacheDataSource
+import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
+import androidx.media3.datasource.cache.SimpleCache
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.ImagePreview.LoadStrategy
 import cc.shinichi.library.R
@@ -59,9 +68,12 @@ import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.devbrackets.android.exomedia.core.listener.CaptionListener
 import com.devbrackets.android.exomedia.core.state.PlaybackState
+import com.devbrackets.android.exomedia.listener.OnCompletionListener
 import com.devbrackets.android.exomedia.listener.OnPreparedListener
 import com.devbrackets.android.exomedia.ui.widget.VideoView
+import com.devbrackets.android.exomedia.unified.ext.asMedia3Player
 import java.io.File
 import kotlin.math.abs
 
@@ -127,12 +139,13 @@ class ImagePreviewFragment : Fragment() {
         imageStatic = view.findViewById(R.id.static_view)
         imageAnim = view.findViewById(R.id.anim_view)
         videoView = view.findViewById(R.id.video_view)
+        val phoneHei = getPhoneHei(imagePreviewActivity.applicationContext)
         // 手势拖拽事件
         if (ImagePreview.instance.isEnableDragClose) {
             dragCloseView.setOnAlphaChangeListener { event, translationY ->
                 ImagePreview.instance.onPageDragListener?.onDrag(event, translationY)
                 val yAbs = abs(translationY)
-                val percent = yAbs / getPhoneHei(imagePreviewActivity.applicationContext)
+                val percent = yAbs / phoneHei
                 val number = 1.0f - percent
                 imagePreviewActivity.setAlpha(number)
                 if (imageAnim.visibility == View.VISIBLE) {
@@ -352,33 +365,50 @@ class ImagePreviewFragment : Fragment() {
         }
     }
 
-    fun onSelected() {
-        if (imageInfo.type == Type.IMAGE) {
-            SLog.d("onSelected", "onSelected: 图片类型，不做处理")
-        } else if (imageInfo.type == Type.VIDEO) {
-            SLog.d("onSelected", "onSelected: 视频类型，开始播放")
-            // 如果是视频类型，就播放
-            videoView.setOnPreparedListener(object : OnPreparedListener {
-                override fun onPrepared() {
-                    // 准备完毕
-                    SLog.d("onPrepared", "onPrepared: 视频准备完毕, state = " + videoView.getPlaybackState())
-                    videoView.start()
+    override fun onResume() {
+        super.onResume()
+        SLog.d("onResume", "onResume: position = $position")
+        if (imageInfo.type == Type.VIDEO) {
+            // 只特殊处理视频类型
+            if (imagePreviewActivity.viewPager2.currentItem == position) {
+                if (::videoView.isInitialized) {
+                    if (videoView.getPlaybackState() == PlaybackState.IDLE) {
+                        videoView.setOnPreparedListener(object : OnPreparedListener {
+                            override fun onPrepared() {
+                                // 准备完毕
+                                SLog.d("onResume", "onResume: 视频准备完毕. position = $position")
+                                if (imagePreviewActivity.viewPager2.currentItem == position) {
+                                    videoView.start()
+                                }
+                            }
+                        })
+                        videoView.setMedia(Uri.parse(imageInfo.originUrl))
+                    } else {
+                        if (videoView.getPlaybackState() == PlaybackState.PAUSED) {
+                            videoView.start()
+                        }
+                    }
                 }
-            })
-            videoView.setMedia(Uri.parse(imageInfo.originUrl))
+            }
         }
     }
 
-    fun onUnSelected() {
-        if (imageInfo.type == Type.IMAGE) {
-            SLog.d("onUnSelected", "onUnSelected: 图片类型，清理资源")
-        } else if (imageInfo.type == Type.VIDEO) {
-            SLog.d("onUnSelected", "onUnSelected: 视频类型，停止播放")
-            // 如果是视频类型，就停止播放
+    override fun onPause() {
+        super.onPause()
+        SLog.d("onPause", "onPause: position = $position")
+        if (imageInfo.type == Type.VIDEO) {
+            // 只特殊处理视频类型
             if (::videoView.isInitialized) {
-                videoView.pause()
+                if (videoView.getPlaybackState() == PlaybackState.PLAYING) {
+                    videoView.pause()
+                }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        onRelease()
     }
 
     private fun loadResImage(
@@ -428,8 +458,7 @@ class ImagePreviewFragment : Fragment() {
                     // glide加载失败，使用http下载后再次加载
                     Thread {
                         val fileFullName = System.currentTimeMillis().toString()
-                        val saveDir =
-                            getAvailableCacheDir(imagePreviewActivity)?.absolutePath + File.separator + "image/"
+                        val saveDir = getAvailableCacheDir(imagePreviewActivity)?.absolutePath + File.separator + "image/"
                         val downloadFile = downloadFile(url, fileFullName, saveDir)
                         Handler(Looper.getMainLooper()).post {
                             if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
@@ -692,7 +721,9 @@ class ImagePreviewFragment : Fragment() {
             imageAnim.setImageBitmap(null)
         }
         if (::videoView.isInitialized) {
-            videoView.release()
+            if ((videoView.getPlaybackState() != PlaybackState.RELEASED)) {
+                videoView.release()
+            }
         }
     }
 }

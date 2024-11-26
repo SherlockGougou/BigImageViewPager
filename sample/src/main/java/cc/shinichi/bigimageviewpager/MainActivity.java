@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
         i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/gif1.gif");
         mediaList.add(i);
 
-        // 全景图片1：
+        // 全景图片1：(风景-横向)
         i = new ImageInfo();
         i.setThumbnailUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/heng1thumb.jpg");
         i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/heng1.jpg");

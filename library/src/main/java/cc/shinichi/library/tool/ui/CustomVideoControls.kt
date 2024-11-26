@@ -70,6 +70,7 @@ class CustomVideoControls : DefaultVideoControls {
 
     override fun retrieveViews() {
         super.retrieveViews()
+
         extraViewsContainer = findViewById(R.id.exomedia_controls_extra_container)
         container = findViewById(R.id.exomedia_controls_container)
         val bottomMargin = PhoneUtil.getNavBarHeight(context) + UIUtil.dp2px(context, 20f) + UIUtil.dp2px(context, 60f)
@@ -77,12 +78,11 @@ class CustomVideoControls : DefaultVideoControls {
         seekBarParams.bottomMargin = bottomMargin
         seekBar.layoutParams = seekBarParams
 
-        setPreviousButtonEnabled(false)
-        setNextButtonEnabled(false)
-
         // 自定义隐藏一些UI
         titleTextView.visibility = GONE
         subTitleTextView.visibility = GONE
+        setPreviousButtonRemoved(true)
+        setNextButtonRemoved(true)
         previousButton.visibility = GONE
         nextButton.visibility = GONE
     }
@@ -137,8 +137,8 @@ class CustomVideoControls : DefaultVideoControls {
             timeSeparatorView.visibility = View.INVISIBLE
             endTimeTextView.visibility = View.INVISIBLE
 
-            previousButton.visibility = View.INVISIBLE
-            nextButton.visibility = View.INVISIBLE
+//            previousButton.visibility = View.INVISIBLE
+//            nextButton.visibility = View.INVISIBLE
 
             extraViewsContainer.visibility = View.INVISIBLE
         }
@@ -159,11 +159,11 @@ class CustomVideoControls : DefaultVideoControls {
         playPauseButton.visibility = View.VISIBLE
         playPauseButton.isEnabled = true
 
-        previousButton.visibility = View.VISIBLE
-        previousButton.isEnabled = enabledViews.get(R.id.exomedia_controls_previous_btn, true)
+//        previousButton.visibility = View.VISIBLE
+//        previousButton.isEnabled = enabledViews.get(R.id.exomedia_controls_previous_btn, true)
 
-        nextButton.visibility = View.VISIBLE
-        nextButton.isEnabled = enabledViews.get(R.id.exomedia_controls_next_btn, true)
+//        nextButton.visibility = View.VISIBLE
+//        nextButton.isEnabled = enabledViews.get(R.id.exomedia_controls_next_btn, true)
 
         extraViewsContainer.visibility = View.VISIBLE
 

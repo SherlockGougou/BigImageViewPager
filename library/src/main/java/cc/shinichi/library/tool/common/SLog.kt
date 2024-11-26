@@ -13,7 +13,7 @@ import com.bumptech.glide.integration.webp.BuildConfig
 object SLog {
 
     private const val TAG = "SLog"
-    private val isDebug = BuildConfig.DEBUG
+    private val isDebug = true
 
     fun d(msg: String) {
         if (isDebug) {
