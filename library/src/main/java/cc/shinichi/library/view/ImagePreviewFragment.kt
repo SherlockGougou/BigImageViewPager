@@ -5,20 +5,22 @@ import android.graphics.PointF
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
-import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager.widget.PagerAdapter
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.ImagePreview.LoadStrategy
 import cc.shinichi.library.R
 import cc.shinichi.library.bean.ImageInfo
+import cc.shinichi.library.bean.Type
 import cc.shinichi.library.glide.FileTarget
-import cc.shinichi.library.glide.ImageLoader.clearMemory
 import cc.shinichi.library.glide.ImageLoader.getGlideCacheFile
 import cc.shinichi.library.tool.common.HttpUtil.downloadFile
 import cc.shinichi.library.tool.common.NetworkUtil.isWiFi
@@ -40,7 +42,7 @@ import cc.shinichi.library.tool.image.ImageUtil.isTabletOrLandscape
 import cc.shinichi.library.tool.image.ImageUtil.isWideImage
 import cc.shinichi.library.tool.ui.PhoneUtil.getPhoneHei
 import cc.shinichi.library.tool.ui.ToastUtil
-import cc.shinichi.library.view.helper.FingerDragHelper
+import cc.shinichi.library.view.helper.DragCloseView
 import cc.shinichi.library.view.listener.SimpleOnImageEventListener
 import cc.shinichi.library.view.photoview.PhotoView
 import cc.shinichi.library.view.subsampling.ImageSource
@@ -57,69 +59,144 @@ import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.devbrackets.android.exomedia.core.state.PlaybackState
+import com.devbrackets.android.exomedia.listener.OnPreparedListener
+import com.devbrackets.android.exomedia.ui.widget.VideoView
 import java.io.File
 import kotlin.math.abs
 
 /**
- * @author 工藤
- * @email qinglingou@gmail.com
+ * 仓库: <a href="http://git.xiaozhouintel.com/root/C-UI-App-Android">...</a>
+ * 文件名: ImagePreviewFragment.java
+ * 作者: kirito
+ * 描述: 单个页面
+ * 创建时间: 2024/11/25
  */
-class ImagePreviewAdapter(
-    private val activity: AppCompatActivity,
-    imageList: MutableList<ImageInfo>
-) :
-    PagerAdapter() {
+class ImagePreviewFragment : Fragment() {
 
-    private val imageMyList: MutableList<ImageInfo> = mutableListOf()
-    private val imageStaticHashMap: HashMap<String, SubsamplingScaleImageView?> = HashMap()
-    private val imageAnimHashMap: HashMap<String, PhotoView?> = HashMap()
-    private var finalLoadUrl: String = ""
+    private lateinit var imagePreviewActivity: ImagePreviewActivity
+    private lateinit var imageInfo: ImageInfo
+    private var position: Int = 0
 
-    init {
-        imageMyList.addAll(imageList)
-    }
+    private lateinit var dragCloseView: DragCloseView
+    private lateinit var imageStatic: SubsamplingScaleImageView
+    private lateinit var imageAnim: PhotoView
+    private lateinit var videoView: VideoView
+    private lateinit var progressBar: ProgressBar
 
-    fun closePage() {
-        try {
-            if (imageStaticHashMap.isNotEmpty()) {
-                for (o in imageStaticHashMap.entries) {
-                    val entry = o as Map.Entry<*, *>
-                    if (entry.value != null) {
-                        (entry.value as SubsamplingScaleImageView).destroyDrawingCache()
-                        (entry.value as SubsamplingScaleImageView).recycle()
-                    }
-                }
-                imageStaticHashMap.clear()
-            }
-            if (imageAnimHashMap.isNotEmpty()) {
-                for (o in imageAnimHashMap.entries) {
-                    val entry = o as Map.Entry<*, *>
-                    if (entry.value != null) {
-                        (entry.value as PhotoView).destroyDrawingCache()
-                        (entry.value as PhotoView).setImageBitmap(null)
-                    }
-                }
-                imageAnimHashMap.clear()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+    companion object {
+        fun newInstance(
+            imagePreviewActivity: ImagePreviewActivity,
+            position: Int,
+            imageInfo: ImageInfo
+        ): ImagePreviewFragment {
+            val fragment = ImagePreviewFragment()
+            fragment.imagePreviewActivity = imagePreviewActivity
+            fragment.position = position
+            fragment.imageInfo = imageInfo
+            return fragment
         }
     }
 
-    override fun getCount(): Int {
-        return imageMyList.size
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val view = inflater.inflate(R.layout.sh_item_photoview, container, false)
+        initView(view)
+        initData()
+        return view
     }
 
-    override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val convertView = View.inflate(activity, R.layout.sh_item_photoview, null)
-        val progressBar = convertView.findViewById<ProgressBar>(R.id.progress_view)
-        val fingerDragHelper: FingerDragHelper = convertView.findViewById(R.id.fingerDragHelper)
-        val imageStatic: SubsamplingScaleImageView = convertView.findViewById(R.id.static_view)
-        val imageAnim: PhotoView = convertView.findViewById(R.id.anim_view)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
 
-        val info = imageMyList[position]
-        val originPathUrl = info.originUrl
-        val thumbPathUrl = info.thumbnailUrl
+    private fun initData() {
+        val type = imageInfo.type
+        if (type == Type.IMAGE) {
+            initImageType()
+        } else if (type == Type.VIDEO) {
+            initVideoType()
+        }
+    }
+
+    private fun initView(view: View) {
+        progressBar = view.findViewById<ProgressBar>(R.id.progress_view)
+        dragCloseView = view.findViewById(R.id.fingerDragHelper)
+        imageStatic = view.findViewById(R.id.static_view)
+        imageAnim = view.findViewById(R.id.anim_view)
+        videoView = view.findViewById(R.id.video_view)
+        // 手势拖拽事件
+        if (ImagePreview.instance.isEnableDragClose) {
+            dragCloseView.setOnAlphaChangeListener { event, translationY ->
+                ImagePreview.instance.onPageDragListener?.onDrag(event, translationY)
+                val yAbs = abs(translationY)
+                val percent = yAbs / getPhoneHei(imagePreviewActivity.applicationContext)
+                val number = 1.0f - percent
+                imagePreviewActivity.setAlpha(number)
+                if (imageAnim.visibility == View.VISIBLE) {
+                    imageAnim.scaleY = number
+                    imageAnim.scaleX = number
+                }
+                if (imageStatic.visibility == View.VISIBLE) {
+                    imageStatic.scaleY = number
+                    imageStatic.scaleX = number
+                }
+                if (videoView.visibility == View.VISIBLE) {
+                    videoView.scaleY = number
+                    videoView.scaleX = number
+                }
+            }
+        }
+        // 点击事件(视频类型不支持点击关闭)
+        imageStatic.setOnClickListener { v ->
+            if (ImagePreview.instance.isEnableClickClose) {
+                imagePreviewActivity.onBackPressed()
+            }
+            ImagePreview.instance.bigImageClickListener?.onClick(imagePreviewActivity, v, position)
+        }
+        imageAnim.setOnClickListener { v ->
+            if (ImagePreview.instance.isEnableClickClose) {
+                imagePreviewActivity.onBackPressed()
+            }
+            ImagePreview.instance.bigImageClickListener?.onClick(imagePreviewActivity, v, position)
+        }
+        // 长按事件
+        ImagePreview.instance.bigImageLongClickListener?.let {
+            imageStatic.setOnLongClickListener { v ->
+                ImagePreview.instance.bigImageLongClickListener?.onLongClick(
+                    imagePreviewActivity,
+                    v,
+                    position
+                )
+                true
+            }
+            imageAnim.setOnLongClickListener { v ->
+                ImagePreview.instance.bigImageLongClickListener?.onLongClick(
+                    imagePreviewActivity,
+                    v,
+                    position
+                )
+                true
+            }
+            videoView.setOnLongClickListener { v ->
+                ImagePreview.instance.bigImageLongClickListener?.onLongClick(
+                    imagePreviewActivity,
+                    v,
+                    position
+                )
+                true
+            }
+        }
+    }
+
+    private fun initImageType() {
+        // 图片类型，隐藏视频
+        videoView.visibility = View.GONE
+
+        val originPathUrl = imageInfo.originUrl
+        val thumbPathUrl = imageInfo.thumbnailUrl
 
         imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
         imageStatic.setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER)
@@ -130,57 +207,8 @@ class ImagePreviewAdapter(
         imageAnim.maximumScale = ImagePreview.instance.maxScale
         imageAnim.scaleType = ImageView.ScaleType.FIT_CENTER
 
-        imageStatic.setOnClickListener { v ->
-            if (ImagePreview.instance.isEnableClickClose) {
-                activity.onBackPressed()
-            }
-            ImagePreview.instance.bigImageClickListener?.onClick(activity, v, position)
-        }
-        imageAnim.setOnClickListener { v ->
-            if (ImagePreview.instance.isEnableClickClose) {
-                activity.onBackPressed()
-            }
-            ImagePreview.instance.bigImageClickListener?.onClick(activity, v, position)
-        }
-        imageStatic.setOnLongClickListener { v ->
-            ImagePreview.instance.bigImageLongClickListener?.onLongClick(activity, v, position)
-            true
-        }
-        imageAnim.setOnLongClickListener { v ->
-            ImagePreview.instance.bigImageLongClickListener?.onLongClick(activity, v, position)
-            true
-        }
-
-        if (activity is ImagePreviewActivity) {
-            activity.setAlpha(1f)
-        }
-
-        if (ImagePreview.instance.isEnableDragClose) {
-            fingerDragHelper.setOnAlphaChangeListener { event, translationY ->
-                ImagePreview.instance.onPageDragListener?.onDrag(event, translationY)
-                val yAbs = abs(translationY)
-                val percent = yAbs / getPhoneHei(activity.applicationContext)
-                val number = 1.0f - percent
-                if (activity is ImagePreviewActivity) {
-                    activity.setAlpha(number)
-                }
-                if (imageAnim.visibility == View.VISIBLE) {
-                    imageAnim.scaleY = number
-                    imageAnim.scaleX = number
-                }
-                if (imageStatic.visibility == View.VISIBLE) {
-                    imageStatic.scaleY = number
-                    imageStatic.scaleX = number
-                }
-            }
-        }
-
-        imageAnimHashMap.remove(originPathUrl)
-        imageAnimHashMap[originPathUrl + "_" + position] = imageAnim
-        imageStaticHashMap.remove(originPathUrl)
-        imageStaticHashMap[originPathUrl + "_" + position] = imageStatic
-
         // 根据当前加载策略判断，需要加载的url是哪一个
+        var finalLoadUrl: String = ""
         when (ImagePreview.instance.loadStrategy) {
             LoadStrategy.Default -> {
                 finalLoadUrl = thumbPathUrl
@@ -195,7 +223,7 @@ class ImagePreviewAdapter(
             }
 
             LoadStrategy.NetworkAuto -> {
-                finalLoadUrl = if (isWiFi(activity)) {
+                finalLoadUrl = if (isWiFi(imagePreviewActivity)) {
                     originPathUrl
                 } else {
                     thumbPathUrl
@@ -203,7 +231,7 @@ class ImagePreviewAdapter(
             }
 
             LoadStrategy.Auto -> {
-                finalLoadUrl = if (isWiFi(activity)) {
+                finalLoadUrl = if (isWiFi(imagePreviewActivity)) {
                     originPathUrl
                 } else {
                     thumbPathUrl
@@ -214,37 +242,150 @@ class ImagePreviewAdapter(
         val url: String = finalLoadUrl
 
         // 显示加载圈圈
-        // progressBar.visibility = View.VISIBLE
+        progressBar.visibility = View.VISIBLE
 
         // 判断原图缓存是否存在，存在的话，直接显示原图缓存，优先保证清晰。
-        val cacheFile = getGlideCacheFile(activity, originPathUrl)
+        val cacheFile = getGlideCacheFile(imagePreviewActivity, originPathUrl)
         if (cacheFile != null && cacheFile.exists()) {
             SLog.d("instantiateItem", "原图缓存存在，直接显示 originPathUrl = $originPathUrl")
-            loadSuccess(originPathUrl, cacheFile, imageStatic, imageAnim, progressBar, position)
+            loadSuccess(
+                originPathUrl,
+                cacheFile
+            )
         } else {
             SLog.d("instantiateItem", "原图缓存不存在，开始加载 url = $url")
             // 判断url是否是res资源 R.mipmap.xxx
             if (url.startsWith("res://")) {
                 SLog.d("instantiateItem", "instantiateItem: res资源")
-                loadResImage(url, originPathUrl, imageStatic, imageAnim, progressBar, position)
+                loadResImage(url, originPathUrl)
             } else {
                 SLog.d("instantiateItem", "instantiateItem: url资源")
-                loadUrlImage(url, originPathUrl, imageStatic, imageAnim, progressBar, position)
+                loadUrlImage(
+                    url,
+                    originPathUrl
+                )
             }
         }
-        container.addView(convertView)
-        return convertView
+    }
+
+    private fun initVideoType() {
+        // 视频类型，隐藏图片
+        imageStatic.visibility = View.GONE
+        imageAnim.visibility = View.GONE
+        videoView.visibility = View.VISIBLE
+    }
+
+    fun onOriginal() {
+        if (imageInfo.type == Type.IMAGE) {
+            SLog.d("onOriginal", "onOriginal: 加载原图")
+            loadOriginal()
+        } else {
+            SLog.d("onOriginal", "onOriginal: 视频类型，不做处理")
+        }
+    }
+
+    private fun loadOriginal() {
+        val originalUrl = imageInfo.originUrl
+        val cacheFile = getGlideCacheFile(imagePreviewActivity, imageInfo.originUrl)
+        if (cacheFile != null && cacheFile.exists()) {
+            val isStatic = isStaticImage(originalUrl, cacheFile.absolutePath)
+            if (isStatic) {
+                SLog.d("loadOrigin", "静态图")
+                val isHeifImageWithMime = isHeifImageWithMime(imageInfo.originUrl, cacheFile.absolutePath)
+                if (isHeifImageWithMime) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ALPHA_8)
+                    } else {
+                        SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
+                    }
+                }
+                imageAnim.visibility = View.GONE
+                imageStatic.visibility = View.VISIBLE
+                imageStatic.let {
+                    val thumbnailUrl = imageInfo.thumbnailUrl
+                    val smallCacheFile = getGlideCacheFile(imagePreviewActivity, thumbnailUrl)
+                    var small: ImageSource? = null
+                    if (smallCacheFile != null && smallCacheFile.exists()) {
+                        val smallImagePath = smallCacheFile.absolutePath
+                        small = getImageBitmap(
+                            smallImagePath,
+                            getBitmapDegree(smallImagePath)
+                        )?.let {
+                            ImageSource.bitmap(it)
+                        }
+                        val widSmall = getWidthHeight(smallImagePath)[0]
+                        val heiSmall = getWidthHeight(smallImagePath)[1]
+                        if (isBmpImageWithMime(originalUrl, cacheFile.absolutePath)) {
+                            small?.tilingDisabled()
+                        }
+                        small?.dimensions(widSmall, heiSmall)
+                    }
+                    val imagePath = cacheFile.absolutePath
+                    val origin = ImageSource.uri(imagePath)
+                    val widOrigin = getWidthHeight(imagePath)[0]
+                    val heiOrigin = getWidthHeight(imagePath)[1]
+                    if (isBmpImageWithMime(originalUrl, cacheFile.absolutePath)) {
+                        origin.tilingDisabled()
+                    }
+                    origin.dimensions(widOrigin, heiOrigin)
+                    imageStatic.setImage(origin, small)
+                    // 缩放适配
+                    setImageStatic(imagePath, imageStatic)
+                    scaleLongPic(imagePath, imageStatic)
+                }
+            } else {
+                SLog.d("loadOrigin", "动态图")
+                imageStatic.visibility = View.GONE
+                imageAnim.visibility = View.VISIBLE
+                imageAnim.let {
+                    Glide.with(imagePreviewActivity)
+                        .asGif()
+                        .load(cacheFile)
+                        .apply(
+                            RequestOptions()
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .error(ImagePreview.instance.errorPlaceHolder)
+                        )
+                        .into(imageAnim)
+                }
+            }
+        }
+    }
+
+    fun onSelected() {
+        if (imageInfo.type == Type.IMAGE) {
+            SLog.d("onSelected", "onSelected: 图片类型，不做处理")
+        } else if (imageInfo.type == Type.VIDEO) {
+            SLog.d("onSelected", "onSelected: 视频类型，开始播放")
+            // 如果是视频类型，就播放
+            videoView.setOnPreparedListener(object : OnPreparedListener {
+                override fun onPrepared() {
+                    // 准备完毕
+                    SLog.d("onPrepared", "onPrepared: 视频准备完毕, state = " + videoView.getPlaybackState())
+                    videoView.start()
+                }
+            })
+            videoView.setMedia(Uri.parse(imageInfo.originUrl))
+        }
+    }
+
+    fun onUnSelected() {
+        if (imageInfo.type == Type.IMAGE) {
+            SLog.d("onUnSelected", "onUnSelected: 图片类型，清理资源")
+        } else if (imageInfo.type == Type.VIDEO) {
+            SLog.d("onUnSelected", "onUnSelected: 视频类型，停止播放")
+            // 如果是视频类型，就停止播放
+            if (::videoView.isInitialized) {
+                videoView.pause()
+            }
+        }
     }
 
     private fun loadResImage(
         url: String,
-        originPathUrl: String,
-        imageStatic: SubsamplingScaleImageView,
-        imageAnim: PhotoView,
-        progressBar: ProgressBar,
-        position: Int
+        originPathUrl: String
     ) {
-        Glide.with(activity).load(R.drawable.icon_download_new)
+        Glide.with(imagePreviewActivity).load(R.drawable.icon_download_new)
             .addListener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
@@ -252,7 +393,7 @@ class ImagePreviewAdapter(
                     target: Target<Drawable?>,
                     isFirstResource: Boolean
                 ): Boolean {
-                    loadFailed(imageStatic, imageAnim, progressBar, e)
+                    loadFailed(e)
                     return true
                 }
 
@@ -274,13 +415,9 @@ class ImagePreviewAdapter(
 
     private fun loadUrlImage(
         url: String,
-        originPathUrl: String,
-        imageStatic: SubsamplingScaleImageView,
-        imageAnim: PhotoView,
-        progressBar: ProgressBar,
-        position: Int
+        originPathUrl: String
     ) {
-        Glide.with(activity).downloadOnly().load(url)
+        Glide.with(imagePreviewActivity).downloadOnly().load(url)
             .addListener(object : RequestListener<File> {
                 override fun onLoadFailed(
                     e: GlideException?,
@@ -291,21 +428,18 @@ class ImagePreviewAdapter(
                     // glide加载失败，使用http下载后再次加载
                     Thread {
                         val fileFullName = System.currentTimeMillis().toString()
-                        val saveDir = getAvailableCacheDir(activity)?.absolutePath + File.separator + "image/"
+                        val saveDir =
+                            getAvailableCacheDir(imagePreviewActivity)?.absolutePath + File.separator + "image/"
                         val downloadFile = downloadFile(url, fileFullName, saveDir)
                         Handler(Looper.getMainLooper()).post {
                             if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
                                 // 通过urlConn下载完成
                                 loadSuccess(
                                     originPathUrl,
-                                    downloadFile,
-                                    imageStatic,
-                                    imageAnim,
-                                    progressBar,
-                                    position
+                                    downloadFile
                                 )
                             } else {
-                                loadFailed(imageStatic, imageAnim, progressBar, e)
+                                loadFailed(e)
                             }
                         }
                     }.start()
@@ -319,115 +453,31 @@ class ImagePreviewAdapter(
                     dataSource: DataSource,
                     isFirstResource: Boolean
                 ): Boolean {
-                    loadSuccess(url, resource, imageStatic, imageAnim, progressBar, position)
+                    loadSuccess(
+                        url,
+                        resource
+                    )
                     return true
                 }
             }).into(object : FileTarget() {
             })
     }
 
-    override fun isViewFromObject(view: View, `object`: Any): Boolean {
-        return view === `object`
-    }
-
-    override fun getItemPosition(`object`: Any): Int {
-        return POSITION_NONE
-    }
-
-    /**
-     * 加载原图
-     */
-    fun loadOrigin(imageInfo: ImageInfo) {
-        val originalUrl = imageInfo.originUrl
-        if (imageStaticHashMap[originalUrl] != null && imageAnimHashMap[originalUrl] != null) {
-            val imageStatic = imageStaticHashMap[imageInfo.originUrl]
-            val imageAnim = imageAnimHashMap[imageInfo.originUrl]
-            val cacheFile = getGlideCacheFile(activity, imageInfo.originUrl)
-            if (cacheFile != null && cacheFile.exists()) {
-                val isStatic = isStaticImage(originalUrl, cacheFile.absolutePath)
-                if (isStatic) {
-                    SLog.d("loadOrigin", "动静判断: 静态图")
-                    val isHeifImageWithMime = isHeifImageWithMime(imageInfo.originUrl, cacheFile.absolutePath)
-                    if (isHeifImageWithMime) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ALPHA_8)
-                        } else {
-                            SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
-                        }
-                    }
-                    imageAnim?.visibility = View.GONE
-                    imageStatic?.visibility = View.VISIBLE
-                    imageStatic?.let {
-                        val thumbnailUrl = imageInfo.thumbnailUrl
-                        val smallCacheFile = getGlideCacheFile(activity, thumbnailUrl)
-                        var small: ImageSource? = null
-                        if (smallCacheFile != null && smallCacheFile.exists()) {
-                            val smallImagePath = smallCacheFile.absolutePath
-                            small = getImageBitmap(
-                                smallImagePath,
-                                getBitmapDegree(smallImagePath)
-                            )?.let {
-                                ImageSource.bitmap(it)
-                            }
-                            val widSmall = getWidthHeight(smallImagePath)[0]
-                            val heiSmall = getWidthHeight(smallImagePath)[1]
-                            if (isBmpImageWithMime(originalUrl, cacheFile.absolutePath)) {
-                                small?.tilingDisabled()
-                            }
-                            small?.dimensions(widSmall, heiSmall)
-                        }
-                        val imagePath = cacheFile.absolutePath
-                        val origin = ImageSource.uri(imagePath)
-                        val widOrigin = getWidthHeight(imagePath)[0]
-                        val heiOrigin = getWidthHeight(imagePath)[1]
-                        if (isBmpImageWithMime(originalUrl, cacheFile.absolutePath)) {
-                            origin.tilingDisabled()
-                        }
-                        origin.dimensions(widOrigin, heiOrigin)
-                        setImageStatic(imagePath, imageStatic)
-                        imageStatic.setImage(origin, small)
-                        scaleLongPic(imageStatic, imagePath)
-                    }
-                } else {
-                    SLog.d("loadOrigin", "动静判断: 动态图")
-                    imageStatic?.visibility = View.GONE
-                    imageAnim?.visibility = View.VISIBLE
-                    imageAnim?.let {
-                        Glide.with(activity)
-                            .asGif()
-                            .load(cacheFile)
-                            .apply(
-                                RequestOptions()
-                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                    .error(ImagePreview.instance.errorPlaceHolder)
-                            )
-                            .into(imageAnim)
-                    }
-                }
-            } else {
-                notifyDataSetChanged()
-            }
-        } else {
-            notifyDataSetChanged()
-        }
-    }
-
     private fun loadSuccess(
         imageUrl: String,
-        resource: File,
-        imageStatic: SubsamplingScaleImageView,
-        imageAnim: ImageView,
-        progressBar: ProgressBar,
-        position: Int
+        resource: File
     ) {
         val imagePath = resource.absolutePath
         val isStatic = isStaticImage(imageUrl, imagePath)
         if (isStatic) {
             SLog.d("loadSuccess", "动静判断: 静态图")
-            loadImageStatic(imagePath, imageStatic, imageAnim, progressBar, position)
+            loadImageStatic(imagePath)
         } else {
             SLog.d("loadSuccess", "动静判断: 动态图")
-            loadImageAnim(imageUrl, imagePath, imageStatic, imageAnim, progressBar, position)
+            loadImageAnim(
+                imageUrl,
+                imagePath
+            )
         }
     }
 
@@ -435,7 +485,6 @@ class ImagePreviewAdapter(
      * 加载失败的处理
      */
     private fun loadFailed(
-        imageStatic: SubsamplingScaleImageView, imageAnim: ImageView, progressBar: ProgressBar,
         e: GlideException?
     ) {
         progressBar.visibility = View.GONE
@@ -444,14 +493,14 @@ class ImagePreviewAdapter(
         imageStatic.isZoomEnabled = false
         imageStatic.setImage(ImageSource.resource(ImagePreview.instance.errorPlaceHolder))
         if (ImagePreview.instance.isShowErrorToast) {
-            var errorMsg = activity.getString(R.string.toast_load_failed)
+            var errorMsg = imagePreviewActivity.getString(R.string.toast_load_failed)
             if (e != null) {
                 errorMsg = e.localizedMessage as String
             }
             if (errorMsg.length > 200) {
                 errorMsg = errorMsg.substring(0, 199)
             }
-            ToastUtil.instance.showShort(activity.applicationContext, errorMsg)
+            ToastUtil.instance.showShort(imagePreviewActivity.applicationContext, errorMsg)
         }
     }
 
@@ -465,7 +514,7 @@ class ImagePreviewAdapter(
                 SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
             }
         }
-        val tabletOrLandscape = isTabletOrLandscape(activity)
+        val tabletOrLandscape = isTabletOrLandscape(imagePreviewActivity)
         if (tabletOrLandscape) {
             // Tablet
             imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
@@ -476,28 +525,46 @@ class ImagePreviewAdapter(
             // Phone
             imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
             imageStatic.minScale = 1f
-            val isLongImage = isLongImage(activity, imagePath)
+            val isLongImage = isLongImage(imagePreviewActivity, imagePath)
             if (isLongImage) {
                 // 长图
-                imageStatic.maxScale = ImageUtil.getLongImageMaxZoomScale(activity, imagePath)
-                imageStatic.setDoubleTapZoomScale(getLongImageDoubleZoomScale(activity, imagePath))
+                imageStatic.maxScale =
+                    ImageUtil.getLongImageMaxZoomScale(imagePreviewActivity, imagePath)
+                imageStatic.setDoubleTapZoomScale(
+                    getLongImageDoubleZoomScale(
+                        imagePreviewActivity,
+                        imagePath
+                    )
+                )
             } else {
                 val isWideImage = isWideImage(imagePath)
                 if (isWideImage) {
                     // 宽图
-                    imageStatic.maxScale = ImageUtil.getWideImageMaxZoomScale(activity, imagePath)
-                    imageStatic.setDoubleTapZoomScale(getWideImageDoubleScale(activity, imagePath))
+                    imageStatic.maxScale =
+                        ImageUtil.getWideImageMaxZoomScale(imagePreviewActivity, imagePath)
+                    imageStatic.setDoubleTapZoomScale(
+                        getWideImageDoubleScale(
+                            imagePreviewActivity,
+                            imagePath
+                        )
+                    )
                 } else {
                     // 普通图片
-                    imageStatic.maxScale = ImageUtil.getImageMaxZoomScale(activity, imagePath)
-                    imageStatic.setDoubleTapZoomScale(getImageDoubleScale(activity, imagePath))
+                    imageStatic.maxScale =
+                        ImageUtil.getImageMaxZoomScale(imagePreviewActivity, imagePath)
+                    imageStatic.setDoubleTapZoomScale(
+                        getImageDoubleScale(
+                            imagePreviewActivity,
+                            imagePath
+                        )
+                    )
                 }
             }
         }
     }
 
-    private fun scaleLongPic(imageStatic: SubsamplingScaleImageView, imagePath: String) {
-        val isLongImage = isLongImage(this.activity, imagePath)
+    private fun scaleLongPic(imagePath: String, imageStatic: SubsamplingScaleImageView) {
+        val isLongImage = isLongImage(this.imagePreviewActivity, imagePath)
         if (isLongImage) {
             when (ImagePreview.instance.longPicDisplayMode) {
                 ImagePreview.LongPicDisplayMode.Default -> {
@@ -506,7 +573,7 @@ class ImagePreviewAdapter(
                 ImagePreview.LongPicDisplayMode.FillWidth -> {
                     imageStatic.setScaleAndCenter(
                         ImageUtil.getLongImageFillWidthScale(
-                            this.activity,
+                            this.imagePreviewActivity,
                             imagePath
                         ), PointF(0f, 0f)
                     )
@@ -519,15 +586,10 @@ class ImagePreviewAdapter(
      * 加载静态图片
      */
     private fun loadImageStatic(
-        imagePath: String, imageStatic: SubsamplingScaleImageView, imageAnim: ImageView,
-        progressBar: ProgressBar,
-        position: Int
+        imagePath: String
     ) {
         imageAnim.visibility = View.GONE
         imageStatic.visibility = View.VISIBLE
-
-        setImageStatic(imagePath, imageStatic)
-
         val imageSource = ImageSource.uri(Uri.fromFile(File(imagePath)))
         if (isBmpImageWithMime(imagePath, imagePath)) {
             imageSource.tilingDisabled()
@@ -538,22 +600,23 @@ class ImagePreviewAdapter(
                 progressBar.visibility = View.GONE
             }
         })
-        scaleLongPic(imageStatic, imagePath)
+        // 缩放适配
+        setImageStatic(imagePath, imageStatic)
+        scaleLongPic(imagePath, imageStatic)
     }
 
     /**
      * 加载动图
      */
     private fun loadImageAnim(
-        imageUrl: String, imagePath: String, imageStatic: SubsamplingScaleImageView,
-        imageAnim: ImageView, progressBar: ProgressBar, position: Int
+        imageUrl: String, imagePath: String
     ) {
         imageStatic.visibility = View.GONE
         imageAnim.visibility = View.VISIBLE
 
         if (isAnimWebp(imageUrl, imagePath)) {
             val fitCenter: Transformation<Bitmap> = FitCenter()
-            Glide.with(activity)
+            Glide.with(imagePreviewActivity)
                 .load(imagePath)
                 .apply(
                     RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -585,7 +648,7 @@ class ImagePreviewAdapter(
                 })
                 .into(imageAnim)
         } else {
-            Glide.with(activity)
+            Glide.with(imagePreviewActivity)
                 .asGif()
                 .load(imagePath)
                 .apply(
@@ -619,27 +682,17 @@ class ImagePreviewAdapter(
         }
     }
 
-    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-        val originUrl = imageMyList[position].originUrl + "_" + position
-        try {
-            val imageViewDragClose = imageStaticHashMap[originUrl]
-            imageViewDragClose?.resetScaleAndCenter()
-            imageViewDragClose?.destroyDrawingCache()
-            imageViewDragClose?.recycle()
-        } catch (e: Exception) {
-            e.printStackTrace()
+    fun onRelease() {
+        if (::imageStatic.isInitialized) {
+            imageStatic.destroyDrawingCache()
+            imageStatic.recycle()
         }
-        try {
-            val photoView = imageAnimHashMap[originUrl]
-            photoView?.destroyDrawingCache()
-            photoView?.setImageBitmap(null)
-        } catch (e: Exception) {
-            e.printStackTrace()
+        if (::imageAnim.isInitialized) {
+            imageAnim.destroyDrawingCache()
+            imageAnim.setImageBitmap(null)
         }
-        try {
-            clearMemory(activity)
-        } catch (e: Exception) {
-            e.printStackTrace()
+        if (::videoView.isInitialized) {
+            videoView.release()
         }
     }
 }

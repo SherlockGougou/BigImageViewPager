@@ -6,6 +6,7 @@
     <application>
         <activity
             android:name=".view.ImagePreviewActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:theme="@style/Theme.ImagePreview" />
     </application>
 </manifest>

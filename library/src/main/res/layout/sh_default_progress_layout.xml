@@ -15,4 +15,5 @@
         android:layout_centerInParent="true"
         android:text="100%"
         android:textSize="9sp" />
+
 </RelativeLayout>

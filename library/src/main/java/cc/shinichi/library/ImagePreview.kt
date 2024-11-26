@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.text.TextUtils
-import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import cc.shinichi.library.bean.ImageInfo
+import cc.shinichi.library.bean.Type
 import cc.shinichi.library.tool.common.SLog
 import cc.shinichi.library.view.ImagePreviewActivity
 import cc.shinichi.library.view.listener.*
@@ -25,6 +25,7 @@ class ImagePreview {
 
     // 图片数据集合
     private var imageInfoList: MutableList<ImageInfo> = mutableListOf()
+    private var resImageList: MutableList<Int> = mutableListOf()
 
     // 默认显示第几个
     var index = 0
@@ -137,6 +138,8 @@ class ImagePreview {
         private set
     var onPageDragListener: OnPageDragListener? = null
         private set
+    var onVideoLoadListener: OnVideoLoadListener? = null
+        private set
 
     // 自定义百分比布局layout id
     @LayoutRes
@@ -145,8 +148,15 @@ class ImagePreview {
 
     // 防止多次快速点击，记录上次打开的时间戳
     private var lastClickTime: Long = 0
-    fun setContext(context: Context): ImagePreview {
+
+    fun with(context: Context): ImagePreview {
         contextWeakReference = WeakReference(context)
+        return this
+    }
+
+    @Deprecated("请使用with(Context context)代替")
+    fun setContext(context: Context): ImagePreview {
+        with(context)
         return this
     }
 
@@ -154,17 +164,30 @@ class ImagePreview {
         return imageInfoList
     }
 
+    @Deprecated("请使用setMediaInfoList(List<ImageInfo> imageInfoList)代替")
     fun setImageInfoList(imageInfoList: MutableList<ImageInfo>): ImagePreview {
-        this.imageInfoList.clear()
-        this.imageInfoList.addAll(imageInfoList)
+        setMediaInfoList(imageInfoList)
         return this
     }
 
+    /**
+     * 支持图片视频混合
+     */
+    fun setMediaInfoList(mediaList: MutableList<ImageInfo>): ImagePreview {
+        this.imageInfoList.clear()
+        this.imageInfoList.addAll(mediaList)
+        return this
+    }
+
+    /**
+     * 仅支持图片类型
+     */
     fun setImageList(imageList: MutableList<String>): ImagePreview {
         var imageInfo: ImageInfo
         imageInfoList.clear()
         for (i in imageList.indices) {
             imageInfo = ImageInfo()
+            imageInfo.type = Type.IMAGE
             imageInfo.thumbnailUrl = imageList[i]
             imageInfo.originUrl = imageList[i]
             imageInfoList.add(imageInfo)
@@ -175,6 +198,7 @@ class ImagePreview {
     fun setImage(image: String): ImagePreview {
         imageInfoList.clear()
         val imageInfo = ImageInfo()
+        imageInfo.type = Type.IMAGE
         imageInfo.thumbnailUrl = image
         imageInfo.originUrl = image
         imageInfoList.add(imageInfo)
@@ -182,23 +206,14 @@ class ImagePreview {
     }
 
     fun setImageRes(imageResId: Int): ImagePreview {
-        imageInfoList.clear()
-        val imageInfo = ImageInfo()
-        imageInfo.thumbnailUrl = "res://$imageResId"
-        imageInfo.originUrl = "res://$imageResId"
-        imageInfoList.add(imageInfo)
+        resImageList.clear()
+        resImageList.add(imageResId)
         return this
     }
 
     fun setImageResList(imageResIdList: MutableList<Int>): ImagePreview {
-        imageInfoList.clear()
-        var imageInfo: ImageInfo
-        for (i in imageResIdList.indices) {
-            imageInfo = ImageInfo()
-            imageInfo.thumbnailUrl = "res://" + imageResIdList[i].toString()
-            imageInfo.originUrl = "res://" + imageResIdList[i].toString()
-            imageInfoList.add(imageInfo)
-        }
+        resImageList.clear()
+        resImageList.addAll(imageResIdList)
         return this
     }
 
@@ -392,6 +407,11 @@ class ImagePreview {
         return this
     }
 
+    fun setOnVideoLoadListener(onVideoLoadListener: OnVideoLoadListener): ImagePreview {
+        this.onVideoLoadListener = onVideoLoadListener
+        return this
+    }
+
     private fun setOnOriginProgressListener(onOriginProgressListener: OnOriginProgressListener): ImagePreview {
         this.onOriginProgressListener = onOriginProgressListener
         return this
@@ -452,15 +472,14 @@ class ImagePreview {
             SLog.e("ImagePreview", "---忽略多次快速点击---")
             return
         }
-        val context = contextWeakReference.get()
-            ?: throw IllegalArgumentException("You must call 'setContext(Context context)' first!")
-        require(context is Activity) { "context must be a Activity!" }
+        val context = contextWeakReference.get() ?: throw IllegalArgumentException("You must call 'setContext(Context context)' first!")
+        require(context is Activity) { "Context must be a Activity!" }
         if (context.isFinishing || context.isDestroyed) {
             reset()
             return
         }
-        require(imageInfoList.isNotEmpty()) { "Do you forget to call 'setImageInfoList(List<ImageInfo> imageInfoList)' ?" }
-        require(index < imageInfoList.size) { "index out of range!" }
+        require(imageInfoList.isNotEmpty() || resImageList.isNotEmpty()) { "没有数据源!" }
+        require(index < imageInfoList.size || index < resImageList.size) { "index out of bound!" }
         lastClickTime = System.currentTimeMillis()
         ImagePreviewActivity.activityStart(context)
     }

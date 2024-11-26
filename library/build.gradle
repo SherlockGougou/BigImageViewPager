@@ -33,4 +33,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.16.0'
     implementation "com.github.zjupure:webpdecoder:2.3.4.14.2"
+
+    // https://github.com/brianwernick/ExoMedia
+    implementation 'com.devbrackets.android:exomedia:5.1.0'
 }

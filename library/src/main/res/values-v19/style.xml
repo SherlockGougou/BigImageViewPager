@@ -5,7 +5,6 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">false</item>
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowContentTransitions">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="background">@null</item>
         <item name="android:windowBackground">@android:color/transparent</item>

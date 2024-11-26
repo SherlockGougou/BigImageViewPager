@@ -5,16 +5,16 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.animation.LinearInterpolator;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.devbrackets.android.exomedia.ui.widget.VideoView;
 
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.view.nine.ViewHelper;
@@ -27,37 +27,33 @@ import cc.shinichi.library.view.subsampling.SubsamplingScaleImageView;
  * create at 2018/10/19  11:22
  * description:辅助下拉关闭图片
  */
-public class FingerDragHelper extends LinearLayout {
+public class DragCloseView extends RelativeLayout {
 
-    private static final String TAG = FingerDragHelper.class.getSimpleName();
+    private static final String TAG = DragCloseView.class.getSimpleName();
 
     private final static int MAX_EXIT_Y = 500;
     private final static long DURATION = 200;
 
     private SubsamplingScaleImageView imageStatic;
     private PhotoView imageAnime;
+    private VideoView videoView;
 
+    private float mDownX;
     private float mDownY;
     private float mTranslationY;
-    private int mTouchSlop;
 
     private onAlphaChangedListener mOnAlphaChangedListener;
 
-    public FingerDragHelper(Context context) {
+    public DragCloseView(Context context) {
         this(context, null);
     }
 
-    public FingerDragHelper(Context context, @Nullable AttributeSet attrs) {
+    public DragCloseView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public FingerDragHelper(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public DragCloseView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initViews();
-    }
-
-    private void initViews() {
-        mTouchSlop = ViewConfiguration.getTouchSlop();
     }
 
     @Override
@@ -65,6 +61,7 @@ public class FingerDragHelper extends LinearLayout {
         super.onFinishInflate();
         imageStatic = (SubsamplingScaleImageView) getChildAt(0);
         imageAnime = (PhotoView) getChildAt(1);
+        videoView = (VideoView) getChildAt(2);
     }
 
     @Override
@@ -72,6 +69,7 @@ public class FingerDragHelper extends LinearLayout {
         if (ImagePreview.Companion.getInstance().isEnableDragClose()) {
             int action = ev.getActionMasked();
             if (action == MotionEvent.ACTION_DOWN) {
+                mDownX = ev.getRawX();
                 mDownY = ev.getRawY();
             } else if (action == MotionEvent.ACTION_MOVE) {
                 return canInterceptDrag(ev);
@@ -81,18 +79,26 @@ public class FingerDragHelper extends LinearLayout {
     }
 
     private boolean canInterceptDrag(MotionEvent ev) {
-        float diffY = Math.abs(ev.getRawY() - mDownY);
-        if (diffY <= 2 * mTouchSlop) {
+        float diffX = Math.abs(ev.getX() - mDownX);
+        float diffY = Math.abs(ev.getY() - mDownY);
+        if (diffY <= diffX) {
+            // 下拉手势，Y 轴位移小于 X 轴位移，是横向滑动，不拦截
             return false;
         }
-        if (imageAnime != null && imageAnime.getVisibility() == View.VISIBLE) {
-            return imageAnime.getScale() <= (imageAnime.getMinimumScale() + 0.001F) &&
-                    (imageAnime.getMaxTouchCount() == 0 || imageAnime.getMaxTouchCount() == 1);
-        } else if (imageStatic != null && imageStatic.getVisibility() == View.VISIBLE) {
+        getParent().requestDisallowInterceptTouchEvent(true);
+        if (imageStatic != null && imageStatic.getVisibility() == View.VISIBLE) {
+            // 静图
             boolean isAtEdge = ImagePreview.Companion.getInstance().isEnableDragCloseIgnoreScale()
                     ? imageStatic.getScale() <= (imageStatic.getMinScale() + 0.001F) || imageStatic.isAtYEdge()
                     : imageStatic.getScale() <= (imageStatic.getMinScale() + 0.001F) && imageStatic.isAtYEdge();
             return isAtEdge && (imageStatic.getMaxTouchCount() == 0 || imageStatic.getMaxTouchCount() == 1);
+        } else if (imageAnime != null && imageAnime.getVisibility() == View.VISIBLE) {
+            // 动图
+            return imageAnime.getScale() <= (imageAnime.getMinimumScale() + 0.001F) &&
+                    (imageAnime.getMaxTouchCount() == 0 || imageAnime.getMaxTouchCount() == 1);
+        } else if (videoView != null && videoView.getVisibility() == View.VISIBLE) {
+            // 视频
+            return true;
         }
         return false;
     }
@@ -103,11 +109,14 @@ public class FingerDragHelper extends LinearLayout {
         int action = event.getAction() & event.getActionMasked();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+                mDownX = event.getRawX();
                 mDownY = event.getRawY();
             case MotionEvent.ACTION_MOVE:
                 if (ImagePreview.Companion.getInstance().isEnableDragClose()) {
                     if ((imageAnime != null && imageAnime.getVisibility() == View.VISIBLE)
-                            || (imageStatic != null && imageStatic.getVisibility() == View.VISIBLE)) {
+                            || (imageStatic != null && imageStatic.getVisibility() == View.VISIBLE)
+                            || (videoView != null && videoView.getVisibility() == View.VISIBLE)
+                    ) {
                         onOneFingerPanActionMove(event);
                     }
                 }
@@ -121,6 +130,11 @@ public class FingerDragHelper extends LinearLayout {
         return true;
     }
 
+    /**
+     * 处理拖拽事件
+     *
+     * @param event
+     */
     private void onOneFingerPanActionMove(MotionEvent event) {
         float moveY = event.getRawY();
         mTranslationY = moveY - mDownY;
@@ -165,11 +179,7 @@ public class FingerDragHelper extends LinearLayout {
         animatorY.start();
     }
 
-    public void exit(float currentY) {
-        exitDefault(currentY);
-    }
-
-    private void exitDefault(float currentY) {
+    private void exit(float currentY) {
         // 默认的退出动画
         ValueAnimator animatorExit;
         if (currentY > 0) {
@@ -181,7 +191,7 @@ public class FingerDragHelper extends LinearLayout {
             @Override
             public void onAnimationUpdate(@NonNull ValueAnimator animation) {
                 float fraction = (float) animation.getAnimatedValue();
-                ViewHelper.setScrollY(FingerDragHelper.this, -(int) fraction);
+                ViewHelper.setScrollY(DragCloseView.this, -(int) fraction);
             }
         });
         animatorExit.addListener(new Animator.AnimatorListener() {
@@ -221,7 +231,7 @@ public class FingerDragHelper extends LinearLayout {
         }
     }
 
-    public abstract class SimpleAnimatorListener implements Animator.AnimatorListener {
+    public abstract static class SimpleAnimatorListener implements Animator.AnimatorListener {
         @Override
         public void onAnimationStart(@NonNull Animator animation) {
         }

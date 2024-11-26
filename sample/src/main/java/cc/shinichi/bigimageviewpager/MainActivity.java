@@ -3,11 +3,8 @@ package cc.shinichi.bigimageviewpager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.transition.TransitionInflater;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -20,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback;
 import com.luck.picture.lib.basic.PictureSelector;
 import com.luck.picture.lib.config.SelectMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
@@ -32,7 +28,9 @@ import java.util.List;
 import cc.shinichi.bigimageviewpager.glide.GlideEngine;
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.bean.ImageInfo;
+import cc.shinichi.library.bean.Type;
 import cc.shinichi.library.glide.ImageLoader;
+import cc.shinichi.library.tool.common.SLog;
 import cc.shinichi.library.tool.ui.ToastUtil;
 import cc.shinichi.library.view.listener.OnBigImageClickListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
@@ -63,10 +61,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        getWindow().setSharedElementEnterTransition(TransitionInflater.from(this).inflateTransition(R.transition.change_image_transform));
-        getWindow().setSharedElementReturnTransition(TransitionInflater.from(this).inflateTransition(R.transition.change_image_transform));
-
         setContentView(R.layout.activity_main);
 
         initView();
@@ -150,75 +144,82 @@ public class MainActivity extends AppCompatActivity {
         radioGroupStrategy.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.radioThumb:
-                        loadStrategy = ImagePreview.LoadStrategy.AlwaysThumb;
-                        break;
-                    case R.id.radioOrigin:
-                        loadStrategy = ImagePreview.LoadStrategy.AlwaysOrigin;
-                        break;
-                    case R.id.radioDefault:
-                        loadStrategy = ImagePreview.LoadStrategy.Default;
-                        break;
-                    case R.id.radioNetAuto:
-                        loadStrategy = ImagePreview.LoadStrategy.NetworkAuto;
-                        break;
-                    case R.id.radioAuto:
-                        loadStrategy = ImagePreview.LoadStrategy.Auto;
-                        break;
-                    default:
-                        loadStrategy = ImagePreview.LoadStrategy.Auto;
-                        break;
+                if (checkedId == R.id.radioThumb) {
+                    loadStrategy = ImagePreview.LoadStrategy.AlwaysThumb;
+                } else if (checkedId == R.id.radioOrigin) {
+                    loadStrategy = ImagePreview.LoadStrategy.AlwaysOrigin;
+                } else if (checkedId == R.id.radioDefault) {
+                    loadStrategy = ImagePreview.LoadStrategy.Default;
+                } else if (checkedId == R.id.radioNetAuto) {
+                    loadStrategy = ImagePreview.LoadStrategy.NetworkAuto;
+                } else if (checkedId == R.id.radioAuto) {
+                    loadStrategy = ImagePreview.LoadStrategy.Auto;
+                } else {
+                    loadStrategy = ImagePreview.LoadStrategy.Auto;
                 }
             }
         });
     }
 
     private void initData() {
-        final List<ImageInfo> imageInfoList = new ArrayList<>();
+        final List<ImageInfo> mediaList = new ArrayList<>();
         ImageInfo i;
 
         // 普通图片1：
         i = new ImageInfo();
         i.setThumbnailUrl("http://img3.16fan.com/static/live/origin/202104/20/9a7d0915c91b.jpg-600");
         i.setOriginUrl("http://img3.16fan.com/static/live/origin/202104/20/9a7d0915c91b.jpg");
-        imageInfoList.add(i);
+        mediaList.add(i);
 
         // 普通图片2：
         i = new ImageInfo();
         i.setThumbnailUrl("http://img3.16fan.com/static/live/origin/202104/20/96247e9c3757.jpg-600");
         i.setOriginUrl("http://img3.16fan.com/static/live/origin/202104/20/96247e9c3757.jpg");
-        imageInfoList.add(i);
+        mediaList.add(i);
+
+        // 视频
+        i = new ImageInfo();
+        i.setType(Type.VIDEO);
+        i.setThumbnailUrl("https://static.smartisanos.cn/common/video/production/delta/smartisan-os-8-0.mp4");
+        i.setOriginUrl("https://static.smartisanos.cn/common/video/production/delta/smartisan-os-8-0.mp4");
+        mediaList.add(i);
+
+        // 视频
+        i = new ImageInfo();
+        i.setType(Type.VIDEO);
+        i.setThumbnailUrl("https://static.smartisanos.cn/common/video/t1-ui.mp4");
+        i.setOriginUrl("https://static.smartisanos.cn/common/video/t1-ui.mp4");
+        mediaList.add(i);
 
         // 大尺寸图片：
         i = new ImageInfo();
         i.setThumbnailUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/A3ZD8.md.jpg");
         i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/A3ZD8.jpg");
-        imageInfoList.add(i);
-
-        // 长截图1：
-        i = new ImageInfo();
-        i.setThumbnailUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/llong1thubm.jpg");
-        i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/llong1.jpg");
-        imageInfoList.add(i);
-
-        // 全景图片1：
-        i = new ImageInfo();
-        i.setThumbnailUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/heng1thumb.jpg");
-        i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/heng1.jpg");
-        imageInfoList.add(i);
-
-        // 全景图片2：
-        i = new ImageInfo();
-        i.setThumbnailUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/heng2thumb.jpg");
-        i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/heng2.jpg");
-        imageInfoList.add(i);
+        mediaList.add(i);
 
         // 动图：
         i = new ImageInfo();
         i.setThumbnailUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/gif1thumb.png");
         i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/gif1.gif");
-        imageInfoList.add(i);
+        mediaList.add(i);
+
+        // 全景图片1：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/heng1thumb.jpg");
+        i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/heng1.jpg");
+        mediaList.add(i);
+
+        // 全景图片2：(清明上河图-横向)
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://cdn.jeff1992.com/av/ai/image/2024/upload/am_c4d05c716a1df7eefba1760909111912.jpg");
+        i.setOriginUrl("https://cdn.jeff1992.com/av/ai/image/2024/upload/am_f8c3fc818e61d5b878537cf8b2e2a3c4.jpg");
+        mediaList.add(i);
+
+        // 全景图片3：(清明上河图-竖向)
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://cdn.jeff1992.com/av/app/image/2024/upload/am_b4b46dab0e4599fa793ab79cf061e061.jpg");
+        i.setOriginUrl("https://cdn.jeff1992.com/av/app/image/2024/upload/am_af2caea4ce80cb515e9279e6d58ef78a.jpg");
+        mediaList.add(i);
 
         // ==============================================================================================================
         // 一、最简单的调用：
@@ -226,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // 一行代码即可实现大部分需求。如需定制，可参考下面【三、完全自定义调用】自定义的代码：
-                ImagePreview.getInstance().setContext(MainActivity.this).setImageInfoList(imageInfoList).start();
+                ImagePreview.getInstance().with(MainActivity.this).setMediaInfoList(mediaList).start();
             }
         });
         // ==============================================================================================================
@@ -256,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ImagePreview.getInstance()
-                        .setContext(MainActivity.this)
+                        .with(MainActivity.this)
                         .setImageList(list3)
                         .setIndex(0)
                         .setEnableDragClose(true)
@@ -268,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ImagePreview.getInstance()
-                        .setContext(MainActivity.this)
+                        .with(MainActivity.this)
                         .setImageList(list3)
                         .setIndex(1)
                         .setEnableDragClose(true)
@@ -280,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ImagePreview.getInstance()
-                        .setContext(MainActivity.this)
+                        .with(MainActivity.this)
                         .setImageList(list3)
                         .setIndex(2)
                         .setEnableDragClose(true)
@@ -299,14 +300,14 @@ public class MainActivity extends AppCompatActivity {
                 // 完全自定义配置
                 ImagePreview.getInstance()
                         // 上下文，必须是activity，不需要担心内存泄漏，本框架已经处理好
-                        .setContext(MainActivity.this)
+                        .with(MainActivity.this)
                         // 从第几张图片开始，索引从0开始哦~
                         .setIndex(0)
 
                         //=================================================================================================
                         // 有三种设置数据集合的方式，根据自己的需求进行三选一：
                         // 1：第一步生成的imageInfo List
-                        .setImageInfoList(imageInfoList)
+                        .setMediaInfoList(mediaList)
 
                         // 2：直接传url List
                         //.setImageList(List<String> imageList)
@@ -319,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
                         .setLoadStrategy(loadStrategy)
 
                         // 长图的展示模式，默认是SCALE_TYPE_CENTER_INSIDE，缩小到内部居中：
-                        .setLongPicDisplayMode(ImagePreview.LongPicDisplayMode.FillWidth)
+                        .setLongPicDisplayMode(ImagePreview.LongPicDisplayMode.Default)
 
                         // 保存的文件夹名称，会在Picture目录进行文件夹的新建。比如："BigImageView"，会在Picture目录新建BigImageView文件夹)
                         .setFolderName("BigImageView")
@@ -362,7 +363,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(Activity activity, View view, int position) {
                                 // ...
-                                Log.d(TAG, "onClick: ");
+                                SLog.INSTANCE.d(TAG, "onClick: ");
                             }
                         })
                         // 长按图片回调
@@ -370,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public boolean onLongClick(Activity activity, View view, int position) {
                                 // ...请使用该方法提供的activity，否则弹窗会被覆盖
-                                Log.d(TAG, "onLongClick: ");
+                                SLog.INSTANCE.d(TAG, "onLongClick: ");
                                 AlertDialog dialog = new AlertDialog.Builder(activity)
                                         .setTitle("提示")
                                         .setMessage("这里是提示")
@@ -385,17 +386,17 @@ public class MainActivity extends AppCompatActivity {
                         .setBigImagePageChangeListener(new OnBigImagePageChangeListener() {
                             @Override
                             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                                Log.d(TAG, "onPageScrolled: ");
+                                // SLog.INSTANCE.d(TAG, "onPageScrolled: ");
                             }
 
                             @Override
                             public void onPageSelected(int position) {
-                                Log.d(TAG, "onPageSelected: ");
+                                SLog.INSTANCE.d(TAG, "onPageSelected: ");
                             }
 
                             @Override
                             public void onPageScrollStateChanged(int state) {
-                                Log.d(TAG, "onPageScrollStateChanged: ");
+                                SLog.INSTANCE.d(TAG, "onPageScrollStateChanged: ");
                             }
                         })
                         // 下载按钮点击回调，可以拦截下载逻辑，从而实现自己下载或埋点统计
@@ -403,7 +404,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(Activity activity, View view, int position) {
                                 // 可以在此处执行您自己的下载逻辑、埋点统计等信息
-                                Log.d(TAG, "onDownloadClick: position = " + position);
+                                SLog.INSTANCE.d(TAG, "onDownloadClick: position = " + position);
                             }
 
                             @Override
@@ -438,7 +439,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onFinish(@NonNull Activity activity) {
                                 // ...
-                                Log.d(TAG, "onFinish: ");
+                                SLog.INSTANCE.d(TAG, "onFinish: ");
                             }
                         })
 
@@ -447,8 +448,7 @@ public class MainActivity extends AppCompatActivity {
                         .setProgressLayoutId(ImagePreview.PROGRESS_THEME_CIRCLE_TEXT, new OnOriginProgressListener() {
                             @Override
                             public void progress(View parentView, int progress) {
-                                Log.d(TAG, "progress: " + progress);
-
+                                SLog.INSTANCE.d(TAG, "progress: " + progress);
                                 // 需要找到进度控件并设置百分比，回调中的parentView即传入的布局的根View，可通过parentView找到控件：
                                 ProgressBar progressBar = parentView.findViewById(R.id.sh_progress_view);
                                 TextView textView = parentView.findViewById(R.id.sh_progress_text);
@@ -459,21 +459,21 @@ public class MainActivity extends AppCompatActivity {
 
                             @Override
                             public void finish(View parentView) {
-                                Log.d(TAG, "finish: ");
+                                SLog.INSTANCE.d(TAG, "finish: ");
                             }
                         })
                         // 完全自定义预览界面，请参考这个布局（R.layout.sh_layout_preview），需要保持控件类型、id和其中的一致，否则会找不到控件而报错
-                        .setPreviewLayoutResId(R.layout.custom_layout_preview, new OnCustomLayoutCallback() {
-                            @Override
-                            public void onLayout(@NonNull View parentView) {
-                                // 自定义控件事件处理
-                            }
-                        })
+//                        .setPreviewLayoutResId(R.layout.custom_layout_preview, new OnCustomLayoutCallback() {
+//                            @Override
+//                            public void onLayout(@NonNull View parentView) {
+//                                // 自定义控件事件处理
+//                            }
+//                        })
                         // 监听页面拖动(自定义布局可以根据是否拖动进行隐藏或者展示)
                         .setOnPageDragListener(new OnPageDragListener() {
                             @Override
                             public void onDrag(MotionEvent event, float translationY) {
-                                Log.d(TAG, "onDrag: translationY = " + translationY);
+                                SLog.INSTANCE.d(TAG, "onDrag: translationY = " + translationY);
                             }
                         })
                         // 开启预览
@@ -520,7 +520,7 @@ public class MainActivity extends AppCompatActivity {
                             urlList.add(localMedia.getPath());
                         }
                         ImagePreview.getInstance()
-                                .setContext(MainActivity.this)
+                                .with(MainActivity.this)
                                 .setImageList(urlList)
                                 .setShowDownButton(false)
                                 .setShowCloseButton(false)

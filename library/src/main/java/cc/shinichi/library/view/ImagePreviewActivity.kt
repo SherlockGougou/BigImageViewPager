@@ -1,9 +1,7 @@
 package cc.shinichi.library.view
 
 import android.Manifest
-import android.R.attr.visible
 import android.app.Activity
-import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,8 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.text.TextUtils
-import android.transition.TransitionInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -22,12 +18,10 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.get
-import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener
+import androidx.viewpager2.widget.ViewPager2
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.R
 import cc.shinichi.library.bean.ImageInfo
@@ -41,13 +35,10 @@ import cc.shinichi.library.tool.common.HttpUtil
 import cc.shinichi.library.tool.common.NetworkUtil
 import cc.shinichi.library.tool.common.SLog
 import cc.shinichi.library.tool.image.DownloadPictureUtil.downloadPicture
+import cc.shinichi.library.tool.ui.PhoneUtil
 import cc.shinichi.library.tool.ui.ToastUtil
-import cc.shinichi.library.view.photoview.PhotoView
-import cc.shinichi.library.view.subsampling.SubsamplingScaleImageView
+import cc.shinichi.library.tool.ui.UIUtil
 import com.bumptech.glide.Glide
-import com.google.android.material.transition.platform.MaterialContainerTransform
-import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
-import java.util.*
 
 /**
  * @author 工藤
@@ -57,9 +48,12 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
 
     private lateinit var context: Activity
     private lateinit var handlerHolder: HandlerHolder
-    private lateinit var imageInfoList: MutableList<ImageInfo>
-    private lateinit var viewPager: HackyViewPager
+    private val imageInfoList: MutableList<ImageInfo> = mutableListOf()
+    private val fragmentList: MutableList<ImagePreviewFragment> = mutableListOf()
+
+    lateinit var viewPager2: ViewPager2
     private lateinit var tvIndicator: TextView
+
     private lateinit var fmImageShowOriginContainer: FrameLayout
     private lateinit var fmCenterProgressContainer: FrameLayout
     private lateinit var btnShowOrigin: Button
@@ -68,7 +62,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     private lateinit var rootView: View
     private lateinit var progressParentLayout: View
 
-    private var imagePreviewAdapter: ImagePreviewAdapter? = null
+    private lateinit var imagePreviewAdapter: ImagePreviewAdapter2
 
     private var isShowDownButton = false
     private var isShowCloseButton = false
@@ -86,12 +80,6 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        window.sharedElementEnterTransition = TransitionInflater.from(this)
-            .inflateTransition(R.transition.change_image_transform)
-        window.sharedElementReturnTransition = TransitionInflater.from(this)
-            .inflateTransition(R.transition.change_image_transform)
-
         val parentView = View.inflate(this, ImagePreview.instance.previewLayoutResId, null)
         setContentView(parentView)
         ImagePreview.instance.onCustomLayoutCallback?.onLayout(parentView)
@@ -101,7 +89,8 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
 
         context = this
         handlerHolder = HandlerHolder(this)
-        imageInfoList = ImagePreview.instance.getImageInfoList()
+        imageInfoList.clear()
+        imageInfoList.addAll(ImagePreview.instance.getImageInfoList())
         if (imageInfoList.isEmpty()) {
             onBackPressed()
             return
@@ -117,17 +106,32 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             checkCache(currentItemOriginPathUrl)
         }
         rootView = findViewById(R.id.rootView)
-        viewPager = findViewById(R.id.viewPager)
+        viewPager2 = findViewById(R.id.viewPager)
         tvIndicator = findViewById(R.id.tv_indicator)
+        val consBottomController = findViewById<ConstraintLayout>(R.id.consBottomController)
         fmImageShowOriginContainer = findViewById(R.id.fm_image_show_origin_container)
         fmCenterProgressContainer = findViewById(R.id.fm_center_progress_container)
+
+        // tvIndicator top margin
+        val topMargin = PhoneUtil.getStatusBarHeight(context) + UIUtil.dp2px(context, 20f)
+        val layoutParamsIndicator = tvIndicator.layoutParams as ConstraintLayout.LayoutParams
+        layoutParamsIndicator.setMargins(0, topMargin, 0, 0)
+        tvIndicator.layoutParams = layoutParamsIndicator
+
+        // consBottomController bottom margin
+        val bottomMargin = PhoneUtil.getNavBarHeight(context) + UIUtil.dp2px(context, 20f)
+        val layoutParams = consBottomController.layoutParams as ConstraintLayout.LayoutParams
+        layoutParams.setMargins(0, 0, 0, bottomMargin)
+        consBottomController.layoutParams = layoutParams
+
         fmImageShowOriginContainer.visibility = View.GONE
         fmCenterProgressContainer.visibility = View.GONE
         val progressLayoutId = ImagePreview.instance.progressLayoutId
         // != -1 即用户自定义了view
         if (progressLayoutId != -1) {
             // add用户自定义的view到frameLayout中，回调进度和view
-            progressParentLayout = View.inflate(context, ImagePreview.instance.progressLayoutId, null)
+            progressParentLayout =
+                View.inflate(context, ImagePreview.instance.progressLayoutId, null)
             fmCenterProgressContainer.removeAllViews()
             fmCenterProgressContainer.addView(progressParentLayout)
             isUserCustomProgressView = true
@@ -184,15 +188,30 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             (currentItem + 1).toString(),
             (imageInfoList.size).toString()
         )
-        imagePreviewAdapter = ImagePreviewAdapter(this, imageInfoList)
-        viewPager.adapter = imagePreviewAdapter
-        viewPager.currentItem = currentItem
 
-        viewPager.addOnPageChangeListener(object : SimpleOnPageChangeListener() {
+        // 适配器
+        fragmentList.clear()
+        for ((index, info) in imageInfoList.withIndex()) {
+            fragmentList.add(
+                ImagePreviewFragment.newInstance(
+                    this@ImagePreviewActivity,
+                    index,
+                    info
+                )
+            )
+        }
+        imagePreviewAdapter = ImagePreviewAdapter2(this, fragmentList)
+        viewPager2.adapter = imagePreviewAdapter
+        viewPager2.setCurrentItem(currentItem, false)
+
+        viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 currentItem = position
+                // select回调
                 ImagePreview.instance.bigImagePageChangeListener?.onPageSelected(currentItem)
+
+                // 判断是否展示查看原图按钮
                 currentItemOriginPathUrl = imageInfoList[currentItem].originUrl
                 isShowOriginButton = ImagePreview.instance.isShowOriginButton(currentItem)
                 if (isShowOriginButton) {
@@ -211,6 +230,13 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 if (isUserCustomProgressView) {
                     fmCenterProgressContainer.visibility = View.GONE
                     lastProgress = 0
+                }
+                for ((index, fragment) in fragmentList.withIndex()) {
+                    if (index == currentItem) {
+                        fragment.onSelected()
+                    } else {
+                        fragment.onUnSelected()
+                    }
                 }
             }
 
@@ -232,13 +258,6 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 ImagePreview.instance.bigImagePageChangeListener?.onPageScrollStateChanged(state)
             }
         })
-
-        // 推迟过渡动画，等待视图加载完成
-        postponeEnterTransition()
-        // 设置共享元素标记
-        viewPager.post {
-            supportStartPostponedEnterTransition()
-        }
     }
 
     /**
@@ -248,15 +267,17 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         downloadPicture(context, currentItem, currentItemOriginPathUrl)
     }
 
-//    override fun onBackPressed() {
-//        supportFinishAfterTransition()
-//    }
-
     override fun finish() {
         super.finish()
+        for (fragment in fragmentList) {
+            fragment.onRelease()
+        }
         ImagePreview.instance.onPageFinishListener?.onFinish(this)
         ImagePreview.instance.reset()
-        imagePreviewAdapter?.closePage()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
     private fun convertPercentToBlackAlphaColor(percent: Float): Int {
@@ -322,7 +343,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                     progressParentLayout.visibility = View.GONE
                     ImagePreview.instance.onOriginProgressListener?.finish(progressParentLayout)
                 }
-                imagePreviewAdapter?.loadOrigin(imageInfoList[currentItem])
+                fragmentList[currentItem].onOriginal()
             }
         } else if (msg.what == 2) {
             // 加载中
@@ -543,7 +564,8 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         window.navigationBarColor = Color.TRANSPARENT
         val decorView = window.decorView
         val vis = decorView.systemUiVisibility
-        val option = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        val option =
+            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         decorView.systemUiVisibility = vis or option
     }
 

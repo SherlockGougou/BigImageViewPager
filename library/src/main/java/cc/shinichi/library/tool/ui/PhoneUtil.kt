@@ -57,4 +57,11 @@ object PhoneUtil {
         val resourceId: Int = resources.getIdentifier("navigation_bar_height", "dimen", "android")
         return resources.getDimensionPixelSize(resourceId)
     }
+
+    @SuppressLint("InternalInsetResource")
+    fun getStatusBarHeight(context: Context): Int {
+        val resources: Resources = context.resources
+        val resourceId: Int = resources.getIdentifier("status_bar_height", "dimen", "android")
+        return resources.getDimensionPixelSize(resourceId)
+    }
 }

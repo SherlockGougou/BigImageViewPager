@@ -9,12 +9,19 @@ import java.io.Serializable
  */
 class ImageInfo : Serializable {
     /**
+     * 类型
+     */
+    var type: Type = Type.IMAGE // image / video
+    /**
      * 缩略图
      */
     var thumbnailUrl: String = ""
-
     /**
      * 原图
      */
     var originUrl: String = ""
+}
+
+enum class Type {
+    IMAGE, VIDEO
 }
