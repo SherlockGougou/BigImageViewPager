@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <androidx.viewpager2.widget.ViewPager2
+    <cc.shinichi.library.view.HackyViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -31,12 +31,28 @@
         android:background="@drawable/shape_indicator_bg"
         android:gravity="center"
         android:includeFontPadding="false"
-        android:text="1/9"
+        android:text="1 / 9"
         android:textColor="#ffffff"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_custom"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/shape_indicator_bg"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="Tips: 支持完全自定义展示UI"
+        android:textColor="#ffffff"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_indicator" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/consBottomController"
@@ -50,8 +66,8 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgCloseButton"
             android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:padding="3dp"
+            android:layout_height="60dp"
+            android:padding="15dp"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -85,8 +101,8 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_download"
             android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:padding="3dp"
+            android:layout_height="60dp"
+            android:padding="15dp"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

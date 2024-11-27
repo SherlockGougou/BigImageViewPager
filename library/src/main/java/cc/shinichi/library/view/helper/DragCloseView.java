@@ -14,8 +14,6 @@ import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.devbrackets.android.exomedia.ui.widget.VideoView;
-
 import cc.shinichi.library.ImagePreview;
 import cc.shinichi.library.view.nine.ViewHelper;
 import cc.shinichi.library.view.photoview.PhotoView;
@@ -36,7 +34,7 @@ public class DragCloseView extends RelativeLayout {
 
     private SubsamplingScaleImageView imageStatic;
     private PhotoView imageAnime;
-    private VideoView videoView;
+    private View videoView;
 
     private float mDownX;
     private float mDownY;
@@ -61,7 +59,7 @@ public class DragCloseView extends RelativeLayout {
         super.onFinishInflate();
         imageStatic = (SubsamplingScaleImageView) getChildAt(0);
         imageAnime = (PhotoView) getChildAt(1);
-        videoView = (VideoView) getChildAt(2);
+        videoView = getChildAt(2);
     }
 
     @Override

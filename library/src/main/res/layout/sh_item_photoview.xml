@@ -25,13 +25,11 @@
             android:visibility="gone" />
 
         <!--视频-->
-        <com.devbrackets.android.exomedia.ui.widget.VideoView
+        <androidx.media3.ui.PlayerView
             android:id="@+id/video_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="gone"
-            app:videoControlsProvider="cc.shinichi.library.tool.ui.CustomVideoControlsProvider" />
+            android:layout_height="match_parent"
+            app:controller_layout_id="@layout/sh_media_controller" />
 
     </cc.shinichi.library.view.helper.DragCloseView>
 

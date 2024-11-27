@@ -46,14 +46,14 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    boolean enableClickClose = false;
+    boolean enableClickClose = true;
     boolean enableDragClose = true;
-    boolean enableUpDragClose = false;
+    boolean enableUpDragClose = true;
     boolean enableDragIgnoreScale = true;
 
-    boolean showIndicator = false;
+    boolean showIndicator = true;
     boolean showCloseButton = false;
-    boolean showDownButton = false;
+    boolean showDownButton = true;
     boolean showErrorToast = false;
 
     private ImagePreview.LoadStrategy loadStrategy = ImagePreview.LoadStrategy.Default;
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                 enableClickClose = isChecked;
             }
         });
-        switchClickClose.setChecked(true);
+        switchClickClose.setChecked(showCloseButton);
 
         switchDragClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 enableDragClose = isChecked;
             }
         });
-        switchDragClose.setChecked(true);
+        switchDragClose.setChecked(enableDragClose);
 
         switchUpDragClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 enableUpDragClose = isChecked;
             }
         });
-        switchUpDragClose.setChecked(false);
+        switchUpDragClose.setChecked(enableUpDragClose);
 
         switchDragCloseIgnore.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                 enableDragIgnoreScale = isChecked;
             }
         });
-        switchDragCloseIgnore.setChecked(true);
+        switchDragCloseIgnore.setChecked(enableDragIgnoreScale);
 
         switchShowIndicator.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                 showIndicator = isChecked;
             }
         });
-        switchShowIndicator.setChecked(true);
+        switchShowIndicator.setChecked(showIndicator);
 
         switchShowCloseButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 showCloseButton = isChecked;
             }
         });
-        switchShowCloseButton.setChecked(true);
+        switchShowCloseButton.setChecked(showCloseButton);
 
         switchShowDownButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -132,14 +132,15 @@ public class MainActivity extends AppCompatActivity {
                 showDownButton = isChecked;
             }
         });
-        switchShowDownButton.setChecked(true);
+        switchShowDownButton.setChecked(showDownButton);
+
         switchShowErrorToast.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 showErrorToast = isChecked;
             }
         });
-        switchShowErrorToast.setChecked(false);
+        switchShowErrorToast.setChecked(showErrorToast);
 
         radioGroupStrategy.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -226,7 +227,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.buttonEasyUse).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 一行代码即可实现大部分需求。如需定制，可参考下面【三、完全自定义调用】自定义的代码：
+                // 一行代码即可实现大部分需求。
+                // 如需定制，可参考下面【三、完全自定义调用】自定义的代码：
                 ImagePreview.getInstance().with(MainActivity.this).setMediaInfoList(mediaList).start();
             }
         });
@@ -234,59 +236,31 @@ public class MainActivity extends AppCompatActivity {
 
 
         // ==============================================================================================================
-        // 二、共享元素动画
+        // 二、图片展示调用
         ImageView image1 = findViewById(R.id.image1);
         ImageView image2 = findViewById(R.id.image2);
         ImageView image3 = findViewById(R.id.image3);
 
-        List<Integer> list2 = new ArrayList<>();
-        list2.add(R.mipmap.ic_launcher);
-        list2.add(R.mipmap.ic_launcher_foreground);
-        list2.add(R.mipmap.ic_launcher_round);
-
-        List<String> list3 = new ArrayList<>();
-        list3.add("http://img3.16fan.com/static/live/origin/202104/20/b915013fa0b8.jpg");
-        list3.add("http://img3.16fan.com/static/live/origin/202104/20/81c3475f8a1c.jpg");
-        list3.add("http://img3.16fan.com/static/live/origin/202104/20/fd0525cefbc0.jpg");
-
-        Glide.with(this).load("http://img3.16fan.com/static/live/origin/202104/20/b915013fa0b8.jpg-600").into(image1);
-        Glide.with(this).load("http://img3.16fan.com/static/live/origin/202104/20/81c3475f8a1c.jpg-600").into(image2);
-        Glide.with(this).load("http://img3.16fan.com/static/live/origin/202104/20/fd0525cefbc0.jpg-600").into(image3);
+        Glide.with(this).load(mediaList.get(0).getThumbnailUrl()).into(image1);
+        Glide.with(this).load(mediaList.get(1).getThumbnailUrl()).into(image2);
+        Glide.with(this).load(mediaList.get(2).getThumbnailUrl()).into(image3);
 
         image1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ImagePreview.getInstance()
-                        .with(MainActivity.this)
-                        .setImageList(list3)
-                        .setIndex(0)
-                        .setEnableDragClose(true)
-                        .setEnableDragCloseIgnoreScale(true)
-                        .start();
+                ImagePreview.getInstance().with(MainActivity.this).setIndex(0).setMediaInfoList(mediaList).start();
             }
         });
         image2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ImagePreview.getInstance()
-                        .with(MainActivity.this)
-                        .setImageList(list3)
-                        .setIndex(1)
-                        .setEnableDragClose(true)
-                        .setEnableDragCloseIgnoreScale(true)
-                        .start();
+                ImagePreview.getInstance().with(MainActivity.this).setIndex(1).setMediaInfoList(mediaList).start();
             }
         });
         image3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ImagePreview.getInstance()
-                        .with(MainActivity.this)
-                        .setImageList(list3)
-                        .setIndex(2)
-                        .setEnableDragClose(true)
-                        .setEnableDragCloseIgnoreScale(true)
-                        .start();
+                ImagePreview.getInstance().with(MainActivity.this).setIndex(2).setMediaInfoList(mediaList).start();
             }
         });
         // ==============================================================================================================
@@ -301,7 +275,8 @@ public class MainActivity extends AppCompatActivity {
                 ImagePreview.getInstance()
                         // 上下文，必须是activity，不需要担心内存泄漏，本框架已经处理好
                         .with(MainActivity.this)
-                        // 从第几张图片开始，索引从0开始哦~
+
+                        // 从第几张图片开始，索引从0开始
                         .setIndex(0)
 
                         //=================================================================================================
@@ -316,13 +291,13 @@ public class MainActivity extends AppCompatActivity {
                         //.setImage(String image)
                         //=================================================================================================
 
-                        // 加载策略，默认为手动模式
+                        // 加载策略，默认为手动模式：默认普清，点击按钮再加载原图；会根据原图、缩略图url是否一样来判断是否显示查看原图按钮
                         .setLoadStrategy(loadStrategy)
 
-                        // 长图的展示模式，默认是SCALE_TYPE_CENTER_INSIDE，缩小到内部居中：
+                        // 长图的展示模式，默认是缩小到内部居中，可选撑满屏幕：
                         .setLongPicDisplayMode(ImagePreview.LongPicDisplayMode.Default)
 
-                        // 保存的文件夹名称，会在Picture目录进行文件夹的新建。比如："BigImageView"，会在Picture目录新建BigImageView文件夹)
+                        // 保存的文件夹名称，会在(Pictures/Movies)目录进行文件夹的新建。
                         .setFolderName("BigImageView")
 
                         // 缩放动画时长，单位ms
@@ -333,11 +308,11 @@ public class MainActivity extends AppCompatActivity {
 
                         // 是否启用点击图片关闭。默认启用
                         .setEnableClickClose(enableClickClose)
-                        // 是否启用下拉关闭。默认不启用
+                        // 是否启用下拉关闭。默认启用
                         .setEnableDragClose(enableDragClose)
-                        // 是否启用上拉关闭。默认不启用
+                        // 是否启用上拉关闭。默认启用
                         .setEnableUpDragClose(enableUpDragClose)
-                        // 是否忽略缩放启用拉动关闭。默认不忽略
+                        // 是否忽略缩放启用拉动关闭。默认忽略
                         .setEnableDragCloseIgnoreScale(enableDragIgnoreScale)
 
                         // 是否显示关闭页面按钮，在页面左下角。默认不显示
@@ -349,57 +324,7 @@ public class MainActivity extends AppCompatActivity {
                         .setShowDownButton(showDownButton)
                         // 设置下载按钮图片资源，可不填，默认为库中自带：R.drawable.icon_download_new
                         .setDownIconResId(R.drawable.icon_download_new)
-
-                        // 设置是否显示顶部的指示器（1/9）默认显示
-                        .setShowIndicator(showIndicator)
-                        // 设置顶部指示器背景shape，默认自带灰色圆角shape
-                        .setIndicatorShapeResId(R.drawable.shape_indicator_bg)
-
-                        // 设置失败时的占位图，默认为库中自带R.drawable.load_failed，设置为 0 时不显示
-                        .setErrorPlaceHolder(R.drawable.load_failed)
-
-                        // 点击图片回调
-                        .setBigImageClickListener(new OnBigImageClickListener() {
-                            @Override
-                            public void onClick(Activity activity, View view, int position) {
-                                // ...
-                                SLog.INSTANCE.d(TAG, "onClick: ");
-                            }
-                        })
-                        // 长按图片回调
-                        .setBigImageLongClickListener(new OnBigImageLongClickListener() {
-                            @Override
-                            public boolean onLongClick(Activity activity, View view, int position) {
-                                // ...请使用该方法提供的activity，否则弹窗会被覆盖
-                                SLog.INSTANCE.d(TAG, "onLongClick: ");
-                                AlertDialog dialog = new AlertDialog.Builder(activity)
-                                        .setTitle("提示")
-                                        .setMessage("这里是提示")
-                                        .setPositiveButton("确定", null)
-                                        .setNegativeButton("取消", null)
-                                        .create();
-                                dialog.show();
-                                return true;
-                            }
-                        })
-                        // 页面切换回调
-                        .setBigImagePageChangeListener(new OnBigImagePageChangeListener() {
-                            @Override
-                            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                                // SLog.INSTANCE.d(TAG, "onPageScrolled: ");
-                            }
-
-                            @Override
-                            public void onPageSelected(int position) {
-                                SLog.INSTANCE.d(TAG, "onPageSelected: ");
-                            }
-
-                            @Override
-                            public void onPageScrollStateChanged(int state) {
-                                SLog.INSTANCE.d(TAG, "onPageScrollStateChanged: ");
-                            }
-                        })
-                        // 下载按钮点击回调，可以拦截下载逻辑，从而实现自己下载或埋点统计
+                        // 下载按钮点击回调：重写此方法，isInterceptDownload返回true时，即代表您需要自己实现下载逻辑
                         .setDownloadClickListener(new OnDownloadClickListener() {
                             @Override
                             public void onClick(Activity activity, View view, int position) {
@@ -414,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
                                 return false;
                             }
                         })
-                        // 下载过程回调，可自定义toast，如果不设置此回调会使用默认的toast内容
+                        // 内置下载过程回调，可自定义toast。如果不设置此回调会使用默认的toast内容，反之，设置了此回调时不会展示默认toast
                         .setDownloadListener(new OnDownloadListener() {
                             @Override
                             public void onDownloadStart(Activity activity, int position) {
@@ -434,6 +359,58 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(activity, "下载失败", Toast.LENGTH_SHORT).show();
                             }
                         })
+
+                        // 设置是否显示顶部的指示器（1/9）默认显示
+                        .setShowIndicator(showIndicator)
+                        // 设置顶部指示器背景shape，默认自带灰色圆角shape
+                        .setIndicatorShapeResId(R.drawable.shape_indicator_bg)
+
+                        // 设置失败时的占位图，默认为库中自带R.drawable.load_failed，设置为 0 时不显示
+                        .setErrorPlaceHolder(R.drawable.load_failed)
+
+                        // 点击图片回调：不受点击关闭开关的影响，都会回调此方法
+                        .setBigImageClickListener(new OnBigImageClickListener() {
+                            @Override
+                            public void onClick(Activity activity, View view, int position) {
+                                // ...
+                                SLog.INSTANCE.d(TAG, "点击了: position = " + position);
+                            }
+                        })
+                        // 长按图片回调
+                        .setBigImageLongClickListener(new OnBigImageLongClickListener() {
+                            @Override
+                            public boolean onLongClick(Activity activity, View view, int position) {
+                                // ...请使用该方法提供的activity，否则弹窗会被覆盖
+                                SLog.INSTANCE.d(TAG, "onLongClick: ");
+                                AlertDialog dialog = new AlertDialog.Builder(activity)
+                                        .setTitle("提示")
+                                        .setMessage("这里是模拟长按的弹窗")
+                                        .setPositiveButton("确定", null)
+                                        .setNegativeButton("取消", null)
+                                        .create();
+                                dialog.show();
+                                // 返回true
+                                return true;
+                            }
+                        })
+
+                        // 页面左右切换的回调
+                        .setBigImagePageChangeListener(new OnBigImagePageChangeListener() {
+                            @Override
+                            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                            }
+
+                            @Override
+                            public void onPageSelected(int position) {
+                                SLog.INSTANCE.d(TAG, "onPageSelected: position = " + position);
+                            }
+
+                            @Override
+                            public void onPageScrollStateChanged(int state) {
+                                SLog.INSTANCE.d(TAG, "onPageScrollStateChanged: state = " + state);
+                            }
+                        })
+
                         // 页面关闭回调
                         .setOnPageFinishListener(new OnPageFinishListener() {
                             @Override
@@ -443,12 +420,25 @@ public class MainActivity extends AppCompatActivity {
                             }
                         })
 
-                        //=================================================================================================
-                        // 设置查看原图时的百分比样式：库中带有一个样式：ImagePreview.PROGRESS_THEME_CIRCLE_TEXT，使用如下：
+                        // 页面手势上下拖动的回调：自定义布局可以根据是否拖动进行隐藏或者展示
+                        .setOnPageDragListener(new OnPageDragListener() {
+                            @Override
+                            public void onDrag(MotionEvent event, float translationY) {
+                                SLog.INSTANCE.d(TAG, "onDrag: translationY = " + translationY);
+                            }
+
+                            @Override
+                            public void onDragEnd() {
+                                SLog.INSTANCE.d(TAG, "onDragEnd: ");
+                            }
+                        })
+
+                        // 设置查看原图时的百分比样式：默认为库中自带样式：ImagePreview.PROGRESS_THEME_CIRCLE_TEXT。
+                        // 可手动更改为自定义样式，需要在回调中手动更新进度
                         .setProgressLayoutId(ImagePreview.PROGRESS_THEME_CIRCLE_TEXT, new OnOriginProgressListener() {
                             @Override
                             public void progress(View parentView, int progress) {
-                                SLog.INSTANCE.d(TAG, "progress: " + progress);
+                                SLog.INSTANCE.d(TAG, "原图progress: " + progress);
                                 // 需要找到进度控件并设置百分比，回调中的parentView即传入的布局的根View，可通过parentView找到控件：
                                 ProgressBar progressBar = parentView.findViewById(R.id.sh_progress_view);
                                 TextView textView = parentView.findViewById(R.id.sh_progress_text);
@@ -462,20 +452,16 @@ public class MainActivity extends AppCompatActivity {
                                 SLog.INSTANCE.d(TAG, "finish: ");
                             }
                         })
+
                         // 完全自定义预览界面，请参考这个布局（R.layout.sh_layout_preview），需要保持控件类型、id和其中的一致，否则会找不到控件而报错
-//                        .setPreviewLayoutResId(R.layout.custom_layout_preview, new OnCustomLayoutCallback() {
-//                            @Override
-//                            public void onLayout(@NonNull View parentView) {
-//                                // 自定义控件事件处理
-//                            }
-//                        })
-                        // 监听页面拖动(自定义布局可以根据是否拖动进行隐藏或者展示)
-                        .setOnPageDragListener(new OnPageDragListener() {
+                        .setPreviewLayoutResId(R.layout.custom_layout_preview, new OnCustomLayoutCallback() {
                             @Override
-                            public void onDrag(MotionEvent event, float translationY) {
-                                SLog.INSTANCE.d(TAG, "onDrag: translationY = " + translationY);
+                            public void onLayout(@NonNull View parentView) {
+                                // 除了默认的控件之外，你可以在此处处理你的其他控件，比如分享按钮、业务数据展示等
+                                // View xxx = parentView.findViewById(R.id.xxx);
                             }
                         })
+
                         // 开启预览
                         .start();
             }
@@ -509,7 +495,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void chooseImage() {
         PictureSelector.create(this)
-                .openGallery(SelectMimeType.ofImage())
+                .openGallery(SelectMimeType.ofAll())
                 .isDisplayCamera(false)
                 .setImageEngine(GlideEngine.createGlideEngine())
                 .forResult(new OnResultCallbackListener<LocalMedia>() {
@@ -519,14 +505,7 @@ public class MainActivity extends AppCompatActivity {
                         for (LocalMedia localMedia : result) {
                             urlList.add(localMedia.getPath());
                         }
-                        ImagePreview.getInstance()
-                                .with(MainActivity.this)
-                                .setImageList(urlList)
-                                .setShowDownButton(false)
-                                .setShowCloseButton(false)
-                                .setEnableDragClose(true)
-                                .setEnableClickClose(false)
-                                .start();
+                        ImagePreview.getInstance().with(MainActivity.this).setImageUrlList(urlList).start();
                     }
 
                     @Override

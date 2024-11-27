@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -17,11 +18,19 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.viewpager2.widget.ViewPager2
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.cache.CacheDataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.R
 import cc.shinichi.library.bean.ImageInfo
@@ -39,6 +48,7 @@ import cc.shinichi.library.tool.image.DownloadUtil
 import cc.shinichi.library.tool.ui.PhoneUtil
 import cc.shinichi.library.tool.ui.ToastUtil
 import cc.shinichi.library.tool.ui.UIUtil
+import cc.shinichi.library.view.helper.MediaCacheHelper
 import com.bumptech.glide.Glide
 
 /**
@@ -52,8 +62,9 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     private val imageInfoList: MutableList<ImageInfo> = mutableListOf()
     private val fragmentList: MutableList<ImagePreviewFragment> = mutableListOf()
 
-    lateinit var viewPager2: ViewPager2
+    lateinit var viewPager: HackyViewPager
     private lateinit var tvIndicator: TextView
+    private lateinit var consBottomController: ConstraintLayout
 
     private lateinit var fmImageShowOriginContainer: FrameLayout
     private lateinit var fmCenterProgressContainer: FrameLayout
@@ -79,6 +90,8 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     private var currentItemOriginPathUrl: String? = ""
     private var lastProgress = 0
 
+    private var dataSourceFactory: DataSource.Factory? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val parentView = View.inflate(this, ImagePreview.instance.previewLayoutResId, null)
@@ -96,6 +109,10 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             onBackPressed()
             return
         }
+
+        // 播放器初始化
+        initExoPlayer()
+
         currentItem = ImagePreview.instance.index
         isShowDownButton = ImagePreview.instance.isShowDownButton
         isShowCloseButton = ImagePreview.instance.isShowCloseButton
@@ -107,23 +124,14 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             checkCache(currentItemOriginPathUrl)
         }
         rootView = findViewById(R.id.rootView)
-        viewPager2 = findViewById(R.id.viewPager)
+        viewPager = findViewById(R.id.viewPager)
         tvIndicator = findViewById(R.id.tv_indicator)
-        val consBottomController = findViewById<ConstraintLayout>(R.id.consBottomController)
+        consBottomController = findViewById<ConstraintLayout>(R.id.consBottomController)
         fmImageShowOriginContainer = findViewById(R.id.fm_image_show_origin_container)
         fmCenterProgressContainer = findViewById(R.id.fm_center_progress_container)
 
-        // tvIndicator top margin
-        val topMargin = PhoneUtil.getStatusBarHeight(context) + UIUtil.dp2px(context, 20f)
-        val layoutParamsIndicator = tvIndicator.layoutParams as ConstraintLayout.LayoutParams
-        layoutParamsIndicator.setMargins(0, topMargin, 0, 0)
-        tvIndicator.layoutParams = layoutParamsIndicator
-
-        // consBottomController bottom margin
-        val bottomMargin = PhoneUtil.getNavBarHeight(context) + UIUtil.dp2px(context, 20f)
-        val layoutParams = consBottomController.layoutParams as ConstraintLayout.LayoutParams
-        layoutParams.setMargins(0, 0, 0, bottomMargin)
-        consBottomController.layoutParams = layoutParams
+        // 顶部和底部margin
+        refreshUIMargin()
 
         fmImageShowOriginContainer.visibility = View.GONE
         fmCenterProgressContainer.visibility = View.GONE
@@ -201,14 +209,13 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 )
             )
         }
-        imagePreviewAdapter = ImagePreviewAdapter2(this, fragmentList)
-        viewPager2.adapter = imagePreviewAdapter
-        viewPager2.setCurrentItem(currentItem, false)
-        viewPager2.offscreenPageLimit = 1
+        imagePreviewAdapter = ImagePreviewAdapter2(supportFragmentManager, fragmentList)
+        viewPager.adapter = imagePreviewAdapter
+        viewPager.offscreenPageLimit = 1
+        viewPager.setCurrentItem(currentItem, false)
 
-        viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        viewPager.addOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
                 currentItem = position
                 // select回调
                 ImagePreview.instance.bigImagePageChangeListener?.onPageSelected(currentItem)
@@ -240,14 +247,14 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                     lastProgress = 0
                 }
 
-                // fragment事件
-//                for ((index, fragment) in fragmentList.withIndex()) {
-//                    if (index == currentItem) {
-//                        fragment.onSelected()
-//                    } else {
-//                        fragment.onUnSelected()
-//                    }
-//                }
+                // 调用非当前页的Fragment的方法
+                for (i in fragmentList.indices) {
+                    if (i != currentItem) {
+                        fragmentList[i].onUnSelected()
+                    }
+                }
+                // 调用当前页的Fragment的方法
+                fragmentList[currentItem].onSelected()
             }
 
             override fun onPageScrolled(
@@ -255,7 +262,6 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 positionOffset: Float,
                 positionOffsetPixels: Int
             ) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
                 ImagePreview.instance.bigImagePageChangeListener?.onPageScrolled(
                     position,
                     positionOffset,
@@ -264,10 +270,68 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             }
 
             override fun onPageScrollStateChanged(state: Int) {
-                super.onPageScrollStateChanged(state)
                 ImagePreview.instance.bigImagePageChangeListener?.onPageScrollStateChanged(state)
             }
         })
+
+        // 如果当前第一个就是视频类型，需要手动调用一次
+//        if (imageInfoList[currentItem].type == Type.VIDEO) {
+//            fragmentList[currentItem].onSelected()
+//        }
+    }
+
+    private fun refreshUIMargin() {
+        val layoutParamsIndicator = tvIndicator.layoutParams as ConstraintLayout.LayoutParams
+        val layoutParams = consBottomController.layoutParams as ConstraintLayout.LayoutParams
+        // 获取当前屏幕方向
+        val orientation = resources.configuration.orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // 横屏
+            // tvIndicator top margin
+            val topMargin = UIUtil.dp2px(context, 20f)
+            layoutParamsIndicator.setMargins(0, topMargin, 0, 0)
+
+            // consBottomController bottom margin
+            val bottomMargin = UIUtil.dp2px(context, 20f)
+            layoutParams.setMargins(0, 0, 0, bottomMargin)
+        } else {
+            // 竖屏
+            // tvIndicator top margin
+            val topMargin = PhoneUtil.getStatusBarHeight(context) + UIUtil.dp2px(context, 20f)
+            layoutParamsIndicator.setMargins(0, topMargin, 0, 0)
+
+            // consBottomController bottom margin
+            val bottomMargin = PhoneUtil.getNavBarHeight(context) + UIUtil.dp2px(context, 20f)
+            layoutParams.setMargins(0, 0, 0, bottomMargin)
+        }
+        tvIndicator.layoutParams = layoutParamsIndicator
+        consBottomController.layoutParams = layoutParams
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun initExoPlayer() {
+        if (dataSourceFactory == null) {
+            dataSourceFactory = createCacheDataSourceFactory()
+        }
+    }
+
+    @OptIn(UnstableApi::class)
+    fun getExoPlayer(): ExoPlayer {
+        return ExoPlayer.Builder(context)
+            .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory!!))
+            .build()
+    }
+
+    @OptIn(UnstableApi::class)
+    fun createCacheDataSourceFactory(): DataSource.Factory {
+        val dataSourceFactory = DefaultDataSource.Factory(
+            context,
+            DefaultHttpDataSource.Factory()
+        )
+        return CacheDataSource.Factory()
+            .setCache(MediaCacheHelper.getCache(this))
+            .setUpstreamDataSourceFactory(dataSourceFactory)
+            .setCacheWriteDataSinkFactory(null) // 可选：禁用写入缓存
     }
 
     /**
@@ -292,6 +356,13 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
 
     override fun onDestroy() {
         super.onDestroy()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // 判断屏幕方向变化
+        // 顶部和底部margin
+        refreshUIMargin()
     }
 
     private fun convertPercentToBlackAlphaColor(percent: Float): Int {

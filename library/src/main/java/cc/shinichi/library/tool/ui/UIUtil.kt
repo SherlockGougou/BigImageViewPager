@@ -3,7 +3,6 @@ package cc.shinichi.library.tool.ui
 import android.content.Context
 
 /**
- * 仓库: <a href="http://git.xiaozhouintel.com/root/C-UI-App-Android">...</a>
  * 文件名: UIUtil.java
  * 作者: kirito
  * 描述: UI工具

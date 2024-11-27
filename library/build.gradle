@@ -34,6 +34,8 @@ dependencies {
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.16.0'
     implementation "com.github.zjupure:webpdecoder:2.3.4.14.2"
 
-    // https://github.com/brianwernick/ExoMedia
-    implementation 'com.devbrackets.android:exomedia:5.1.0'
+    // ExoPlayer https://developer.android.com/media/media3/exoplayer/hello-world?hl=zh-cn#groovy
+    implementation "androidx.media3:media3-exoplayer:1.4.1"
+    implementation "androidx.media3:media3-exoplayer-dash:1.4.1"
+    implementation "androidx.media3:media3-ui:1.4.1"
 }

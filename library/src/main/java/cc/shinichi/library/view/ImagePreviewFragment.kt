@@ -1,5 +1,6 @@
 package cc.shinichi.library.view
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.PointF
 import android.graphics.drawable.Drawable
@@ -11,19 +12,20 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ProgressBar
-import androidx.core.view.isVisible
+import android.widget.SeekBar
+import android.widget.TextView
+import androidx.annotation.OptIn
 import androidx.fragment.app.Fragment
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.common.text.CueGroup
-import androidx.media3.database.StandaloneDatabaseProvider
-import androidx.media3.datasource.DefaultDataSource
-import androidx.media3.datasource.cache.CacheDataSource
-import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
-import androidx.media3.datasource.cache.SimpleCache
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.common.VideoSize
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.ImagePreview.LoadStrategy
 import cc.shinichi.library.R
@@ -49,8 +51,10 @@ import cc.shinichi.library.tool.image.ImageUtil.isLongImage
 import cc.shinichi.library.tool.image.ImageUtil.isStaticImage
 import cc.shinichi.library.tool.image.ImageUtil.isTabletOrLandscape
 import cc.shinichi.library.tool.image.ImageUtil.isWideImage
+import cc.shinichi.library.tool.ui.PhoneUtil
 import cc.shinichi.library.tool.ui.PhoneUtil.getPhoneHei
 import cc.shinichi.library.tool.ui.ToastUtil
+import cc.shinichi.library.tool.ui.UIUtil
 import cc.shinichi.library.view.helper.DragCloseView
 import cc.shinichi.library.view.listener.SimpleOnImageEventListener
 import cc.shinichi.library.view.photoview.PhotoView
@@ -68,23 +72,22 @@ import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import com.devbrackets.android.exomedia.core.listener.CaptionListener
-import com.devbrackets.android.exomedia.core.state.PlaybackState
-import com.devbrackets.android.exomedia.listener.OnCompletionListener
-import com.devbrackets.android.exomedia.listener.OnPreparedListener
-import com.devbrackets.android.exomedia.ui.widget.VideoView
-import com.devbrackets.android.exomedia.unified.ext.asMedia3Player
 import java.io.File
+import java.util.Locale
 import kotlin.math.abs
 
 /**
- * 仓库: <a href="http://git.xiaozhouintel.com/root/C-UI-App-Android">...</a>
  * 文件名: ImagePreviewFragment.java
  * 作者: kirito
  * 描述: 单个页面
  * 创建时间: 2024/11/25
  */
 class ImagePreviewFragment : Fragment() {
+
+    /**
+     * 当前是否加载过
+     */
+    private var mLoading = false
 
     private lateinit var imagePreviewActivity: ImagePreviewActivity
     private lateinit var imageInfo: ImageInfo
@@ -93,10 +96,22 @@ class ImagePreviewFragment : Fragment() {
     private lateinit var dragCloseView: DragCloseView
     private lateinit var imageStatic: SubsamplingScaleImageView
     private lateinit var imageAnim: PhotoView
-    private lateinit var videoView: VideoView
+    private lateinit var videoView: PlayerView
     private lateinit var progressBar: ProgressBar
 
+    private var exoPlayer: ExoPlayer? = null
+
+    private lateinit var ivPlayButton: ImageView
+    private lateinit var tvPlayTime: TextView
+    private lateinit var seekBar: SeekBar
+
+    private var progressHandler: Handler? = null
+    private var progressRunnable: Runnable? = null
+    private var isDragging = false
+    private var onPausePlaying = false
+
     companion object {
+        private const val TAG = "ImagePreviewFragment"
         fun newInstance(
             imagePreviewActivity: ImagePreviewActivity,
             position: Int,
@@ -114,17 +129,14 @@ class ImagePreviewFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        mLoading = false
         val view = inflater.inflate(R.layout.sh_item_photoview, container, false)
         initView(view)
-        initData()
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
     private fun initData() {
+        SLog.d(TAG, "initData: position = $position")
         val type = imageInfo.type
         if (type == Type.IMAGE) {
             initImageType()
@@ -139,11 +151,18 @@ class ImagePreviewFragment : Fragment() {
         imageStatic = view.findViewById(R.id.static_view)
         imageAnim = view.findViewById(R.id.anim_view)
         videoView = view.findViewById(R.id.video_view)
+        ivPlayButton = videoView.findViewById<ImageView>(R.id.ivPlayButton)
+        seekBar = videoView.findViewById<SeekBar>(R.id.seekbar)
+        tvPlayTime = videoView.findViewById<TextView>(R.id.tvPlayTime)
         val phoneHei = getPhoneHei(imagePreviewActivity.applicationContext)
         // 手势拖拽事件
         if (ImagePreview.instance.isEnableDragClose) {
             dragCloseView.setOnAlphaChangeListener { event, translationY ->
-                ImagePreview.instance.onPageDragListener?.onDrag(event, translationY)
+                if (translationY > 0) {
+                    ImagePreview.instance.onPageDragListener?.onDrag(event, translationY)
+                } else {
+                    ImagePreview.instance.onPageDragListener?.onDragEnd()
+                }
                 val yAbs = abs(translationY)
                 val percent = yAbs / phoneHei
                 val number = 1.0f - percent
@@ -174,6 +193,21 @@ class ImagePreviewFragment : Fragment() {
                 imagePreviewActivity.onBackPressed()
             }
             ImagePreview.instance.bigImageClickListener?.onClick(imagePreviewActivity, v, position)
+        }
+        ivPlayButton.setOnClickListener {
+            // 控制播放和暂停
+            videoView.player?.let {
+                if (it.isPlaying) {
+                    // 去暂停，显示为播放图标
+                    it.pause()
+                    ivPlayButton.setImageResource(R.drawable.icon_video_play)
+                } else {
+                    // 去播放，显示为暂停图标
+                    // 如果进度条已经到最后，重新播放
+                    it.play()
+                    ivPlayButton.setImageResource(R.drawable.icon_video_stop)
+                }
+            }
         }
         // 长按事件
         ImagePreview.instance.bigImageLongClickListener?.let {
@@ -260,19 +294,19 @@ class ImagePreviewFragment : Fragment() {
         // 判断原图缓存是否存在，存在的话，直接显示原图缓存，优先保证清晰。
         val cacheFile = getGlideCacheFile(imagePreviewActivity, originPathUrl)
         if (cacheFile != null && cacheFile.exists()) {
-            SLog.d("instantiateItem", "原图缓存存在，直接显示 originPathUrl = $originPathUrl")
+            SLog.d(TAG, "initImageType: 原图缓存存在，直接显示 originPathUrl = $originPathUrl")
             loadSuccess(
                 originPathUrl,
                 cacheFile
             )
         } else {
-            SLog.d("instantiateItem", "原图缓存不存在，开始加载 url = $url")
+            SLog.d(TAG, "initImageType: 原图缓存不存在，开始加载 url = $url")
             // 判断url是否是res资源 R.mipmap.xxx
             if (url.startsWith("res://")) {
-                SLog.d("instantiateItem", "instantiateItem: res资源")
+                SLog.d(TAG, "initImageType: res资源")
                 loadResImage(url, originPathUrl)
             } else {
-                SLog.d("instantiateItem", "instantiateItem: url资源")
+                SLog.d(TAG, "initImageType: url资源")
                 loadUrlImage(
                     url,
                     originPathUrl
@@ -281,19 +315,119 @@ class ImagePreviewFragment : Fragment() {
         }
     }
 
+    @OptIn(UnstableApi::class)
     private fun initVideoType() {
         // 视频类型，隐藏图片
         imageStatic.visibility = View.GONE
         imageAnim.visibility = View.GONE
         videoView.visibility = View.VISIBLE
+
+        // 自定义控制
+        refreshUIMargin()
+
+        // 初始化播放器
+        if (exoPlayer == null) {
+            exoPlayer = imagePreviewActivity.getExoPlayer()
+            exoPlayer?.addListener(object : Player.Listener {
+                override fun onVideoSizeChanged(videoSize: VideoSize) {
+                    super.onVideoSizeChanged(videoSize)
+                    SLog.d(TAG, "onVideoSizeChanged: videoSize = ${videoSize.width} * ${videoSize.height}")
+                }
+
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    super.onIsPlayingChanged(isPlaying)
+                    SLog.d(TAG, "onIsPlayingChanged: isPlaying = $isPlaying")
+                    if (isPlaying) {
+                        ivPlayButton.setImageResource(R.drawable.icon_video_stop)
+                    } else {
+                        ivPlayButton.setImageResource(R.drawable.icon_video_play)
+                    }
+                }
+
+                override fun onPlaybackStateChanged(playbackState: Int) {
+                    super.onPlaybackStateChanged(playbackState)
+                    SLog.d(TAG, "onPlaybackStateChanged: playbackState = $playbackState")
+                    if (playbackState == Player.STATE_READY) {
+                        // 底部控制器处理
+                        setProgress(exoPlayer!!)
+                    } else if (playbackState == Player.STATE_ENDED) {
+                        // 播放结束
+                        exoPlayer?.pause()
+                        exoPlayer?.seekTo(0)
+                    }
+                }
+            })
+        }
+        videoView.player = exoPlayer
+        val mediaItem = MediaItem.fromUri(imageInfo.originUrl)
+        exoPlayer?.setMediaItem(mediaItem)
+        exoPlayer?.prepare()
+        exoPlayer?.playWhenReady = false
+
+        if (ImagePreview.instance.index == position) {
+            // 如果是当前选中的，就播放
+            exoPlayer?.play()
+        }
+    }
+
+    private fun setProgress(exoPlayer: ExoPlayer) {
+        // 清除之前的任务
+        progressHandler?.removeCallbacksAndMessages(null)
+        progressHandler = Handler(Looper.getMainLooper())
+
+        // 定义任务
+        progressRunnable = object : Runnable {
+            override fun run() {
+                if (!isDragging) {
+                    val currentPosition = exoPlayer.currentPosition
+                    val currentTime = formatTimestamp(currentPosition / 1000)
+                    val totalDuration = exoPlayer.duration
+                    val totalTime = formatTimestamp(totalDuration / 1000)
+
+                    seekBar.max = totalDuration.toInt()
+                    seekBar.progress = currentPosition.toInt()
+
+                    tvPlayTime.text = "$currentTime/$totalTime"
+                }
+                // 每秒更新一次
+                progressHandler?.postDelayed(this, 1000)
+            }
+        }
+
+        // 开始任务
+        progressHandler?.post(progressRunnable!!)
+
+        // 设置 SeekBar 的监听器
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    // 如果是用户拖动的，则更新播放位置。
+                    exoPlayer.seekTo(progress.toLong())
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                isDragging = true
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                isDragging = false
+            }
+        })
+    }
+
+    private fun formatTimestamp(timestampInSeconds: Long): String {
+        val minutes = timestampInSeconds / 60
+        val seconds = timestampInSeconds % 60
+        return String.format(locale = Locale.getDefault(), "%02d:%02d", minutes, seconds)
     }
 
     fun onOriginal() {
         if (imageInfo.type == Type.IMAGE) {
-            SLog.d("onOriginal", "onOriginal: 加载原图")
+            SLog.d(TAG, "onOriginal: 加载原图")
             loadOriginal()
         } else {
-            SLog.d("onOriginal", "onOriginal: 视频类型，不做处理")
+            SLog.d(TAG, "onOriginal: 视频类型，不做处理")
         }
     }
 
@@ -303,7 +437,7 @@ class ImagePreviewFragment : Fragment() {
         if (cacheFile != null && cacheFile.exists()) {
             val isStatic = isStaticImage(originalUrl, cacheFile.absolutePath)
             if (isStatic) {
-                SLog.d("loadOrigin", "静态图")
+                SLog.d(TAG, "loadOriginal: 静态图")
                 val isHeifImageWithMime = isHeifImageWithMime(imageInfo.originUrl, cacheFile.absolutePath)
                 if (isHeifImageWithMime) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -347,7 +481,7 @@ class ImagePreviewFragment : Fragment() {
                     scaleLongPic(imagePath, imageStatic)
                 }
             } else {
-                SLog.d("loadOrigin", "动态图")
+                SLog.d(TAG, "loadOriginal: 动态图")
                 imageStatic.visibility = View.GONE
                 imageAnim.visibility = View.VISIBLE
                 imageAnim.let {
@@ -365,29 +499,65 @@ class ImagePreviewFragment : Fragment() {
         }
     }
 
+    fun onSelected() {
+        if (imageInfo.type == Type.VIDEO) {
+            exoPlayer?.seekTo(0)
+            exoPlayer?.play()
+        }
+    }
+
+    fun onUnSelected() {
+        if (imageInfo.type == Type.VIDEO) {
+            exoPlayer?.isPlaying?.let {
+                if (it) {
+                    exoPlayer?.pause()
+                }
+            }
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        refreshUIMargin()
+    }
+
+    private fun refreshUIMargin() {
+        val llControllerContainer = videoView.findViewById<LinearLayout>(R.id.llControllerContainer)
+        val layoutParams = llControllerContainer.layoutParams as MarginLayoutParams
+        // 获取当前屏幕方向
+        val orientation = resources.configuration.orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // 横屏
+            layoutParams.setMargins(
+                0,
+                0,
+                0,
+                UIUtil.dp2px(imagePreviewActivity, 70f)
+            )
+        } else {
+            // 竖屏
+            layoutParams.setMargins(
+                0,
+                0,
+                0,
+                UIUtil.dp2px(imagePreviewActivity, 70f) + PhoneUtil.getNavBarHeight(imagePreviewActivity)
+            )
+        }
+        llControllerContainer.layoutParams = layoutParams
+    }
+
     override fun onResume() {
         super.onResume()
-        SLog.d("onResume", "onResume: position = $position")
-        if (imageInfo.type == Type.VIDEO) {
-            // 只特殊处理视频类型
-            if (imagePreviewActivity.viewPager2.currentItem == position) {
-                if (::videoView.isInitialized) {
-                    if (videoView.getPlaybackState() == PlaybackState.IDLE) {
-                        videoView.setOnPreparedListener(object : OnPreparedListener {
-                            override fun onPrepared() {
-                                // 准备完毕
-                                SLog.d("onResume", "onResume: 视频准备完毕. position = $position")
-                                if (imagePreviewActivity.viewPager2.currentItem == position) {
-                                    videoView.start()
-                                }
-                            }
-                        })
-                        videoView.setMedia(Uri.parse(imageInfo.originUrl))
-                    } else {
-                        if (videoView.getPlaybackState() == PlaybackState.PAUSED) {
-                            videoView.start()
-                        }
-                    }
+        if (!mLoading) {
+            mLoading = true
+            // 初始化时调用一次
+            initData()
+        } else {
+            // 已经初始化过，如果当前是视频，就执行播放
+            if (imageInfo.type == Type.VIDEO) {
+                // 后台前是播放的才恢复播放
+                if (onPausePlaying == true) {
+                    exoPlayer?.play()
                 }
             }
         }
@@ -395,19 +565,17 @@ class ImagePreviewFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        SLog.d("onPause", "onPause: position = $position")
+        SLog.d(TAG, "onPause: position = $position")
         if (imageInfo.type == Type.VIDEO) {
             // 只特殊处理视频类型
-            if (::videoView.isInitialized) {
-                if (videoView.getPlaybackState() == PlaybackState.PLAYING) {
-                    videoView.pause()
-                }
-            }
+            onPausePlaying = exoPlayer?.isPlaying == true
+            onUnSelected()
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        mLoading = false
         onRelease()
     }
 
@@ -499,10 +667,10 @@ class ImagePreviewFragment : Fragment() {
         val imagePath = resource.absolutePath
         val isStatic = isStaticImage(imageUrl, imagePath)
         if (isStatic) {
-            SLog.d("loadSuccess", "动静判断: 静态图")
+            SLog.d(TAG, "loadSuccess: 动静判断: 静态图")
             loadImageStatic(imagePath)
         } else {
-            SLog.d("loadSuccess", "动静判断: 动态图")
+            SLog.d(TAG, "loadSuccess: 动静判断: 动态图")
             loadImageAnim(
                 imageUrl,
                 imagePath
@@ -720,10 +888,7 @@ class ImagePreviewFragment : Fragment() {
             imageAnim.destroyDrawingCache()
             imageAnim.setImageBitmap(null)
         }
-        if (::videoView.isInitialized) {
-            if ((videoView.getPlaybackState() != PlaybackState.RELEASED)) {
-                videoView.release()
-            }
-        }
+        exoPlayer?.release()
+        exoPlayer = null
     }
 }

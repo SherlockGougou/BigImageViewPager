@@ -1,10 +1,8 @@
 package cc.shinichi.library.tool.common
 
 import android.util.Log
-import com.bumptech.glide.integration.webp.BuildConfig
 
 /**
- * 仓库: <a href="http://git.xiaozhouintel.com/root/C-UI-App-Android">...</a>
  * 文件名: SLog.java
  * 作者: kirito
  * 描述: 内部日志打印，可以根据是否debug来决定是否打印

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <androidx.viewpager2.widget.ViewPager2
+    <cc.shinichi.library.view.HackyViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -50,8 +50,8 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgCloseButton"
             android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:padding="3dp"
+            android:layout_height="60dp"
+            android:padding="15dp"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -85,8 +85,8 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_download"
             android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:padding="3dp"
+            android:layout_height="60dp"
+            android:padding="15dp"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

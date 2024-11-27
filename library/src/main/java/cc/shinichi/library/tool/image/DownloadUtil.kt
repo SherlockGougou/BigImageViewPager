@@ -1,7 +1,5 @@
 package cc.shinichi.library.tool.image
 
-import android.R.attr.mimeType
-import android.R.attr.name
 import android.app.Activity
 import android.content.ContentValues
 import android.graphics.drawable.Drawable

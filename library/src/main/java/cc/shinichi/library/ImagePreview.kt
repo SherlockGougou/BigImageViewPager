@@ -2,7 +2,6 @@ package cc.shinichi.library
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.text.TextUtils
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
@@ -21,7 +20,7 @@ import java.lang.ref.WeakReference
  * description:
  */
 class ImagePreview {
-    private var contextWeakReference: WeakReference<Context> = WeakReference(null)
+    private var contextWeakReference: WeakReference<Activity> = WeakReference(null)
 
     // 图片数据集合
     private var imageInfoList: MutableList<ImageInfo> = mutableListOf()
@@ -138,8 +137,6 @@ class ImagePreview {
         private set
     var onPageDragListener: OnPageDragListener? = null
         private set
-    var onVideoLoadListener: OnVideoLoadListener? = null
-        private set
 
     // 自定义百分比布局layout id
     @LayoutRes
@@ -149,13 +146,13 @@ class ImagePreview {
     // 防止多次快速点击，记录上次打开的时间戳
     private var lastClickTime: Long = 0
 
-    fun with(context: Context): ImagePreview {
+    fun with(context: Activity): ImagePreview {
         contextWeakReference = WeakReference(context)
         return this
     }
 
     @Deprecated("请使用with(Context context)代替")
-    fun setContext(context: Context): ImagePreview {
+    fun setContext(context: Activity): ImagePreview {
         with(context)
         return this
     }
@@ -182,7 +179,7 @@ class ImagePreview {
     /**
      * 仅支持图片类型
      */
-    fun setImageList(imageList: MutableList<String>): ImagePreview {
+    fun setImageUrlList(imageList: MutableList<String>): ImagePreview {
         var imageInfo: ImageInfo
         imageInfoList.clear()
         for (i in imageList.indices) {
@@ -205,17 +202,17 @@ class ImagePreview {
         return this
     }
 
-    fun setImageRes(imageResId: Int): ImagePreview {
-        resImageList.clear()
-        resImageList.add(imageResId)
-        return this
-    }
-
-    fun setImageResList(imageResIdList: MutableList<Int>): ImagePreview {
-        resImageList.clear()
-        resImageList.addAll(imageResIdList)
-        return this
-    }
+//    fun setImageRes(imageResId: Int): ImagePreview {
+//        resImageList.clear()
+//        resImageList.add(imageResId)
+//        return this
+//    }
+//
+//    fun setImageResList(imageResIdList: MutableList<Int>): ImagePreview {
+//        resImageList.clear()
+//        resImageList.addAll(imageResIdList)
+//        return this
+//    }
 
     fun setIndex(index: Int): ImagePreview {
         this.index = index
@@ -407,11 +404,6 @@ class ImagePreview {
         return this
     }
 
-    fun setOnVideoLoadListener(onVideoLoadListener: OnVideoLoadListener): ImagePreview {
-        this.onVideoLoadListener = onVideoLoadListener
-        return this
-    }
-
     private fun setOnOriginProgressListener(onOriginProgressListener: OnOriginProgressListener): ImagePreview {
         this.onOriginProgressListener = onOriginProgressListener
         return this
@@ -473,7 +465,6 @@ class ImagePreview {
             return
         }
         val context = contextWeakReference.get() ?: throw IllegalArgumentException("You must call 'setContext(Context context)' first!")
-        require(context is Activity) { "Context must be a Activity!" }
         if (context.isFinishing || context.isDestroyed) {
             reset()
             return
@@ -485,7 +476,7 @@ class ImagePreview {
     }
 
     /**
-     * 主动关闭页面
+     * 手动关闭页面
      */
     fun finish() {
         val context = contextWeakReference.get()

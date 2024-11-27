@@ -11,4 +11,5 @@ import android.view.MotionEvent
  */
 abstract class OnPageDragListener {
     abstract fun onDrag(event: MotionEvent?, translationY: Float)
+    abstract fun onDragEnd()
 }
