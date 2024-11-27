@@ -8,5 +8,9 @@
             android:name=".view.ImagePreviewActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:theme="@style/Theme.ImagePreview" />
+        <provider
+            android:name=".InitProvider"
+            android:authorities="${applicationId}.initprovider"
+            android:exported="false" />
     </application>
 </manifest>

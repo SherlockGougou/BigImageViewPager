@@ -223,7 +223,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="显示加载失败的Toast（默认开启）" />
+                android:text="显示加载失败的Toast（默认关闭）" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switchShowErrorToast"
@@ -296,7 +296,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="使用上述属性开始预览" />
+            android:text="使用上面配置预览" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -306,7 +306,7 @@
                 android:id="@+id/buttonChoose"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="从相册选图" />
+                android:text="相册选图预览" />
 
             <Button
                 android:id="@+id/buttonClean"

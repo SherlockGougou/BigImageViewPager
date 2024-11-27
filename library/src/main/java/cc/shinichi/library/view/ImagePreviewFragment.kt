@@ -51,10 +51,10 @@ import cc.shinichi.library.tool.image.ImageUtil.isLongImage
 import cc.shinichi.library.tool.image.ImageUtil.isStaticImage
 import cc.shinichi.library.tool.image.ImageUtil.isTabletOrLandscape
 import cc.shinichi.library.tool.image.ImageUtil.isWideImage
-import cc.shinichi.library.tool.ui.PhoneUtil
-import cc.shinichi.library.tool.ui.PhoneUtil.getPhoneHei
-import cc.shinichi.library.tool.ui.ToastUtil
-import cc.shinichi.library.tool.ui.UIUtil
+import cc.shinichi.library.tool.common.PhoneUtil
+import cc.shinichi.library.tool.common.PhoneUtil.getPhoneHei
+import cc.shinichi.library.tool.common.ToastUtil
+import cc.shinichi.library.tool.common.UIUtil
 import cc.shinichi.library.view.helper.DragCloseView
 import cc.shinichi.library.view.listener.SimpleOnImageEventListener
 import cc.shinichi.library.view.photoview.PhotoView
@@ -159,9 +159,9 @@ class ImagePreviewFragment : Fragment() {
         if (ImagePreview.instance.isEnableDragClose) {
             dragCloseView.setOnAlphaChangeListener { event, translationY ->
                 if (translationY > 0) {
-                    ImagePreview.instance.onPageDragListener?.onDrag(event, translationY)
+                    ImagePreview.instance.onPageDragListener?.onDrag(imagePreviewActivity.parentView, event, translationY)
                 } else {
-                    ImagePreview.instance.onPageDragListener?.onDragEnd()
+                    ImagePreview.instance.onPageDragListener?.onDragEnd(imagePreviewActivity.parentView)
                 }
                 val yAbs = abs(translationY)
                 val percent = yAbs / phoneHei

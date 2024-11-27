@@ -24,13 +24,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultDataSource
-import androidx.media3.datasource.DefaultHttpDataSource
-import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import cc.shinichi.library.GlobalContext
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.R
 import cc.shinichi.library.bean.ImageInfo
@@ -45,23 +42,24 @@ import cc.shinichi.library.tool.common.HttpUtil
 import cc.shinichi.library.tool.common.NetworkUtil
 import cc.shinichi.library.tool.common.SLog
 import cc.shinichi.library.tool.image.DownloadUtil
-import cc.shinichi.library.tool.ui.PhoneUtil
-import cc.shinichi.library.tool.ui.ToastUtil
-import cc.shinichi.library.tool.ui.UIUtil
-import cc.shinichi.library.view.helper.MediaCacheHelper
+import cc.shinichi.library.tool.common.PhoneUtil
+import cc.shinichi.library.tool.common.ToastUtil
+import cc.shinichi.library.tool.common.UIUtil
+import cc.shinichi.library.view.listener.OnFinishListener
 import com.bumptech.glide.Glide
 
 /**
  * @author 工藤
  * @email qinglingou@gmail.com
  */
-class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClickListener {
+class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClickListener, OnFinishListener {
 
     private lateinit var context: Activity
     private lateinit var handlerHolder: HandlerHolder
     private val imageInfoList: MutableList<ImageInfo> = mutableListOf()
     private val fragmentList: MutableList<ImagePreviewFragment> = mutableListOf()
 
+    lateinit var parentView: View
     lateinit var viewPager: HackyViewPager
     private lateinit var tvIndicator: TextView
     private lateinit var consBottomController: ConstraintLayout
@@ -90,11 +88,9 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     private var currentItemOriginPathUrl: String? = ""
     private var lastProgress = 0
 
-    private var dataSourceFactory: DataSource.Factory? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val parentView = View.inflate(this, ImagePreview.instance.previewLayoutResId, null)
+        parentView = View.inflate(this, ImagePreview.instance.previewLayoutResId, null)
         setContentView(parentView)
         ImagePreview.instance.onCustomLayoutCallback?.onLayout(parentView)
 
@@ -109,6 +105,9 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             onBackPressed()
             return
         }
+
+        // 回调
+        ImagePreview.instance.setOnFinishListener(this)
 
         // 播放器初始化
         initExoPlayer()
@@ -310,28 +309,13 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
 
     @OptIn(UnstableApi::class)
     private fun initExoPlayer() {
-        if (dataSourceFactory == null) {
-            dataSourceFactory = createCacheDataSourceFactory()
-        }
     }
 
     @OptIn(UnstableApi::class)
     fun getExoPlayer(): ExoPlayer {
         return ExoPlayer.Builder(context)
-            .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory!!))
+            .setMediaSourceFactory(DefaultMediaSourceFactory(GlobalContext.getCacheDataSourceFactory()))
             .build()
-    }
-
-    @OptIn(UnstableApi::class)
-    fun createCacheDataSourceFactory(): DataSource.Factory {
-        val dataSourceFactory = DefaultDataSource.Factory(
-            context,
-            DefaultHttpDataSource.Factory()
-        )
-        return CacheDataSource.Factory()
-            .setCache(MediaCacheHelper.getCache(this))
-            .setUpstreamDataSourceFactory(dataSourceFactory)
-            .setCacheWriteDataSinkFactory(null) // 可选：禁用写入缓存
     }
 
     /**
@@ -652,6 +636,10 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         val option =
             View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         decorView.systemUiVisibility = vis or option
+    }
+
+    override fun onFinish() {
+        onBackPressed()
     }
 
     companion object {

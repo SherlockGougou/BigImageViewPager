@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
 import com.luck.picture.lib.basic.PictureSelector;
@@ -31,7 +32,8 @@ import cc.shinichi.library.bean.ImageInfo;
 import cc.shinichi.library.bean.Type;
 import cc.shinichi.library.glide.ImageLoader;
 import cc.shinichi.library.tool.common.SLog;
-import cc.shinichi.library.tool.ui.ToastUtil;
+import cc.shinichi.library.tool.common.PhoneUtil;
+import cc.shinichi.library.tool.common.ToastUtil;
 import cc.shinichi.library.view.listener.OnBigImageClickListener;
 import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
 import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
@@ -51,10 +53,17 @@ public class MainActivity extends AppCompatActivity {
     boolean enableUpDragClose = true;
     boolean enableDragIgnoreScale = true;
 
-    boolean showIndicator = true;
+    boolean showIndicator = false;
     boolean showCloseButton = false;
     boolean showDownButton = true;
     boolean showErrorToast = false;
+
+    // 自定义展示UI，业务控件
+    ConstraintLayout customViewContainer = null;
+    ImageView imgClose = null;
+    ImageView imgShare = null;
+    TextView tvIndicatorCustom = null;
+    int currentPosition = 0;
 
     private ImagePreview.LoadStrategy loadStrategy = ImagePreview.LoadStrategy.Default;
 
@@ -84,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 enableClickClose = isChecked;
             }
         });
-        switchClickClose.setChecked(showCloseButton);
+        switchClickClose.setChecked(enableClickClose);
 
         switchDragClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -272,6 +281,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // 完全自定义配置
+                currentPosition = 0;
                 ImagePreview.getInstance()
                         // 上下文，必须是activity，不需要担心内存泄漏，本框架已经处理好
                         .with(MainActivity.this)
@@ -403,6 +413,8 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onPageSelected(int position) {
                                 SLog.INSTANCE.d(TAG, "onPageSelected: position = " + position);
+                                currentPosition = position;
+                                tvIndicatorCustom.setText((currentPosition + 1) + " / " + mediaList.size());
                             }
 
                             @Override
@@ -423,13 +435,20 @@ public class MainActivity extends AppCompatActivity {
                         // 页面手势上下拖动的回调：自定义布局可以根据是否拖动进行隐藏或者展示
                         .setOnPageDragListener(new OnPageDragListener() {
                             @Override
-                            public void onDrag(MotionEvent event, float translationY) {
+                            public void onDrag(@NonNull View parentView, MotionEvent event, float translationY) {
                                 SLog.INSTANCE.d(TAG, "onDrag: translationY = " + translationY);
+                                // 此处可以根据是否拖拽设置自定义的View的逻辑
+                                if (customViewContainer != null) {
+                                    customViewContainer.setVisibility(View.GONE);
+                                }
                             }
 
                             @Override
-                            public void onDragEnd() {
+                            public void onDragEnd(@NonNull View parentView) {
                                 SLog.INSTANCE.d(TAG, "onDragEnd: ");
+                                if (customViewContainer != null) {
+                                    customViewContainer.setVisibility(View.VISIBLE);
+                                }
                             }
                         })
 
@@ -458,7 +477,27 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onLayout(@NonNull View parentView) {
                                 // 除了默认的控件之外，你可以在此处处理你的其他控件，比如分享按钮、业务数据展示等
-                                // View xxx = parentView.findViewById(R.id.xxx);
+                                customViewContainer = parentView.findViewById(R.id.custom_view_container);
+                                imgClose = parentView.findViewById(R.id.img_close_button_custom);
+                                imgShare = parentView.findViewById(R.id.img_share_button_custom);
+                                tvIndicatorCustom = parentView.findViewById(R.id.tv_indicator_custom);
+                                // 业务逻辑处理
+                                int statusBarHeight = PhoneUtil.INSTANCE.getStatusBarHeight(MainActivity.this);
+                                customViewContainer.setPadding(0, statusBarHeight, 0, 0);
+                                tvIndicatorCustom.setText((currentPosition + 1) + " / " + mediaList.size());
+                                // 点击事件
+                                imgClose.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        ImagePreview.getInstance().finish();
+                                    }
+                                });
+                                imgShare.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        ToastUtil.getInstance().showShort(MainActivity.this, "点击了分享, 当前 position = " + currentPosition);
+                                    }
+                                });
                             }
                         })
 
@@ -496,16 +535,25 @@ public class MainActivity extends AppCompatActivity {
     private void chooseImage() {
         PictureSelector.create(this)
                 .openGallery(SelectMimeType.ofAll())
+                .isWithSelectVideoImage(true)
                 .isDisplayCamera(false)
                 .setImageEngine(GlideEngine.createGlideEngine())
                 .forResult(new OnResultCallbackListener<LocalMedia>() {
                     @Override
                     public void onResult(ArrayList<LocalMedia> result) {
-                        List<String> urlList = new ArrayList<>();
+                        List<ImageInfo> mediaList = new ArrayList<>();
                         for (LocalMedia localMedia : result) {
-                            urlList.add(localMedia.getPath());
+                            ImageInfo imageInfo = new ImageInfo();
+                            if (localMedia.getMimeType().startsWith("video")) {
+                                imageInfo.setType(Type.VIDEO);
+                            } else if (localMedia.getMimeType().startsWith("image")) {
+                                imageInfo.setType(Type.IMAGE);
+                            }
+                            imageInfo.setThumbnailUrl(localMedia.getPath());
+                            imageInfo.setOriginUrl(localMedia.getPath());
+                            mediaList.add(imageInfo);
                         }
-                        ImagePreview.getInstance().with(MainActivity.this).setImageUrlList(urlList).start();
+                        ImagePreview.getInstance().with(MainActivity.this).setMediaInfoList(mediaList).start();
                     }
 
                     @Override

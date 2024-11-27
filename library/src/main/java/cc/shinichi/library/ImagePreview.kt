@@ -137,6 +137,8 @@ class ImagePreview {
         private set
     var onPageDragListener: OnPageDragListener? = null
         private set
+    var finishListener: OnFinishListener? = null
+        private set
 
     // 自定义百分比布局layout id
     @LayoutRes
@@ -404,6 +406,11 @@ class ImagePreview {
         return this
     }
 
+    fun setOnFinishListener(finishListener: OnFinishListener): ImagePreview {
+        this.finishListener = finishListener
+        return this
+    }
+
     private fun setOnOriginProgressListener(onOriginProgressListener: OnOriginProgressListener): ImagePreview {
         this.onOriginProgressListener = onOriginProgressListener
         return this
@@ -433,30 +440,55 @@ class ImagePreview {
 
     fun reset() {
         imageInfoList.clear()
+        resImageList.clear()
+
         index = 0
+
+        folderName = "Download"
+
         minScale = 1.0f
         mediumScale = 3.0f
         maxScale = 5.0f
-        zoomTransitionDuration = 200
-        isShowDownButton = true
+
+        isShowIndicator = true
         isShowCloseButton = false
+        isShowDownButton = true
+
+        zoomTransitionDuration = 200
+
         isEnableDragClose = true
         isEnableUpDragClose = true
+        isEnableDragCloseIgnoreScale = true
         isEnableClickClose = true
-        isShowIndicator = true
+
         isShowErrorToast = false
+
+        loadStrategy = LoadStrategy.Default
+        longPicDisplayMode = LongPicDisplayMode.Default
+
+        previewLayoutResId = R.layout.sh_layout_preview
+
+        onCustomLayoutCallback = null
+
+        indicatorShapeResId = R.drawable.shape_indicator_bg
         closeIconResId = R.drawable.ic_action_close
         downIconResId = R.drawable.icon_download_new
         errorPlaceHolder = R.drawable.load_failed
-        loadStrategy = LoadStrategy.Default
-        longPicDisplayMode = LongPicDisplayMode.Default
-        folderName = "Download"
-        contextWeakReference.clear()
+
         bigImageClickListener = null
         bigImageLongClickListener = null
         bigImagePageChangeListener = null
+        downloadClickListener = null
+        downloadListener = null
+        onOriginProgressListener = null
+        onPageFinishListener = null
+        onPageDragListener = null
+        finishListener = null
+
         progressLayoutId = -1
         lastClickTime = 0
+
+        contextWeakReference.clear()
     }
 
     fun start() {
@@ -479,14 +511,7 @@ class ImagePreview {
      * 手动关闭页面
      */
     fun finish() {
-        val context = contextWeakReference.get()
-        if (context !is Activity) {
-            return
-        }
-        if (context.isFinishing || context.isDestroyed) {
-            return
-        }
-        context.finish()
+        finishListener?.onFinish()
     }
 
     enum class LoadStrategy {

@@ -17,7 +17,7 @@ import cc.shinichi.library.tool.file.FileUtil.Companion.createFileByDeleteOldFil
 import cc.shinichi.library.tool.file.FileUtil.Companion.getAvailableCacheDir
 import cc.shinichi.library.tool.file.SingleMediaScanner
 import cc.shinichi.library.tool.image.ImageUtil.refresh
-import cc.shinichi.library.tool.ui.ToastUtil
+import cc.shinichi.library.tool.common.ToastUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.transition.Transition
 import java.io.*
