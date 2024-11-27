@@ -14,16 +14,16 @@ BigImageViewPager是一个图片/视频浏览器库，支持超大图、超长�
 
 # 界面展示：
 <p align="center">
-  <img src="image/1.jpg" width="300" alt="界面">
-  <img src="image/2.jpg" width="300" alt="界面">
-  <img src="image/3.jpg" width="300" alt="界面">
+  <img src="image/1.jpg" width="200" alt="界面">
+  <img src="image/2.jpg" width="200" alt="界面">
+  <img src="image/3.jpg" width="200" alt="界面">
 </p>
 <p align="center">
   <img src="image/4-video-hor.jpg" width="600" alt="界面">
 </p>
 <p align="center">
-  <img src="image/5-long-ver.jpg" width="400" alt="界面">
-  <img src="image/6-long-hor.jpg" width="400" alt="界面">
+  <img src="image/5-long-ver.jpg" width="300" alt="界面">
+  <img src="image/6-long-hor.jpg" width="300" alt="界面">
 </p>
 
 # 视频展示：
@@ -155,8 +155,8 @@ https://github.com/user-attachments/assets/070caa63-8e9f-4b11-9240-4cb56440d3c2
 
 # 如果有帮助到你，欢迎请我喝杯☕️：
 <p align="center">
-  <img src="image/pay-wepay.jpg" width="400" alt="">
-  <img src="image/pay-alipay.jpg" width="400" alt="">
+  <img src="image/pay-wepay.jpg" width="300" alt="">
+  <img src="image/pay-alipay.jpg" width="300" alt="">
 </p>
 
 # LICENSE
