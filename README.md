@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://cdn.jeff1992.com/av/app/image/2024/upload/am_0c8dab2391b904d0bcf78a427bb741af.jpeg" alt="头图">
+    <img src="image/cover.png" alt="头图">
 </p>
 
 ### BigImageViewPager = BigImage + ImageView + ViewPager
@@ -9,33 +9,29 @@ BigImageViewPager是一个图片/视频浏览器库，支持超大图、超长�
 # 推荐扫描二维码进行安装体验：
 
 <p align="start">
-  <img src="https://www.pgyer.com/manager/dashboard/app/288e41d4f0f1251c68559c58205a70d9#" width="300" alt="蒲公英">
+  <img src="image/qrcode.png" width="300" alt="蒲公英">
 </p>
 
 # 界面展示：
 <p align="center">
-    <video controls width="300">
-      <source src="https://cdn.jeff1992.com/av/app/image/2024/upload/am_b90b7ba16a6735c34c10d4d1c3e4bba9.mp4" type="video/mp4" />
-    </video>
-    <video controls width="300">
-      <source src="https://cdn.jeff1992.com/av/app/image/2024/upload/am_3198cad3c32246c330b2b271038210b5.mp4" type="video/mp4" />
-    </video>
-    <video controls width="300">
-      <source src="https://cdn.jeff1992.com/av/app/image/2024/upload/am_f9bf8ccffd9f043de8aa467bfc0d0ad7.mp4" type="video/mp4" />
-    </video>
+  <img src="image/1.jpg" width="300" alt="界面">
+  <img src="image/2.jpg" width="300" alt="界面">
+  <img src="image/3.jpg" width="300" alt="界面">
 </p>
 <p align="center">
-  <img src="https://cdn.jeff1992.com/av/app/image/2024/upload/am_c6bdee2c702b81739566986fefd2d0f3.jpg" width="200" alt="界面">
-  <img src="https://cdn.jeff1992.com/av/app/image/2024/upload/am_117eeaa3a76690cc87a92b94c7c3220f.jpg" width="200" alt="界面">
-  <img src="https://cdn.jeff1992.com/av/app/image/2024/upload/am_b53404299b60f1debe0c37736dd9dc86.jpg" width="200" alt="界面">
+  <img src="image/4-video-hor.jpg" width="600" alt="界面">
 </p>
 <p align="center">
-  <img src="https://cdn.jeff1992.com/av/app/image/2024/upload/am_417e153c7b2327fc99ba02ffd5c4492b.jpg" width="600" alt="界面">
+  <img src="image/5-long-ver.jpg" width="400" alt="界面">
+  <img src="image/6-long-hor.jpg" width="400" alt="界面">
 </p>
-<p align="center">
-  <img src="https://cdn.jeff1992.com/av/app/image/2024/upload/am_b3f8f59107f3a92234776791e6411da1.jpg" width="200" alt="界面">
-  <img src="https://cdn.jeff1992.com/av/app/image/2024/upload/am_f02c24c3e0e94d7cb897b77ae5c0a115.jpg" width="200" alt="界面">
-</p>
+
+# 视频展示：
+https://github.com/user-attachments/assets/101d706c-d8d0-455b-b38a-6c42282c03e2
+
+https://github.com/user-attachments/assets/b7becb07-e6bd-459b-9795-d048d02fb21b
+
+https://github.com/user-attachments/assets/070caa63-8e9f-4b11-9240-4cb56440d3c2
 
 ## ⭐️⭐️Star数量曲线⭐️⭐️
 [![Star History Chart](https://api.star-history.com/svg?repos=SherlockGougou/BigImageViewPager&type=Date)](https://star-history.com/#SherlockGougou/BigImageViewPager&Date)
@@ -153,14 +149,14 @@ BigImageViewPager是一个图片/视频浏览器库，支持超大图、超长�
     对原作感兴趣的，可以去研究学习 ---> [传送门点我](https://github.com/davemorrissey/subsampling-scale-image-view)
 *   okhttp 进度监听部分代码，借鉴使用了[GlideImageView](https://github.com/sunfusheng/GlideImageView)，在此对其表示感谢，喜欢其作品的可以移步去查看学习
 # Bug反馈、增加需求，加 QQ 交流群
-<p align="center">
-  <img src="" width="300" alt="QQ群">
+<p align="start">
+  <img src="image/qq.png" width="300" alt="QQ群">
 </p>
 
 # 如果有帮助到你，欢迎请我喝杯☕️：
 <p align="center">
-  <img src="https://github.com/SherlockGougou/BigImageViewPager/assets/17920617/ad358723-6c5c-4878-81b9-ec77b17cda09" width="400" alt="">
-  <img src="https://github.com/SherlockGougou/BigImageViewPager/assets/17920617/507f28d2-c5d0-449c-bbe6-a5e022484130" width="400" alt="">
+  <img src="image/pay-wepay.jpg" width="400" alt="">
+  <img src="image/pay-alipay.jpg" width="400" alt="">
 </p>
 
 # LICENSE
