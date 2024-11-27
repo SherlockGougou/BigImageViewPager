@@ -2,20 +2,36 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('../common-60.keystore')
+            storePassword '000000'
+            keyAlias '000000'
+            keyPassword '000000'
+        }
+        release {
+            storeFile file('../common-60.keystore')
+            storePassword '000000'
+            keyAlias '000000'
+            keyPassword '000000'
+        }
+    }
     namespace 'cc.shinichi.bigimageviewpager'
     compileSdkVersion 34
+    buildToolsVersion '34.0.0'
     defaultConfig {
         applicationId "cc.shinichi.bigimageviewpager"
         minSdkVersion 24
         targetSdkVersion 34
         versionCode 800
         versionName "androidx-8.0.0"
+        signingConfig signingConfigs.debug
+        multiDexEnabled true
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
         }
     }
     compileOptions {

@@ -4,9 +4,11 @@ apply plugin: 'kotlin-android'
 android {
     namespace 'cc.shinichi.library'
     compileSdkVersion 34
+    buildToolsVersion '34.0.0'
     defaultConfig {
         minSdkVersion 24
         targetSdkVersion 34
+        multiDexEnabled true
     }
     buildTypes {
         release {

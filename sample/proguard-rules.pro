@@ -23,3 +23,8 @@
 # This is generated automatically by the Android Gradle plugin.
 -dontwarn org.conscrypt.Conscrypt
 -dontwarn org.conscrypt.OpenSSLProvider
+
+# 配置
+-keep class cc.shinichi.library.** { *; }
+-keep interface cc.shinichi.library.** { *; }
+-dontwarn cc.shinichi.library.**
