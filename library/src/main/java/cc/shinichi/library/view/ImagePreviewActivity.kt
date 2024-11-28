@@ -336,6 +336,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         }
         ImagePreview.instance.onPageFinishListener?.onFinish(this)
         ImagePreview.instance.reset()
+        context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     override fun onDestroy() {
@@ -643,17 +644,11 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     companion object {
-        fun activityStart(context: Context?) {
-            if (context == null) {
-                return
-            }
+        fun activityStart(context: Activity) {
             val intent = Intent()
             intent.setClass(context, ImagePreviewActivity::class.java)
-            // 默认动画
             context.startActivity(intent)
-            if (context is Activity) {
-                context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-            }
+            context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }
     }
 }
