@@ -33,6 +33,7 @@ import cc.shinichi.library.bean.ImageInfo
 import cc.shinichi.library.bean.Type
 import cc.shinichi.library.glide.FileTarget
 import cc.shinichi.library.glide.ImageLoader.getGlideCacheFile
+import cc.shinichi.library.tool.common.DeviceUtil
 import cc.shinichi.library.tool.common.HttpUtil.downloadFile
 import cc.shinichi.library.tool.common.NetworkUtil.isWiFi
 import cc.shinichi.library.tool.common.SLog
@@ -438,13 +439,10 @@ class ImagePreviewFragment : Fragment() {
             val isStatic = isStaticImage(originalUrl, cacheFile.absolutePath)
             if (isStatic) {
                 SLog.d(TAG, "loadOriginal: 静态图")
-                val isHeifImageWithMime = isHeifImageWithMime(imageInfo.originUrl, cacheFile.absolutePath)
-                if (isHeifImageWithMime) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ALPHA_8)
-                    } else {
-                        SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
-                    }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_4444)
+                } else {
+                    SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
                 }
                 imageAnim.visibility = View.GONE
                 imageStatic.visibility = View.VISIBLE
@@ -703,13 +701,10 @@ class ImagePreviewFragment : Fragment() {
 
     private fun setImageStatic(imagePath: String, imageStatic: SubsamplingScaleImageView) {
         imageStatic.orientation = SubsamplingScaleImageView.ORIENTATION_USE_EXIF
-        val isHeifImageWithMime = isHeifImageWithMime("", imagePath)
-        if (isHeifImageWithMime) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ALPHA_8)
-            } else {
-                SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_4444)
+        } else {
+            SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
         }
         val tabletOrLandscape = isTabletOrLandscape(imagePreviewActivity)
         if (tabletOrLandscape) {

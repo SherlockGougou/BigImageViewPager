@@ -49,9 +49,10 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgCloseButton"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:padding="15dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="10dp"
+            android:padding="8dp"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -84,9 +85,10 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_download"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:padding="15dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="10dp"
+            android:padding="8dp"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

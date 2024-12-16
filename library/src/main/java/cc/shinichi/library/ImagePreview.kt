@@ -112,7 +112,15 @@ class ImagePreview {
         private set
 
     @DrawableRes
+    var closeIconBackgroundResId = -1
+        private set
+
+    @DrawableRes
     var downIconResId = R.drawable.icon_download_new
+        private set
+
+    @DrawableRes
+    var downIconBackgroundResId = -1
         private set
 
     // 加载失败时的占位图
@@ -361,6 +369,16 @@ class ImagePreview {
         return this
     }
 
+    fun setCloseIconBackgroundResId(@DrawableRes closeIconBackgroundResId: Int): ImagePreview {
+        this.closeIconBackgroundResId = closeIconBackgroundResId
+        return this
+    }
+
+    fun setDownIconBackgroundResId(@DrawableRes downIconBackgroundResId: Int): ImagePreview {
+        this.downIconBackgroundResId = downIconBackgroundResId
+        return this
+    }
+
     fun setShowIndicator(showIndicator: Boolean): ImagePreview {
         isShowIndicator = showIndicator
         return this
@@ -473,6 +491,8 @@ class ImagePreview {
         indicatorShapeResId = R.drawable.shape_indicator_bg
         closeIconResId = R.drawable.ic_action_close
         downIconResId = R.drawable.icon_download_new
+        closeIconBackgroundResId = -1
+        downIconBackgroundResId = -1
         errorPlaceHolder = R.drawable.load_failed
 
         bigImageClickListener = null

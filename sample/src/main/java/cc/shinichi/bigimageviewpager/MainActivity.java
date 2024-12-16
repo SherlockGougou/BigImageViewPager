@@ -329,11 +329,15 @@ public class MainActivity extends AppCompatActivity {
                         .setShowCloseButton(showCloseButton)
                         // 设置关闭按钮图片资源，可不填，默认为库中自带：R.drawable.ic_action_close
                         .setCloseIconResId(R.drawable.ic_action_close)
+                        // 设置关闭按钮背景shape
+                        .setCloseIconBackgroundResId(R.drawable.shape_indicator_bg)
 
                         // 是否显示下载按钮，在页面右下角。默认显示
                         .setShowDownButton(showDownButton)
                         // 设置下载按钮图片资源，可不填，默认为库中自带：R.drawable.icon_download_new
                         .setDownIconResId(R.drawable.icon_download_new)
+                        // 设置下载按钮背景shape
+                        .setDownIconBackgroundResId(R.drawable.shape_indicator_bg)
                         // 下载按钮点击回调：重写此方法，isInterceptDownload返回true时，即代表您需要自己实现下载逻辑
                         .setDownloadClickListener(new OnDownloadClickListener() {
                             @Override

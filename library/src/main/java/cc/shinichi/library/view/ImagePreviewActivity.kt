@@ -175,6 +175,13 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         if (ImagePreview.instance.indicatorShapeResId > 0) {
             tvIndicator.setBackgroundResource(ImagePreview.instance.indicatorShapeResId)
         }
+        // 设置关闭和下载的shape
+        if (ImagePreview.instance.closeIconBackgroundResId > 0) {
+            imgCloseButton.setBackgroundResource(ImagePreview.instance.closeIconBackgroundResId)
+        }
+        if (ImagePreview.instance.downIconBackgroundResId > 0) {
+            imgDownload.setBackgroundResource(ImagePreview.instance.downIconBackgroundResId)
+        }
         downloadButtonStatus = if (isShowDownButton) {
             imgDownload.visibility = View.VISIBLE
             true
