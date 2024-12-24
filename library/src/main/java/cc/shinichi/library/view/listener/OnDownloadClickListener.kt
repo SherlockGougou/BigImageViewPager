@@ -15,7 +15,7 @@ abstract class OnDownloadClickListener {
      * 点击事件
      * 是否拦截下载行为
      */
-    abstract fun onClick(activity: Activity?, view: View?, position: Int)
+    abstract fun onClick(activity: Activity, view: View, position: Int)
 
     /**
      * 是否拦截下载

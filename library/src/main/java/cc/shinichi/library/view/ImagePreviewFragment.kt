@@ -160,9 +160,9 @@ class ImagePreviewFragment : Fragment() {
         if (ImagePreview.instance.isEnableDragClose) {
             dragCloseView.setOnAlphaChangeListener { event, translationY ->
                 if (translationY > 0) {
-                    ImagePreview.instance.onPageDragListener?.onDrag(imagePreviewActivity.parentView, event, translationY)
+                    ImagePreview.instance.onPageDragListener?.onDrag(imagePreviewActivity, imagePreviewActivity.parentView, event, translationY)
                 } else {
-                    ImagePreview.instance.onPageDragListener?.onDragEnd(imagePreviewActivity.parentView)
+                    ImagePreview.instance.onPageDragListener?.onDragEnd(imagePreviewActivity, imagePreviewActivity.parentView)
                 }
                 val yAbs = abs(translationY)
                 val percent = yAbs / phoneHei

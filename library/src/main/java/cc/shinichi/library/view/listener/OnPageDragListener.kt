@@ -1,5 +1,6 @@
 package cc.shinichi.library.view.listener
 
+import android.app.Activity
 import android.view.MotionEvent
 import android.view.View
 
@@ -11,6 +12,6 @@ import android.view.View
  * description: 页面拖拽回调
  */
 abstract class OnPageDragListener {
-    abstract fun onDrag(parentView: View, event: MotionEvent?, translationY: Float)
-    abstract fun onDragEnd(parentView: View)
+    abstract fun onDrag(activity: Activity, parentView: View, event: MotionEvent?, translationY: Float)
+    abstract fun onDragEnd(activity: Activity, parentView: View)
 }

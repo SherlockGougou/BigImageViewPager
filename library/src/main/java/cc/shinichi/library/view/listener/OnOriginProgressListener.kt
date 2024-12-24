@@ -1,5 +1,6 @@
 package cc.shinichi.library.view.listener
 
+import android.app.Activity
 import android.view.View
 
 /**
@@ -12,10 +13,10 @@ interface OnOriginProgressListener {
     /**
      * 加载中
      */
-    fun progress(parentView: View?, progress: Int)
+    fun progress(activity: Activity, parentView: View, progress: Int)
 
     /**
      * 加载完成
      */
-    fun finish(parentView: View?)
+    fun finish(activity: Activity, parentView: View)
 }

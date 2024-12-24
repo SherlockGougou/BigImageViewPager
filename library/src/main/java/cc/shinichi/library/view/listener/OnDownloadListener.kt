@@ -10,7 +10,7 @@ import android.app.Activity
  * description: 下载结果回调
  */
 abstract class OnDownloadListener {
-    abstract fun onDownloadStart(activity: Activity?, position: Int)
-    abstract fun onDownloadSuccess(activity: Activity?, position: Int)
-    abstract fun onDownloadFailed(activity: Activity?, position: Int)
+    abstract fun onDownloadStart(activity: Activity, position: Int)
+    abstract fun onDownloadSuccess(activity: Activity, position: Int)
+    abstract fun onDownloadFailed(activity: Activity, position: Int)
 }

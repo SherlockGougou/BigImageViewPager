@@ -92,7 +92,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         super.onCreate(savedInstanceState)
         parentView = View.inflate(this, ImagePreview.instance.previewLayoutResId, null)
         setContentView(parentView)
-        ImagePreview.instance.onCustomLayoutCallback?.onLayout(parentView)
+        ImagePreview.instance.onCustomLayoutCallback?.onLayout(this, parentView)
 
         transparentStatusBar(this)
         transparentNavBar(this)
@@ -372,20 +372,10 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             if (indicatorStatus) {
                 tvIndicator.visibility = View.VISIBLE
             }
-            if (originalStatus) {
-                fmImageShowOriginContainer.visibility = View.VISIBLE
-            }
-            if (downloadButtonStatus) {
-                imgDownload.visibility = View.VISIBLE
-            }
-            if (closeButtonStatus) {
-                imgCloseButton.visibility = View.VISIBLE
-            }
+            consBottomController.visibility = View.VISIBLE
         } else {
             tvIndicator.visibility = View.GONE
-            fmImageShowOriginContainer.visibility = View.GONE
-            imgDownload.visibility = View.GONE
-            imgCloseButton.visibility = View.GONE
+            consBottomController.visibility = View.GONE
         }
     }
 
@@ -418,7 +408,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 if (isUserCustomProgressView) {
                     fmCenterProgressContainer.visibility = View.GONE
                     progressParentLayout.visibility = View.GONE
-                    ImagePreview.instance.onOriginProgressListener?.finish(progressParentLayout)
+                    ImagePreview.instance.onOriginProgressListener?.finish(this, progressParentLayout)
                 }
                 fragmentList[currentItem].onOriginal()
             }
@@ -433,6 +423,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                     fmCenterProgressContainer.visibility = View.VISIBLE
                     progressParentLayout.visibility = View.VISIBLE
                     ImagePreview.instance.onOriginProgressListener?.progress(
+                        this,
                         progressParentLayout,
                         progress
                     )

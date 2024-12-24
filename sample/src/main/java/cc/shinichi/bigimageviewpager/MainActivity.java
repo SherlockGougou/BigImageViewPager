@@ -439,7 +439,7 @@ public class MainActivity extends AppCompatActivity {
                         // 页面手势上下拖动的回调：自定义布局可以根据是否拖动进行隐藏或者展示
                         .setOnPageDragListener(new OnPageDragListener() {
                             @Override
-                            public void onDrag(@NonNull View parentView, MotionEvent event, float translationY) {
+                            public void onDrag(@NonNull Activity activity, @NonNull View parentView, MotionEvent event, float translationY) {
                                 SLog.INSTANCE.d(TAG, "onDrag: translationY = " + translationY);
                                 // 此处可以根据是否拖拽设置自定义的View的逻辑
                                 if (customViewContainer != null) {
@@ -448,7 +448,7 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onDragEnd(@NonNull View parentView) {
+                            public void onDragEnd(@NonNull Activity activity, @NonNull View parentView) {
                                 SLog.INSTANCE.d(TAG, "onDragEnd: ");
                                 if (customViewContainer != null) {
                                     customViewContainer.setVisibility(View.VISIBLE);
@@ -460,7 +460,7 @@ public class MainActivity extends AppCompatActivity {
                         // 可手动更改为自定义样式，需要在回调中手动更新进度
                         .setProgressLayoutId(ImagePreview.PROGRESS_THEME_CIRCLE_TEXT, new OnOriginProgressListener() {
                             @Override
-                            public void progress(View parentView, int progress) {
+                            public void progress(@NonNull Activity activity, View parentView, int progress) {
                                 SLog.INSTANCE.d(TAG, "原图progress: " + progress);
                                 // 需要找到进度控件并设置百分比，回调中的parentView即传入的布局的根View，可通过parentView找到控件：
                                 ProgressBar progressBar = parentView.findViewById(R.id.sh_progress_view);
@@ -471,7 +471,7 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void finish(View parentView) {
+                            public void finish(@NonNull Activity activity, View parentView) {
                                 SLog.INSTANCE.d(TAG, "finish: ");
                             }
                         })
@@ -479,7 +479,7 @@ public class MainActivity extends AppCompatActivity {
                         // 完全自定义预览界面，请参考这个布局（R.layout.sh_layout_preview），需要保持控件类型、id和其中的一致，否则会找不到控件而报错
                         .setPreviewLayoutResId(R.layout.custom_layout_preview, new OnCustomLayoutCallback() {
                             @Override
-                            public void onLayout(@NonNull View parentView) {
+                            public void onLayout(@NonNull Activity activity, @NonNull View parentView) {
                                 // 除了默认的控件之外，你可以在此处处理你的其他控件，比如分享按钮、业务数据展示等
                                 customViewContainer = parentView.findViewById(R.id.custom_view_container);
                                 imgClose = parentView.findViewById(R.id.img_close_button_custom);

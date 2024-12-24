@@ -6,7 +6,9 @@
     <ProgressBar
         android:id="@id/sh_progress_view"
         android:layout_width="70dp"
-        android:layout_height="70dp" />
+        android:layout_height="70dp"
+        android:indeterminateTint="#ffffff"
+        android:indeterminateTintMode="src_in" />
 
     <TextView
         android:id="@id/sh_progress_text"
@@ -14,6 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="100%"
-        android:textSize="12sp" />
+        android:textColor="#ffffff"
+        android:textSize="13sp" />
 
 </RelativeLayout>

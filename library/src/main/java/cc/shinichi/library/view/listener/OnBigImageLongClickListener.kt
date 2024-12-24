@@ -14,5 +14,5 @@ interface OnBigImageLongClickListener {
     /**
      * 长按事件
      */
-    fun onLongClick(activity: Activity?, view: View?, position: Int): Boolean
+    fun onLongClick(activity: Activity, view: View, position: Int): Boolean
 }

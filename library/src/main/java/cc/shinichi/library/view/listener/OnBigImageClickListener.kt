@@ -14,5 +14,5 @@ interface OnBigImageClickListener {
     /**
      * 点击事件
      */
-    fun onClick(activity: Activity?, view: View?, position: Int)
+    fun onClick(activity: Activity, view: View, position: Int)
 }
