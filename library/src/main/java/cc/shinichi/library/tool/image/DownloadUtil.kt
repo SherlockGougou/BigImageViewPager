@@ -12,12 +12,12 @@ import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.R
 import cc.shinichi.library.glide.FileTarget
 import cc.shinichi.library.tool.common.HttpUtil.downloadFile
+import cc.shinichi.library.tool.common.ToastUtil
 import cc.shinichi.library.tool.file.FileUtil.Companion.copyFile
 import cc.shinichi.library.tool.file.FileUtil.Companion.createFileByDeleteOldFile
 import cc.shinichi.library.tool.file.FileUtil.Companion.getAvailableCacheDir
 import cc.shinichi.library.tool.file.SingleMediaScanner
 import cc.shinichi.library.tool.image.ImageUtil.refresh
-import cc.shinichi.library.tool.common.ToastUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.transition.Transition
 import java.io.*

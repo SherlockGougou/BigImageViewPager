@@ -13,8 +13,8 @@ import android.provider.MediaStore
 import android.text.TextUtils
 import androidx.annotation.RequiresApi
 import androidx.exifinterface.media.ExifInterface
-import cc.shinichi.library.tool.common.SLog
 import cc.shinichi.library.tool.common.PhoneUtil
+import cc.shinichi.library.tool.common.SLog
 import java.io.*
 import java.util.*
 import kotlin.math.max
@@ -168,13 +168,12 @@ object ImageUtil {
         return isTablet(context) or isLandscape(context)
     }
 
-    fun isLongImage(context: Context, imagePath: String): Boolean {
+    fun isLongImage(imagePath: String): Boolean {
         val wh = getWidthHeight(imagePath)
         val w = wh[0].toFloat()
         val h = wh[1].toFloat()
         val imageRatio = h / w
-        val phoneRatio = PhoneUtil.getPhoneRatio(context)
-        val isLongImage = h > w && imageRatio > phoneRatio
+        val isLongImage = h > w && imageRatio >= 3
         SLog.d(TAG, "isLongImage = $isLongImage")
         return isLongImage
     }
@@ -184,27 +183,29 @@ object ImageUtil {
         val w = wh[0].toFloat()
         val h = wh[1].toFloat()
         val imageRatio = w / h
-        val isWideImage = w > h && imageRatio >= 2
+        val isWideImage = w > h && imageRatio >= 3
         SLog.d(TAG, "isWideImage = $isWideImage")
         return isWideImage
     }
 
-    fun getImageMaxZoomScale(context: Context, imagePath: String): Float {
+    fun getStandardImageMaxZoomScale(context: Context, imagePath: String): Float {
         val wh = getWidthHeight(imagePath)
         val imageWid = wh[0].toFloat()
-        val imageHei = wh[1].toFloat()
-        val phoneHei = PhoneUtil.getPhoneHei(context.applicationContext).toFloat()
-        if (imageWid >= 2560) {
-            return phoneHei * 4f / imageHei
-        }
-        return phoneHei * 2f / imageHei
+        val phoneWid = PhoneUtil.getPhoneWid(context.applicationContext).toFloat()
+        return (phoneWid * 4f / imageWid).coerceAtLeast(4f)
     }
 
-    fun getImageDoubleScale(context: Context, imagePath: String): Float {
-        val wh = getWidthHeight(imagePath)
-        val imageHei = wh[1].toFloat()
+    fun getStandardImageDoubleScale(context: Context, imagePath: String): Float {
+        val widthHeight = getWidthHeight(imagePath)
+        val imageWid = widthHeight[0].toFloat()
+        val imageHei = widthHeight[1].toFloat()
         val phoneHei = PhoneUtil.getPhoneHei(context.applicationContext).toFloat()
-        return phoneHei / imageHei
+        if (imageWid > imageHei) {
+            // 宽图，双击放大到高度铺满
+            return phoneHei / imageHei
+        } else {
+            return getStandardImageMaxZoomScale(context, imagePath) / 2f
+        }
     }
 
     fun getLongImageMaxZoomScale(context: Context, imagePath: String): Float {

@@ -18,12 +18,10 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
-import androidx.annotation.OptIn
 import androidx.fragment.app.Fragment
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.VideoSize
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import cc.shinichi.library.ImagePreview
@@ -33,29 +31,15 @@ import cc.shinichi.library.bean.ImageInfo
 import cc.shinichi.library.bean.Type
 import cc.shinichi.library.glide.FileTarget
 import cc.shinichi.library.glide.ImageLoader.getGlideCacheFile
-import cc.shinichi.library.tool.common.DeviceUtil
 import cc.shinichi.library.tool.common.HttpUtil.downloadFile
 import cc.shinichi.library.tool.common.NetworkUtil.isWiFi
-import cc.shinichi.library.tool.common.SLog
-import cc.shinichi.library.tool.file.FileUtil.Companion.getAvailableCacheDir
-import cc.shinichi.library.tool.image.ImageUtil
-import cc.shinichi.library.tool.image.ImageUtil.getBitmapDegree
-import cc.shinichi.library.tool.image.ImageUtil.getImageBitmap
-import cc.shinichi.library.tool.image.ImageUtil.getImageDoubleScale
-import cc.shinichi.library.tool.image.ImageUtil.getLongImageDoubleZoomScale
-import cc.shinichi.library.tool.image.ImageUtil.getWideImageDoubleScale
-import cc.shinichi.library.tool.image.ImageUtil.getWidthHeight
-import cc.shinichi.library.tool.image.ImageUtil.isAnimWebp
-import cc.shinichi.library.tool.image.ImageUtil.isBmpImageWithMime
-import cc.shinichi.library.tool.image.ImageUtil.isHeifImageWithMime
-import cc.shinichi.library.tool.image.ImageUtil.isLongImage
-import cc.shinichi.library.tool.image.ImageUtil.isStaticImage
-import cc.shinichi.library.tool.image.ImageUtil.isTabletOrLandscape
-import cc.shinichi.library.tool.image.ImageUtil.isWideImage
 import cc.shinichi.library.tool.common.PhoneUtil
 import cc.shinichi.library.tool.common.PhoneUtil.getPhoneHei
+import cc.shinichi.library.tool.common.SLog
 import cc.shinichi.library.tool.common.ToastUtil
 import cc.shinichi.library.tool.common.UIUtil
+import cc.shinichi.library.tool.file.FileUtil.Companion.getAvailableCacheDir
+import cc.shinichi.library.tool.image.ImageUtil
 import cc.shinichi.library.view.helper.DragCloseView
 import cc.shinichi.library.view.listener.SimpleOnImageEventListener
 import cc.shinichi.library.view.photoview.PhotoView
@@ -316,12 +300,12 @@ class ImagePreviewFragment : Fragment() {
         }
     }
 
-    @OptIn(UnstableApi::class)
     private fun initVideoType() {
         // 视频类型，隐藏图片
         imageStatic.visibility = View.GONE
         imageAnim.visibility = View.GONE
         videoView.visibility = View.VISIBLE
+        progressBar.visibility = View.GONE
 
         // 自定义控制
         refreshUIMargin()
@@ -355,6 +339,12 @@ class ImagePreviewFragment : Fragment() {
                         // 播放结束
                         exoPlayer?.pause()
                         exoPlayer?.seekTo(0)
+                    }
+                    if (playbackState == Player.STATE_BUFFERING) {
+                        // 缓冲中
+                        progressBar.visibility = View.VISIBLE
+                    } else {
+                        progressBar.visibility = View.GONE
                     }
                 }
             })
@@ -436,7 +426,7 @@ class ImagePreviewFragment : Fragment() {
         val originalUrl = imageInfo.originUrl
         val cacheFile = getGlideCacheFile(imagePreviewActivity, imageInfo.originUrl)
         if (cacheFile != null && cacheFile.exists()) {
-            val isStatic = isStaticImage(originalUrl, cacheFile.absolutePath)
+            val isStatic = ImageUtil.isStaticImage(originalUrl, cacheFile.absolutePath)
             if (isStatic) {
                 SLog.d(TAG, "loadOriginal: 静态图")
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -452,31 +442,30 @@ class ImagePreviewFragment : Fragment() {
                     var small: ImageSource? = null
                     if (smallCacheFile != null && smallCacheFile.exists()) {
                         val smallImagePath = smallCacheFile.absolutePath
-                        small = getImageBitmap(
+                        small = ImageUtil.getImageBitmap(
                             smallImagePath,
-                            getBitmapDegree(smallImagePath)
+                            ImageUtil.getBitmapDegree(smallImagePath)
                         )?.let {
                             ImageSource.bitmap(it)
                         }
-                        val widSmall = getWidthHeight(smallImagePath)[0]
-                        val heiSmall = getWidthHeight(smallImagePath)[1]
-                        if (isBmpImageWithMime(originalUrl, cacheFile.absolutePath)) {
+                        val widSmall = ImageUtil.getWidthHeight(smallImagePath)[0]
+                        val heiSmall = ImageUtil.getWidthHeight(smallImagePath)[1]
+                        if (ImageUtil.isBmpImageWithMime(originalUrl, cacheFile.absolutePath)) {
                             small?.tilingDisabled()
                         }
                         small?.dimensions(widSmall, heiSmall)
                     }
                     val imagePath = cacheFile.absolutePath
                     val origin = ImageSource.uri(imagePath)
-                    val widOrigin = getWidthHeight(imagePath)[0]
-                    val heiOrigin = getWidthHeight(imagePath)[1]
-                    if (isBmpImageWithMime(originalUrl, cacheFile.absolutePath)) {
+                    val widOrigin = ImageUtil.getWidthHeight(imagePath)[0]
+                    val heiOrigin = ImageUtil.getWidthHeight(imagePath)[1]
+                    if (ImageUtil.isBmpImageWithMime(originalUrl, cacheFile.absolutePath)) {
                         origin.tilingDisabled()
                     }
                     origin.dimensions(widOrigin, heiOrigin)
                     imageStatic.setImage(origin, small)
                     // 缩放适配
                     setImageStatic(imagePath, imageStatic)
-                    scaleLongPic(imagePath, imageStatic)
                 }
             } else {
                 SLog.d(TAG, "loadOriginal: 动态图")
@@ -663,7 +652,7 @@ class ImagePreviewFragment : Fragment() {
         resource: File
     ) {
         val imagePath = resource.absolutePath
-        val isStatic = isStaticImage(imageUrl, imagePath)
+        val isStatic = ImageUtil.isStaticImage(imageUrl, imagePath)
         if (isStatic) {
             SLog.d(TAG, "loadSuccess: 动静判断: 静态图")
             loadImageStatic(imagePath)
@@ -706,7 +695,7 @@ class ImagePreviewFragment : Fragment() {
         } else {
             SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
         }
-        val tabletOrLandscape = isTabletOrLandscape(imagePreviewActivity)
+        val tabletOrLandscape = ImageUtil.isTabletOrLandscape(imagePreviewActivity)
         if (tabletOrLandscape) {
             // Tablet
             imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
@@ -717,59 +706,49 @@ class ImagePreviewFragment : Fragment() {
             // Phone
             imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
             imageStatic.minScale = 1f
-            val isLongImage = isLongImage(imagePreviewActivity, imagePath)
+            val isLongImage = ImageUtil.isLongImage(imagePath)
+            val isWideImage = ImageUtil.isWideImage(imagePath)
             if (isLongImage) {
-                // 长图
-                imageStatic.maxScale =
-                    ImageUtil.getLongImageMaxZoomScale(imagePreviewActivity, imagePath)
+                // 长图，高/宽>=3
+                imageStatic.maxScale = ImageUtil.getLongImageMaxZoomScale(imagePreviewActivity, imagePath)
                 imageStatic.setDoubleTapZoomScale(
-                    getLongImageDoubleZoomScale(
+                    ImageUtil.getLongImageDoubleZoomScale(
+                        imagePreviewActivity,
+                        imagePath
+                    )
+                )
+                // 设置长图的默认展示模式：宽度拉满/居中显示
+                when (ImagePreview.instance.longPicDisplayMode) {
+                    ImagePreview.LongPicDisplayMode.Default -> {
+                    }
+
+                    ImagePreview.LongPicDisplayMode.FillWidth -> {
+                        imageStatic.setScaleAndCenter(
+                            ImageUtil.getLongImageFillWidthScale(
+                                this.imagePreviewActivity,
+                                imagePath
+                            ), PointF(0f, 0f)
+                        )
+                    }
+                }
+            } else if (isWideImage) {
+                // 宽图，宽/高>=3
+                imageStatic.maxScale = ImageUtil.getWideImageMaxZoomScale(imagePreviewActivity, imagePath)
+                imageStatic.setDoubleTapZoomScale(
+                    ImageUtil.getWideImageDoubleScale(
                         imagePreviewActivity,
                         imagePath
                     )
                 )
             } else {
-                val isWideImage = isWideImage(imagePath)
-                if (isWideImage) {
-                    // 宽图
-                    imageStatic.maxScale =
-                        ImageUtil.getWideImageMaxZoomScale(imagePreviewActivity, imagePath)
-                    imageStatic.setDoubleTapZoomScale(
-                        getWideImageDoubleScale(
-                            imagePreviewActivity,
-                            imagePath
-                        )
+                // 普通图片，其他
+                imageStatic.maxScale = ImageUtil.getStandardImageMaxZoomScale(imagePreviewActivity, imagePath)
+                imageStatic.setDoubleTapZoomScale(
+                    ImageUtil.getStandardImageDoubleScale(
+                        imagePreviewActivity,
+                        imagePath
                     )
-                } else {
-                    // 普通图片
-                    imageStatic.maxScale =
-                        ImageUtil.getImageMaxZoomScale(imagePreviewActivity, imagePath)
-                    imageStatic.setDoubleTapZoomScale(
-                        getImageDoubleScale(
-                            imagePreviewActivity,
-                            imagePath
-                        )
-                    )
-                }
-            }
-        }
-    }
-
-    private fun scaleLongPic(imagePath: String, imageStatic: SubsamplingScaleImageView) {
-        val isLongImage = isLongImage(this.imagePreviewActivity, imagePath)
-        if (isLongImage) {
-            when (ImagePreview.instance.longPicDisplayMode) {
-                ImagePreview.LongPicDisplayMode.Default -> {
-                }
-
-                ImagePreview.LongPicDisplayMode.FillWidth -> {
-                    imageStatic.setScaleAndCenter(
-                        ImageUtil.getLongImageFillWidthScale(
-                            this.imagePreviewActivity,
-                            imagePath
-                        ), PointF(0f, 0f)
-                    )
-                }
+                )
             }
         }
     }
@@ -783,7 +762,7 @@ class ImagePreviewFragment : Fragment() {
         imageAnim.visibility = View.GONE
         imageStatic.visibility = View.VISIBLE
         val imageSource = ImageSource.uri(Uri.fromFile(File(imagePath)))
-        if (isBmpImageWithMime(imagePath, imagePath)) {
+        if (ImageUtil.isBmpImageWithMime(imagePath, imagePath)) {
             imageSource.tilingDisabled()
         }
         imageStatic.setImage(imageSource)
@@ -794,7 +773,6 @@ class ImagePreviewFragment : Fragment() {
         })
         // 缩放适配
         setImageStatic(imagePath, imageStatic)
-        scaleLongPic(imagePath, imageStatic)
     }
 
     /**
@@ -805,8 +783,7 @@ class ImagePreviewFragment : Fragment() {
     ) {
         imageStatic.visibility = View.GONE
         imageAnim.visibility = View.VISIBLE
-
-        if (isAnimWebp(imageUrl, imagePath)) {
+        if (ImageUtil.isAnimWebp(imageUrl, imagePath)) {
             val fitCenter: Transformation<Bitmap> = FitCenter()
             Glide.with(imagePreviewActivity)
                 .load(imagePath)

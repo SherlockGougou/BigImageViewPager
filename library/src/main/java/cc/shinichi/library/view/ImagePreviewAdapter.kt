@@ -10,7 +10,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
  * 描述: ViewPager适配器
  * 创建时间: 2024/11/25
  */
-class ImagePreviewAdapter2(
+class ImagePreviewAdapter(
     fragmentManager: FragmentManager,
     private val fragmentList: MutableList<ImagePreviewFragment>
 ) : FragmentStatePagerAdapter(fragmentManager) {

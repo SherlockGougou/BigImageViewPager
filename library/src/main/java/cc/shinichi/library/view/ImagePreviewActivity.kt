@@ -2,17 +2,16 @@ package cc.shinichi.library.view
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
+import android.os.Build.VERSION_CODES.P
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.view.View
-import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.FrameLayout
@@ -40,11 +39,11 @@ import cc.shinichi.library.tool.common.DeviceUtil
 import cc.shinichi.library.tool.common.HandlerHolder
 import cc.shinichi.library.tool.common.HttpUtil
 import cc.shinichi.library.tool.common.NetworkUtil
-import cc.shinichi.library.tool.common.SLog
-import cc.shinichi.library.tool.image.DownloadUtil
 import cc.shinichi.library.tool.common.PhoneUtil
+import cc.shinichi.library.tool.common.SLog
 import cc.shinichi.library.tool.common.ToastUtil
 import cc.shinichi.library.tool.common.UIUtil
+import cc.shinichi.library.tool.image.DownloadUtil
 import cc.shinichi.library.view.listener.OnFinishListener
 import com.bumptech.glide.Glide
 
@@ -52,7 +51,8 @@ import com.bumptech.glide.Glide
  * @author 工藤
  * @email qinglingou@gmail.com
  */
-class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClickListener, OnFinishListener {
+class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClickListener,
+    OnFinishListener {
 
     private lateinit var context: Activity
     private lateinit var handlerHolder: HandlerHolder
@@ -61,6 +61,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
 
     lateinit var parentView: View
     lateinit var viewPager: HackyViewPager
+    lateinit var consControllerOverlay: ConstraintLayout
     private lateinit var tvIndicator: TextView
     private lateinit var consBottomController: ConstraintLayout
 
@@ -72,7 +73,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     private lateinit var rootView: View
     private lateinit var progressParentLayout: View
 
-    private lateinit var imagePreviewAdapter: ImagePreviewAdapter2
+    private lateinit var imagePreviewAdapter: ImagePreviewAdapter
 
     private var isShowDownButton = false
     private var isShowCloseButton = false
@@ -90,12 +91,18 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, R.anim.fade_in, R.anim.fade_out)
+        } else {
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+        }
+
         parentView = View.inflate(this, ImagePreview.instance.previewLayoutResId, null)
         setContentView(parentView)
         ImagePreview.instance.onCustomLayoutCallback?.onLayout(this, parentView)
 
-        transparentStatusBar(this)
-        transparentNavBar(this)
+        transparentStatusBar()
+        transparentNavBar()
 
         context = this
         handlerHolder = HandlerHolder(this)
@@ -105,6 +112,11 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             onBackPressed()
             return
         }
+
+        // 设置共享元素过渡
+        supportPostponeEnterTransition()
+        // 启动共享元素过渡
+        supportStartPostponedEnterTransition()
 
         // 回调
         ImagePreview.instance.setOnFinishListener(this)
@@ -122,12 +134,23 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             // 检查缓存是否存在
             checkCache(currentItemOriginPathUrl)
         }
+
         rootView = findViewById(R.id.rootView)
         viewPager = findViewById(R.id.viewPager)
+        consControllerOverlay = findViewById(R.id.consControllerOverlay)
         tvIndicator = findViewById(R.id.tv_indicator)
         consBottomController = findViewById<ConstraintLayout>(R.id.consBottomController)
         fmImageShowOriginContainer = findViewById(R.id.fm_image_show_origin_container)
         fmCenterProgressContainer = findViewById(R.id.fm_center_progress_container)
+
+        setAlpha(0f)
+        // setAlpha，从0到1
+        handlerHolder.postDelayed({
+            setAlpha(1f)
+        }, 300)
+        handlerHolder.postDelayed({
+            consControllerOverlay.visibility = View.VISIBLE
+        }, 600)
 
         // 顶部和底部margin
         refreshUIMargin()
@@ -215,7 +238,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 )
             )
         }
-        imagePreviewAdapter = ImagePreviewAdapter2(supportFragmentManager, fragmentList)
+        imagePreviewAdapter = ImagePreviewAdapter(supportFragmentManager, fragmentList)
         viewPager.adapter = imagePreviewAdapter
         viewPager.offscreenPageLimit = 1
         viewPager.setCurrentItem(currentItem, false)
@@ -343,7 +366,6 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         }
         ImagePreview.instance.onPageFinishListener?.onFinish(this)
         ImagePreview.instance.reset()
-        context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     override fun onDestroy() {
@@ -408,7 +430,10 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 if (isUserCustomProgressView) {
                     fmCenterProgressContainer.visibility = View.GONE
                     progressParentLayout.visibility = View.GONE
-                    ImagePreview.instance.onOriginProgressListener?.finish(this, progressParentLayout)
+                    ImagePreview.instance.onOriginProgressListener?.finish(
+                        this,
+                        progressParentLayout
+                    )
                 }
                 fragmentList[currentItem].onOriginal()
             }
@@ -608,33 +633,23 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         })
     }
 
-    private fun transparentStatusBar(activity: Activity) {
-        transparentStatusBar(activity.window)
-    }
-
-    private fun transparentStatusBar(window: Window) {
+    private fun transparentStatusBar() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        val option = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        val vis = window.decorView.systemUiVisibility
-        window.decorView.systemUiVisibility = option or vis
+        val option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        window.decorView.systemUiVisibility = option
         window.statusBarColor = Color.TRANSPARENT
     }
 
-    private fun transparentNavBar(activity: Activity) {
-        transparentNavBar(activity.window)
-    }
-
-    private fun transparentNavBar(window: Window) {
+    private fun transparentNavBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
         }
         window.navigationBarColor = Color.TRANSPARENT
         val decorView = window.decorView
-        val vis = decorView.systemUiVisibility
         val option =
             View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-        decorView.systemUiVisibility = vis or option
+        decorView.systemUiVisibility = option
     }
 
     override fun onFinish() {
@@ -646,7 +661,6 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             val intent = Intent()
             intent.setClass(context, ImagePreviewActivity::class.java)
             context.startActivity(intent)
-            context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }
     }
 }

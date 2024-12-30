@@ -9,6 +9,8 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:indeterminate="false"
+        android:indeterminateTint="#ffffff"
+        android:indeterminateTintMode="src_in"
         android:max="100" />
 
 </LinearLayout>

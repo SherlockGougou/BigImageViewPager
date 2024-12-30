@@ -4,7 +4,7 @@
     android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000">
+    android:background="#00000000">
 
     <cc.shinichi.library.view.HackyViewPager
         android:id="@+id/viewPager"
@@ -23,77 +23,85 @@
 
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/tv_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/shape_indicator_bg"
-        android:gravity="center"
-        android:includeFontPadding="false"
-        android:text="1/9"
-        android:textColor="#ffffff"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/consBottomController"
+        android:id="@+id/consControllerOverlay"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imgCloseButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="10dp"
-            android:padding="8dp"
-            android:scaleType="centerInside"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_action_close" />
-
-        <FrameLayout
-            android:id="@+id/fm_image_show_origin_container"
+        <TextView
+            android:id="@+id/tv_indicator"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/shape_indicator_bg"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="1/9"
+            android:textColor="#ffffff"
+            android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
-                android:id="@+id/btn_show_origin"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/consBottomController"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgCloseButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_action_close" />
+
+            <FrameLayout
+                android:id="@+id/fm_image_show_origin_container"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:background="@drawable/gray_square_circle_bg_white_stroke"
-                android:gravity="center"
-                android:includeFontPadding="false"
-                android:paddingHorizontal="10dp"
-                android:text="@string/btn_original"
-                android:textAllCaps="false"
-                android:textColor="#ffffff"
-                android:textSize="12sp" />
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        </FrameLayout>
+                <Button
+                    android:id="@+id/btn_show_origin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:background="@drawable/gray_square_circle_bg_white_stroke"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:paddingHorizontal="10dp"
+                    android:text="@string/btn_original"
+                    android:textAllCaps="false"
+                    android:textColor="#ffffff"
+                    android:textSize="12sp" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/img_download"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="10dp"
-            android:padding="8dp"
-            android:scaleType="centerInside"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/icon_download_new" />
+            </FrameLayout>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_download"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="10dp"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_download_new" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
