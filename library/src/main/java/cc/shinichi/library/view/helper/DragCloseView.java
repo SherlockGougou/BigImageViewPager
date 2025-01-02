@@ -146,13 +146,19 @@ public class DragCloseView extends RelativeLayout {
         boolean enableUpDragClose = ImagePreview.Companion.getInstance().isEnableUpDragClose();
         if (enableUpDragClose) {
             if (Math.abs(mTranslationY) > MAX_EXIT_Y) {
-                exit(mTranslationY);
+                if (null != mOnAlphaChangedListener) {
+                    mOnAlphaChangedListener.onExit();
+                }
+                exit();
             } else {
                 resetCallBackAnimation();
             }
         } else {
             if (mTranslationY > MAX_EXIT_Y) {
-                exit(mTranslationY);
+                if (null != mOnAlphaChangedListener) {
+                    mOnAlphaChangedListener.onExit();
+                }
+                exit();
             } else {
                 resetCallBackAnimation();
             }
@@ -176,10 +182,9 @@ public class DragCloseView extends RelativeLayout {
         animatorY.start();
     }
 
-    private void exit(float currentY) {
-        // 默认的退出动画
+    private void exit() {
         ValueAnimator animatorExit;
-        if (currentY > 0) {
+        if (mTranslationY > 0) {
             animatorExit = ValueAnimator.ofFloat(mTranslationY, getHeight());
         } else {
             animatorExit = ValueAnimator.ofFloat(mTranslationY, -getHeight());
@@ -198,7 +203,6 @@ public class DragCloseView extends RelativeLayout {
 
             @Override
             public void onAnimationEnd(@NonNull Animator animation) {
-                reset();
                 ((Activity) getContext()).finish();
             }
 
@@ -245,5 +249,7 @@ public class DragCloseView extends RelativeLayout {
     public interface onAlphaChangedListener {
 
         void onTranslationYChanged(MotionEvent event, float translationY);
+
+        void onExit();
     }
 }

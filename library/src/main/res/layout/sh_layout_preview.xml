@@ -4,7 +4,7 @@
     android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00000000">
+    android:background="#000000">
 
     <cc.shinichi.library.view.HackyViewPager
         android:id="@+id/viewPager"
@@ -26,8 +26,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/consControllerOverlay"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/tv_indicator"

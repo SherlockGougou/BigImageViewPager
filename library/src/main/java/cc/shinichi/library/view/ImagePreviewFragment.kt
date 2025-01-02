@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
@@ -59,6 +60,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import java.io.File
 import java.util.Locale
+import kotlin.compareTo
+import kotlin.div
 import kotlin.math.abs
 
 /**
@@ -142,29 +145,35 @@ class ImagePreviewFragment : Fragment() {
         val phoneHei = getPhoneHei(imagePreviewActivity.applicationContext)
         // 手势拖拽事件
         if (ImagePreview.instance.isEnableDragClose) {
-            dragCloseView.setOnAlphaChangeListener { event, translationY ->
-                if (translationY > 0) {
-                    ImagePreview.instance.onPageDragListener?.onDrag(imagePreviewActivity, imagePreviewActivity.parentView, event, translationY)
-                } else {
-                    ImagePreview.instance.onPageDragListener?.onDragEnd(imagePreviewActivity, imagePreviewActivity.parentView)
+            dragCloseView.setOnAlphaChangeListener(object : DragCloseView.onAlphaChangedListener {
+                override fun onTranslationYChanged(event: MotionEvent?, translationY: Float) {
+                    if (translationY > 0) {
+                        ImagePreview.instance.onPageDragListener?.onDrag(imagePreviewActivity, imagePreviewActivity.parentView, event, translationY)
+                    } else {
+                        ImagePreview.instance.onPageDragListener?.onDragEnd(imagePreviewActivity, imagePreviewActivity.parentView)
+                    }
+                    val yAbs = abs(translationY)
+                    val percent = yAbs / phoneHei
+                    val number = 1.0f - percent
+                    imagePreviewActivity.setAlpha(number)
+                    if (imageAnim.visibility == View.VISIBLE) {
+                        imageAnim.scaleY = number
+                        imageAnim.scaleX = number
+                    }
+                    if (imageStatic.visibility == View.VISIBLE) {
+                        imageStatic.scaleY = number
+                        imageStatic.scaleX = number
+                    }
+                    if (videoView.visibility == View.VISIBLE) {
+                        videoView.scaleY = number
+                        videoView.scaleX = number
+                    }
                 }
-                val yAbs = abs(translationY)
-                val percent = yAbs / phoneHei
-                val number = 1.0f - percent
-                imagePreviewActivity.setAlpha(number)
-                if (imageAnim.visibility == View.VISIBLE) {
-                    imageAnim.scaleY = number
-                    imageAnim.scaleX = number
+
+                override fun onExit() {
+                    imagePreviewActivity.setAlpha(0f)
                 }
-                if (imageStatic.visibility == View.VISIBLE) {
-                    imageStatic.scaleY = number
-                    imageStatic.scaleX = number
-                }
-                if (videoView.visibility == View.VISIBLE) {
-                    videoView.scaleY = number
-                    videoView.scaleX = number
-                }
-            }
+            })
         }
         // 点击事件(视频类型不支持点击关闭)
         imageStatic.setOnClickListener { v ->

@@ -91,6 +91,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, R.anim.fade_in, R.anim.fade_out)
         } else {
@@ -109,14 +110,9 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         imageInfoList.clear()
         imageInfoList.addAll(ImagePreview.instance.getImageInfoList())
         if (imageInfoList.isEmpty()) {
-            onBackPressed()
+            finish()
             return
         }
-
-        // 设置共享元素过渡
-        supportPostponeEnterTransition()
-        // 启动共享元素过渡
-        supportStartPostponedEnterTransition()
 
         // 回调
         ImagePreview.instance.setOnFinishListener(this)
@@ -142,15 +138,6 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         consBottomController = findViewById<ConstraintLayout>(R.id.consBottomController)
         fmImageShowOriginContainer = findViewById(R.id.fm_image_show_origin_container)
         fmCenterProgressContainer = findViewById(R.id.fm_center_progress_container)
-
-        setAlpha(0f)
-        // setAlpha，从0到1
-        handlerHolder.postDelayed({
-            setAlpha(1f)
-        }, 300)
-        handlerHolder.postDelayed({
-            consControllerOverlay.visibility = View.VISIBLE
-        }, 600)
 
         // 顶部和底部margin
         refreshUIMargin()
@@ -302,11 +289,6 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 ImagePreview.instance.bigImagePageChangeListener?.onPageScrollStateChanged(state)
             }
         })
-
-        // 如果当前第一个就是视频类型，需要手动调用一次
-//        if (imageInfoList[currentItem].type == Type.VIDEO) {
-//            fragmentList[currentItem].onSelected()
-//        }
     }
 
     private fun refreshUIMargin() {
@@ -359,13 +341,21 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         }
     }
 
+    override fun onFinish() {
+        onBackPressed()
+    }
+
+    override fun onBackPressed() {
+        finish()
+    }
+
     override fun finish() {
-        super.finish()
         for (fragment in fragmentList) {
             fragment.onRelease()
         }
         ImagePreview.instance.onPageFinishListener?.onFinish(this)
         ImagePreview.instance.reset()
+        super.finish()
     }
 
     override fun onDestroy() {
@@ -518,7 +508,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         } else if (i == R.id.btn_show_origin) {
             handlerHolder.sendEmptyMessage(0)
         } else if (i == R.id.imgCloseButton) {
-            onBackPressed()
+            finish()
         }
     }
 
@@ -650,10 +640,6 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         val option =
             View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         decorView.systemUiVisibility = option
-    }
-
-    override fun onFinish() {
-        onBackPressed()
     }
 
     companion object {
