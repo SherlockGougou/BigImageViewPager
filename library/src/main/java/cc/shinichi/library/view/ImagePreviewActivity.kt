@@ -92,11 +92,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, R.anim.fade_in, R.anim.fade_out)
-        } else {
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-        }
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
 
         parentView = View.inflate(this, ImagePreview.instance.previewLayoutResId, null)
         setContentView(parentView)
