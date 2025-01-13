@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.VideoSize
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import cc.shinichi.library.ImagePreview
@@ -123,6 +124,7 @@ class ImagePreviewFragment : Fragment() {
         return view
     }
 
+    @UnstableApi
     private fun initData() {
         SLog.d(TAG, "initData: position = $position")
         val type = imageInfo.type
@@ -148,9 +150,17 @@ class ImagePreviewFragment : Fragment() {
             dragCloseView.setOnAlphaChangeListener(object : DragCloseView.onAlphaChangedListener {
                 override fun onTranslationYChanged(event: MotionEvent?, translationY: Float) {
                     if (translationY > 0) {
-                        ImagePreview.instance.onPageDragListener?.onDrag(imagePreviewActivity, imagePreviewActivity.parentView, event, translationY)
+                        ImagePreview.instance.onPageDragListener?.onDrag(
+                            imagePreviewActivity,
+                            imagePreviewActivity.parentView,
+                            event,
+                            translationY
+                        )
                     } else {
-                        ImagePreview.instance.onPageDragListener?.onDragEnd(imagePreviewActivity, imagePreviewActivity.parentView)
+                        ImagePreview.instance.onPageDragListener?.onDragEnd(
+                            imagePreviewActivity,
+                            imagePreviewActivity.parentView
+                        )
                     }
                     val yAbs = abs(translationY)
                     val percent = yAbs / phoneHei
@@ -309,6 +319,7 @@ class ImagePreviewFragment : Fragment() {
         }
     }
 
+    @UnstableApi
     private fun initVideoType() {
         // 视频类型，隐藏图片
         imageStatic.visibility = View.GONE
@@ -325,7 +336,10 @@ class ImagePreviewFragment : Fragment() {
             exoPlayer?.addListener(object : Player.Listener {
                 override fun onVideoSizeChanged(videoSize: VideoSize) {
                     super.onVideoSizeChanged(videoSize)
-                    SLog.d(TAG, "onVideoSizeChanged: videoSize = ${videoSize.width} * ${videoSize.height}")
+                    SLog.d(
+                        TAG,
+                        "onVideoSizeChanged: videoSize = ${videoSize.width} * ${videoSize.height}"
+                    )
                 }
 
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -344,6 +358,7 @@ class ImagePreviewFragment : Fragment() {
                     if (playbackState == Player.STATE_READY) {
                         // 底部控制器处理
                         setProgress(exoPlayer!!)
+                        videoView.hideController()
                     } else if (playbackState == Player.STATE_ENDED) {
                         // 播放结束
                         exoPlayer?.pause()
@@ -359,6 +374,7 @@ class ImagePreviewFragment : Fragment() {
             })
         }
         videoView.player = exoPlayer
+
         val mediaItem = MediaItem.fromUri(imageInfo.originUrl)
         exoPlayer?.setMediaItem(mediaItem)
         exoPlayer?.prepare()
@@ -536,7 +552,9 @@ class ImagePreviewFragment : Fragment() {
                 0,
                 0,
                 0,
-                UIUtil.dp2px(imagePreviewActivity, 70f) + PhoneUtil.getNavBarHeight(imagePreviewActivity)
+                UIUtil.dp2px(imagePreviewActivity, 70f) + PhoneUtil.getNavBarHeight(
+                    imagePreviewActivity
+                )
             )
         }
         llControllerContainer.layoutParams = layoutParams
@@ -622,7 +640,8 @@ class ImagePreviewFragment : Fragment() {
                     // glide加载失败，使用http下载后再次加载
                     Thread {
                         val fileFullName = System.currentTimeMillis().toString()
-                        val saveDir = getAvailableCacheDir(imagePreviewActivity)?.absolutePath + File.separator + "image/"
+                        val saveDir =
+                            getAvailableCacheDir(imagePreviewActivity)?.absolutePath + File.separator + "image/"
                         val downloadFile = downloadFile(url, fileFullName, saveDir)
                         Handler(Looper.getMainLooper()).post {
                             if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
@@ -719,7 +738,8 @@ class ImagePreviewFragment : Fragment() {
             val isWideImage = ImageUtil.isWideImage(imagePath)
             if (isLongImage) {
                 // 长图，高/宽>=3
-                imageStatic.maxScale = ImageUtil.getLongImageMaxZoomScale(imagePreviewActivity, imagePath)
+                imageStatic.maxScale =
+                    ImageUtil.getLongImageMaxZoomScale(imagePreviewActivity, imagePath)
                 imageStatic.setDoubleTapZoomScale(
                     ImageUtil.getLongImageDoubleZoomScale(
                         imagePreviewActivity,
@@ -742,7 +762,8 @@ class ImagePreviewFragment : Fragment() {
                 }
             } else if (isWideImage) {
                 // 宽图，宽/高>=3
-                imageStatic.maxScale = ImageUtil.getWideImageMaxZoomScale(imagePreviewActivity, imagePath)
+                imageStatic.maxScale =
+                    ImageUtil.getWideImageMaxZoomScale(imagePreviewActivity, imagePath)
                 imageStatic.setDoubleTapZoomScale(
                     ImageUtil.getWideImageDoubleScale(
                         imagePreviewActivity,
@@ -751,7 +772,8 @@ class ImagePreviewFragment : Fragment() {
                 )
             } else {
                 // 普通图片，其他
-                imageStatic.maxScale = ImageUtil.getStandardImageMaxZoomScale(imagePreviewActivity, imagePath)
+                imageStatic.maxScale =
+                    ImageUtil.getStandardImageMaxZoomScale(imagePreviewActivity, imagePath)
                 imageStatic.setDoubleTapZoomScale(
                     ImageUtil.getStandardImageDoubleScale(
                         imagePreviewActivity,
