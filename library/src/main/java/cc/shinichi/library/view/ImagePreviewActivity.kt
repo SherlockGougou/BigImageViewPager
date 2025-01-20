@@ -23,7 +23,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import cc.shinichi.library.GlobalContext
@@ -323,6 +325,8 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     fun getExoPlayer(): ExoPlayer {
         return ExoPlayer.Builder(context)
             .setMediaSourceFactory(DefaultMediaSourceFactory(GlobalContext.getCacheDataSourceFactory()))
+            .setRenderersFactory(DefaultRenderersFactory(context).setMediaCodecSelector(
+                MediaCodecSelector.DEFAULT))
             .build()
     }
 
