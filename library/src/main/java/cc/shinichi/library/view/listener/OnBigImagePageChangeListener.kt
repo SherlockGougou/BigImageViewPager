@@ -1,5 +1,7 @@
 package cc.shinichi.library.view.listener
 
+import cc.shinichi.library.bean.ImageInfo
+
 /**
  * @author 工藤
  * @email qinglingou@gmail.com
@@ -25,7 +27,7 @@ interface OnBigImagePageChangeListener {
      *
      * @param position Position index of the new selected page.
      */
-    fun onPageSelected(position: Int)
+    fun onPageSelected(position: Int, imageInfoList: MutableList<ImageInfo>)
 
     /**
      * Called when the scroll state changes. Useful for discovering when the user

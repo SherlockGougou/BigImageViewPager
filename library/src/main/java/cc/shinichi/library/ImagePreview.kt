@@ -9,6 +9,7 @@ import cc.shinichi.library.bean.ImageInfo
 import cc.shinichi.library.bean.Type
 import cc.shinichi.library.tool.common.SLog
 import cc.shinichi.library.view.ImagePreviewActivity
+import cc.shinichi.library.view.ImagePreviewAdapter
 import cc.shinichi.library.view.listener.*
 import java.lang.ref.WeakReference
 
@@ -152,6 +153,9 @@ class ImagePreview {
     @LayoutRes
     var progressLayoutId = -1
         private set
+
+    // activity实例
+    var previewActivity: ImagePreviewActivity? = null
 
     // 防止多次快速点击，记录上次打开的时间戳
     private var lastClickTime: Long = 0

@@ -76,6 +76,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     private lateinit var progressParentLayout: View
 
     private lateinit var imagePreviewAdapter: ImagePreviewAdapter
+    private var pageChangeListener: OnPageChangeListener? = null
 
     private var isShowDownButton = false
     private var isShowCloseButton = false
@@ -104,6 +105,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         transparentNavBar()
 
         context = this
+        ImagePreview.instance.previewActivity = this
         handlerHolder = HandlerHolder(this)
         imageInfoList.clear()
         imageInfoList.addAll(ImagePreview.instance.getImageInfoList())
@@ -228,11 +230,12 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         viewPager.offscreenPageLimit = 1
         viewPager.setCurrentItem(currentItem, false)
 
-        viewPager.addOnPageChangeListener(object : OnPageChangeListener {
+        pageChangeListener = object : OnPageChangeListener {
             override fun onPageSelected(position: Int) {
                 currentItem = position
                 // select回调
-                ImagePreview.instance.bigImagePageChangeListener?.onPageSelected(currentItem)
+                ImagePreview.instance.bigImagePageChangeListener?.onPageSelected(currentItem, imageInfoList)
+                ImagePreview.instance.setIndex(currentItem)
 
                 // 判断是否展示查看原图按钮
                 if (imageInfoList[currentItem].type == Type.IMAGE) {
@@ -286,7 +289,11 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             override fun onPageScrollStateChanged(state: Int) {
                 ImagePreview.instance.bigImagePageChangeListener?.onPageScrollStateChanged(state)
             }
-        })
+        }
+
+        pageChangeListener?.apply {
+            viewPager.addOnPageChangeListener(this)
+        }
     }
 
     private fun refreshUIMargin() {
@@ -640,6 +647,61 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         val option =
             View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         decorView.systemUiVisibility = option
+    }
+
+    @UnstableApi
+    fun updateItem(index: Int, image: String) {
+        updateItem(index, image, image)
+    }
+
+    @UnstableApi
+    fun updateItem(index: Int, thumbnail: String, origin: String) {
+        updateItem(index, thumbnail, origin, Type.IMAGE)
+    }
+
+    @UnstableApi
+    fun updateItem(index: Int, thumbnail: String, origin: String, type: Type) {
+        val imageInfo = ImageInfo()
+        imageInfo.originUrl = origin
+        imageInfo.thumbnailUrl = thumbnail
+        imageInfo.type = type
+        updateItem(index, imageInfo)
+    }
+
+    // 更新指定的数据源
+    fun updateItem(index: Int, imageInfo: ImageInfo) {
+        imageInfoList[index] = imageInfo
+        fragmentList[index].updateItem(imageInfo)
+    }
+
+    // 删除指定的数据源
+    fun deleteItem(index: Int) {
+        imageInfoList.removeAt(index)
+        if (imageInfoList.isEmpty()) {
+            onFinish()
+            return
+        }
+        // 清空重建
+        fragmentList.clear()
+        for ((i, info) in imageInfoList.withIndex()) {
+            fragmentList.add(
+                ImagePreviewFragment.newInstance(
+                    this@ImagePreviewActivity,
+                    i,
+                    info
+                )
+            )
+        }
+        var newIndex = currentItem - 1
+        if (newIndex < 0) {
+            newIndex = 0
+        }
+        imagePreviewAdapter = ImagePreviewAdapter(supportFragmentManager, fragmentList)
+        viewPager.adapter = imagePreviewAdapter
+        viewPager.offscreenPageLimit = 1
+        viewPager.setCurrentItem(newIndex , false)
+        // 触发页面选中回调
+        pageChangeListener?.onPageSelected(newIndex)
     }
 
     companion object {

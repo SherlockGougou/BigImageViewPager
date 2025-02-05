@@ -560,6 +560,13 @@ class ImagePreviewFragment : Fragment() {
         llControllerContainer.layoutParams = layoutParams
     }
 
+    @UnstableApi
+    fun updateItem(imageInfo: ImageInfo) {
+        this.imageInfo = imageInfo
+        initData()
+    }
+
+    @UnstableApi
     override fun onResume() {
         super.onResume()
         if (!mLoading) {

@@ -2,6 +2,7 @@ package cc.shinichi.bigimageviewpager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -397,10 +398,26 @@ public class MainActivity extends AppCompatActivity {
                                 // ...请使用该方法提供的activity，否则弹窗会被覆盖
                                 SLog.INSTANCE.d(TAG, "onLongClick: ");
                                 AlertDialog dialog = new AlertDialog.Builder(activity)
-                                        .setTitle("提示")
-                                        .setMessage("这里是模拟长按的弹窗")
-                                        .setPositiveButton("确定", null)
-                                        .setNegativeButton("取消", null)
+                                        .setTitle("这里是模拟长按的弹窗")
+                                        .setMessage("是否删除当前图片？")
+                                        .setPositiveButton("确定", new AlertDialog.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                // 删除图片
+                                                ImagePreview.getInstance().getPreviewActivity().deleteItem(position);
+                                            }
+                                        })
+                                        .setNegativeButton("更新当前", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                // 更新图片
+                                                ImageInfo imageInfo = mediaList.get(position);
+                                                imageInfo.setOriginUrl("https://cdn.jeff1992.com/av/ai/video/2024/upload/am_f34ca072f2e0812204233934085111dd.mp4");
+                                                imageInfo.setThumbnailUrl("https://cdn.jeff1992.com/av/ai/video/2024/upload/am_f34ca072f2e0812204233934085111dd.mp4");
+                                                imageInfo.setType(Type.VIDEO);
+                                                ImagePreview.getInstance().getPreviewActivity().updateItem(position, imageInfo);
+                                            }
+                                        })
                                         .create();
                                 dialog.show();
                                 // 返回true
@@ -415,10 +432,10 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onPageSelected(int position) {
+                            public void onPageSelected(int position, List<ImageInfo> imageInfoList) {
                                 SLog.INSTANCE.d(TAG, "onPageSelected: position = " + position);
                                 currentPosition = position;
-                                tvIndicatorCustom.setText((currentPosition + 1) + " / " + mediaList.size());
+                                tvIndicatorCustom.setText((currentPosition + 1) + " / " + imageInfoList.size());
                             }
 
                             @Override
