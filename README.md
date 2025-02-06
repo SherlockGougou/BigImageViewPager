@@ -4,7 +4,7 @@
 
 ### BigImageViewPager = BigImage + ImageView + ViewPager
 
-BigImageViewPager是一个图片/视频浏览器库，支持超大图、超长图、动图、视频，支持手势，支持查看原图、下载、加载百分比进度显示。采用区块复用加载，优化内存占用，有效避免OOM。
+BigImageViewPager是一个图片/视频浏览器库，支持超大图、超长图、动图、视频，支持手势，支持查看原图、下载、加载百分比进度显示，支持动态更新/删除数据源。采用区块复用加载，优化内存占用，有效避免OOM。
 
 # 推荐扫描二维码进行安装体验：
 
@@ -142,6 +142,23 @@ https://github.com/user-attachments/assets/070caa63-8e9f-4b11-9240-4cb56440d3c2
 ##### 6：Q\&A
 1.查看原图卡在1%？
 答：请仔细查看以上第三步的操作。
+2.我想展示后，动态更新某些item/删除某些item，比如，更新图片为视频、更新图片或视频的地址，该如何做？
+答：框架提供了更新数据源的方法，使用示例如下：
+```
+// 删除，执行删除后，会自动选中前一张，并触发onPageSelected回调；如果全部都被删除，会自动关闭预览界面
+ImagePreview.getInstance().getPreviewActivity().deleteItem(position);
+// 更新
+ImagePreview.getInstance().getPreviewActivity().updateItem(position, "new url");
+ImagePreview.getInstance().getPreviewActivity().updateItem(position, "new thumbnail url", "new origin url");
+ImagePreview.getInstance().getPreviewActivity().updateItem(position, "new thumbnail url", "new origin url", Type.IMAGE / Type.VIDEO);
+ImagePreview.getInstance().getPreviewActivity().updateItem(position, newImageInfo);
+例如：
+ImageInfo imageInfo = new ImageInfo();
+imageInfo.setOriginUrl("https://cdn.jeff1992.com/av/ai/video/2024/upload/am_f34ca072f2e0812204233934085111dd.mp4");
+imageInfo.setThumbnailUrl("https://cdn.jeff1992.com/av/ai/video/2024/upload/am_f34ca072f2e0812204233934085111dd.mp4");
+imageInfo.setType(Type.VIDEO);
+ImagePreview.getInstance().getPreviewActivity().updateItem(position, imageInfo);
+```
 # GitHub源码
 <https://github.com/SherlockGougou/BigImageViewPager>
 # 致谢

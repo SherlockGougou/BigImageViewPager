@@ -342,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
                         // 下载按钮点击回调：重写此方法，isInterceptDownload返回true时，即代表您需要自己实现下载逻辑
                         .setDownloadClickListener(new OnDownloadClickListener() {
                             @Override
-                            public void onClick(Activity activity, View view, int position) {
+                            public void onClick(@NonNull Activity activity, @NonNull View view, int position) {
                                 // 可以在此处执行您自己的下载逻辑、埋点统计等信息
                                 SLog.INSTANCE.d(TAG, "onDownloadClick: position = " + position);
                             }
@@ -357,19 +357,19 @@ public class MainActivity extends AppCompatActivity {
                         // 内置下载过程回调，可自定义toast。如果不设置此回调会使用默认的toast内容，反之，设置了此回调时不会展示默认toast
                         .setDownloadListener(new OnDownloadListener() {
                             @Override
-                            public void onDownloadStart(Activity activity, int position) {
+                            public void onDownloadStart(@NonNull Activity activity, int position) {
                                 // 此处可以设置自己的开始下载的toast，仅仅在使用内置下载时失效
                                 Toast.makeText(activity, "开始下载", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
-                            public void onDownloadSuccess(Activity activity, int position) {
+                            public void onDownloadSuccess(@NonNull Activity activity, int position) {
                                 // 此处可以设置自己的下载成功的toast，仅仅在使用内置下载时失效
                                 Toast.makeText(activity, "下载成功", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
-                            public void onDownloadFailed(Activity activity, int position) {
+                            public void onDownloadFailed(@NonNull Activity activity, int position) {
                                 // 此处可以设置自己的下载失败的toast，仅仅在使用内置下载时失效
                                 Toast.makeText(activity, "下载失败", Toast.LENGTH_SHORT).show();
                             }
@@ -386,7 +386,7 @@ public class MainActivity extends AppCompatActivity {
                         // 点击图片回调：不受点击关闭开关的影响，都会回调此方法
                         .setBigImageClickListener(new OnBigImageClickListener() {
                             @Override
-                            public void onClick(Activity activity, View view, int position) {
+                            public void onClick(@NonNull Activity activity, @NonNull View view, int position) {
                                 // ...
                                 SLog.INSTANCE.d(TAG, "点击了: position = " + position);
                             }
@@ -394,7 +394,7 @@ public class MainActivity extends AppCompatActivity {
                         // 长按图片回调
                         .setBigImageLongClickListener(new OnBigImageLongClickListener() {
                             @Override
-                            public boolean onLongClick(Activity activity, View view, int position) {
+                            public boolean onLongClick(@NonNull Activity activity, @NonNull View view, int position) {
                                 // ...请使用该方法提供的activity，否则弹窗会被覆盖
                                 SLog.INSTANCE.d(TAG, "onLongClick: ");
                                 AlertDialog dialog = new AlertDialog.Builder(activity)
@@ -432,7 +432,7 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onPageSelected(int position, List<ImageInfo> imageInfoList) {
+                            public void onPageSelected(int position, @NonNull List<ImageInfo> imageInfoList) {
                                 SLog.INSTANCE.d(TAG, "onPageSelected: position = " + position);
                                 currentPosition = position;
                                 tvIndicatorCustom.setText((currentPosition + 1) + " / " + imageInfoList.size());
@@ -477,7 +477,7 @@ public class MainActivity extends AppCompatActivity {
                         // 可手动更改为自定义样式，需要在回调中手动更新进度
                         .setProgressLayoutId(ImagePreview.PROGRESS_THEME_CIRCLE_TEXT, new OnOriginProgressListener() {
                             @Override
-                            public void progress(@NonNull Activity activity, View parentView, int progress) {
+                            public void progress(@NonNull Activity activity, @NonNull View parentView, int progress) {
                                 SLog.INSTANCE.d(TAG, "原图progress: " + progress);
                                 // 需要找到进度控件并设置百分比，回调中的parentView即传入的布局的根View，可通过parentView找到控件：
                                 ProgressBar progressBar = parentView.findViewById(R.id.sh_progress_view);
@@ -488,7 +488,7 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void finish(@NonNull Activity activity, View parentView) {
+                            public void finish(@NonNull Activity activity, @NonNull View parentView) {
                                 SLog.INSTANCE.d(TAG, "finish: ");
                             }
                         })
