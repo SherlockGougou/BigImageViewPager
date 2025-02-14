@@ -6,7 +6,7 @@
     <application>
         <activity
             android:name=".view.ImagePreviewActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:configChanges="orientation|screenSize|screenLayout"
             android:theme="@style/Theme.ImagePreview" />
         <provider
             android:name=".InitProvider"

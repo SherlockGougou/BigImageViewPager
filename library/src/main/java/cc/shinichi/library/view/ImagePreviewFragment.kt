@@ -136,14 +136,14 @@ class ImagePreviewFragment : Fragment() {
     }
 
     private fun initView(view: View) {
-        progressBar = view.findViewById<ProgressBar>(R.id.progress_view)
+        progressBar = view.findViewById(R.id.progress_view)
         dragCloseView = view.findViewById(R.id.fingerDragHelper)
         imageStatic = view.findViewById(R.id.static_view)
         imageAnim = view.findViewById(R.id.anim_view)
         videoView = view.findViewById(R.id.video_view)
-        ivPlayButton = videoView.findViewById<ImageView>(R.id.ivPlayButton)
-        seekBar = videoView.findViewById<SeekBar>(R.id.seekbar)
-        tvPlayTime = videoView.findViewById<TextView>(R.id.tvPlayTime)
+        ivPlayButton = videoView.findViewById(R.id.ivPlayButton)
+        seekBar = videoView.findViewById(R.id.seekbar)
+        tvPlayTime = videoView.findViewById(R.id.tvPlayTime)
         val phoneHei = getPhoneHei(imagePreviewActivity.applicationContext)
         // 手势拖拽事件
         if (ImagePreview.instance.isEnableDragClose) {

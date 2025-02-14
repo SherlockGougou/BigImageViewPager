@@ -95,8 +95,6 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-
         parentView = View.inflate(this, ImagePreview.instance.previewLayoutResId, null)
         setContentView(parentView)
         ImagePreview.instance.onCustomLayoutCallback?.onLayout(this, parentView)
@@ -117,9 +115,6 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         // 回调
         ImagePreview.instance.setOnFinishListener(this)
 
-        // 播放器初始化
-        initExoPlayer()
-
         currentItem = ImagePreview.instance.index
         isShowDownButton = ImagePreview.instance.isShowDownButton
         isShowCloseButton = ImagePreview.instance.isShowCloseButton
@@ -135,7 +130,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         viewPager = findViewById(R.id.viewPager)
         consControllerOverlay = findViewById(R.id.consControllerOverlay)
         tvIndicator = findViewById(R.id.tv_indicator)
-        consBottomController = findViewById<ConstraintLayout>(R.id.consBottomController)
+        consBottomController = findViewById(R.id.consBottomController)
         fmImageShowOriginContainer = findViewById(R.id.fm_image_show_origin_container)
         fmCenterProgressContainer = findViewById(R.id.fm_center_progress_container)
 
@@ -325,10 +320,6 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     @OptIn(UnstableApi::class)
-    private fun initExoPlayer() {
-    }
-
-    @OptIn(UnstableApi::class)
     fun getExoPlayer(): ExoPlayer {
         return ExoPlayer.Builder(context)
             .setMediaSourceFactory(DefaultMediaSourceFactory(GlobalContext.getCacheDataSourceFactory()))
@@ -363,10 +354,6 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         ImagePreview.instance.onPageFinishListener?.onFinish(this)
         ImagePreview.instance.reset()
         super.finish()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -669,6 +656,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     // 更新指定的数据源
+    @UnstableApi
     fun updateItem(index: Int, imageInfo: ImageInfo) {
         imageInfoList[index] = imageInfo
         fragmentList[index].updateItem(imageInfo)
