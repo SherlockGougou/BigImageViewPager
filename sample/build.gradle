@@ -21,9 +21,9 @@ android {
     defaultConfig {
         applicationId "cc.shinichi.bigimageviewpager"
         minSdkVersion 24
-        targetSdkVersion 33
-        versionCode 822
-        versionName "androidx-8.2.2"
+        targetSdkVersion 34
+        versionCode 830
+        versionName "androidx-8.3.0"
         signingConfig signingConfigs.debug
         multiDexEnabled true
     }
@@ -45,12 +45,15 @@ android {
     lint {
         abortOnError false
     }
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
 }
 
 repositories {
-    flatDir {
-        dirs 'libs'
-    }
+    google()
     mavenCentral()
 }
 
@@ -67,15 +70,16 @@ dependencies {
     implementation 'io.github.lucksiege:pictureselector:v3.11.2'
 
     // glide
-    implementation 'com.github.bumptech.glide:glide:4.16.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
-    implementation 'com.github.bumptech.glide:okhttp3-integration:4.16.0'
-    implementation "com.github.zjupure:webpdecoder:2.3.4.14.2"
+    def glideVersion = "4.16.0"
+    implementation "com.github.bumptech.glide:glide:${glideVersion}"
+    annotationProcessor "com.github.bumptech.glide:compiler:${glideVersion}"
+    implementation "com.github.bumptech.glide:okhttp3-integration:${glideVersion}"
 
     // ExoPlayer https://developer.android.com/media/media3/exoplayer/hello-world?hl=zh-cn#groovy
-    implementation "androidx.media3:media3-exoplayer:1.4.1"
-    implementation "androidx.media3:media3-exoplayer-dash:1.4.1"
-    implementation "androidx.media3:media3-ui:1.4.1"
+    def media3Version = "1.4.1"
+    implementation "androidx.media3:media3-exoplayer:${media3Version}"
+    implementation "androidx.media3:media3-exoplayer-dash:${media3Version}"
+    implementation "androidx.media3:media3-ui:${media3Version}"
 
     // library
     // implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-8.2.2'

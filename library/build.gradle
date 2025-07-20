@@ -2,12 +2,19 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
+    ndkVersion "${NDK_VERSION}"
     namespace 'cc.shinichi.library'
     compileSdkVersion 34
     defaultConfig {
         minSdkVersion 24
-        targetSdkVersion 33
+        targetSdkVersion 34
         multiDexEnabled true
+        ndk {
+            abiFilter "armeabi-v7a"
+            abiFilter "arm64-v8a"
+            abiFilter "x86"
+            abiFilter "x86_64"
+        }
     }
     buildTypes {
         release {
@@ -15,9 +22,24 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    externalNativeBuild {
+        ndkBuild {
+            path "src/main/jni/Android.mk"
+        }
+    }
+    sourceSets {
+        main {
+            jni.srcDirs = []
+        }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+        }
     }
 }
 
@@ -30,13 +52,14 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     // glide
-    implementation 'com.github.bumptech.glide:glide:4.16.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
-    implementation 'com.github.bumptech.glide:okhttp3-integration:4.16.0'
-    implementation "com.github.zjupure:webpdecoder:2.3.4.14.2"
+    def glideVersion = "4.16.0"
+    compileOnly "com.github.bumptech.glide:glide:${glideVersion}"
+    annotationProcessor "com.github.bumptech.glide:compiler:${glideVersion}"
+    compileOnly "com.github.bumptech.glide:okhttp3-integration:${glideVersion}"
 
     // ExoPlayer https://developer.android.com/media/media3/exoplayer/hello-world?hl=zh-cn#groovy
-    implementation "androidx.media3:media3-exoplayer:1.4.1"
-    implementation "androidx.media3:media3-exoplayer-dash:1.4.1"
-    implementation "androidx.media3:media3-ui:1.4.1"
+    def media3Version = "1.4.1"
+    compileOnly "androidx.media3:media3-exoplayer:${media3Version}"
+    compileOnly "androidx.media3:media3-exoplayer-dash:${media3Version}"
+    compileOnly "androidx.media3:media3-ui:${media3Version}"
 }

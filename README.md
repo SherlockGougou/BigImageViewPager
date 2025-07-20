@@ -55,15 +55,16 @@ https://github.com/user-attachments/assets/070caa63-8e9f-4b11-9240-4cb56440d3c2
         implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-8.2.2'
 
         // glide
-        implementation 'com.github.bumptech.glide:glide:4.16.0'
-        annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'// kotlin请使用kapt
-        implementation 'com.github.bumptech.glide:okhttp3-integration:4.16.0'
-        implementation "com.github.zjupure:webpdecoder:2.3.4.14.2"
-
+        def glideVersion = "4.16.0"
+        implementation "com.github.bumptech.glide:glide:${glideVersion}"
+        annotationProcessor "com.github.bumptech.glide:compiler:${glideVersion}"
+        implementation "com.github.bumptech.glide:okhttp3-integration:${glideVersion}"
+    
         // ExoPlayer https://developer.android.com/media/media3/exoplayer/hello-world?hl=zh-cn#groovy
-        implementation "androidx.media3:media3-exoplayer:1.4.1"
-        implementation "androidx.media3:media3-exoplayer-dash:1.4.1"
-        implementation "androidx.media3:media3-ui:1.4.1"
+        def media3Version = "1.4.1"
+        implementation "androidx.media3:media3-exoplayer:${media3Version}"
+        implementation "androidx.media3:media3-exoplayer-dash:${media3Version}"
+        implementation "androidx.media3:media3-ui:${media3Version}"
     }
 ```
 #### Step 3. 在你app中添加AppGlideModule。需要继承AppGlideModule并添加以下代码到对应的重载方法中，例如：

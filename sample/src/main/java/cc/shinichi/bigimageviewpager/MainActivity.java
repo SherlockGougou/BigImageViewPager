@@ -176,6 +176,12 @@ public class MainActivity extends AppCompatActivity {
         final List<ImageInfo> mediaList = new ArrayList<>();
         ImageInfo i;
 
+        // webp图片：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://www.gstatic.com/webp/gallery/1.webp");
+        i.setOriginUrl("https://www.gstatic.com/webp/gallery/1.webp");
+        mediaList.add(i);
+
         // 普通图片1：
         i = new ImageInfo();
         i.setThumbnailUrl("http://img3.16fan.com/static/live/origin/202104/20/9a7d0915c91b.jpg-600");
