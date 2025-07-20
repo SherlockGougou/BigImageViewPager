@@ -83,6 +83,16 @@ https://github.com/user-attachments/assets/070caa63-8e9f-4b11-9240-4cb56440d3c2
 ```
 #### Step 4. 以上操作完成后，请点击顶部按钮：Build->Rebuild Project，等待重建完成，至此，框架添加完成。如遇到任何问题，请附带截图提issues，我会及时回复，或添加底部QQ群，进行交流。
 
+#### Step 5. 针对Android 16KB对齐问题，本库已完成支持，如果您的APG版本低于8.5.1，需要在app模块的build.gradle中额外增加以下配置，否则会显示支持16KB，但NON 16KB STORED：
+```
+    # 参见：https://developer.android.com/guide/practices/page-sizes?hl=zh-cn
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
+```
+
 ## 二、调用方式
 
 #### 1：生成图片源：
