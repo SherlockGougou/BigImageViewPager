@@ -48,6 +48,7 @@ import cc.shinichi.library.tool.common.UIUtil
 import cc.shinichi.library.tool.image.DownloadUtil
 import cc.shinichi.library.view.listener.OnFinishListener
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 /**
  * @author 工藤
@@ -613,7 +614,14 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 }
             }
         })
-        Glide.with(context).downloadOnly().load(path).into(object : FileTarget() {
+        Glide.with(context).downloadOnly()
+            .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
+            .diskCacheStrategy(if (ImagePreview.instance.isSkipLocalCache) {
+                DiskCacheStrategy.NONE
+            } else {
+                DiskCacheStrategy.ALL
+            })
+            .load(path).into(object : FileTarget() {
         })
     }
 

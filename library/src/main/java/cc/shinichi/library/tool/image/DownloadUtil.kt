@@ -19,6 +19,7 @@ import cc.shinichi.library.tool.file.FileUtil.Companion.getAvailableCacheDir
 import cc.shinichi.library.tool.file.SingleMediaScanner
 import cc.shinichi.library.tool.image.ImageUtil.refresh
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.transition.Transition
 import java.io.*
 
@@ -31,7 +32,14 @@ import java.io.*
 object DownloadUtil {
 
     fun downloadPicture(context: Activity, currentItem: Int, url: String?) {
-        Glide.with(context).downloadOnly().load(url).into(object : FileTarget() {
+        Glide.with(context).downloadOnly()
+            .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
+            .diskCacheStrategy(if (ImagePreview.instance.isSkipLocalCache) {
+                DiskCacheStrategy.NONE
+            } else {
+                DiskCacheStrategy.ALL
+            })
+            .load(url).into(object : FileTarget() {
             override fun onLoadStarted(placeholder: Drawable?) {
                 super.onLoadStarted(placeholder)
                 if (ImagePreview.instance.downloadListener != null) {

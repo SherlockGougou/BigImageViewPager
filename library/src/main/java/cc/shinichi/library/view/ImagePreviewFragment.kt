@@ -500,11 +500,13 @@ class ImagePreviewFragment : Fragment() {
                     Glide.with(imagePreviewActivity)
                         .asGif()
                         .load(cacheFile)
-                        .apply(
-                            RequestOptions()
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .error(ImagePreview.instance.errorPlaceHolder)
-                        )
+                        .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
+                        .diskCacheStrategy(if (ImagePreview.instance.isSkipLocalCache) {
+                            DiskCacheStrategy.NONE
+                        } else {
+                            DiskCacheStrategy.ALL
+                        })
+                        .error(ImagePreview.instance.errorPlaceHolder)
                         .into(imageAnim)
                 }
             }
@@ -636,7 +638,14 @@ class ImagePreviewFragment : Fragment() {
         url: String,
         originPathUrl: String
     ) {
-        Glide.with(imagePreviewActivity).downloadOnly().load(url)
+        Glide.with(imagePreviewActivity).downloadOnly()
+            .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
+            .diskCacheStrategy(if (ImagePreview.instance.isSkipLocalCache) {
+                DiskCacheStrategy.NONE
+            } else {
+                DiskCacheStrategy.ALL
+            })
+            .load(url)
             .addListener(object : RequestListener<File> {
                 override fun onLoadFailed(
                     e: GlideException?,
@@ -825,10 +834,13 @@ class ImagePreviewFragment : Fragment() {
             val fitCenter: Transformation<Bitmap> = FitCenter()
             Glide.with(imagePreviewActivity)
                 .load(imagePath)
-                .apply(
-                    RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .error(ImagePreview.instance.errorPlaceHolder)
-                )
+                .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
+                .diskCacheStrategy(if (ImagePreview.instance.isSkipLocalCache) {
+                    DiskCacheStrategy.NONE
+                } else {
+                    DiskCacheStrategy.ALL
+                })
+                .error(ImagePreview.instance.errorPlaceHolder)
                 .optionalTransform(fitCenter)
                 .optionalTransform(WebpDrawable::class.java, WebpDrawableTransformation(fitCenter))
                 .addListener(object : RequestListener<Drawable> {
@@ -858,10 +870,13 @@ class ImagePreviewFragment : Fragment() {
             Glide.with(imagePreviewActivity)
                 .asGif()
                 .load(imagePath)
-                .apply(
-                    RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .error(ImagePreview.instance.errorPlaceHolder)
-                )
+                .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
+                .diskCacheStrategy(if (ImagePreview.instance.isSkipLocalCache) {
+                    DiskCacheStrategy.NONE
+                } else {
+                    DiskCacheStrategy.ALL
+                })
+                .error(ImagePreview.instance.errorPlaceHolder)
                 .listener(object : RequestListener<GifDrawable?> {
                     override fun onLoadFailed(
                         e: GlideException?,

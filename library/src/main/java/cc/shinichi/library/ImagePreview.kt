@@ -154,6 +154,10 @@ class ImagePreview {
     var progressLayoutId = -1
         private set
 
+    // 是否全部跳过glide缓存
+    var isSkipLocalCache = false
+        private set
+
     // activity实例
     var previewActivity: ImagePreviewActivity? = null
 
@@ -457,6 +461,11 @@ class ImagePreview {
     ): ImagePreview {
         this.previewLayoutResId = previewLayoutResId
         this.onCustomLayoutCallback = onCustomLayoutCallback
+        return this
+    }
+
+    fun setSkipLocalCache(skipLocalCache: Boolean): ImagePreview {
+        isSkipLocalCache = skipLocalCache
         return this
     }
 

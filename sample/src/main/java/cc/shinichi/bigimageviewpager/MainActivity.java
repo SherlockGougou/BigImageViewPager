@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     boolean showCloseButton = false;
     boolean showDownButton = true;
     boolean showErrorToast = false;
+    boolean skipCache = false;
 
     // 自定义展示UI，业务控件
     ConstraintLayout customViewContainer = null;
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         SwitchCompat switchShowCloseButton = findViewById(R.id.switchShowCloseButton);
         SwitchCompat switchShowDownButton = findViewById(R.id.switchShowDownButton);
         SwitchCompat switchShowErrorToast = findViewById(R.id.switchShowErrorToast);
+        SwitchCompat switchSkipCache = findViewById(R.id.switchSkipCache);
         RadioGroup radioGroupStrategy = findViewById(R.id.radioGroupStrategy);
 
         switchClickClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -151,6 +153,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         switchShowErrorToast.setChecked(showErrorToast);
+        switchSkipCache.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                skipCache = isChecked;
+            }
+        });
+        switchSkipCache.setChecked(skipCache);
 
         radioGroupStrategy.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -322,6 +331,9 @@ public class MainActivity extends AppCompatActivity {
 
                         // 是否显示加载失败的Toast
                         .setShowErrorToast(showErrorToast)
+
+                        // 是否跳过缓存，强制只从网络获取图片
+                        .setSkipLocalCache(skipCache)
 
                         // 是否启用点击图片关闭。默认启用
                         .setEnableClickClose(enableClickClose)
