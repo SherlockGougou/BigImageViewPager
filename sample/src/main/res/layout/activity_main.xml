@@ -16,7 +16,7 @@
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="最简单的调用方式，不受下面配置影响："
+            android:text="一、最简单的调用方式，不受下面配置影响："
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -24,7 +24,7 @@
             android:id="@+id/buttonEasyUse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:text="开始浏览"
             android:textSize="12sp" />
 
@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="模拟图片展示调用："
+            android:text="二、模拟图片展示调用："
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -78,7 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="自定义属性开关："
+            android:text="三、自定义属性开关："
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -256,14 +256,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:orientation="vertical">
 
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="选择加载策略："
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <RadioGroup
@@ -313,7 +313,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonChoose"

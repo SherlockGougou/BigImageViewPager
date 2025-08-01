@@ -388,24 +388,29 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
 
     override fun handleMessage(msg: Message): Boolean {
         if (msg.what == 0) {
-            // 点击查看原图按钮，开始加载原图
             val path = imageInfoList[currentItem].originUrl
-            visible()
-            if (isUserCustomProgressView) {
-                gone()
+            if (ImagePreview.instance.isSkipLocalCache) {
+                // 设置了跳过缓存，这里点击查看原图，直接更换当前item的url
+                updateItem(currentItem, path, path)
             } else {
-                btnShowOrigin.text = "0 %"
+                // 点击查看原图按钮，开始加载原图
+                visible()
+                if (isUserCustomProgressView) {
+                    gone()
+                } else {
+                    btnShowOrigin.text = "0 %"
+                }
+                if (checkCache(path)) {
+                    val message = handlerHolder.obtainMessage()
+                    val bundle = Bundle()
+                    bundle.putString("url", path)
+                    message.what = 1
+                    message.obj = bundle
+                    handlerHolder.sendMessage(message)
+                    return true
+                }
+                loadOriginImage(path)
             }
-            if (checkCache(path)) {
-                val message = handlerHolder.obtainMessage()
-                val bundle = Bundle()
-                bundle.putString("url", path)
-                message.what = 1
-                message.obj = bundle
-                handlerHolder.sendMessage(message)
-                return true
-            }
-            loadOriginImage(path)
         } else if (msg.what == 1) {
             // 加载完成
             val bundle = msg.obj as Bundle
@@ -614,14 +619,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 }
             }
         })
-        Glide.with(context).downloadOnly()
-            .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
-            .diskCacheStrategy(if (ImagePreview.instance.isSkipLocalCache) {
-                DiskCacheStrategy.NONE
-            } else {
-                DiskCacheStrategy.ALL
-            })
-            .load(path).into(object : FileTarget() {
+        Glide.with(context).downloadOnly().load(path).into(object : FileTarget() {
         })
     }
 

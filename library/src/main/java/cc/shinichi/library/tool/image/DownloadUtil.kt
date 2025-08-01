@@ -33,43 +33,37 @@ object DownloadUtil {
 
     fun downloadPicture(context: Activity, currentItem: Int, url: String?) {
         Glide.with(context).downloadOnly()
-            .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
-            .diskCacheStrategy(if (ImagePreview.instance.isSkipLocalCache) {
-                DiskCacheStrategy.NONE
-            } else {
-                DiskCacheStrategy.ALL
-            })
             .load(url).into(object : FileTarget() {
-            override fun onLoadStarted(placeholder: Drawable?) {
-                super.onLoadStarted(placeholder)
-                if (ImagePreview.instance.downloadListener != null) {
-                    ImagePreview.instance.downloadListener?.onDownloadStart(context, currentItem)
-                } else {
-                    ToastUtil.instance.showShort(
-                        context,
-                        context.getString(R.string.toast_start_download)
-                    )
+                override fun onLoadStarted(placeholder: Drawable?) {
+                    super.onLoadStarted(placeholder)
+                    if (ImagePreview.instance.downloadListener != null) {
+                        ImagePreview.instance.downloadListener?.onDownloadStart(context, currentItem)
+                    } else {
+                        ToastUtil.instance.showShort(
+                            context,
+                            context.getString(R.string.toast_start_download)
+                        )
+                    }
+                    super.onLoadStarted(placeholder)
                 }
-                super.onLoadStarted(placeholder)
-            }
 
-            override fun onLoadFailed(errorDrawable: Drawable?) {
-                super.onLoadFailed(errorDrawable)
-                if (ImagePreview.instance.downloadListener != null) {
-                    ImagePreview.instance.downloadListener?.onDownloadFailed(context, currentItem)
-                } else {
-                    ToastUtil.instance.showShort(
-                        context,
-                        context.getString(R.string.toast_save_failed)
-                    )
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    super.onLoadFailed(errorDrawable)
+                    if (ImagePreview.instance.downloadListener != null) {
+                        ImagePreview.instance.downloadListener?.onDownloadFailed(context, currentItem)
+                    } else {
+                        ToastUtil.instance.showShort(
+                            context,
+                            context.getString(R.string.toast_save_failed)
+                        )
+                    }
                 }
-            }
 
-            override fun onResourceReady(resource: File, transition: Transition<in File>?) {
-                super.onResourceReady(resource, transition)
-                saveImage(context, resource, currentItem)
-            }
-        })
+                override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+                    super.onResourceReady(resource, transition)
+                    saveImage(context, resource, currentItem)
+                }
+            })
     }
 
     private fun saveImage(context: Activity, resource: File, currentItem: Int) {

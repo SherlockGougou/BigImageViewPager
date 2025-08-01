@@ -48,11 +48,11 @@ https://github.com/user-attachments/assets/070caa63-8e9f-4b11-9240-4cb56440d3c2
     }
 ```
 #### Step 2. 在你app的build.gradle中添加依赖：
-当前最新版本为：```androidx-8.3.3```
+当前最新版本为：```androidx-8.3.4```
 ```
     dependencies {
         // 本框架
-        implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-8.3.3'
+        implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-8.3.4'
 
         // glide
         def glideVersion = "4.16.0"
@@ -170,6 +170,9 @@ imageInfo.setThumbnailUrl("https://cdn.jeff1992.com/av/ai/video/2024/upload/am_f
 imageInfo.setType(Type.VIDEO);
 ImagePreview.getInstance().getPreviewActivity().updateItem(position, imageInfo);
 ```
+3.如果你们服务器的图片url不会变动但图片内容可能变动，需要每次都走网络加载（即跳过缓存），可以设置setSkipLocalCache来跳过本地的缓存。
+注意，跳过缓存可能导致缩略图和原图加载功能出现异常；但如果你没有缩略图和原图需求，就没有影响。
+除了使用setSkipLocalCache来跳过本地的缓存外，你还可以使用url拼接一个随机的参数来实现跳过缓存的效果；例如，在末尾拼接时间戳等。
 # GitHub源码
 <https://github.com/SherlockGougou/BigImageViewPager>
 # 致谢
