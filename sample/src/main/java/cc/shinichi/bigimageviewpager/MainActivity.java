@@ -577,22 +577,33 @@ public class MainActivity extends AppCompatActivity {
                 .isWithSelectVideoImage(true)
                 .isDisplayCamera(false)
                 .setImageEngine(GlideEngine.createGlideEngine())
-                .forResult(new OnResultCallbackListener<LocalMedia>() {
+                .forResult(new OnResultCallbackListener<>() {
                     @Override
                     public void onResult(ArrayList<LocalMedia> result) {
                         List<ImageInfo> mediaList = new ArrayList<>();
                         for (LocalMedia localMedia : result) {
-                            ImageInfo imageInfo = new ImageInfo();
-                            if (localMedia.getMimeType().startsWith("video")) {
-                                imageInfo.setType(Type.VIDEO);
-                            } else if (localMedia.getMimeType().startsWith("image")) {
-                                imageInfo.setType(Type.IMAGE);
-                            }
-                            imageInfo.setThumbnailUrl(localMedia.getPath());
-                            imageInfo.setOriginUrl(localMedia.getPath());
+                            ImageInfo imageInfo = getImageInfo(localMedia);
                             mediaList.add(imageInfo);
                         }
-                        ImagePreview.getInstance().with(MainActivity.this).setMediaInfoList(mediaList).start();
+                        ImagePreview.getInstance()
+                                .with(MainActivity.this)
+                                .setIndex(0)
+                                .setMediaInfoList(mediaList)
+                                .setSkipLocalCache(false)
+                                .start();
+                    }
+
+                    @NonNull
+                    private ImageInfo getImageInfo(LocalMedia localMedia) {
+                        ImageInfo imageInfo = new ImageInfo();
+                        if (localMedia.getMimeType().startsWith("video")) {
+                            imageInfo.setType(Type.VIDEO);
+                        } else if (localMedia.getMimeType().startsWith("image")) {
+                            imageInfo.setType(Type.IMAGE);
+                        }
+                        imageInfo.setThumbnailUrl(localMedia.getRealPath());
+                        imageInfo.setOriginUrl(localMedia.getRealPath());
+                        return imageInfo;
                     }
 
                     @Override

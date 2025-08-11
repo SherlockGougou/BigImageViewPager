@@ -8,20 +8,24 @@ import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import androidx.core.net.toUri
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.R
 import cc.shinichi.library.glide.FileTarget
 import cc.shinichi.library.tool.common.HttpUtil.downloadFile
 import cc.shinichi.library.tool.common.ToastUtil
-import cc.shinichi.library.tool.file.FileUtil.Companion.copyFile
-import cc.shinichi.library.tool.file.FileUtil.Companion.createFileByDeleteOldFile
-import cc.shinichi.library.tool.file.FileUtil.Companion.getAvailableCacheDir
+import cc.shinichi.library.tool.file.FileUtil
 import cc.shinichi.library.tool.file.SingleMediaScanner
 import cc.shinichi.library.tool.image.ImageUtil.refresh
+import cc.shinichi.library.tool.image.UtilExt.isLocalImage
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.transition.Transition
-import java.io.*
+import java.io.BufferedInputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 
 /**
  * @author 工藤
@@ -81,7 +85,8 @@ object DownloadUtil {
             values.put(MediaStore.Images.Media.DISPLAY_NAME, name)
             values.put(MediaStore.Images.Media.DESCRIPTION, name)
             values.put(MediaStore.Images.Media.MIME_TYPE, "image/$mimeType")
-            values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/" + downloadFolderName + "/")
+            val saveFolder = Environment.DIRECTORY_PICTURES + "/" + downloadFolderName + "/"
+            values.put(MediaStore.Images.Media.RELATIVE_PATH, saveFolder)
             val insertUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
             var inputStream: BufferedInputStream? = null
             var os: OutputStream? = null
@@ -103,7 +108,7 @@ object DownloadUtil {
                         context,
                         context.getString(
                             R.string.toast_save_success,
-                            "$downloadFolderName/$name"
+                            "$saveFolder$name"
                         )
                     )
                 }
@@ -133,8 +138,8 @@ object DownloadUtil {
         } else {
             // 低于29版本的保存方法
             val path = Environment.getExternalStorageDirectory().toString() + "/" + downloadFolderName + "/"
-            createFileByDeleteOldFile(path + name)
-            val result = copyFile(resource, path, name)
+            FileUtil.createFileByDeleteOldFile(path + name)
+            val result = FileUtil.copyFile(resource, path, name)
             if (result) {
                 if (ImagePreview.instance.downloadListener != null) {
                     ImagePreview.instance.downloadListener?.onDownloadSuccess(context, currentItem)
@@ -172,32 +177,38 @@ object DownloadUtil {
             )
         }
         Thread {
-            val saveDir = getAvailableCacheDir(context)?.absolutePath + File.separator + "video/"
+            val saveDir = FileUtil.getAvailableCacheDir(context)?.absolutePath + File.separator + "video/"
             val fileFullName = System.currentTimeMillis().toString() + ".mp4"
-            val downloadFile = downloadFile(url, fileFullName, saveDir)
-            Handler(Looper.getMainLooper()).post {
-                if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
-                    // 通过urlConn下载完成
-                    saveVideo(context, downloadFile, currentItem)
-                } else {
-                    if (ImagePreview.instance.downloadListener != null) {
-                        ImagePreview.instance.downloadListener?.onDownloadFailed(context, currentItem)
+            if (url?.isLocalImage() == true) {
+                // 是本地视频，直接拷贝到指定目录
+                saveVideo(context, url, currentItem)
+            } else {
+                // 不是本地视频，执行下载
+                val downloadFile = downloadFile(url, fileFullName, saveDir)
+                Handler(Looper.getMainLooper()).post {
+                    if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
+                        // 通过urlConn下载完成
+                        saveVideo(context, downloadFile.absolutePath, currentItem)
                     } else {
-                        ToastUtil.instance.showShort(
-                            context,
-                            context.getString(R.string.toast_save_failed)
-                        )
+                        if (ImagePreview.instance.downloadListener != null) {
+                            ImagePreview.instance.downloadListener?.onDownloadFailed(context, currentItem)
+                        } else {
+                            ToastUtil.instance.showShort(
+                                context,
+                                context.getString(R.string.toast_save_failed)
+                            )
+                        }
                     }
                 }
             }
         }.start()
     }
 
-    private fun saveVideo(context: Activity, resource: File, currentItem: Int) {
+    private fun saveVideo(context: Activity, resourceUrl: String, currentItem: Int) {
         // 传入的保存文件夹名
         val downloadFolderName = ImagePreview.instance.folderName
         // 保存的名称
-        var name = System.currentTimeMillis().toString() + ".mp4"
+        val name = System.currentTimeMillis().toString() + ".mp4"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             // 大于等于29版本的保存方法
             val resolver = context.contentResolver
@@ -206,17 +217,23 @@ object DownloadUtil {
             values.put(MediaStore.Video.Media.DISPLAY_NAME, name)
             values.put(MediaStore.Video.Media.DESCRIPTION, name)
             values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4")
-            values.put(MediaStore.Video.Media.RELATIVE_PATH, Environment.DIRECTORY_MOVIES + "/" + downloadFolderName + "/")
+            val saveFolder = Environment.DIRECTORY_MOVIES + "/" + downloadFolderName + "/"
+            values.put(MediaStore.Video.Media.RELATIVE_PATH, saveFolder)
             val insertUri = resolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values)
-            var inputStream: BufferedInputStream? = null
+            var inputStream: InputStream? = null
             var os: OutputStream? = null
             try {
-                inputStream = BufferedInputStream(FileInputStream(resource.absolutePath))
+                val parseUrl = resourceUrl.toUri()
+                inputStream = if ("content" == parseUrl.scheme) {
+                    context.contentResolver.openInputStream(parseUrl)
+                } else {
+                    BufferedInputStream(FileInputStream(resourceUrl))
+                }
                 os = insertUri?.let { resolver.openOutputStream(it) }
                 os?.let {
                     val buffer = ByteArray(1024 * 4)
                     var len: Int
-                    while (inputStream.read(buffer).also { len = it } != -1) {
+                    while (inputStream!!.read(buffer).also { len = it } != -1) {
                         os.write(buffer, 0, len)
                     }
                     os.flush()
@@ -228,7 +245,7 @@ object DownloadUtil {
                         context,
                         context.getString(
                             R.string.toast_save_success,
-                            "$downloadFolderName/$name"
+                            "$saveFolder$name"
                         )
                     )
                 }
@@ -258,8 +275,8 @@ object DownloadUtil {
         } else {
             // 低于29版本的保存方法
             val path = Environment.getExternalStorageDirectory().toString() + "/" + downloadFolderName + "/"
-            createFileByDeleteOldFile(path + name)
-            val result = copyFile(resource, path, name)
+            FileUtil.createFileByDeleteOldFile(path + name)
+            val result = FileUtil.copyFile(File(resourceUrl), path, name)
             if (result) {
                 if (ImagePreview.instance.downloadListener != null) {
                     ImagePreview.instance.downloadListener?.onDownloadSuccess(context, currentItem)

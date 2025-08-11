@@ -10,10 +10,11 @@ package cc.shinichi.library.tool.image
 object UtilExt {
 
     fun String.isLocalImage(): Boolean {
-        return this.startsWith("file://")
-                || this.startsWith("content://")
-                || this.startsWith("android.resource://")
-                || this.startsWith("assets://")
-                || this.startsWith("raw://")
+        return this.lowercase().startsWith("file://")
+                || this.lowercase().startsWith("/storage")
+                || this.lowercase().startsWith("content://")
+                || this.lowercase().startsWith("android.resource://")
+                || this.lowercase().startsWith("assets://")
+                || this.lowercase().startsWith("raw://")
     }
 }

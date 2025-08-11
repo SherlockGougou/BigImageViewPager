@@ -639,12 +639,11 @@ class ImagePreviewFragment : Fragment() {
         url: String,
         originPathUrl: String
     ) {
-        var builder: RequestBuilder<File>
-        if (url.isLocalImage()) {
-            builder = Glide.with(imagePreviewActivity)
+        val builder: RequestBuilder<File> = if (url.isLocalImage()) {
+            Glide.with(imagePreviewActivity)
                 .downloadOnly()
         } else {
-            builder = Glide.with(imagePreviewActivity).downloadOnly()
+            Glide.with(imagePreviewActivity).downloadOnly()
                 .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
                 .diskCacheStrategy(
                     if (ImagePreview.instance.isSkipLocalCache) {
