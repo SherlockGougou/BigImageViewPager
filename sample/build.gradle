@@ -22,8 +22,8 @@ android {
         applicationId "cc.shinichi.bigimageviewpager"
         minSdkVersion 24
         targetSdkVersion 34
-        versionCode 834
-        versionName "androidx-8.3.4"
+        versionCode 835
+        versionName "androidx-8.3.5"
         signingConfig signingConfigs.debug
         multiDexEnabled true
     }
@@ -82,6 +82,6 @@ dependencies {
     implementation "androidx.media3:media3-ui:${media3Version}"
 
     // library
-    // implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-8.3.4'
+    // implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-8.3.5'
     implementation project(':library')
 }

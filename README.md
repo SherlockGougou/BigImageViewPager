@@ -48,11 +48,11 @@ https://github.com/user-attachments/assets/070caa63-8e9f-4b11-9240-4cb56440d3c2
     }
 ```
 #### Step 2. 在你app的build.gradle中添加依赖：
-当前最新版本为：```androidx-8.3.4```
+当前最新版本为：```androidx-8.3.5```
 ```
     dependencies {
         // 本框架
-        implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-8.3.4'
+        implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-8.3.5'
 
         // glide
         def glideVersion = "4.16.0"
