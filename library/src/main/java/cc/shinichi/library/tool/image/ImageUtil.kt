@@ -387,6 +387,12 @@ object ImageUtil {
             .endsWith("heic")
     }
 
+    fun isAvifImageWithMime(url: String, path: String): Boolean {
+        return "avif".equals(getImageTypeWithMime(path), ignoreCase = true)
+                || url.toLowerCase(Locale.CHINA).endsWith("avif") || url.toLowerCase(Locale.CHINA)
+            .endsWith("avif")
+    }
+
     fun isStaticImage(url: String, path: String): Boolean {
         val isWebpImageWithMime = isWebpImageWithMime(url, path)
         SLog.d(TAG, "isStaticImage: isWebpImageWithMime = $isWebpImageWithMime")
@@ -403,8 +409,10 @@ object ImageUtil {
         SLog.d(TAG, "isStaticImage: bmpImageWithMime = $bmpImageWithMime")
         val heifImageWithMime = isHeifImageWithMime(url, path)
         SLog.d(TAG, "isStaticImage: heifImageWithMime = $heifImageWithMime")
+        val avifImageWithMime = isAvifImageWithMime(url, path)
+        SLog.d(TAG, "isStaticImage: avifImageWithMime = $avifImageWithMime")
         val animImageWithMime = isAnimImageWithMime(url, path)
         SLog.d(TAG, "isStaticImage: animImageWithMime = $animImageWithMime")
-        return (jpegImageWithMime || pngImageWithMime || bmpImageWithMime || heifImageWithMime) && !animImageWithMime
+        return (jpegImageWithMime || pngImageWithMime || bmpImageWithMime || heifImageWithMime || avifImageWithMime) && !animImageWithMime
     }
 }
