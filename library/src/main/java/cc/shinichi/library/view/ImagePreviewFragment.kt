@@ -474,7 +474,7 @@ class ImagePreviewFragment : Fragment() {
                         }
                         val widSmall = ImageUtil.getWidthHeight(smallImagePath)[0]
                         val heiSmall = ImageUtil.getWidthHeight(smallImagePath)[1]
-                        if (ImageUtil.isBmpImageWithMime(originalUrl, cacheFile.absolutePath) || ImageUtil.isAvifImageWithMime(originalUrl, cacheFile.absolutePath)) {
+                        if (ImageUtil.isBmpImageWithMime(thumbnailUrl, smallImagePath) || ImageUtil.isAvifImageWithMime(thumbnailUrl, smallImagePath)) {
                             small?.tilingDisabled()
                         }
                         small?.dimensions(widSmall, heiSmall)
@@ -483,7 +483,7 @@ class ImagePreviewFragment : Fragment() {
                     val origin = ImageSource.uri(imagePath)
                     val widOrigin = ImageUtil.getWidthHeight(imagePath)[0]
                     val heiOrigin = ImageUtil.getWidthHeight(imagePath)[1]
-                    if (ImageUtil.isBmpImageWithMime(originalUrl, cacheFile.absolutePath) || ImageUtil.isAvifImageWithMime(originalUrl, cacheFile.absolutePath)) {
+                    if (ImageUtil.isBmpImageWithMime(originalUrl, imagePath) || ImageUtil.isAvifImageWithMime(originalUrl, imagePath)) {
                         origin.tilingDisabled()
                     }
                     origin.dimensions(widOrigin, heiOrigin)
