@@ -3,7 +3,11 @@ package cc.shinichi.library.tool.file
 import android.content.Context
 import android.os.Environment
 import android.text.TextUtils
-import java.io.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 import java.nio.channels.FileChannel
 
 /**

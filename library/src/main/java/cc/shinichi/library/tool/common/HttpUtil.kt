@@ -1,6 +1,10 @@
 package cc.shinichi.library.tool.common
 
-import java.io.*
+import java.io.BufferedInputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL

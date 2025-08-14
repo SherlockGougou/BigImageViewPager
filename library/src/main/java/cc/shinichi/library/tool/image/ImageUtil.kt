@@ -15,8 +15,12 @@ import androidx.annotation.RequiresApi
 import androidx.exifinterface.media.ExifInterface
 import cc.shinichi.library.tool.common.PhoneUtil
 import cc.shinichi.library.tool.common.SLog
-import java.io.*
-import java.util.*
+import java.io.BufferedReader
+import java.io.FileInputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.util.Locale
 import kotlin.math.max
 
 /**
@@ -393,26 +397,26 @@ object ImageUtil {
             .endsWith("avif")
     }
 
-    fun isStaticImage(url: String, path: String): Boolean {
+    fun isLoadWithSubsampling(url: String, path: String): Boolean {
         val isWebpImageWithMime = isWebpImageWithMime(url, path)
-        SLog.d(TAG, "isStaticImage: isWebpImageWithMime = $isWebpImageWithMime")
+        SLog.d(TAG, "isLoadWithSubsampling: isWebpImageWithMime = $isWebpImageWithMime")
         if (isWebpImageWithMime) {
             val animWebp = isAnimWebp(url, path)
-            SLog.d(TAG, "isStaticImage: animWebp = $animWebp")
+            SLog.d(TAG, "isLoadWithSubsampling: animWebp = $animWebp")
             return !animWebp
         }
         val jpegImageWithMime = isJpegImageWithMime(url, path)
-        SLog.d(TAG, "isStaticImage: jpegImageWithMime = $jpegImageWithMime")
+        SLog.d(TAG, "isLoadWithSubsampling: jpegImageWithMime = $jpegImageWithMime")
         val pngImageWithMime = isPngImageWithMime(url, path)
-        SLog.d(TAG, "isStaticImage: pngImageWithMime = $pngImageWithMime")
+        SLog.d(TAG, "isLoadWithSubsampling: pngImageWithMime = $pngImageWithMime")
         val bmpImageWithMime = isBmpImageWithMime(url, path)
-        SLog.d(TAG, "isStaticImage: bmpImageWithMime = $bmpImageWithMime")
+        SLog.d(TAG, "isLoadWithSubsampling: bmpImageWithMime = $bmpImageWithMime")
         val heifImageWithMime = isHeifImageWithMime(url, path)
-        SLog.d(TAG, "isStaticImage: heifImageWithMime = $heifImageWithMime")
+        SLog.d(TAG, "isLoadWithSubsampling: heifImageWithMime = $heifImageWithMime")
         val avifImageWithMime = isAvifImageWithMime(url, path)
-        SLog.d(TAG, "isStaticImage: avifImageWithMime = $avifImageWithMime")
+        SLog.d(TAG, "isLoadWithSubsampling: avifImageWithMime = $avifImageWithMime")
         val animImageWithMime = isAnimImageWithMime(url, path)
-        SLog.d(TAG, "isStaticImage: animImageWithMime = $animImageWithMime")
-        return (jpegImageWithMime || pngImageWithMime || bmpImageWithMime || heifImageWithMime || avifImageWithMime) && !animImageWithMime
+        SLog.d(TAG, "isLoadWithSubsampling: animImageWithMime = $animImageWithMime")
+        return (jpegImageWithMime || pngImageWithMime || bmpImageWithMime || heifImageWithMime) && (!animImageWithMime || !avifImageWithMime)
     }
 }

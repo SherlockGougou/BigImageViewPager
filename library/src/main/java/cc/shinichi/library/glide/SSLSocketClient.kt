@@ -3,7 +3,11 @@ package cc.shinichi.library.glide
 import android.annotation.SuppressLint
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
-import javax.net.ssl.*
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSocketFactory
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 /**
  * @author 工藤

@@ -1,6 +1,7 @@
 package cc.shinichi.library.tool.common
 
 import android.util.Log
+import cc.shinichi.library.BuildConfig
 
 /**
  * 文件名: SLog.java
@@ -11,7 +12,7 @@ import android.util.Log
 object SLog {
 
     private const val TAG = "SLog"
-    private val isDebug = true
+    private val isDebug = BuildConfig.DEBUG
 
     fun d(msg: String) {
         if (isDebug) {

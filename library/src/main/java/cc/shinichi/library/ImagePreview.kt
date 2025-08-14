@@ -9,8 +9,16 @@ import cc.shinichi.library.bean.ImageInfo
 import cc.shinichi.library.bean.Type
 import cc.shinichi.library.tool.common.SLog
 import cc.shinichi.library.view.ImagePreviewActivity
-import cc.shinichi.library.view.ImagePreviewAdapter
-import cc.shinichi.library.view.listener.*
+import cc.shinichi.library.view.listener.OnBigImageClickListener
+import cc.shinichi.library.view.listener.OnBigImageLongClickListener
+import cc.shinichi.library.view.listener.OnBigImagePageChangeListener
+import cc.shinichi.library.view.listener.OnCustomLayoutCallback
+import cc.shinichi.library.view.listener.OnDownloadClickListener
+import cc.shinichi.library.view.listener.OnDownloadListener
+import cc.shinichi.library.view.listener.OnFinishListener
+import cc.shinichi.library.view.listener.OnOriginProgressListener
+import cc.shinichi.library.view.listener.OnPageDragListener
+import cc.shinichi.library.view.listener.OnPageFinishListener
 import java.lang.ref.WeakReference
 
 /**
@@ -526,7 +534,7 @@ class ImagePreview {
 
     fun start() {
         if (System.currentTimeMillis() - lastClickTime <= MIN_DOUBLE_CLICK_TIME) {
-            SLog.e("ImagePreview", "---忽略多次快速点击---")
+            SLog.e("ImagePreview", "---ignore quick click---")
             return
         }
         val context = contextWeakReference.get() ?: throw IllegalArgumentException("You must call 'setContext(Context context)' first!")

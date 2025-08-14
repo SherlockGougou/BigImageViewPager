@@ -12,10 +12,12 @@ class ImageInfo : Serializable {
      * 类型
      */
     var type: Type = Type.IMAGE // image / video
+
     /**
      * 缩略图
      */
     var thumbnailUrl: String = ""
+
     /**
      * 原图
      */

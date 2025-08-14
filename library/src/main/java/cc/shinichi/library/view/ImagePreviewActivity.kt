@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
-import android.os.Build.VERSION_CODES.P
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -48,7 +47,6 @@ import cc.shinichi.library.tool.common.UIUtil
 import cc.shinichi.library.tool.image.DownloadUtil
 import cc.shinichi.library.view.listener.OnFinishListener
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 /**
  * @author 工藤
@@ -324,8 +322,11 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     fun getExoPlayer(): ExoPlayer {
         return ExoPlayer.Builder(context)
             .setMediaSourceFactory(DefaultMediaSourceFactory(GlobalContext.getCacheDataSourceFactory()))
-            .setRenderersFactory(DefaultRenderersFactory(context).setMediaCodecSelector(
-                MediaCodecSelector.DEFAULT))
+            .setRenderersFactory(
+                DefaultRenderersFactory(context).setMediaCodecSelector(
+                    MediaCodecSelector.DEFAULT
+                )
+            )
             .build()
     }
 
@@ -515,7 +516,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     private fun checkAndDownload() {
         if (DeviceUtil.isHarmonyOs()) {
             val harmonyVersion = DeviceUtil.getHarmonyVersionCode()
-            SLog.d("checkAndDownload", "是鸿蒙系统, harmonyVersion:$harmonyVersion")
+            SLog.d("checkAndDownload", "is HarmonyOS, HarmonyOS version:$harmonyVersion")
             if (harmonyVersion < 6) {
                 if (ContextCompat.checkSelfPermission(
                         context,
@@ -536,7 +537,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 downloadCurrentImg()
             }
         } else {
-            SLog.d("checkAndDownload", "不是鸿蒙系统")
+            SLog.d("checkAndDownload", "not HarmonyOS")
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                 // Android 10 以下，需要动态申请权限
                 if (ContextCompat.checkSelfPermission(
@@ -693,7 +694,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         imagePreviewAdapter = ImagePreviewAdapter(supportFragmentManager, fragmentList)
         viewPager.adapter = imagePreviewAdapter
         viewPager.offscreenPageLimit = 1
-        viewPager.setCurrentItem(newIndex , false)
+        viewPager.setCurrentItem(newIndex, false)
         // 触发页面选中回调
         pageChangeListener?.onPageSelected(newIndex)
     }

@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Helper class used to set the source and additional attributes from a variety of sources. Supports
@@ -48,11 +49,7 @@ public final class ImageSource {
         if (uriString.startsWith(FILE_SCHEME)) {
             File uriFile = new File(uriString.substring(FILE_SCHEME.length() - 1));
             if (!uriFile.exists()) {
-                try {
-                    uri = Uri.parse(URLDecoder.decode(uriString, "UTF-8"));
-                } catch (UnsupportedEncodingException e) {
-                    // Fallback to encoded URI. This exception is not expected.
-                }
+                uri = Uri.parse(URLDecoder.decode(uriString, StandardCharsets.UTF_8));
             }
         }
         this.bitmap = null;
@@ -239,35 +236,35 @@ public final class ImageSource {
         }
     }
 
-    public final Uri getUri() {
+    public Uri getUri() {
         return uri;
     }
 
-    public final Bitmap getBitmap() {
+    public Bitmap getBitmap() {
         return bitmap;
     }
 
-    public final Integer getResource() {
+    public Integer getResource() {
         return resource;
     }
 
-    public final boolean getTile() {
+    public boolean getTile() {
         return tile;
     }
 
-    public final int getSWidth() {
+    public int getSWidth() {
         return sWidth;
     }
 
-    public final int getSHeight() {
+    public int getSHeight() {
         return sHeight;
     }
 
-    public final Rect getSRegion() {
+    public Rect getSRegion() {
         return sRegion;
     }
 
-    public final boolean isCached() {
+    public boolean isCached() {
         return cached;
     }
 }

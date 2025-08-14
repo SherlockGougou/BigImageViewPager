@@ -90,14 +90,11 @@ public class DragCloseView extends RelativeLayout {
                     ? imageStatic.getScale() <= (imageStatic.getMinScale() + 0.001F) || imageStatic.isAtYEdge()
                     : imageStatic.getScale() <= (imageStatic.getMinScale() + 0.001F) && imageStatic.isAtYEdge();
             return isAtEdge && (imageStatic.getMaxTouchCount() == 0 || imageStatic.getMaxTouchCount() == 1);
-        } else if (imageAnime != null && imageAnime.getVisibility() == View.VISIBLE) {
+        } else // 视频
+            if (imageAnime != null && imageAnime.getVisibility() == View.VISIBLE) {
             // 动图
             return imageAnime.getScale() <= (imageAnime.getMinimumScale() + 0.001F) && (imageAnime.getMaxTouchCount() == 0 || imageAnime.getMaxTouchCount() == 1);
-        } else if (videoView != null && videoView.getVisibility() == View.VISIBLE) {
-            // 视频
-            return true;
-        }
-        return false;
+        } else return videoView != null && videoView.getVisibility() == View.VISIBLE;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -232,6 +229,13 @@ public class DragCloseView extends RelativeLayout {
         }
     }
 
+    public interface onAlphaChangedListener {
+
+        void onTranslationYChanged(MotionEvent event, float translationY);
+
+        void onExit();
+    }
+
     public abstract static class SimpleAnimatorListener implements Animator.AnimatorListener {
         @Override
         public void onAnimationStart(@NonNull Animator animation) {
@@ -244,12 +248,5 @@ public class DragCloseView extends RelativeLayout {
         @Override
         public void onAnimationRepeat(@NonNull Animator animation) {
         }
-    }
-
-    public interface onAlphaChangedListener {
-
-        void onTranslationYChanged(MotionEvent event, float translationY);
-
-        void onExit();
     }
 }

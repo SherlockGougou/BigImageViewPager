@@ -185,6 +185,12 @@ public class MainActivity extends AppCompatActivity {
         final List<ImageInfo> mediaList = new ArrayList<>();
         ImageInfo i;
 
+        // avif 图片：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://shinichi-common.oss-cn-hangzhou.aliyuncs.com/upload/hato.profile0.10bpc.yuv420.avif");
+        i.setOriginUrl("https://shinichi-common.oss-cn-hangzhou.aliyuncs.com/upload/hato.profile0.10bpc.yuv420.avif");
+        mediaList.add(i);
+
         // webp图片：
         i = new ImageInfo();
         i.setThumbnailUrl("https://www.gstatic.com/webp/gallery/1.webp");
@@ -223,10 +229,16 @@ public class MainActivity extends AppCompatActivity {
         i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/A3ZD8.jpg");
         mediaList.add(i);
 
-        // 动图：
+        // gif 动图：
         i = new ImageInfo();
         i.setThumbnailUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/gif1thumb.png");
         i.setOriginUrl("https://yitaoyitao.oss-cn-qingdao.aliyuncs.com/app/img/temp/test/gif1.gif");
+        mediaList.add(i);
+
+        // webp 动图：
+        i = new ImageInfo();
+        i.setThumbnailUrl("https://shinichi-common.oss-cn-hangzhou.aliyuncs.com/upload/1.webp");
+        i.setOriginUrl("https://shinichi-common.oss-cn-hangzhou.aliyuncs.com/upload/1.webp");
         mediaList.add(i);
 
         // 全景图片1：(风景-横向)

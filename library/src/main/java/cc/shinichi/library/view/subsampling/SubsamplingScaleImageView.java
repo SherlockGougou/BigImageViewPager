@@ -178,9 +178,8 @@ public class SubsamplingScaleImageView extends View {
     private final float density;
     // Bitmap (preview or full image)
     private Bitmap bitmap;    // Min scale allowed (prevent infinite zoom)
-    private float minScale = minScale();
     // Whether the bitmap is a preview image
-    private boolean bitmapIsPreview;
+    private boolean bitmapIsPreview;    private float minScale = minScale();
     // Specifies if a cache handler is also referencing the bitmap. Do not recycle if so.
     private boolean bitmapIsCached;
     // Uri of full size image
@@ -1038,6 +1037,7 @@ public class SubsamplingScaleImageView extends View {
                     for (Tile tile : tileMapEntry.getValue()) {
                         if (tile.visible && (tile.loading || tile.bitmap == null)) {
                             hasMissingTiles = true;
+                            break;
                         }
                     }
                 }
@@ -1181,6 +1181,7 @@ public class SubsamplingScaleImageView extends View {
                     for (Tile tile : tileMapEntry.getValue()) {
                         if (tile.loading || tile.bitmap == null) {
                             baseLayerReady = false;
+                            break;
                         }
                     }
                 }
@@ -3140,6 +3141,7 @@ public class SubsamplingScaleImageView extends View {
     private static class ScaleAndTranslate {
         private final PointF vTranslate;
         private float scale;
+
         private ScaleAndTranslate(float scale, PointF vTranslate) {
             this.scale = scale;
             this.vTranslate = vTranslate;
@@ -3376,6 +3378,8 @@ public class SubsamplingScaleImageView extends View {
         }
 
     }
+
+
 
 
 }
