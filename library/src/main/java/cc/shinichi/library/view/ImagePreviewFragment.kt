@@ -593,11 +593,12 @@ class ImagePreviewFragment : Fragment() {
         url: String,
         originPathUrl: String
     ) {
-        val builder: RequestBuilder<File> = if (url.isLocalImage()) {
+        if (url.isLocalImage()) {
+            // 本地图片，直接加载
+            loadLocalImage(url, File(url))
+        } else {
             Glide.with(imagePreviewActivity)
                 .downloadOnly()
-        } else {
-            Glide.with(imagePreviewActivity).downloadOnly()
                 .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
                 .diskCacheStrategy(
                     if (ImagePreview.instance.isSkipLocalCache) {
@@ -606,53 +607,51 @@ class ImagePreviewFragment : Fragment() {
                         DiskCacheStrategy.ALL
                     }
                 )
-        }
-
-        builder
-            .load(url)
-            .addListener(object : RequestListener<File> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<File?>,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    // glide加载失败，使用http下载后再次加载
-                    Thread {
-                        val fileFullName = System.currentTimeMillis().toString()
-                        val saveDir =
-                            getAvailableCacheDir(imagePreviewActivity)?.absolutePath + File.separator + "image/"
-                        val downloadFile = downloadFile(url, fileFullName, saveDir)
-                        Handler(Looper.getMainLooper()).post {
-                            if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
-                                // 通过urlConn下载完成
-                                loadLocalImage(
-                                    originPathUrl,
-                                    downloadFile
-                                )
-                            } else {
-                                loadFailed(e)
+                .load(url)
+                .addListener(object : RequestListener<File> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<File?>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        // glide加载失败，使用http下载后再次加载
+                        Thread {
+                            val fileFullName = System.currentTimeMillis().toString()
+                            val saveDir =
+                                getAvailableCacheDir(imagePreviewActivity)?.absolutePath + File.separator + "image/"
+                            val downloadFile = downloadFile(url, fileFullName, saveDir)
+                            Handler(Looper.getMainLooper()).post {
+                                if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
+                                    // 通过urlConn下载完成
+                                    loadLocalImage(
+                                        originPathUrl,
+                                        downloadFile
+                                    )
+                                } else {
+                                    loadFailed(e)
+                                }
                             }
-                        }
-                    }.start()
-                    return true
-                }
+                        }.start()
+                        return true
+                    }
 
-                override fun onResourceReady(
-                    resource: File,
-                    model: Any,
-                    target: Target<File>,
-                    dataSource: DataSource,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    loadLocalImage(
-                        url,
-                        resource
-                    )
-                    return true
-                }
-            }).into(object : FileTarget() {
-            })
+                    override fun onResourceReady(
+                        resource: File,
+                        model: Any,
+                        target: Target<File>,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        loadLocalImage(
+                            url,
+                            resource
+                        )
+                        return true
+                    }
+                }).into(object : FileTarget() {
+                })
+        }
     }
 
     private fun loadLocalImage(
