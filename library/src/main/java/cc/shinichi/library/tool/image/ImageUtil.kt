@@ -329,20 +329,24 @@ object ImageUtil {
             return false
         }
         var result = false
-        val br: BufferedReader
-        var line: String
-        // 读取path为InputStream
-        val `is`: InputStream = FileInputStream(path)
-        br = BufferedReader(InputStreamReader(`is`))
-        var count = 0
-        while (br.readLine().also { line = it } != null) {
-            // 读取5行，如果其中包含"ANIM"则为动图
-            if (line.contains("ANIM")) {
-                result = true
+        try {
+            val br: BufferedReader
+            var line: String
+            // 读取path为InputStream
+            val `is`: InputStream = FileInputStream(path)
+            br = BufferedReader(InputStreamReader(`is`))
+            var count = 0
+            while (br.readLine().also { line = it } != null) {
+                // 读取5行，如果其中包含"ANIM"则为动图
+                if (line.contains("ANIM")) {
+                    result = true
+                }
+                if (count++ >= 5) {
+                    break
+                }
             }
-            if (count++ >= 5) {
-                break
-            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
         SLog.d(TAG, "isAnimWebp: result = $result")
         return result

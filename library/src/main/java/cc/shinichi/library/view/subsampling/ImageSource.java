@@ -3,6 +3,7 @@ package cc.shinichi.library.view.subsampling;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 
@@ -49,7 +50,15 @@ public final class ImageSource {
         if (uriString.startsWith(FILE_SCHEME)) {
             File uriFile = new File(uriString.substring(FILE_SCHEME.length() - 1));
             if (!uriFile.exists()) {
-                uri = Uri.parse(URLDecoder.decode(uriString, StandardCharsets.UTF_8));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    uri = Uri.parse(URLDecoder.decode(uriString, StandardCharsets.UTF_8));
+                } else {
+                    try {
+                        uri = Uri.parse(URLDecoder.decode(uriString, "UTF-8"));
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
         this.bitmap = null;

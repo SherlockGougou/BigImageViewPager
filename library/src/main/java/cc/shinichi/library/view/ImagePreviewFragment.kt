@@ -483,18 +483,34 @@ class ImagePreviewFragment : Fragment() {
                 imageSubsample.visibility = View.GONE
                 imagePhotoView.visibility = View.VISIBLE
                 imagePhotoView.let {
-                    Glide.with(imagePreviewActivity)
-                        .load(cacheFile)
-                        .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
-                        .diskCacheStrategy(
-                            if (ImagePreview.instance.isSkipLocalCache) {
-                                DiskCacheStrategy.NONE
-                            } else {
-                                DiskCacheStrategy.ALL
-                            }
-                        )
-                        .error(ImagePreview.instance.errorPlaceHolder)
-                        .into(imagePhotoView)
+                    if (ImageUtil.isAnimImageWithMime(originalUrl, cacheFile.absolutePath)) {
+                        Glide.with(imagePreviewActivity)
+                            .asGif()
+                            .load(cacheFile)
+                            .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
+                            .diskCacheStrategy(
+                                if (ImagePreview.instance.isSkipLocalCache) {
+                                    DiskCacheStrategy.NONE
+                                } else {
+                                    DiskCacheStrategy.ALL
+                                }
+                            )
+                            .error(ImagePreview.instance.errorPlaceHolder)
+                            .into(imagePhotoView)
+                    } else {
+                        Glide.with(imagePreviewActivity)
+                            .load(cacheFile)
+                            .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
+                            .diskCacheStrategy(
+                                if (ImagePreview.instance.isSkipLocalCache) {
+                                    DiskCacheStrategy.NONE
+                                } else {
+                                    DiskCacheStrategy.ALL
+                                }
+                            )
+                            .error(ImagePreview.instance.errorPlaceHolder)
+                            .into(imagePhotoView)
+                    }
                 }
             }
         }
@@ -618,8 +634,7 @@ class ImagePreviewFragment : Fragment() {
                         // glide加载失败，使用http下载后再次加载
                         Thread {
                             val fileFullName = System.currentTimeMillis().toString()
-                            val saveDir =
-                                getAvailableCacheDir(imagePreviewActivity)?.absolutePath + File.separator + "image/"
+                            val saveDir = getAvailableCacheDir(imagePreviewActivity)?.absolutePath + File.separator + "image/"
                             val downloadFile = downloadFile(url, fileFullName, saveDir)
                             Handler(Looper.getMainLooper()).post {
                                 if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
