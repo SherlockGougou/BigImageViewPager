@@ -43,16 +43,16 @@ https://github.com/user-attachments/assets/070caa63-8e9f-4b11-9240-4cb56440d3c2
     allprojects {
         repositories {
             ...
-            maven { url 'https://jitpack.io' }
+            mavenCentral()
         }
     }
 ```
 #### Step 2. 在你app的build.gradle中添加依赖：
-当前最新版本为：```androidx-8.4.2```
+当前最新版本为：```androidx-8.4.3```
 ```
     dependencies {
         // 本框架
-        implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-8.4.2'
+        implementation 'com.gouqinglin:BigImageViewPager:androidx-8.4.3'
 
         // glide
         def glideVersion = "4.16.0"

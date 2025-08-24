@@ -12,3 +12,5 @@
 /.idea/
 */release/*
 */debug/*
+
+gradle.properties

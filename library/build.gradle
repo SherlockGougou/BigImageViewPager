@@ -1,5 +1,8 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+apply plugin: 'org.jetbrains.dokka'
 
 android {
     ndkVersion "${NDK_VERSION}"
@@ -36,6 +39,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+    kotlinOptions {
+        jvmTarget = '11'
+    }
     packagingOptions {
         jniLibs {
             useLegacyPackaging true
@@ -67,4 +73,77 @@ dependencies {
     implementation "androidx.media3:media3-exoplayer:${media3Version}"
     implementation "androidx.media3:media3-exoplayer-dash:${media3Version}"
     implementation "androidx.media3:media3-ui:${media3Version}"
+}
+
+repositories {
+    mavenCentral()
+}
+
+// =============================================================================
+// --- MAVEN CENTRAL PUBLISHING CONFIGURATION ---
+// =============================================================================
+
+// Use Dokka to generate Javadoc and package it into a JAR.
+task javadocJar(type: Jar) {
+    dependsOn tasks.named("dokkaJavadoc")
+    from tasks.named("dokkaJavadoc").get().getOutputDirectory()
+    archiveClassifier.set('javadoc')
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from android.sourceSets.main.java.srcDirs
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+
+                groupId = GROUP_ID
+                artifactId = ARTIFACT_ID
+                version = VERSION_NAME
+
+                artifact sourcesJar
+                artifact javadocJar
+
+                pom {
+                    name = ARTIFACT_ID
+                    description = POM_DESCRIPTION
+                    url = POM_URL
+                    licenses {
+                        license {
+                            name = POM_LICENSE_NAME
+                            url = POM_LICENSE_URL
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = POM_DEVELOPER_ID
+                            name = POM_DEVELOPER_NAME
+                            email = POM_DEVELOPER_EMAIL
+                        }
+                    }
+                    scm {
+                        connection = POM_SCM_CONNECTION
+                        developerConnection = POM_SCM_DEV_CONNECTION
+                        url = POM_SCM_URL
+                    }
+                }
+            }
+        }
+    }
+}
+
+signing {
+    def signingKeyId = findProperty("signing.keyId")
+    def signingPassword = findProperty("signing.password")
+    def signingKeyRingFile = findProperty("signing.secretKeyRingFile")
+
+    // Only sign if all signing properties are configured and the key ring file exists.
+    // This prevents build failures in environments where signing is not configured.
+    if (signingKeyId != null && signingPassword != null && signingKeyRingFile != null && new File(signingKeyRingFile).exists()) {
+        sign publishing.publications
+    }
 }
