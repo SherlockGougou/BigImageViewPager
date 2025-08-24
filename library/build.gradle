@@ -137,8 +137,8 @@ afterEvaluate {
 }
 
 signing {
-    def signingKeyId = findProperty("signing.keyId")
-    def signingPassword = findProperty("signing.password")
+    def signingKeyId = findProperty("signing.keyId") ?: System.getenv("SIGNING_KEY_ID")
+    def signingPassword = findProperty("signing.password") ?: System.getenv("SIGNING_PASSWORD")
     def signingKeyRingFile = findProperty("signing.secretKeyRingFile")
 
     // Only sign if all signing properties are configured and the key ring file exists.
