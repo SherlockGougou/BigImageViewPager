@@ -454,8 +454,7 @@ public class MainActivity extends AppCompatActivity {
                     public boolean isInterceptDownload() {
                         // return true 时, 需要自己实现下载
                         // return false 时, 使用内置下载
-                        Toast.makeText(MainActivity.this, "TODO 请自己实现下载", Toast.LENGTH_SHORT).show();
-                        return true;
+                        return false;
                     }
                 })
                 // 内置下载过程回调，可自定义toast。如果不设置此回调会使用默认的toast内容，反之，设置了此回调时不会展示默认toast

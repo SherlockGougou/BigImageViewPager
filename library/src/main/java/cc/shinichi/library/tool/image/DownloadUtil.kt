@@ -17,7 +17,7 @@ import cc.shinichi.library.tool.common.ToastUtil
 import cc.shinichi.library.tool.file.FileUtil
 import cc.shinichi.library.tool.file.SingleMediaScanner
 import cc.shinichi.library.tool.image.ImageUtil.refresh
-import cc.shinichi.library.tool.image.UtilExt.isLocalImage
+import cc.shinichi.library.tool.image.UtilExt.isLocalFile
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.transition.Transition
 import java.io.BufferedInputStream
@@ -179,7 +179,7 @@ object DownloadUtil {
         Thread {
             val saveDir = FileUtil.getAvailableCacheDir(context)?.absolutePath + File.separator + "video/"
             val fileFullName = System.currentTimeMillis().toString() + ".mp4"
-            if (url?.isLocalImage() == true) {
+            if (url?.isLocalFile() == true) {
                 // 是本地视频，直接拷贝到指定目录
                 saveVideo(context, url, currentItem)
             } else {

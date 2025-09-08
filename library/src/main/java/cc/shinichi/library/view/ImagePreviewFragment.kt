@@ -19,6 +19,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -42,14 +43,13 @@ import cc.shinichi.library.tool.common.ToastUtil
 import cc.shinichi.library.tool.common.UIUtil
 import cc.shinichi.library.tool.file.FileUtil.Companion.getAvailableCacheDir
 import cc.shinichi.library.tool.image.ImageUtil
-import cc.shinichi.library.tool.image.UtilExt.isLocalImage
+import cc.shinichi.library.tool.image.UtilExt.isLocalFile
 import cc.shinichi.library.view.helper.DragCloseView
 import cc.shinichi.library.view.listener.SimpleOnImageEventListener
 import cc.shinichi.library.view.photoview.PhotoView
 import cc.shinichi.library.view.subsampling.ImageSource
 import cc.shinichi.library.view.subsampling.SubsamplingScaleImageView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.DataSource
@@ -357,7 +357,11 @@ class ImagePreviewFragment : Fragment() {
         }
         videoView.player = exoPlayer
 
-        val mediaItem = MediaItem.fromUri(imageInfo.originUrl)
+        val mediaItem = if (imageInfo.originUrl.isLocalFile()) {
+            MediaItem.fromUri(imageInfo.originUrl.toUri())
+        } else {
+            MediaItem.fromUri(imageInfo.originUrl)
+        }
         exoPlayer?.setMediaItem(mediaItem)
         exoPlayer?.prepare()
         exoPlayer?.playWhenReady = false
@@ -609,10 +613,11 @@ class ImagePreviewFragment : Fragment() {
         url: String,
         originPathUrl: String
     ) {
-        if (url.isLocalImage()) {
+        if (url.isLocalFile()) {
             // 本地图片，直接加载
             loadLocalImage(url, File(url))
         } else {
+            // 远程图片
             Glide.with(imagePreviewActivity)
                 .downloadOnly()
                 .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)

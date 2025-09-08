@@ -1,5 +1,7 @@
 package cc.shinichi.library.tool.image
 
+import androidx.core.net.toUri
+
 /**
  * 仓库: <a href="http://git.xiaozhouintel.com/root/C-UI-App-Android">...</a>
  * 文件名: UtilExt.java
@@ -9,12 +11,15 @@ package cc.shinichi.library.tool.image
  */
 object UtilExt {
 
-    fun String.isLocalImage(): Boolean {
-        return this.lowercase().startsWith("file://")
-                || this.lowercase().startsWith("/storage")
-                || this.lowercase().startsWith("content://")
-                || this.lowercase().startsWith("android.resource://")
-                || this.lowercase().startsWith("assets://")
-                || this.lowercase().startsWith("raw://")
+    fun String.isLocalFile(): Boolean {
+        val uri = this.toUri()
+        return when (uri.scheme?.lowercase()) {
+            "file" -> true
+            "content" -> true
+            "android.resource" -> true
+            "assets", "raw" -> true
+            null -> this.startsWith("/")
+            else -> false
+        }
     }
 }
