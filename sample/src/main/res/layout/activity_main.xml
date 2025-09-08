@@ -321,7 +321,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="相册选图"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:backgroundTint="@color/blue" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonPreview"
@@ -337,7 +338,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:text="清除缓存"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:backgroundTint="@color/red" />
 
         </RelativeLayout>
 
