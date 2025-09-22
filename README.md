@@ -62,25 +62,11 @@
 
 ## 🎬 视频展示
 
-<table align="center">
-  <tr>
-    <td>
-      <video width="220" controls>
-        <source src="https://github.com/user-attachments/assets/101d706c-d8d0-455b-b38a-6c42282c03e2">
-      </video>
-    </td>
-    <td>
-      <video width="220" controls>
-        <source src="https://github.com/user-attachments/assets/b7becb07-e6bd-459b-9795-d048d02fb21b">
-      </video>
-    </td>
-    <td>
-      <video width="220" controls>
-        <source src="https://github.com/user-attachments/assets/070caa63-8e9f-4b11-9240-4cb56440d3c2">
-      </video>
-    </td>
-  </tr>
-</table>
+https://github.com/user-attachments/assets/101d706c-d8d0-455b-b38a-6c42282c03e2
+
+https://github.com/user-attachments/assets/b7becb07-e6bd-459b-9795-d048d02fb21b
+
+https://github.com/user-attachments/assets/070caa63-8e9f-4b11-9240-4cb56440d3c2
 
 ---
 
@@ -149,20 +135,7 @@ ImagePreview
     .setMediaInfoList(imageInfoList)
     .start();
 ```
-更多用法请参考 Demo <a href="sample/src/main/java/cc/shinichi/bigimageviewpager/MainActivity.java">MainActivity.java</a>。
-
-### ❓ 常见问题
-- 查看原图卡在 1%？请检查是否正确配置 GlideModule
-- 如何动态更新 / 删除 item？
-```
-// 删除
-ImagePreview.getInstance().getPreviewActivity().deleteItem(position);
-
-// 更新
-ImagePreview.getInstance().getPreviewActivity().updateItem(position, newUrl);
-```
-
-更多问题请见 <a href="#Q&A">Q&A</a>。
+### 详细配置文档：<a href="https://github.com/SherlockGougou/BigImageViewPager/blob/master/doc/DETAIL.md">详细文档</a>。
 
 ### 🙏 致谢
 - <a href="https://github.com/davemorrissey/subsampling-scale-image-view">subsampling-scale-image-view</a> —— 提供大图加载核心
