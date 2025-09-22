@@ -23,14 +23,21 @@ import java.io.File
 @UnstableApi
 class InitProvider : ContentProvider() {
 
+    private var application: Application? = null
+
     override fun onCreate(): Boolean {
         // 获取 Application 实例
         val application = context?.applicationContext as? Application
         if (application != null) {
             // 在这里进行初始化操作
+            this.application = application
             initializeLibrary(application)
         }
         return true // 返回 true 表示成功初始化
+    }
+
+    fun getApplication(): Application? {
+        return application
     }
 
     private fun initializeLibrary(application: Application) {
@@ -51,7 +58,7 @@ class InitProvider : ContentProvider() {
             DefaultHttpDataSource.Factory()
         )
         // Configure the DataSource.Factory with the cache and factory for the desired HTTP stack.
-        var cacheDataSourceFactory =
+        val cacheDataSourceFactory =
             CacheDataSource.Factory()
                 .setCache(cache)
                 .setUpstreamDataSourceFactory(dataSourceFactory)

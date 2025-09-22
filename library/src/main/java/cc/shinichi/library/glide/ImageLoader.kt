@@ -34,7 +34,8 @@ object ImageLoader {
             val safeKey = safeKeyGenerator.getSafeKey(dataCacheKey)
             SLog.d(TAG, "safeKey = $safeKey")
             val file = File(context.cacheDir, DiskCache.Factory.DEFAULT_DISK_CACHE_DIR)
-            val diskLruCache = DiskLruCache.open(file, 1, 1, DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE.toLong())
+            val diskLruCache =
+                DiskLruCache.open(file, 1, 1, DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE.toLong())
             val value = diskLruCache[safeKey]
             return value?.getFile(0)
         } catch (e: Exception) {

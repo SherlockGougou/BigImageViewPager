@@ -22,12 +22,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.DefaultRenderersFactory
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
-import cc.shinichi.library.GlobalContext
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.R
 import cc.shinichi.library.bean.ImageInfo
@@ -55,26 +53,26 @@ import com.bumptech.glide.Glide
 class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClickListener,
     OnFinishListener {
 
-    private lateinit var context: Activity
-    private lateinit var handlerHolder: HandlerHolder
+    private var handlerHolder: HandlerHolder? = null
     private val imageInfoList: MutableList<ImageInfo> = mutableListOf()
     private val fragmentList: MutableList<ImagePreviewFragment> = mutableListOf()
 
-    lateinit var parentView: View
-    lateinit var viewPager: HackyViewPager
-    lateinit var consControllerOverlay: ConstraintLayout
-    private lateinit var tvIndicator: TextView
-    private lateinit var consBottomController: ConstraintLayout
+    var parentView: View? = null
 
-    private lateinit var fmImageShowOriginContainer: FrameLayout
-    private lateinit var fmCenterProgressContainer: FrameLayout
-    private lateinit var btnShowOrigin: Button
-    private lateinit var imgDownload: ImageView
-    private lateinit var imgCloseButton: ImageView
-    private lateinit var rootView: View
-    private lateinit var progressParentLayout: View
+    private var viewPager: HackyViewPager? = null
+    private var consControllerOverlay: ConstraintLayout? = null
+    private var tvIndicator: TextView? = null
+    private var consBottomController: ConstraintLayout? = null
 
-    private lateinit var imagePreviewAdapter: ImagePreviewAdapter
+    private var fmImageShowOriginContainer: FrameLayout? = null
+    private var fmCenterProgressContainer: FrameLayout? = null
+    private var btnShowOrigin: Button? = null
+    private var imgDownload: ImageView? = null
+    private var imgCloseButton: ImageView? = null
+    private var rootView: View? = null
+    private var progressParentLayout: View? = null
+
+    private var imagePreviewAdapter: ImagePreviewAdapter? = null
     private var pageChangeListener: OnPageChangeListener? = null
 
     private var isShowDownButton = false
@@ -96,12 +94,11 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
 
         parentView = View.inflate(this, ImagePreview.instance.previewLayoutResId, null)
         setContentView(parentView)
-        ImagePreview.instance.onCustomLayoutCallback?.onLayout(this, parentView)
+        ImagePreview.instance.onCustomLayoutCallback?.onLayout(this, parentView!!)
 
         transparentStatusBar()
         transparentNavBar()
 
-        context = this
         ImagePreview.instance.previewActivity = this
         handlerHolder = HandlerHolder(this)
         imageInfoList.clear()
@@ -136,16 +133,16 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         // 顶部和底部margin
         refreshUIMargin()
 
-        fmImageShowOriginContainer.visibility = View.GONE
-        fmCenterProgressContainer.visibility = View.GONE
+        fmImageShowOriginContainer?.visibility = View.GONE
+        fmCenterProgressContainer?.visibility = View.GONE
         val progressLayoutId = ImagePreview.instance.progressLayoutId
         // != -1 即用户自定义了view
         if (progressLayoutId != -1) {
             // add用户自定义的view到frameLayout中，回调进度和view
             progressParentLayout =
-                View.inflate(context, ImagePreview.instance.progressLayoutId, null)
-            fmCenterProgressContainer.removeAllViews()
-            fmCenterProgressContainer.addView(progressParentLayout)
+                View.inflate(this@ImagePreviewActivity, ImagePreview.instance.progressLayoutId, null)
+            fmCenterProgressContainer?.removeAllViews()
+            fmCenterProgressContainer?.addView(progressParentLayout)
             isUserCustomProgressView = true
         } else {
             // 使用默认的textView进行百分比的显示
@@ -154,55 +151,55 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         btnShowOrigin = findViewById(R.id.btn_show_origin)
         imgDownload = findViewById(R.id.img_download)
         imgCloseButton = findViewById(R.id.imgCloseButton)
-        imgDownload.setImageResource(ImagePreview.instance.downIconResId)
-        imgCloseButton.setImageResource(ImagePreview.instance.closeIconResId)
+        imgDownload?.setImageResource(ImagePreview.instance.downIconResId)
+        imgCloseButton?.setImageResource(ImagePreview.instance.closeIconResId)
 
         // 关闭页面按钮
-        imgCloseButton.setOnClickListener(this)
+        imgCloseButton?.setOnClickListener(this)
         // 查看与原图按钮
-        btnShowOrigin.setOnClickListener(this)
+        btnShowOrigin?.setOnClickListener(this)
         // 下载图片按钮
-        imgDownload.setOnClickListener(this)
+        imgDownload?.setOnClickListener(this)
         indicatorStatus = if (!isShowIndicator) {
-            tvIndicator.visibility = View.GONE
+            tvIndicator?.visibility = View.GONE
             false
         } else {
             if (imageInfoList.size > 1) {
-                tvIndicator.visibility = View.VISIBLE
+                tvIndicator?.visibility = View.VISIBLE
                 true
             } else {
-                tvIndicator.visibility = View.GONE
+                tvIndicator?.visibility = View.GONE
                 false
             }
         }
         // 设置顶部指示器背景shape
         if (ImagePreview.instance.indicatorShapeResId > 0) {
-            tvIndicator.setBackgroundResource(ImagePreview.instance.indicatorShapeResId)
+            tvIndicator?.setBackgroundResource(ImagePreview.instance.indicatorShapeResId)
         }
         // 设置关闭和下载的shape
         if (ImagePreview.instance.closeIconBackgroundResId > 0) {
-            imgCloseButton.setBackgroundResource(ImagePreview.instance.closeIconBackgroundResId)
+            imgCloseButton?.setBackgroundResource(ImagePreview.instance.closeIconBackgroundResId)
         }
         if (ImagePreview.instance.downIconBackgroundResId > 0) {
-            imgDownload.setBackgroundResource(ImagePreview.instance.downIconBackgroundResId)
+            imgDownload?.setBackgroundResource(ImagePreview.instance.downIconBackgroundResId)
         }
         downloadButtonStatus = if (isShowDownButton) {
-            imgDownload.visibility = View.VISIBLE
+            imgDownload?.visibility = View.VISIBLE
             true
         } else {
-            imgDownload.visibility = View.GONE
+            imgDownload?.visibility = View.GONE
             false
         }
         closeButtonStatus = if (isShowCloseButton) {
-            imgCloseButton.visibility = View.VISIBLE
+            imgCloseButton?.visibility = View.VISIBLE
             true
         } else {
-            imgCloseButton.visibility = View.GONE
+            imgCloseButton?.visibility = View.GONE
             false
         }
 
         // 更新进度指示器
-        tvIndicator.text = String.format(
+        tvIndicator?.text = String.format(
             getString(R.string.indicator),
             (currentItem + 1).toString(),
             (imageInfoList.size).toString()
@@ -213,16 +210,15 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         for ((index, info) in imageInfoList.withIndex()) {
             fragmentList.add(
                 ImagePreviewFragment.newInstance(
-                    this@ImagePreviewActivity,
                     index,
                     info
                 )
             )
         }
         imagePreviewAdapter = ImagePreviewAdapter(supportFragmentManager, fragmentList)
-        viewPager.adapter = imagePreviewAdapter
-        viewPager.offscreenPageLimit = 1
-        viewPager.setCurrentItem(currentItem, false)
+        viewPager?.adapter = imagePreviewAdapter
+        viewPager?.offscreenPageLimit = 1
+        viewPager?.setCurrentItem(currentItem, false)
 
         pageChangeListener = object : OnPageChangeListener {
             override fun onPageSelected(position: Int) {
@@ -246,7 +242,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 }
 
                 // 更新进度指示器
-                tvIndicator.text = String.format(
+                tvIndicator?.text = String.format(
                     getString(R.string.indicator),
                     (currentItem + 1).toString(),
                     (imageInfoList.size).toString()
@@ -254,7 +250,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
 
                 // 如果是自定义百分比进度view，每次切换都先隐藏，并重置百分比
                 if (isUserCustomProgressView) {
-                    fmCenterProgressContainer.visibility = View.GONE
+                    fmCenterProgressContainer?.visibility = View.GONE
                     lastProgress = 0
                 }
 
@@ -286,48 +282,51 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         }
 
         pageChangeListener?.apply {
-            viewPager.addOnPageChangeListener(this)
+            viewPager?.addOnPageChangeListener(this)
         }
     }
 
     private fun refreshUIMargin() {
-        val layoutParamsIndicator = tvIndicator.layoutParams as ConstraintLayout.LayoutParams
-        val layoutParams = consBottomController.layoutParams as ConstraintLayout.LayoutParams
+        val layoutParamsIndicator = tvIndicator?.layoutParams as ConstraintLayout.LayoutParams
+        val layoutParams = consBottomController?.layoutParams as ConstraintLayout.LayoutParams
         // 获取当前屏幕方向
         val orientation = resources.configuration.orientation
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             // 横屏
             // tvIndicator top margin
-            val topMargin = UIUtil.dp2px(context, 20f)
+            val topMargin = UIUtil.dp2px(20f)
             layoutParamsIndicator.setMargins(0, topMargin, 0, 0)
 
             // consBottomController bottom margin
-            val bottomMargin = UIUtil.dp2px(context, 20f)
+            val bottomMargin = UIUtil.dp2px(20f)
             layoutParams.setMargins(0, 0, 0, bottomMargin)
         } else {
             // 竖屏
             // tvIndicator top margin
-            val topMargin = PhoneUtil.getStatusBarHeight(context) + UIUtil.dp2px(context, 20f)
+            val topMargin = PhoneUtil.getStatusBarHeight() + UIUtil.dp2px(20f)
             layoutParamsIndicator.setMargins(0, topMargin, 0, 0)
 
             // consBottomController bottom margin
-            val bottomMargin = PhoneUtil.getNavBarHeight(context) + UIUtil.dp2px(context, 20f)
+            val bottomMargin = PhoneUtil.getNavBarHeight() + UIUtil.dp2px(20f)
             layoutParams.setMargins(0, 0, 0, bottomMargin)
         }
-        tvIndicator.layoutParams = layoutParamsIndicator
-        consBottomController.layoutParams = layoutParams
+        tvIndicator?.layoutParams = layoutParamsIndicator
+        consBottomController?.layoutParams = layoutParams
     }
 
     @OptIn(UnstableApi::class)
     fun getExoPlayer(): ExoPlayer {
-        return ExoPlayer.Builder(context)
-            .setMediaSourceFactory(DefaultMediaSourceFactory(GlobalContext.getCacheDataSourceFactory()))
-            .setRenderersFactory(
-                DefaultRenderersFactory(context).setMediaCodecSelector(
-                    MediaCodecSelector.DEFAULT
-                )
-            )
+        // 创建带自定义 Header 的 HttpDataSource.Factory
+        val dataSourceFactory = DefaultHttpDataSource.Factory()
+            .setConnectTimeoutMs(10_000)
+            .setReadTimeoutMs(10_000)
+            .setAllowCrossProtocolRedirects(true)
+            .setDefaultRequestProperties(ImagePreview.instance.headers?.toMap() ?: mapOf())
+        // 创建 ExoPlayer
+        val exoPlayer = ExoPlayer.Builder(this@ImagePreviewActivity)
+            .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
             .build()
+        return exoPlayer
     }
 
     /**
@@ -335,9 +334,9 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
      */
     private fun downloadCurrentImg() {
         if (imageInfoList[currentItem].type == Type.IMAGE) {
-            DownloadUtil.downloadPicture(context, currentItem, currentItemOriginPathUrl)
+            DownloadUtil.downloadPicture(this@ImagePreviewActivity, currentItem, currentItemOriginPathUrl)
         } else if (imageInfoList[currentItem].type == Type.VIDEO) {
-            DownloadUtil.downloadVideo(context, currentItem, currentItemOriginPathUrl)
+            DownloadUtil.downloadVideo(this@ImagePreviewActivity, currentItem, currentItemOriginPathUrl)
         }
     }
 
@@ -375,18 +374,19 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
 
     fun setAlpha(alpha: Float) {
         val colorId = convertPercentToBlackAlphaColor(alpha)
-        rootView.setBackgroundColor(colorId)
+        rootView?.setBackgroundColor(colorId)
         if (alpha >= 1) {
             if (indicatorStatus) {
-                tvIndicator.visibility = View.VISIBLE
+                tvIndicator?.visibility = View.VISIBLE
             }
-            consBottomController.visibility = View.VISIBLE
+            consBottomController?.visibility = View.VISIBLE
         } else {
-            tvIndicator.visibility = View.GONE
-            consBottomController.visibility = View.GONE
+            tvIndicator?.visibility = View.GONE
+            consBottomController?.visibility = View.GONE
         }
     }
 
+    @UnstableApi
     override fun handleMessage(msg: Message): Boolean {
         if (msg.what == 0) {
             val path = imageInfoList[currentItem].originUrl
@@ -399,15 +399,17 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 if (isUserCustomProgressView) {
                     gone()
                 } else {
-                    btnShowOrigin.text = "0 %"
+                    btnShowOrigin?.text = "0 %"
                 }
                 if (checkCache(path)) {
-                    val message = handlerHolder.obtainMessage()
+                    val message = handlerHolder?.obtainMessage()
                     val bundle = Bundle()
                     bundle.putString("url", path)
-                    message.what = 1
-                    message.obj = bundle
-                    handlerHolder.sendMessage(message)
+                    message?.what = 1
+                    message?.obj = bundle
+                    message?.apply {
+                        handlerHolder?.sendMessage(message)
+                    }
                     return true
                 }
                 loadOriginImage(path)
@@ -419,12 +421,14 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             gone()
             if (currentItem == getRealIndexWithPath(url)) {
                 if (isUserCustomProgressView) {
-                    fmCenterProgressContainer.visibility = View.GONE
-                    progressParentLayout.visibility = View.GONE
-                    ImagePreview.instance.onOriginProgressListener?.finish(
-                        this,
-                        progressParentLayout
-                    )
+                    fmCenterProgressContainer?.visibility = View.GONE
+                    progressParentLayout?.visibility = View.GONE
+                    progressParentLayout?.apply {
+                        ImagePreview.instance.onOriginProgressListener?.finish(
+                            this@ImagePreviewActivity,
+                            progressParentLayout!!
+                        )
+                    }
                 }
                 fragmentList[currentItem].onOriginal()
             }
@@ -436,26 +440,28 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             if (currentItem == getRealIndexWithPath(url)) {
                 if (isUserCustomProgressView) {
                     gone()
-                    fmCenterProgressContainer.visibility = View.VISIBLE
-                    progressParentLayout.visibility = View.VISIBLE
-                    ImagePreview.instance.onOriginProgressListener?.progress(
-                        this,
-                        progressParentLayout,
-                        progress
-                    )
+                    fmCenterProgressContainer?.visibility = View.VISIBLE
+                    progressParentLayout?.visibility = View.VISIBLE
+                    progressParentLayout?.apply {
+                        ImagePreview.instance.onOriginProgressListener?.progress(
+                            this@ImagePreviewActivity,
+                            progressParentLayout!!,
+                            progress
+                        )
+                    }
                 } else {
                     visible()
-                    btnShowOrigin.text = String.format("%s %%", progress)
+                    btnShowOrigin?.text = String.format("%s %%", progress)
                 }
             }
         } else if (msg.what == 3) {
             // 隐藏查看原图按钮
-            btnShowOrigin.setText(R.string.btn_original)
-            fmImageShowOriginContainer.visibility = View.GONE
+            btnShowOrigin?.setText(R.string.btn_original)
+            fmImageShowOriginContainer?.visibility = View.GONE
             originalStatus = false
         } else if (msg.what == 4) {
             // 显示查看原图按钮
-            fmImageShowOriginContainer.visibility = View.VISIBLE
+            fmImageShowOriginContainer?.visibility = View.VISIBLE
             originalStatus = true
         }
         return true
@@ -471,7 +477,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     private fun checkCache(url: String?): Boolean {
-        val cacheFile = ImageLoader.getGlideCacheFile(context, url)
+        val cacheFile = ImageLoader.getGlideCacheFile(this@ImagePreviewActivity, url)
         return if (cacheFile != null && cacheFile.exists()) {
             gone()
             true
@@ -479,7 +485,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             // 缓存不存在
             // 如果是全自动模式且当前是WiFi，就不显示查看原图按钮
             if (ImagePreview.instance.loadStrategy == ImagePreview.LoadStrategy.Auto && NetworkUtil.isWiFi(
-                    context
+                    this@ImagePreviewActivity
                 )
             ) {
                 gone()
@@ -502,12 +508,12 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                     // 没有拦截下载
                     checkAndDownload()
                 }
-                ImagePreview.instance.downloadClickListener?.onClick(context, v, currentItem)
+                ImagePreview.instance.downloadClickListener?.onClick(this@ImagePreviewActivity, v, currentItem)
             } else {
                 checkAndDownload()
             }
         } else if (i == R.id.btn_show_origin) {
-            handlerHolder.sendEmptyMessage(0)
+            handlerHolder?.sendEmptyMessage(0)
         } else if (i == R.id.imgCloseButton) {
             finish()
         }
@@ -519,12 +525,12 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             SLog.d("checkAndDownload", "is HarmonyOS, HarmonyOS version:$harmonyVersion")
             if (harmonyVersion < 6) {
                 if (ContextCompat.checkSelfPermission(
-                        context,
+                        this@ImagePreviewActivity,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
                     ActivityCompat.requestPermissions(
-                        context,
+                        this@ImagePreviewActivity,
                         arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                         1
                     )
@@ -541,12 +547,12 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                 // Android 10 以下，需要动态申请权限
                 if (ContextCompat.checkSelfPermission(
-                        context,
+                        this@ImagePreviewActivity,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
                     ActivityCompat.requestPermissions(
-                        context,
+                        this@ImagePreviewActivity,
                         arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                         1
                     )
@@ -574,7 +580,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 downloadCurrentImg()
             } else {
                 ToastUtil.instance.showShort(
-                    context,
+                    this@ImagePreviewActivity,
                     getString(R.string.toast_deny_permission_save_failed)
                 )
             }
@@ -582,11 +588,11 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     private fun gone() {
-        handlerHolder.sendEmptyMessage(3)
+        handlerHolder?.sendEmptyMessage(3)
     }
 
     private fun visible() {
-        handlerHolder.sendEmptyMessage(4)
+        handlerHolder?.sendEmptyMessage(4)
     }
 
     private fun loadOriginImage(path: String?) {
@@ -599,28 +605,32 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 totalBytes: Long
             ) {
                 if (isComplete) { // 加载完成
-                    val message = handlerHolder.obtainMessage()
+                    val message = handlerHolder?.obtainMessage()
                     val bundle = Bundle()
                     bundle.putString("url", url)
-                    message.what = 1
-                    message.obj = bundle
-                    handlerHolder.sendMessage(message)
+                    message?.what = 1
+                    message?.obj = bundle
+                    message?.apply {
+                        handlerHolder?.sendMessage(message)
+                    }
                 } else { // 加载中，为减少回调次数，此处做判断，如果和上次的百分比一致就跳过
                     if (percentage == lastProgress) {
                         return
                     }
                     lastProgress = percentage
-                    val message = handlerHolder.obtainMessage()
+                    val message = handlerHolder?.obtainMessage()
                     val bundle = Bundle()
                     bundle.putString("url", url)
                     bundle.putInt("progress", percentage)
-                    message.what = 2
-                    message.obj = bundle
-                    handlerHolder.sendMessage(message)
+                    message?.what = 2
+                    message?.obj = bundle
+                    message?.apply {
+                        handlerHolder?.sendMessage(message)
+                    }
                 }
             }
         })
-        Glide.with(context).downloadOnly().load(path).into(object : FileTarget() {
+        Glide.with(this@ImagePreviewActivity).downloadOnly().load(path).into(object : FileTarget() {
         })
     }
 
@@ -681,7 +691,6 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         for ((i, info) in imageInfoList.withIndex()) {
             fragmentList.add(
                 ImagePreviewFragment.newInstance(
-                    this@ImagePreviewActivity,
                     i,
                     info
                 )
@@ -692,9 +701,9 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             newIndex = 0
         }
         imagePreviewAdapter = ImagePreviewAdapter(supportFragmentManager, fragmentList)
-        viewPager.adapter = imagePreviewAdapter
-        viewPager.offscreenPageLimit = 1
-        viewPager.setCurrentItem(newIndex, false)
+        viewPager?.adapter = imagePreviewAdapter
+        viewPager?.offscreenPageLimit = 1
+        viewPager?.setCurrentItem(newIndex, false)
         // 触发页面选中回调
         pageChangeListener?.onPageSelected(newIndex)
     }

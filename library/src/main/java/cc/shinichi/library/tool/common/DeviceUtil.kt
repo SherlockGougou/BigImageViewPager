@@ -13,7 +13,7 @@ object DeviceUtil {
         return try {
             val buildExClass = Class.forName("com.huawei.system.BuildEx")
             val osBrand = buildExClass.getMethod("getOsBrand").invoke(buildExClass)
-            osBrand.toString().contains("harmony", ignoreCase = true)
+            osBrand?.toString()?.contains("harmony", ignoreCase = true) ?: false
         } catch (x: Throwable) {
             false
         }

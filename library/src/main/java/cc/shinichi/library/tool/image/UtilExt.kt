@@ -13,12 +13,14 @@ object UtilExt {
 
     fun String.isLocalFile(): Boolean {
         val uri = this.toUri()
-        return when (uri.scheme?.lowercase()) {
-            "file" -> true
-            "content" -> true
-            "android.resource" -> true
-            "assets", "raw" -> true
-            null -> this.startsWith("/")
+        val scheme = uri.scheme?.lowercase()
+
+        return when {
+            scheme == "file" -> true
+            scheme == "content" -> true
+            scheme == "android.resource" -> true
+            scheme == null && this.startsWith("/") -> true
+            this.startsWith("file:///android_asset/") -> true // 特殊处理 assets
             else -> false
         }
     }

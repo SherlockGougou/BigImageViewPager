@@ -1,8 +1,10 @@
 package cc.shinichi.library.glide.progress
 
 import android.text.TextUtils
+import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.glide.SSLSocketClient
 import cc.shinichi.library.glide.progress.ProgressResponseBody.InternalProgressListener
+import okhttp3.Headers
 import okhttp3.OkHttpClient
 import java.util.Collections
 import java.util.concurrent.TimeUnit
@@ -37,7 +39,29 @@ object ProgressManager {
             builder.addNetworkInterceptor { chain ->
                 val request = chain.request()
                 val response = chain.proceed(request)
+                val headersBuilder = Headers.Builder()
+                val url = request.url().toString()
+                // 如果url中包含任意一个关键字，就添加监听
+                val hostKeywordList = ImagePreview.instance.hostKeywordList
+                var needAddHeader = false
+                if (hostKeywordList.isNullOrEmpty()) {
+                    needAddHeader = false
+                } else {
+                    for (item in hostKeywordList) {
+                        if (url.contains(item)) {
+                            needAddHeader = true
+                            break
+                        }
+                    }
+                }
+                if (needAddHeader) {
+                    // 通过set，替换原本的header
+                    ImagePreview.instance.headers?.forEach {
+                        headersBuilder.set(it.key, it.value)
+                    }
+                }
                 response.newBuilder()
+                    .headers(headersBuilder.build())
                     .body(
                         response.body()
                             ?.let { ProgressResponseBody(request.url().toString(), LISTENER, it) })

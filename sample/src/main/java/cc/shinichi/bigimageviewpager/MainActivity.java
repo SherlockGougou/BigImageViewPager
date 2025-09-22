@@ -607,7 +607,7 @@ public class MainActivity extends AppCompatActivity {
                         imgShare = parentView.findViewById(R.id.img_share_button_custom);
                         tvIndicatorCustom = parentView.findViewById(R.id.tv_indicator_custom);
                         // 业务逻辑处理
-                        int statusBarHeight = PhoneUtil.INSTANCE.getStatusBarHeight(MainActivity.this);
+                        int statusBarHeight = PhoneUtil.INSTANCE.getStatusBarHeight();
                         customViewContainer.setPadding(0, statusBarHeight, 0, 0);
                         tvIndicatorCustom.setText((currentPosition + 1) + " / " + mediaList.size());
                         // 点击事件

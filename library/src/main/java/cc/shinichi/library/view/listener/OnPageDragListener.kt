@@ -12,6 +12,12 @@ import android.view.View
  * description: 页面拖拽回调
  */
 abstract class OnPageDragListener {
-    abstract fun onDrag(activity: Activity, parentView: View, event: MotionEvent?, translationY: Float)
+    abstract fun onDrag(
+        activity: Activity,
+        parentView: View,
+        event: MotionEvent?,
+        translationY: Float
+    )
+
     abstract fun onDragEnd(activity: Activity, parentView: View)
 }

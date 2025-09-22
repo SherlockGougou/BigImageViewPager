@@ -19,14 +19,17 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
-import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.PlayerView
+import cc.shinichi.library.GlobalContext
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.ImagePreview.LoadStrategy
 import cc.shinichi.library.R
@@ -77,21 +80,21 @@ class ImagePreviewFragment : Fragment() {
      */
     private var mLoading = false
 
-    private lateinit var imagePreviewActivity: ImagePreviewActivity
-    private lateinit var imageInfo: ImageInfo
+    private var imagePreviewActivity: ImagePreviewActivity? = null
+    private var imageInfo: ImageInfo? = null
     private var position: Int = 0
 
-    private lateinit var dragCloseView: DragCloseView
-    private lateinit var imageSubsample: SubsamplingScaleImageView
-    private lateinit var imagePhotoView: PhotoView
-    private lateinit var videoView: PlayerView
-    private lateinit var progressBar: ProgressBar
+    private var dragCloseView: DragCloseView? = null
+    private var imageSubsample: SubsamplingScaleImageView? = null
+    private var imagePhotoView: PhotoView? = null
+    private var videoView: PlayerView? = null
+    private var progressBar: ProgressBar? = null
 
     private var exoPlayer: ExoPlayer? = null
 
-    private lateinit var ivPlayButton: ImageView
-    private lateinit var tvPlayTime: TextView
-    private lateinit var seekBar: SeekBar
+    private var ivPlayButton: ImageView? = null
+    private var tvPlayTime: TextView? = null
+    private var seekBar: SeekBar? = null
 
     private var progressHandler: Handler? = null
     private var progressRunnable: Runnable? = null
@@ -101,14 +104,14 @@ class ImagePreviewFragment : Fragment() {
     companion object {
         private const val TAG = "ImagePreviewFragment"
         fun newInstance(
-            imagePreviewActivity: ImagePreviewActivity,
             position: Int,
             imageInfo: ImageInfo
         ): ImagePreviewFragment {
             val fragment = ImagePreviewFragment()
-            fragment.imagePreviewActivity = imagePreviewActivity
-            fragment.position = position
-            fragment.imageInfo = imageInfo
+            val bundle = Bundle()
+            bundle.putInt("position", position)
+            bundle.putSerializable("imageInfo", imageInfo)
+            fragment.arguments = bundle
             return fragment
         }
     }
@@ -125,8 +128,9 @@ class ImagePreviewFragment : Fragment() {
 
     @UnstableApi
     private fun initData() {
+        initParams()
         SLog.d(TAG, "initData: position = $position")
-        val type = imageInfo.type
+        val type = imageInfo?.type
         if (type == Type.IMAGE) {
             initImageType()
         } else if (type == Type.VIDEO) {
@@ -134,105 +138,124 @@ class ImagePreviewFragment : Fragment() {
         }
     }
 
+    private fun initParams() {
+        imagePreviewActivity = activity as ImagePreviewActivity
+        arguments?.let {
+            position = it.getInt("position", 0)
+            imageInfo = it.getSerializable("imageInfo") as ImageInfo
+        }
+        SLog.d(TAG, "initParams: position = $position, imageInfo = $imageInfo")
+        if ((imagePreviewActivity?.isFinishing == true) or (imagePreviewActivity?.isDestroyed == true)) {
+            return
+        }
+        if (imageInfo == null) {
+            imagePreviewActivity?.finish()
+            return
+        }
+    }
+
+
     private fun initView(view: View) {
         progressBar = view.findViewById(R.id.progress_view)
         dragCloseView = view.findViewById(R.id.fingerDragHelper)
         imageSubsample = view.findViewById(R.id.static_view)
         imagePhotoView = view.findViewById(R.id.anim_view)
         videoView = view.findViewById(R.id.video_view)
-        ivPlayButton = videoView.findViewById(R.id.ivPlayButton)
-        seekBar = videoView.findViewById(R.id.seekbar)
-        tvPlayTime = videoView.findViewById(R.id.tvPlayTime)
-        val phoneHei = getPhoneHei(imagePreviewActivity.applicationContext)
+        ivPlayButton = videoView?.findViewById(R.id.ivPlayButton)
+        seekBar = videoView?.findViewById(R.id.seekbar)
+        tvPlayTime = videoView?.findViewById(R.id.tvPlayTime)
+        val phoneHei = getPhoneHei()
         // 手势拖拽事件
         if (ImagePreview.instance.isEnableDragClose) {
-            dragCloseView.setOnAlphaChangeListener(object : DragCloseView.onAlphaChangedListener {
+            dragCloseView?.setOnAlphaChangeListener(object : DragCloseView.onAlphaChangedListener {
                 override fun onTranslationYChanged(event: MotionEvent?, translationY: Float) {
-                    if (translationY > 0) {
-                        ImagePreview.instance.onPageDragListener?.onDrag(
-                            imagePreviewActivity,
-                            imagePreviewActivity.parentView,
-                            event,
-                            translationY
-                        )
-                    } else {
-                        ImagePreview.instance.onPageDragListener?.onDragEnd(
-                            imagePreviewActivity,
-                            imagePreviewActivity.parentView
-                        )
+                    imagePreviewActivity?.parentView?.apply {
+                        if (translationY > 0) {
+                            ImagePreview.instance.onPageDragListener?.onDrag(
+                                imagePreviewActivity!!,
+                                imagePreviewActivity?.parentView!!,
+                                event,
+                                translationY
+                            )
+                        } else {
+                            ImagePreview.instance.onPageDragListener?.onDragEnd(
+                                imagePreviewActivity!!,
+                                imagePreviewActivity?.parentView!!
+                            )
+                        }
                     }
                     val yAbs = abs(translationY)
                     val percent = yAbs / phoneHei
                     val number = 1.0f - percent
-                    imagePreviewActivity.setAlpha(number)
-                    if (imagePhotoView.visibility == View.VISIBLE) {
-                        imagePhotoView.scaleY = number
-                        imagePhotoView.scaleX = number
+                    imagePreviewActivity?.setAlpha(number)
+                    if (imagePhotoView?.isVisible == true) {
+                        imagePhotoView?.scaleY = number
+                        imagePhotoView?.scaleX = number
                     }
-                    if (imageSubsample.visibility == View.VISIBLE) {
-                        imageSubsample.scaleY = number
-                        imageSubsample.scaleX = number
+                    if (imageSubsample?.isVisible == true) {
+                        imageSubsample?.scaleY = number
+                        imageSubsample?.scaleX = number
                     }
-                    if (videoView.visibility == View.VISIBLE) {
-                        videoView.scaleY = number
-                        videoView.scaleX = number
+                    if (videoView?.isVisible == true) {
+                        videoView?.scaleY = number
+                        videoView?.scaleX = number
                     }
                 }
 
                 override fun onExit() {
-                    imagePreviewActivity.setAlpha(0f)
+                    imagePreviewActivity?.setAlpha(0f)
                 }
             })
         }
         // 点击事件(视频类型不支持点击关闭)
-        imageSubsample.setOnClickListener { v ->
+        imageSubsample?.setOnClickListener { v ->
             if (ImagePreview.instance.isEnableClickClose) {
-                imagePreviewActivity.onBackPressed()
+                imagePreviewActivity?.onBackPressed()
             }
-            ImagePreview.instance.bigImageClickListener?.onClick(imagePreviewActivity, v, position)
+            ImagePreview.instance.bigImageClickListener?.onClick(imagePreviewActivity!!, v, position)
         }
-        imagePhotoView.setOnClickListener { v ->
+        imagePhotoView?.setOnClickListener { v ->
             if (ImagePreview.instance.isEnableClickClose) {
-                imagePreviewActivity.onBackPressed()
+                imagePreviewActivity?.onBackPressed()
             }
-            ImagePreview.instance.bigImageClickListener?.onClick(imagePreviewActivity, v, position)
+            ImagePreview.instance.bigImageClickListener?.onClick(imagePreviewActivity!!, v, position)
         }
-        ivPlayButton.setOnClickListener {
+        ivPlayButton?.setOnClickListener {
             // 控制播放和暂停
-            videoView.player?.let {
+            videoView?.player?.let {
                 if (it.isPlaying) {
                     // 去暂停，显示为播放图标
                     it.pause()
-                    ivPlayButton.setImageResource(R.drawable.icon_video_play)
+                    ivPlayButton?.setImageResource(R.drawable.icon_video_play)
                 } else {
                     // 去播放，显示为暂停图标
                     // 如果进度条已经到最后，重新播放
                     it.play()
-                    ivPlayButton.setImageResource(R.drawable.icon_video_stop)
+                    ivPlayButton?.setImageResource(R.drawable.icon_video_stop)
                 }
             }
         }
         // 长按事件
         ImagePreview.instance.bigImageLongClickListener?.let {
-            imageSubsample.setOnLongClickListener { v ->
+            imageSubsample?.setOnLongClickListener { v ->
                 ImagePreview.instance.bigImageLongClickListener?.onLongClick(
-                    imagePreviewActivity,
+                    imagePreviewActivity!!,
                     v,
                     position
                 )
                 true
             }
-            imagePhotoView.setOnLongClickListener { v ->
+            imagePhotoView?.setOnLongClickListener { v ->
                 ImagePreview.instance.bigImageLongClickListener?.onLongClick(
-                    imagePreviewActivity,
+                    imagePreviewActivity!!,
                     v,
                     position
                 )
                 true
             }
-            videoView.setOnLongClickListener { v ->
+            videoView?.setOnLongClickListener { v ->
                 ImagePreview.instance.bigImageLongClickListener?.onLongClick(
-                    imagePreviewActivity,
+                    imagePreviewActivity!!,
                     v,
                     position
                 )
@@ -243,22 +266,22 @@ class ImagePreviewFragment : Fragment() {
 
     private fun initImageType() {
         // 图片类型，隐藏视频
-        videoView.visibility = View.GONE
+        videoView?.visibility = View.GONE
 
-        val originPathUrl = imageInfo.originUrl
-        val thumbPathUrl = imageInfo.thumbnailUrl
+        val originPathUrl = imageInfo?.originUrl
+        val thumbPathUrl = imageInfo?.thumbnailUrl
 
-        imageSubsample.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
-        imageSubsample.setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER)
-        imageSubsample.setDoubleTapZoomDuration(ImagePreview.instance.zoomTransitionDuration)
+        imageSubsample?.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
+        imageSubsample?.setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER)
+        imageSubsample?.setDoubleTapZoomDuration(ImagePreview.instance.zoomTransitionDuration)
 
-        imagePhotoView.setZoomTransitionDuration(ImagePreview.instance.zoomTransitionDuration)
-        imagePhotoView.minimumScale = ImagePreview.instance.minScale
-        imagePhotoView.maximumScale = ImagePreview.instance.maxScale
-        imagePhotoView.scaleType = ImageView.ScaleType.FIT_CENTER
+        imagePhotoView?.setZoomTransitionDuration(ImagePreview.instance.zoomTransitionDuration)
+        imagePhotoView?.minimumScale = ImagePreview.instance.minScale
+        imagePhotoView?.maximumScale = ImagePreview.instance.maxScale
+        imagePhotoView?.scaleType = ImageView.ScaleType.FIT_CENTER
 
         // 根据当前加载策略判断，需要加载的url是哪一个
-        var finalLoadUrl: String = ""
+        var finalLoadUrl: String? = ""
         when (ImagePreview.instance.loadStrategy) {
             LoadStrategy.Default -> {
                 finalLoadUrl = thumbPathUrl
@@ -273,7 +296,7 @@ class ImagePreviewFragment : Fragment() {
             }
 
             LoadStrategy.NetworkAuto -> {
-                finalLoadUrl = if (isWiFi(imagePreviewActivity)) {
+                finalLoadUrl = if (isWiFi(imagePreviewActivity!!)) {
                     originPathUrl
                 } else {
                     thumbPathUrl
@@ -281,43 +304,43 @@ class ImagePreviewFragment : Fragment() {
             }
 
             LoadStrategy.Auto -> {
-                finalLoadUrl = if (isWiFi(imagePreviewActivity)) {
+                finalLoadUrl = if (isWiFi(imagePreviewActivity!!)) {
                     originPathUrl
                 } else {
                     thumbPathUrl
                 }
             }
         }
-        finalLoadUrl = finalLoadUrl.trim()
+        finalLoadUrl = finalLoadUrl?.trim()
 
         // 显示加载圈圈
-        progressBar.visibility = View.VISIBLE
+        progressBar?.visibility = View.VISIBLE
 
         // 判断原图缓存是否存在，存在的话，直接显示原图缓存，优先保证清晰。
-        val cacheFile = getGlideCacheFile(imagePreviewActivity, originPathUrl)
+        val cacheFile = getGlideCacheFile(imagePreviewActivity!!, originPathUrl)
         if (cacheFile != null && cacheFile.exists()) {
             SLog.d(TAG, "initImageType: original exist, originPathUrl = $originPathUrl")
-            loadLocalImage(originPathUrl, cacheFile)
+            loadLocalImage(originPathUrl.toString(), cacheFile)
         } else {
             SLog.d(TAG, "initImageType: original not exist, finalLoadUrl = $finalLoadUrl")
-            loadImage(finalLoadUrl, originPathUrl)
+            loadImage(finalLoadUrl.toString(), originPathUrl.toString())
         }
     }
 
     @UnstableApi
     private fun initVideoType() {
         // 视频类型，隐藏图片
-        imageSubsample.visibility = View.GONE
-        imagePhotoView.visibility = View.GONE
-        videoView.visibility = View.VISIBLE
-        progressBar.visibility = View.GONE
+        imageSubsample?.visibility = View.GONE
+        imagePhotoView?.visibility = View.GONE
+        videoView?.visibility = View.VISIBLE
+        progressBar?.visibility = View.GONE
 
         // 自定义控制
         refreshUIMargin()
 
         // 初始化播放器
         if (exoPlayer == null) {
-            exoPlayer = imagePreviewActivity.getExoPlayer()
+            exoPlayer = imagePreviewActivity?.getExoPlayer()
             exoPlayer?.addListener(object : Player.Listener {
                 override fun onVideoSizeChanged(videoSize: VideoSize) {
                     super.onVideoSizeChanged(videoSize)
@@ -328,9 +351,9 @@ class ImagePreviewFragment : Fragment() {
                     super.onIsPlayingChanged(isPlaying)
                     SLog.d(TAG, "onIsPlayingChanged: isPlaying = $isPlaying")
                     if (isPlaying) {
-                        ivPlayButton.setImageResource(R.drawable.icon_video_stop)
+                        ivPlayButton?.setImageResource(R.drawable.icon_video_stop)
                     } else {
-                        ivPlayButton.setImageResource(R.drawable.icon_video_play)
+                        ivPlayButton?.setImageResource(R.drawable.icon_video_play)
                     }
                 }
 
@@ -339,8 +362,8 @@ class ImagePreviewFragment : Fragment() {
                     SLog.d(TAG, "onPlaybackStateChanged: playbackState = $playbackState")
                     if (playbackState == Player.STATE_READY) {
                         // 底部控制器处理
-                        setProgress(exoPlayer!!)
-                        videoView.hideController()
+                        setProgress(exoPlayer)
+                        videoView?.hideController()
                     } else if (playbackState == Player.STATE_ENDED) {
                         // 播放结束
                         exoPlayer?.pause()
@@ -348,21 +371,27 @@ class ImagePreviewFragment : Fragment() {
                     }
                     if (playbackState == Player.STATE_BUFFERING) {
                         // 缓冲中
-                        progressBar.visibility = View.VISIBLE
+                        progressBar?.visibility = View.VISIBLE
                     } else {
-                        progressBar.visibility = View.GONE
+                        progressBar?.visibility = View.GONE
                     }
                 }
             })
         }
-        videoView.player = exoPlayer
+        videoView?.player = exoPlayer
 
-        val mediaItem = if (imageInfo.originUrl.isLocalFile()) {
-            MediaItem.fromUri(imageInfo.originUrl.toUri())
+        if (imageInfo?.originUrl?.isLocalFile() == true) {
+            // 本地文件
+            val mediaItem = MediaItem.fromUri(Uri.fromFile(File(imageInfo?.originUrl.toString())))
+            val dataSourceFactory = DefaultDataSource.Factory(imagePreviewActivity!!)
+            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
+            exoPlayer?.setMediaSource(mediaSource)
         } else {
-            MediaItem.fromUri(imageInfo.originUrl)
+            // 网络文件
+            val mediaItem = MediaItem.fromUri(imageInfo?.originUrl.toString())
+            exoPlayer?.setMediaItem(mediaItem)
         }
-        exoPlayer?.setMediaItem(mediaItem)
+
         exoPlayer?.prepare()
         exoPlayer?.playWhenReady = false
 
@@ -372,50 +401,54 @@ class ImagePreviewFragment : Fragment() {
         }
     }
 
-    private fun setProgress(exoPlayer: ExoPlayer) {
-        // 清除之前的任务
-        progressHandler?.removeCallbacksAndMessages(null)
-        progressHandler = Handler(Looper.getMainLooper())
+    private fun setProgress(exoPlayer: ExoPlayer?) {
+        exoPlayer?.apply {
+            // 清除之前的任务
+            progressHandler?.removeCallbacksAndMessages(null)
+            progressHandler = Handler(Looper.getMainLooper())
 
-        // 定义任务
-        progressRunnable = object : Runnable {
-            override fun run() {
-                if (!isDragging) {
-                    val currentPosition = exoPlayer.currentPosition
-                    val currentTime = formatTimestamp(currentPosition / 1000)
-                    val totalDuration = exoPlayer.duration
-                    val totalTime = formatTimestamp(totalDuration / 1000)
+            // 定义任务
+            progressRunnable = object : Runnable {
+                override fun run() {
+                    if (!isDragging) {
+                        val currentPosition = exoPlayer.currentPosition
+                        val currentTime = formatTimestamp(currentPosition / 1000)
+                        val totalDuration = exoPlayer.duration
+                        val totalTime = formatTimestamp(totalDuration / 1000)
 
-                    seekBar.max = totalDuration.toInt()
-                    seekBar.progress = currentPosition.toInt()
+                        seekBar?.max = totalDuration.toInt()
+                        seekBar?.progress = currentPosition.toInt()
 
-                    tvPlayTime.text = "$currentTime/$totalTime"
+                        tvPlayTime?.text = "$currentTime/$totalTime"
+                    }
+                    // 每秒更新一次
+                    progressHandler?.postDelayed(this, 1000)
                 }
-                // 每秒更新一次
-                progressHandler?.postDelayed(this, 1000)
             }
+
+            // 开始任务
+            progressRunnable?.apply {
+                progressHandler?.post(progressRunnable!!)
+            }
+
+            // 设置 SeekBar 的监听器
+            seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    if (fromUser) {
+                        // 如果是用户拖动的，则更新播放位置。
+                        exoPlayer.seekTo(progress.toLong())
+                    }
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                    isDragging = true
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                    isDragging = false
+                }
+            })
         }
-
-        // 开始任务
-        progressHandler?.post(progressRunnable!!)
-
-        // 设置 SeekBar 的监听器
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    // 如果是用户拖动的，则更新播放位置。
-                    exoPlayer.seekTo(progress.toLong())
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                isDragging = true
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                isDragging = false
-            }
-        })
     }
 
     private fun formatTimestamp(timestampInSeconds: Long): String {
@@ -425,7 +458,7 @@ class ImagePreviewFragment : Fragment() {
     }
 
     fun onOriginal() {
-        if (imageInfo.type == Type.IMAGE) {
+        if (imageInfo?.type == Type.IMAGE) {
             SLog.d(TAG, "onOriginal: load image")
             loadOriginal()
         } else {
@@ -434,8 +467,8 @@ class ImagePreviewFragment : Fragment() {
     }
 
     private fun loadOriginal() {
-        val originalUrl = imageInfo.originUrl
-        val cacheFile = getGlideCacheFile(imagePreviewActivity, imageInfo.originUrl)
+        val originalUrl = imageInfo?.originUrl.toString()
+        val cacheFile = getGlideCacheFile(imagePreviewActivity!!, imageInfo?.originUrl)
         if (cacheFile != null && cacheFile.exists()) {
             val isLoadWithSubsample = ImageUtil.isLoadWithSubsampling(originalUrl, cacheFile.absolutePath)
             if (isLoadWithSubsample) {
@@ -445,11 +478,11 @@ class ImagePreviewFragment : Fragment() {
                 } else {
                     SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
                 }
-                imagePhotoView.visibility = View.GONE
-                imageSubsample.visibility = View.VISIBLE
-                imageSubsample.let {
-                    val thumbnailUrl = imageInfo.thumbnailUrl
-                    val smallCacheFile = getGlideCacheFile(imagePreviewActivity, thumbnailUrl)
+                imagePhotoView?.visibility = View.GONE
+                imageSubsample?.visibility = View.VISIBLE
+                imageSubsample?.let {
+                    val thumbnailUrl = imageInfo?.thumbnailUrl.toString()
+                    val smallCacheFile = getGlideCacheFile(imagePreviewActivity!!, thumbnailUrl)
                     var small: ImageSource? = null
                     if (smallCacheFile != null && smallCacheFile.exists()) {
                         val smallImagePath = smallCacheFile.absolutePath
@@ -478,17 +511,17 @@ class ImagePreviewFragment : Fragment() {
                         origin.tilingDisabled()
                     }
                     origin.dimensions(widOrigin, heiOrigin)
-                    imageSubsample.setImage(origin, small)
+                    imageSubsample?.setImage(origin, small)
                     // 缩放适配
                     setImageSubsample(imagePath, imageSubsample)
                 }
             } else {
                 SLog.d(TAG, "loadOriginal -> loadImageWithPhotoView")
-                imageSubsample.visibility = View.GONE
-                imagePhotoView.visibility = View.VISIBLE
-                imagePhotoView.let {
+                imageSubsample?.visibility = View.GONE
+                imagePhotoView?.visibility = View.VISIBLE
+                imagePhotoView?.let {
                     if (ImageUtil.isAnimImageWithMime(originalUrl, cacheFile.absolutePath)) {
-                        Glide.with(imagePreviewActivity)
+                        Glide.with(imagePreviewActivity!!)
                             .asGif()
                             .load(cacheFile)
                             .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
@@ -500,9 +533,9 @@ class ImagePreviewFragment : Fragment() {
                                 }
                             )
                             .error(ImagePreview.instance.errorPlaceHolder)
-                            .into(imagePhotoView)
+                            .into(imagePhotoView!!)
                     } else {
-                        Glide.with(imagePreviewActivity)
+                        Glide.with(imagePreviewActivity!!)
                             .load(cacheFile)
                             .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
                             .diskCacheStrategy(
@@ -513,7 +546,7 @@ class ImagePreviewFragment : Fragment() {
                                 }
                             )
                             .error(ImagePreview.instance.errorPlaceHolder)
-                            .into(imagePhotoView)
+                            .into(imagePhotoView!!)
                     }
                 }
             }
@@ -521,14 +554,14 @@ class ImagePreviewFragment : Fragment() {
     }
 
     fun onSelected() {
-        if (imageInfo.type == Type.VIDEO) {
+        if (imageInfo?.type == Type.VIDEO) {
             exoPlayer?.seekTo(0)
             exoPlayer?.play()
         }
     }
 
     fun onUnSelected() {
-        if (imageInfo.type == Type.VIDEO) {
+        if (imageInfo?.type == Type.VIDEO) {
             exoPlayer?.isPlaying?.let {
                 if (it) {
                     exoPlayer?.pause()
@@ -543,8 +576,8 @@ class ImagePreviewFragment : Fragment() {
     }
 
     private fun refreshUIMargin() {
-        val llControllerContainer = videoView.findViewById<LinearLayout>(R.id.llControllerContainer)
-        val layoutParams = llControllerContainer.layoutParams as MarginLayoutParams
+        val llControllerContainer = videoView?.findViewById<LinearLayout>(R.id.llControllerContainer)
+        val layoutParams = llControllerContainer?.layoutParams as MarginLayoutParams
         // 获取当前屏幕方向
         val orientation = resources.configuration.orientation
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -553,7 +586,7 @@ class ImagePreviewFragment : Fragment() {
                 0,
                 0,
                 0,
-                UIUtil.dp2px(imagePreviewActivity, 70f)
+                UIUtil.dp2px(70f)
             )
         } else {
             // 竖屏
@@ -561,8 +594,7 @@ class ImagePreviewFragment : Fragment() {
                 0,
                 0,
                 0,
-                UIUtil.dp2px(imagePreviewActivity, 70f) + PhoneUtil.getNavBarHeight(
-                    imagePreviewActivity
+                UIUtil.dp2px(70f) + PhoneUtil.getNavBarHeight(
                 )
             )
         }
@@ -584,9 +616,9 @@ class ImagePreviewFragment : Fragment() {
             initData()
         } else {
             // 已经初始化过，如果当前是视频，就执行播放
-            if (imageInfo.type == Type.VIDEO) {
+            if (imageInfo?.type == Type.VIDEO) {
                 // 后台前是播放的才恢复播放
-                if (onPausePlaying == true) {
+                if (onPausePlaying) {
                     exoPlayer?.play()
                 }
             }
@@ -596,7 +628,7 @@ class ImagePreviewFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         SLog.d(TAG, "onPause: position = $position")
-        if (imageInfo.type == Type.VIDEO) {
+        if (imageInfo?.type == Type.VIDEO) {
             // 只特殊处理视频类型
             onPausePlaying = exoPlayer?.isPlaying == true
             onUnSelected()
@@ -618,7 +650,7 @@ class ImagePreviewFragment : Fragment() {
             loadLocalImage(url, File(url))
         } else {
             // 远程图片
-            Glide.with(imagePreviewActivity)
+            Glide.with(imagePreviewActivity!!)
                 .downloadOnly()
                 .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
                 .diskCacheStrategy(
@@ -639,7 +671,7 @@ class ImagePreviewFragment : Fragment() {
                         // glide加载失败，使用http下载后再次加载
                         Thread {
                             val fileFullName = System.currentTimeMillis().toString()
-                            val saveDir = getAvailableCacheDir(imagePreviewActivity)?.absolutePath + File.separator + "image/"
+                            val saveDir = getAvailableCacheDir(imagePreviewActivity!!)?.absolutePath + File.separator + "image/"
                             val downloadFile = downloadFile(url, fileFullName, saveDir)
                             Handler(Looper.getMainLooper()).post {
                                 if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
@@ -695,50 +727,47 @@ class ImagePreviewFragment : Fragment() {
     private fun loadFailed(
         e: GlideException?
     ) {
-        progressBar.visibility = View.GONE
-        imagePhotoView.visibility = View.GONE
-        imageSubsample.visibility = View.VISIBLE
-        imageSubsample.isZoomEnabled = false
-        imageSubsample.setImage(ImageSource.resource(ImagePreview.instance.errorPlaceHolder))
+        progressBar?.visibility = View.GONE
+        imagePhotoView?.visibility = View.GONE
+        imageSubsample?.visibility = View.VISIBLE
+        imageSubsample?.isZoomEnabled = false
+        imageSubsample?.setImage(ImageSource.resource(ImagePreview.instance.errorPlaceHolder))
         if (ImagePreview.instance.isShowErrorToast) {
-            var errorMsg = imagePreviewActivity.getString(R.string.toast_load_failed)
+            var errorMsg = imagePreviewActivity?.getString(R.string.toast_load_failed)
             if (e != null) {
                 errorMsg = e.localizedMessage as String
             }
-            if (errorMsg.length > 200) {
-                errorMsg = errorMsg.substring(0, 199)
-            }
-            ToastUtil.instance.showShort(imagePreviewActivity.applicationContext, errorMsg)
+            ToastUtil.instance.showShort(GlobalContext.getContext(), errorMsg)
         }
     }
 
-    private fun setImageSubsample(imagePath: String, imageStatic: SubsamplingScaleImageView) {
-        imageStatic.orientation = SubsamplingScaleImageView.ORIENTATION_USE_EXIF
+    private fun setImageSubsample(imagePath: String, imageStatic: SubsamplingScaleImageView?) {
+        imageStatic?.orientation = SubsamplingScaleImageView.ORIENTATION_USE_EXIF
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_4444)
         } else {
             SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
         }
-        val tabletOrLandscape = ImageUtil.isTabletOrLandscape(imagePreviewActivity)
+        val tabletOrLandscape = ImageUtil.isTabletOrLandscape(imagePreviewActivity!!)
         if (tabletOrLandscape) {
             // Tablet
-            imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
-            imageStatic.minScale = ImagePreview.instance.minScale
-            imageStatic.maxScale = ImagePreview.instance.maxScale
-            imageStatic.setDoubleTapZoomScale(ImagePreview.instance.mediumScale)
+            imageStatic?.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
+            imageStatic?.minScale = ImagePreview.instance.minScale
+            imageStatic?.maxScale = ImagePreview.instance.maxScale
+            imageStatic?.setDoubleTapZoomScale(ImagePreview.instance.mediumScale)
         } else {
             // Phone
-            imageStatic.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
-            imageStatic.minScale = 1f
+            imageStatic?.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE)
+            imageStatic?.minScale = 1f
             val isLongImage = ImageUtil.isLongImage(imagePath)
             val isWideImage = ImageUtil.isWideImage(imagePath)
             if (isLongImage) {
                 // 长图，高/宽>=3
-                imageStatic.maxScale =
-                    ImageUtil.getLongImageMaxZoomScale(imagePreviewActivity, imagePath)
-                imageStatic.setDoubleTapZoomScale(
+                imageStatic?.maxScale =
+                    ImageUtil.getLongImageMaxZoomScale(imagePreviewActivity!!, imagePath)
+                imageStatic?.setDoubleTapZoomScale(
                     ImageUtil.getLongImageDoubleZoomScale(
-                        imagePreviewActivity,
+                        imagePreviewActivity!!,
                         imagePath
                     )
                 )
@@ -748,9 +777,9 @@ class ImagePreviewFragment : Fragment() {
                     }
 
                     ImagePreview.LongPicDisplayMode.FillWidth -> {
-                        imageStatic.setScaleAndCenter(
+                        imageStatic?.setScaleAndCenter(
                             ImageUtil.getLongImageFillWidthScale(
-                                this.imagePreviewActivity,
+                                this.imagePreviewActivity!!,
                                 imagePath
                             ), PointF(0f, 0f)
                         )
@@ -758,21 +787,21 @@ class ImagePreviewFragment : Fragment() {
                 }
             } else if (isWideImage) {
                 // 宽图，宽/高>=3
-                imageStatic.maxScale =
-                    ImageUtil.getWideImageMaxZoomScale(imagePreviewActivity, imagePath)
-                imageStatic.setDoubleTapZoomScale(
+                imageStatic?.maxScale =
+                    ImageUtil.getWideImageMaxZoomScale(imagePreviewActivity!!, imagePath)
+                imageStatic?.setDoubleTapZoomScale(
                     ImageUtil.getWideImageDoubleScale(
-                        imagePreviewActivity,
+                        imagePreviewActivity!!,
                         imagePath
                     )
                 )
             } else {
                 // 普通图片，其他
-                imageStatic.maxScale =
-                    ImageUtil.getStandardImageMaxZoomScale(imagePreviewActivity, imagePath)
-                imageStatic.setDoubleTapZoomScale(
+                imageStatic?.maxScale =
+                    ImageUtil.getStandardImageMaxZoomScale(imagePreviewActivity!!, imagePath)
+                imageStatic?.setDoubleTapZoomScale(
                     ImageUtil.getStandardImageDoubleScale(
-                        imagePreviewActivity,
+                        imagePreviewActivity!!,
                         imagePath
                     )
                 )
@@ -783,16 +812,16 @@ class ImagePreviewFragment : Fragment() {
     private fun loadLocalImageWithSubsample(
         imagePath: String
     ) {
-        imagePhotoView.visibility = View.GONE
-        imageSubsample.visibility = View.VISIBLE
+        imagePhotoView?.visibility = View.GONE
+        imageSubsample?.visibility = View.VISIBLE
         val imageSource = ImageSource.uri(Uri.fromFile(File(imagePath)))
         if (ImageUtil.isBmpImageWithMime(imagePath, imagePath) || ImageUtil.isAvifImageWithMime(imagePath, imagePath)) {
             imageSource.tilingDisabled()
         }
-        imageSubsample.setImage(imageSource)
-        imageSubsample.setOnImageEventListener(object : SimpleOnImageEventListener() {
+        imageSubsample?.setImage(imageSource)
+        imageSubsample?.setOnImageEventListener(object : SimpleOnImageEventListener() {
             override fun onReady() {
-                progressBar.visibility = View.GONE
+                progressBar?.visibility = View.GONE
             }
         })
         // 缩放适配
@@ -800,12 +829,12 @@ class ImagePreviewFragment : Fragment() {
     }
 
     private fun loadLocalImageWithPhotoView(imageUrl: String, imagePath: String) {
-        imageSubsample.visibility = View.GONE
-        imagePhotoView.visibility = View.VISIBLE
+        imageSubsample?.visibility = View.GONE
+        imagePhotoView?.visibility = View.VISIBLE
         if (ImageUtil.isAnimWebp(imageUrl, imagePath) || ImageUtil.isAvifImageWithMime(imageUrl, imagePath)) {
             // webp animation / avif
             val fitCenter: Transformation<Bitmap> = FitCenter()
-            Glide.with(imagePreviewActivity)
+            Glide.with(imagePreviewActivity!!)
                 .load(imagePath)
                 .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
                 .diskCacheStrategy(
@@ -825,7 +854,7 @@ class ImagePreviewFragment : Fragment() {
                         target: Target<Drawable?>,
                         isFirstResource: Boolean
                     ): Boolean {
-                        progressBar.visibility = View.GONE
+                        progressBar?.visibility = View.GONE
                         return false
                     }
 
@@ -836,14 +865,14 @@ class ImagePreviewFragment : Fragment() {
                         dataSource: DataSource,
                         isFirstResource: Boolean
                     ): Boolean {
-                        progressBar.visibility = View.GONE
+                        progressBar?.visibility = View.GONE
                         return false
                     }
                 })
-                .into(imagePhotoView)
+                .into(imagePhotoView!!)
         } else {
             // gif animation
-            Glide.with(imagePreviewActivity)
+            Glide.with(imagePreviewActivity!!)
                 .asGif()
                 .load(imagePath)
                 .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
@@ -862,8 +891,8 @@ class ImagePreviewFragment : Fragment() {
                         target: Target<GifDrawable?>,
                         isFirstResource: Boolean
                     ): Boolean {
-                        progressBar.visibility = View.GONE
-                        imageSubsample.setImage(ImageSource.resource(ImagePreview.instance.errorPlaceHolder))
+                        progressBar?.visibility = View.GONE
+                        imageSubsample?.setImage(ImageSource.resource(ImagePreview.instance.errorPlaceHolder))
                         return false
                     }
 
@@ -874,23 +903,19 @@ class ImagePreviewFragment : Fragment() {
                         dataSource: DataSource,
                         isFirstResource: Boolean
                     ): Boolean {
-                        progressBar.visibility = View.GONE
+                        progressBar?.visibility = View.GONE
                         return false
                     }
                 })
-                .into(imagePhotoView)
+                .into(imagePhotoView!!)
         }
     }
 
     fun onRelease() {
-        if (::imageSubsample.isInitialized) {
-            imageSubsample.destroyDrawingCache()
-            imageSubsample.recycle()
-        }
-        if (::imagePhotoView.isInitialized) {
-            imagePhotoView.destroyDrawingCache()
-            imagePhotoView.setImageBitmap(null)
-        }
+        imageSubsample?.destroyDrawingCache()
+        imageSubsample?.recycle()
+        imagePhotoView?.destroyDrawingCache()
+        imagePhotoView?.setImageBitmap(null)
         exoPlayer?.release()
         exoPlayer = null
     }

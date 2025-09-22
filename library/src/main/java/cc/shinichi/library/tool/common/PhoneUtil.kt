@@ -6,6 +6,7 @@ import android.content.res.Resources
 import android.util.DisplayMetrics
 import android.view.Display
 import android.view.WindowManager
+import cc.shinichi.library.GlobalContext
 
 
 /**
@@ -19,8 +20,8 @@ object PhoneUtil {
 
     private val TAG = PhoneUtil::class.java.simpleName
 
-    fun getPhoneWid(context: Context): Int {
-        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    fun getPhoneWid(): Int {
+        val wm = GlobalContext.getContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val display: Display = wm.defaultDisplay
         var screenWidth = 0
         val dm = DisplayMetrics()
@@ -31,8 +32,8 @@ object PhoneUtil {
         }
     }
 
-    fun getPhoneHei(context: Context): Int {
-        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    fun getPhoneHei(): Int {
+        val wm = GlobalContext.getContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val display = wm.defaultDisplay
         var screenHeight = 0
 
@@ -44,22 +45,22 @@ object PhoneUtil {
         }
     }
 
-    fun getPhoneRatio(context: Context): Float {
-        return (getPhoneHei(context).toFloat() / getPhoneWid(context).toFloat()).apply {
+    fun getPhoneRatio(): Float {
+        return (getPhoneHei().toFloat() / getPhoneWid().toFloat()).apply {
             SLog.d(TAG, "getPhoneRatio: $this")
         }
     }
 
     @SuppressLint("InternalInsetResource")
-    fun getNavBarHeight(context: Context): Int {
-        val resources: Resources = context.resources
+    fun getNavBarHeight(): Int {
+        val resources: Resources = GlobalContext.getContext().resources
         val resourceId: Int = resources.getIdentifier("navigation_bar_height", "dimen", "android")
         return resources.getDimensionPixelSize(resourceId)
     }
 
     @SuppressLint("InternalInsetResource")
-    fun getStatusBarHeight(context: Context): Int {
-        val resources: Resources = context.resources
+    fun getStatusBarHeight(): Int {
+        val resources: Resources = GlobalContext.getContext().resources
         val resourceId: Int = resources.getIdentifier("status_bar_height", "dimen", "android")
         return resources.getDimensionPixelSize(resourceId)
     }

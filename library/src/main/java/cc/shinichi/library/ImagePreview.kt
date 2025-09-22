@@ -166,6 +166,14 @@ class ImagePreview {
     var isSkipLocalCache = false
         private set
 
+    // 自定义请求头header
+    var headers: Map<String, String>? = null
+        private set
+
+    // 需要添加请求头的url关键词字符串，比如cdn.xxx.com，可以添加多个，任意一个匹配即可
+    var hostKeywordList: List<String>? = null
+        private set
+
     // activity实例
     var previewActivity: ImagePreviewActivity? = null
 
@@ -474,6 +482,16 @@ class ImagePreview {
 
     fun setSkipLocalCache(skipLocalCache: Boolean): ImagePreview {
         isSkipLocalCache = skipLocalCache
+        return this
+    }
+
+    fun setHeaders(headers: Map<String, String>?): ImagePreview {
+        this.headers = headers
+        return this
+    }
+
+    fun setHostKeywordList(hostKeywordList: List<String>?): ImagePreview {
+        this.hostKeywordList = hostKeywordList
         return this
     }
 

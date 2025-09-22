@@ -1,6 +1,8 @@
 package cc.shinichi.library.tool.common
 
 import android.content.Context
+import androidx.media3.common.util.UnstableApi
+import cc.shinichi.library.GlobalContext
 
 /**
  * 文件名: UIUtil.java
@@ -10,23 +12,23 @@ import android.content.Context
  */
 object UIUtil {
 
-    fun dp2px(context: Context, dp: Float): Int {
-        val scale = context.resources.displayMetrics.density
+    fun dp2px(dp: Float): Int {
+        val scale = GlobalContext.getContext().resources.displayMetrics.density
         return (dp * scale + 0.5f).toInt()
     }
 
-    fun px2dp(context: Context, px: Int): Float {
-        val scale = context.resources.displayMetrics.density
+    fun px2dp(px: Int): Float {
+        val scale = GlobalContext.getContext().resources.displayMetrics.density
         return px / scale + 0.5f
     }
 
-    fun sp2px(context: Context, sp: Float): Int {
-        val scale = context.resources.displayMetrics.scaledDensity
+    fun sp2px(sp: Float): Int {
+        val scale = GlobalContext.getContext().resources.displayMetrics.scaledDensity
         return (sp * scale + 0.5f).toInt()
     }
 
-    fun px2sp(context: Context, px: Int): Float {
-        val scale = context.resources.displayMetrics.scaledDensity
+    fun px2sp(px: Int): Float {
+        val scale = GlobalContext.getContext().resources.displayMetrics.scaledDensity
         return px / scale + 0.5f
     }
 }

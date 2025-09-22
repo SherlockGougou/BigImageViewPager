@@ -90,11 +90,14 @@ public class DragCloseView extends RelativeLayout {
                     ? imageStatic.getScale() <= (imageStatic.getMinScale() + 0.001F) || imageStatic.isAtYEdge()
                     : imageStatic.getScale() <= (imageStatic.getMinScale() + 0.001F) && imageStatic.isAtYEdge();
             return isAtEdge && (imageStatic.getMaxTouchCount() == 0 || imageStatic.getMaxTouchCount() == 1);
-        } else // 视频
-            if (imageAnime != null && imageAnime.getVisibility() == View.VISIBLE) {
+        } else if (imageAnime != null && imageAnime.getVisibility() == View.VISIBLE) {
             // 动图
             return imageAnime.getScale() <= (imageAnime.getMinimumScale() + 0.001F) && (imageAnime.getMaxTouchCount() == 0 || imageAnime.getMaxTouchCount() == 1);
-        } else return videoView != null && videoView.getVisibility() == View.VISIBLE;
+        } else if (videoView != null && videoView.getVisibility() == View.VISIBLE) {
+            // 视频
+            return true;
+        }
+        return false;
     }
 
     @SuppressLint("ClickableViewAccessibility")

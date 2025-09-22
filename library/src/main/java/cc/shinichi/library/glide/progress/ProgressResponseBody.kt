@@ -21,8 +21,6 @@ class ProgressResponseBody internal constructor(
     private val responseBody: ResponseBody
 ) : ResponseBody() {
 
-    private lateinit var bufferedSource: BufferedSource
-
     override fun contentType(): MediaType? {
         return responseBody.contentType()
     }
@@ -32,7 +30,7 @@ class ProgressResponseBody internal constructor(
     }
 
     override fun source(): BufferedSource {
-        bufferedSource = Okio.buffer(source(responseBody.source()))
+        val bufferedSource = Okio.buffer(source(responseBody.source()))
         return bufferedSource
     }
 

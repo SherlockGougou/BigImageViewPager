@@ -1,5 +1,6 @@
 package cc.shinichi.library.tool.common
 
+import cc.shinichi.library.ImagePreview
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -33,6 +34,12 @@ object HttpUtil {
             httpURLConnection.requestMethod = "GET"
             // 设置字符编码
             httpURLConnection.setRequestProperty("Charset", "UTF-8")
+            // 添加header
+            ImagePreview.instance.headers?.apply {
+                for (entry in this) {
+                    httpURLConnection.setRequestProperty(entry.key, entry.value)
+                }
+            }
             // 打开到此 URL 引用的资源的通信链接（如果尚未建立这样的连接）。
             httpURLConnection.connect()
             val bin = BufferedInputStream(httpURLConnection.inputStream)

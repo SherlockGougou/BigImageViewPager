@@ -11,11 +11,12 @@ import androidx.media3.datasource.cache.CacheDataSource
  * 描述: 全局
  * 创建时间: 2024/11/27
  */
-@UnstableApi
 object GlobalContext {
     private var application: Application? = null
+    @UnstableApi
     private var cacheDataSourceFactory: CacheDataSource.Factory? = null
 
+    @UnstableApi
     fun init(app: Application, cacheDataSourceFactory: CacheDataSource.Factory) {
         if (application == null) {
             application = app
@@ -29,8 +30,10 @@ object GlobalContext {
         return application ?: throw IllegalStateException("Application is not initialized")
     }
 
+    @UnstableApi
     fun getCacheDataSourceFactory(): CacheDataSource.Factory {
-        return cacheDataSourceFactory ?: throw IllegalStateException("CacheDataSourceFactory is not initialized")
+        return cacheDataSourceFactory
+            ?: throw IllegalStateException("CacheDataSourceFactory is not initialized")
     }
 
     fun getContext(): Context {

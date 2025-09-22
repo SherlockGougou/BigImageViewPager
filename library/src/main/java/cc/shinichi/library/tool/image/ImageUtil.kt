@@ -164,7 +164,7 @@ object ImageUtil {
     }
 
     private fun isLandscape(context: Context): Boolean {
-        val phoneRatio = PhoneUtil.getPhoneRatio(context.applicationContext)
+        val phoneRatio = PhoneUtil.getPhoneRatio()
         return phoneRatio <= 1f
     }
 
@@ -195,7 +195,7 @@ object ImageUtil {
     fun getStandardImageMaxZoomScale(context: Context, imagePath: String): Float {
         val wh = getWidthHeight(imagePath)
         val imageWid = wh[0].toFloat()
-        val phoneWid = PhoneUtil.getPhoneWid(context.applicationContext).toFloat()
+        val phoneWid = PhoneUtil.getPhoneWid().toFloat()
         return (phoneWid * 4f / imageWid).coerceAtLeast(4f)
     }
 
@@ -203,7 +203,7 @@ object ImageUtil {
         val widthHeight = getWidthHeight(imagePath)
         val imageWid = widthHeight[0].toFloat()
         val imageHei = widthHeight[1].toFloat()
-        val phoneHei = PhoneUtil.getPhoneHei(context.applicationContext).toFloat()
+        val phoneHei = PhoneUtil.getPhoneHei().toFloat()
         if (imageWid > imageHei) {
             // 宽图，双击放大到高度铺满
             return phoneHei / imageHei
@@ -216,21 +216,21 @@ object ImageUtil {
         val wh = getWidthHeight(imagePath)
         val imageWid = wh[0].toFloat()
         val imageHei = wh[1].toFloat()
-        val phoneWid = PhoneUtil.getPhoneWid(context.applicationContext).toFloat()
+        val phoneWid = PhoneUtil.getPhoneWid().toFloat()
         return max(imageHei / imageWid, phoneWid * 2f / imageWid)
     }
 
     fun getLongImageDoubleZoomScale(context: Context, imagePath: String): Float {
         val wh = getWidthHeight(imagePath)
         val imageWid = wh[0].toDouble()
-        val phoneWid = PhoneUtil.getPhoneWid(context.applicationContext).toDouble()
+        val phoneWid = PhoneUtil.getPhoneWid().toDouble()
         return (phoneWid / imageWid).toFloat()
     }
 
     fun getLongImageFillWidthScale(context: Context, imagePath: String): Float {
         val wh = getWidthHeight(imagePath)
         val imageWid = wh[0].toDouble()
-        val phoneWid = PhoneUtil.getPhoneWid(context.applicationContext).toDouble()
+        val phoneWid = PhoneUtil.getPhoneWid().toDouble()
         return (phoneWid / imageWid).toFloat()
     }
 
@@ -238,14 +238,14 @@ object ImageUtil {
         val wh = getWidthHeight(imagePath)
         val imageWid = wh[0].toFloat()
         val imageHei = wh[1].toFloat()
-        val phoneHei = PhoneUtil.getPhoneHei(context.applicationContext).toFloat()
+        val phoneHei = PhoneUtil.getPhoneHei().toFloat()
         return max(imageWid / imageHei, phoneHei * 2f / imageHei)
     }
 
     fun getWideImageDoubleScale(context: Context, imagePath: String): Float {
         val wh = getWidthHeight(imagePath)
         val imageHei = wh[1].toFloat()
-        val phoneHei = PhoneUtil.getPhoneHei(context.applicationContext).toFloat()
+        val phoneHei = PhoneUtil.getPhoneHei().toFloat()
         return phoneHei / imageHei
     }
 
@@ -356,7 +356,7 @@ object ImageUtil {
         return "gif".equals(
             getImageTypeWithMime(path),
             ignoreCase = true
-        ) || url.toLowerCase(Locale.CHINA).endsWith("gif")
+        ) || url.lowercase(Locale.CHINA).endsWith("gif")
                 || isAnimWebp(url, path)
     }
 
@@ -364,7 +364,7 @@ object ImageUtil {
         return "png".equals(
             getImageTypeWithMime(path),
             ignoreCase = true
-        ) || url.toLowerCase(Locale.CHINA).endsWith("png")
+        ) || url.lowercase(Locale.CHINA).endsWith("png")
     }
 
     fun isJpegImageWithMime(url: String, path: String): Boolean {
@@ -372,7 +372,7 @@ object ImageUtil {
             getImageTypeWithMime(path),
             ignoreCase = true
         )
-                || url.toLowerCase(Locale.CHINA).endsWith("jpeg") || url.toLowerCase(Locale.CHINA)
+                || url.lowercase(Locale.CHINA).endsWith("jpeg") || url.lowercase(Locale.CHINA)
             .endsWith("jpg"))
     }
 
@@ -380,24 +380,24 @@ object ImageUtil {
         return "bmp".equals(
             getImageTypeWithMime(path),
             ignoreCase = true
-        ) || url.toLowerCase(Locale.CHINA).endsWith("bmp")
+        ) || url.lowercase(Locale.CHINA).endsWith("bmp")
     }
 
     fun isWebpImageWithMime(url: String, path: String): Boolean {
-        return "webp".equals(getImageTypeWithMime(path), ignoreCase = true) || url.toLowerCase(
+        return "webp".equals(getImageTypeWithMime(path), ignoreCase = true) || url.lowercase(
             Locale.CHINA
         ).endsWith("webp")
     }
 
     fun isHeifImageWithMime(url: String, path: String): Boolean {
         return "heif".equals(getImageTypeWithMime(path), ignoreCase = true)
-                || url.toLowerCase(Locale.CHINA).endsWith("heif") || url.toLowerCase(Locale.CHINA)
+                || url.lowercase(Locale.CHINA).endsWith("heif") || url.lowercase(Locale.CHINA)
             .endsWith("heic")
     }
 
     fun isAvifImageWithMime(url: String, path: String): Boolean {
         return "avif".equals(getImageTypeWithMime(path), ignoreCase = true)
-                || url.toLowerCase(Locale.CHINA).endsWith("avif") || url.toLowerCase(Locale.CHINA)
+                || url.lowercase(Locale.CHINA).endsWith("avif") || url.lowercase(Locale.CHINA)
             .endsWith("avif")
     }
 
