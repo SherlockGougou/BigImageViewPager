@@ -19,20 +19,20 @@
 
 ```
     dependencies {
-        // 本框架
+        // 必选：框架 
         implementation 'com.gouqinglin:BigImageViewPager:版本号'
-
-        // glide
-        def glideVersion = "4.16.0"
-        implementation "com.github.bumptech.glide:glide:${glideVersion}"
-        annotationProcessor "com.github.bumptech.glide:compiler:${glideVersion}"
-        implementation "com.github.bumptech.glide:okhttp3-integration:${glideVersion}"
     
-        // ExoPlayer https://developer.android.com/media/media3/exoplayer/hello-world?hl=zh-cn#groovy
+        // 必选：Glide
+        def glideVersion = "4.16.0"
+        implementation "com.github.bumptech.glide:glide:$glideVersion"
+        annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
+        implementation "com.github.bumptech.glide:okhttp3-integration:$glideVersion"
+
+        // 必选：ExoPlayer (Media3)
         def media3Version = "1.4.1"
-        implementation "androidx.media3:media3-exoplayer:${media3Version}"
-        implementation "androidx.media3:media3-exoplayer-dash:${media3Version}"
-        implementation "androidx.media3:media3-ui:${media3Version}"
+        implementation "androidx.media3:media3-exoplayer:$media3Version"
+        implementation "androidx.media3:media3-exoplayer-dash:$media3Version"
+        implementation "androidx.media3:media3-ui:$media3Version"
     }
 ```
 

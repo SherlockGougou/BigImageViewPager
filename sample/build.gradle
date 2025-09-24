@@ -27,6 +27,15 @@ android {
         signingConfig signingConfigs.debug
         multiDexEnabled true
     }
+    splits {
+        abi {
+            enable true
+            reset() // 清空之前的配置
+            //noinspection ChromeOsAbiSupport
+            include 'armeabi-v7a', 'arm64-v8a' // 指定要打包的 ABI 类型
+            universalApk false // 是否生成包含所有 ABI 的通用 APK
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -82,6 +91,6 @@ dependencies {
     implementation "androidx.media3:media3-ui:${media3Version}"
 
     // library
-    // implementation 'com.gouqinglin:BigImageViewPager:androidx-8.4.6'
+    // implementation 'com.gouqinglin:BigImageViewPager:androidx-8.4.7'
     implementation project(':library')
 }

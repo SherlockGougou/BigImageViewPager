@@ -36,6 +36,7 @@
 
 ## 🆕 更新日志
 
+- **androidx-8.4.7**：支持32位的16KB page size特性
 - **androidx-8.4.6**：新增支持res资源
 - **androidx-8.4.5**：新增自定义请求头功能  
 - **androidx-8.4.4**：修复本地视频加载存在的问题  
@@ -94,16 +95,16 @@ allprojects {
 在 `app/build.gradle` 中添加：最新版本 <a href="https://maven.org/"><img src="https://img.shields.io/maven-central/v/com.gouqinglin/BigImageViewPager.svg?label=Maven%20Central&color=blue" alt="Maven"></a>
 ```
 dependencies {
-    // 框架 
+    // 必选：框架 
     implementation 'com.gouqinglin:BigImageViewPager:版本号'
 
-    // Glide
+    // 必选：Glide
     def glideVersion = "4.16.0"
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
     implementation "com.github.bumptech.glide:okhttp3-integration:$glideVersion"
 
-    // ExoPlayer (Media3)
+    // 必选：ExoPlayer (Media3)
     def media3Version = "1.4.1"
     implementation "androidx.media3:media3-exoplayer:$media3Version"
     implementation "androidx.media3:media3-exoplayer-dash:$media3Version"
