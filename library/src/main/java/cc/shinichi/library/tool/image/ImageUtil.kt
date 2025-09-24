@@ -401,7 +401,15 @@ object ImageUtil {
             .endsWith("avif")
     }
 
+    fun isResourceImage(url: String): Boolean {
+        return url.startsWith("android.resource://")
+    }
+
     fun isLoadWithSubsampling(url: String, path: String): Boolean {
+        if (isResourceImage(url)) {
+            SLog.d(TAG, "isLoadWithSubsampling: isResourceImage = true")
+            return false
+        }
         val isWebpImageWithMime = isWebpImageWithMime(url, path)
         SLog.d(TAG, "isLoadWithSubsampling: isWebpImageWithMime = $isWebpImageWithMime")
         if (isWebpImageWithMime) {

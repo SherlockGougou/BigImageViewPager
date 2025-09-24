@@ -831,11 +831,17 @@ class ImagePreviewFragment : Fragment() {
     private fun loadLocalImageWithPhotoView(imageUrl: String, imagePath: String) {
         imageSubsample?.visibility = View.GONE
         imagePhotoView?.visibility = View.VISIBLE
-        if (ImageUtil.isAnimWebp(imageUrl, imagePath) || ImageUtil.isAvifImageWithMime(imageUrl, imagePath)) {
+        if (ImageUtil.isAnimWebp(imageUrl, imagePath) || ImageUtil.isAvifImageWithMime(imageUrl, imagePath) || ImageUtil.isResourceImage(imageUrl)) {
             // webp animation / avif
             val fitCenter: Transformation<Bitmap> = FitCenter()
             Glide.with(imagePreviewActivity!!)
-                .load(imagePath)
+                .load(
+                    if (ImageUtil.isResourceImage(imageUrl)) {
+                        Uri.parse(imageUrl)
+                    } else {
+                        imagePath
+                    }
+                )
                 .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
                 .diskCacheStrategy(
                     if (ImagePreview.instance.isSkipLocalCache) {

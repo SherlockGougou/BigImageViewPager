@@ -199,18 +199,6 @@ public class MainActivity extends AppCompatActivity {
         i.setOriginUrl("https://www.gstatic.com/webp/gallery/1.webp");
         mediaList.add(i);
 
-        // 普通图片1：
-        i = new ImageInfo();
-        i.setThumbnailUrl("http://img3.16fan.com/static/live/origin/202104/20/9a7d0915c91b.jpg-600");
-        i.setOriginUrl("http://img3.16fan.com/static/live/origin/202104/20/9a7d0915c91b.jpg");
-        mediaList.add(i);
-
-        // 普通图片2：
-        i = new ImageInfo();
-        i.setThumbnailUrl("http://img3.16fan.com/static/live/origin/202104/20/96247e9c3757.jpg-600");
-        i.setOriginUrl("http://img3.16fan.com/static/live/origin/202104/20/96247e9c3757.jpg");
-        mediaList.add(i);
-
         // 视频
         i = new ImageInfo();
         i.setType(Type.VIDEO);
@@ -223,6 +211,30 @@ public class MainActivity extends AppCompatActivity {
         i.setType(Type.VIDEO);
         i.setThumbnailUrl("https://static.smartisanos.cn/common/video/t1-ui.mp4");
         i.setOriginUrl("https://static.smartisanos.cn/common/video/t1-ui.mp4");
+        mediaList.add(i);
+
+        // res资源
+        i = new ImageInfo();
+        i.setThumbnailUrl("android.resource://" + getPackageName() + "/" + R.mipmap.blackhole);
+        i.setOriginUrl("android.resource://" + getPackageName() + "/" + R.mipmap.blackhole);
+        mediaList.add(i);
+
+        // raw资源
+        i = new ImageInfo();
+        i.setThumbnailUrl("android.resource://" + getPackageName() + "/" + R.raw.blackhole);
+        i.setOriginUrl("android.resource://" + getPackageName() + "/" + R.raw.blackhole);
+        mediaList.add(i);
+
+        // 普通图片1：
+        i = new ImageInfo();
+        i.setThumbnailUrl("http://img3.16fan.com/static/live/origin/202104/20/9a7d0915c91b.jpg-600");
+        i.setOriginUrl("http://img3.16fan.com/static/live/origin/202104/20/9a7d0915c91b.jpg");
+        mediaList.add(i);
+
+        // 普通图片2：
+        i = new ImageInfo();
+        i.setThumbnailUrl("http://img3.16fan.com/static/live/origin/202104/20/96247e9c3757.jpg-600");
+        i.setOriginUrl("http://img3.16fan.com/static/live/origin/202104/20/96247e9c3757.jpg");
         mediaList.add(i);
 
         // 大尺寸图片：
