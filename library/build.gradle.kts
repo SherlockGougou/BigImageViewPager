@@ -1,3 +1,5 @@
+import org.gradle.api.publish.tasks.GenerateModuleMetadata
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -46,6 +48,12 @@ android {
             useLegacyPackaging = true
         }
     }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {
@@ -87,11 +95,6 @@ val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(android.sourceSets["main"].java.srcDirs)
-}
-
 afterEvaluate {
     publishing {
         publications {
@@ -102,7 +105,6 @@ afterEvaluate {
                 artifactId = prop("ARTIFACT_ID", "BigImageViewPager")
                 version = prop("VERSION_NAME", "1.0.0")
 
-                artifact(sourcesJar)
                 artifact(javadocJar)
 
                 pom {
@@ -144,4 +146,8 @@ signing {
     if (keyId != null && password != null && keyRingFile != null && File(keyRingFile).exists()) {
         sign(publishing.publications)
     }
+}
+
+tasks.withType<GenerateModuleMetadata>().configureEach {
+    dependsOn(javadocJar)
 }
