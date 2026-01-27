@@ -66,6 +66,7 @@ import com.bumptech.glide.request.target.Target
 import java.io.File
 import java.util.Locale
 import kotlin.math.abs
+import androidx.core.net.toUri
 
 /**
  * 文件名: ImagePreviewFragment.java
@@ -100,6 +101,12 @@ class ImagePreviewFragment : Fragment() {
     private var progressRunnable: Runnable? = null
     private var isDragging = false
     private var onPausePlaying = false
+
+    // 用于保存缩略图的缩放状态，以便原图加载成功后恢复
+    private var savedScale: Float? = null
+    private var savedCenter: PointF? = null
+    private var savedImageWidth: Int? = null
+    private var savedImageHeight: Int? = null
 
     companion object {
         private const val TAG = "ImagePreviewFragment"
@@ -214,6 +221,34 @@ class ImagePreviewFragment : Fragment() {
             }
             ImagePreview.instance.bigImageClickListener?.onClick(imagePreviewActivity!!, v, position)
         }
+        // 设置状态监听器，实时保存用户的缩放和拖动状态
+        imageSubsample?.setOnStateChangedListener(object : SubsamplingScaleImageView.DefaultOnStateChangedListener() {
+            override fun onScaleChanged(newScale: Float, origin: Int) {
+                // 保存当前缩放状态
+                imageSubsample?.let { ssiv ->
+                    if (ssiv.isReady) {
+                        savedScale = ssiv.scale
+                        savedCenter = ssiv.center
+                        savedImageWidth = ssiv.sWidth
+                        savedImageHeight = ssiv.sHeight
+                        SLog.d(TAG, "onScaleChanged: savedScale = $savedScale, savedCenter = $savedCenter, savedImageSize = ${savedImageWidth}x${savedImageHeight}")
+                    }
+                }
+            }
+
+            override fun onCenterChanged(newCenter: PointF?, origin: Int) {
+                // 保存当前中心点位置
+                imageSubsample?.let { ssiv ->
+                    if (ssiv.isReady) {
+                        savedScale = ssiv.scale
+                        savedCenter = ssiv.center
+                        savedImageWidth = ssiv.sWidth
+                        savedImageHeight = ssiv.sHeight
+                        SLog.d(TAG, "onCenterChanged: savedScale = $savedScale, savedCenter = $savedCenter, savedImageSize = ${savedImageWidth}x${savedImageHeight}")
+                    }
+                }
+            }
+        })
         imagePhotoView?.setOnClickListener { v ->
             if (ImagePreview.instance.isEnableClickClose) {
                 imagePreviewActivity?.onBackPressed()
@@ -519,15 +554,47 @@ class ImagePreviewFragment : Fragment() {
         // 加载原图
         val originSource = ImageSource.uri(imagePath)
         val whOrigin = ImageUtil.getWidthHeight(imagePath)
+        val originWidth = whOrigin[0]
+        val originHeight = whOrigin[1]
         if (ImageUtil.isBmpImageWithMime(originalUrl, imagePath) ||
             ImageUtil.isAvifImageWithMime(originalUrl, imagePath)
         ) {
             originSource.tilingDisabled()
         }
-        originSource.dimensions(whOrigin[0], whOrigin[1])
+        originSource.dimensions(originWidth, originHeight)
 
         imageSubsample?.setImage(originSource, smallImageSource)
         setImageSubsample(imagePath, imageSubsample)
+
+        // 记录当前保存的状态用于恢复（状态已经在用户操作时实时保存了）
+        val restoreScale = savedScale
+        val restoreCenter = savedCenter
+        val restoreWidth = savedImageWidth
+        val restoreHeight = savedImageHeight
+        SLog.d(TAG, "loadOriginalWithSubsample: saved state - scale=$restoreScale, center=$restoreCenter, size=${restoreWidth}x${restoreHeight}")
+
+        if (restoreScale != null && restoreCenter != null && restoreWidth != null && restoreHeight != null) {
+            // 计算缩略图和原图的尺寸比例
+            val ratio = originWidth.toFloat() / restoreWidth.toFloat()
+
+            // scale 表示的是 source pixels / view pixels
+            val adjustedScale = restoreScale / ratio
+
+            // center 是源图片坐标，需要按比例换算到原图坐标系
+            val adjustedCenter = PointF(
+                restoreCenter.x * ratio,
+                restoreCenter.y * ratio
+            )
+
+            SLog.d(TAG, "loadOriginalWithSubsample: restoring state - scale=$adjustedScale, center=$adjustedCenter, size=${originWidth}x${originHeight}")
+            imageSubsample?.setScaleAndCenter(adjustedScale, adjustedCenter)
+        }
+
+        // 清除保存的状态（避免状态监听器继续更新）
+        savedScale = null
+        savedCenter = null
+        savedImageWidth = null
+        savedImageHeight = null
     }
 
     /**
@@ -819,6 +886,7 @@ class ImagePreviewFragment : Fragment() {
         imageSubsample?.setImage(imageSource)
         imageSubsample?.setOnImageEventListener(object : SimpleOnImageEventListener() {
             override fun onReady() {
+                SLog.d(TAG, "loadLocalImageWithSubsample: onReady")
                 progressBar?.visibility = View.GONE
             }
         })
@@ -848,7 +916,7 @@ class ImagePreviewFragment : Fragment() {
      */
     private fun loadAnimatedImage(imageUrl: String, imagePath: String, isResource: Boolean) {
         val fitCenter: Transformation<Bitmap> = FitCenter()
-        val loadSource = if (isResource) Uri.parse(imageUrl) else imagePath
+        val loadSource = if (isResource) imageUrl.toUri() else imagePath
 
         Glide.with(imagePreviewActivity!!)
             .load(loadSource)
@@ -930,6 +998,12 @@ class ImagePreviewFragment : Fragment() {
         progressHandler?.removeCallbacksAndMessages(null)
         progressHandler = null
         progressRunnable = null
+
+        // 清理保存的缩放状态
+        savedScale = null
+        savedCenter = null
+        savedImageWidth = null
+        savedImageHeight = null
 
         // 释放 SubsamplingScaleImageView
         imageSubsample?.recycle()
