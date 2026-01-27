@@ -31,21 +31,21 @@ import java.util.List;
 
 import cc.shinichi.bigimageviewpager.glide.GlideEngine;
 import cc.shinichi.library.ImagePreview;
-import cc.shinichi.library.bean.ImageInfo;
-import cc.shinichi.library.bean.Type;
-import cc.shinichi.library.glide.ImageLoader;
-import cc.shinichi.library.tool.common.PhoneUtil;
-import cc.shinichi.library.tool.common.SLog;
-import cc.shinichi.library.tool.common.ToastUtil;
-import cc.shinichi.library.view.listener.OnBigImageClickListener;
-import cc.shinichi.library.view.listener.OnBigImageLongClickListener;
-import cc.shinichi.library.view.listener.OnBigImagePageChangeListener;
-import cc.shinichi.library.view.listener.OnCustomLayoutCallback;
-import cc.shinichi.library.view.listener.OnDownloadClickListener;
-import cc.shinichi.library.view.listener.OnDownloadListener;
-import cc.shinichi.library.view.listener.OnOriginProgressListener;
-import cc.shinichi.library.view.listener.OnPageDragListener;
-import cc.shinichi.library.view.listener.OnPageFinishListener;
+import cc.shinichi.library.callback.OnBigImageClickListener;
+import cc.shinichi.library.callback.OnBigImageLongClickListener;
+import cc.shinichi.library.callback.OnBigImagePageChangeListener;
+import cc.shinichi.library.callback.OnCustomLayoutCallback;
+import cc.shinichi.library.callback.OnDownloadClickListener;
+import cc.shinichi.library.callback.OnDownloadListener;
+import cc.shinichi.library.callback.OnOriginProgressListener;
+import cc.shinichi.library.callback.OnPageDragListener;
+import cc.shinichi.library.callback.OnPageFinishListener;
+import cc.shinichi.library.loader.ImageLoader;
+import cc.shinichi.library.model.ImageInfo;
+import cc.shinichi.library.model.Type;
+import cc.shinichi.library.util.PhoneUtil;
+import cc.shinichi.library.util.SLog;
+import cc.shinichi.library.util.ToastUtil;
 
 public class MainActivity extends AppCompatActivity {
 

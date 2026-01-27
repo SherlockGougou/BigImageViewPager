@@ -6,25 +6,10 @@ plugins {
     alias(libs.plugins.dokka)
 }
 
-val ndkVersion: String by project
-val groupId: String by project
-val artifactId: String by project
-val versionName: String by project
-val pomDescription: String by project
-val pomUrl: String by project
-val pomScmUrl: String by project
-val pomScmConnection: String by project
-val pomScmDevConnection: String by project
-val pomLicenseName: String by project
-val pomLicenseUrl: String by project
-val pomDeveloperId: String by project
-val pomDeveloperName: String by project
-val pomDeveloperEmail: String by project
-
 android {
-    ndkVersion = project.properties["NDK_VERSION"]?.toString() ?: "25.2.9519653"
     namespace = "cc.shinichi.library"
     compileSdk = 34
+    ndkVersion = "25.2.9519653"
 
     defaultConfig {
         minSdk = 24
@@ -47,12 +32,6 @@ android {
         }
     }
 
-    sourceSets {
-        named("main") {
-            // JNI 源码由 ndkBuild 处理，这里留空
-        }
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -70,8 +49,6 @@ android {
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-
     // AndroidX
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.material)
@@ -90,7 +67,7 @@ dependencies {
         exclude(group = "org.aomedia.avif.android", module = "avif")
     }
 
-    // ExoPlayer / Media3
+    // Media3 / ExoPlayer
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.exoplayer.dash)
     implementation(libs.media3.ui)
@@ -100,7 +77,10 @@ dependencies {
 // --- MAVEN CENTRAL PUBLISHING CONFIGURATION ---
 // =============================================================================
 
-// Use Dokka to generate Javadoc and package it into a JAR.
+// Helper function to get property with default value
+fun prop(name: String, default: String = ""): String =
+    project.properties[name]?.toString() ?: default
+
 val javadocJar by tasks.registering(Jar::class) {
     dependsOn(tasks.named("dokkaJavadoc"))
     from(tasks.named("dokkaJavadoc").get().outputs)
@@ -118,37 +98,37 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 from(components["release"])
 
-                groupId = project.properties["GROUP_ID"]?.toString() ?: "com.gouqinglin"
-                artifactId = project.properties["ARTIFACT_ID"]?.toString() ?: "BigImageViewPager"
-                version = project.properties["VERSION_NAME"]?.toString() ?: "1.0.0"
+                groupId = prop("GROUP_ID", "com.gouqinglin")
+                artifactId = prop("ARTIFACT_ID", "BigImageViewPager")
+                version = prop("VERSION_NAME", "1.0.0")
 
                 artifact(sourcesJar)
                 artifact(javadocJar)
 
                 pom {
                     name.set(artifactId)
-                    description.set(project.properties["POM_DESCRIPTION"]?.toString() ?: "")
-                    url.set(project.properties["POM_URL"]?.toString() ?: "")
+                    description.set(prop("POM_DESCRIPTION"))
+                    url.set(prop("POM_URL"))
 
                     licenses {
                         license {
-                            name.set(project.properties["POM_LICENSE_NAME"]?.toString() ?: "")
-                            url.set(project.properties["POM_LICENSE_URL"]?.toString() ?: "")
+                            name.set(prop("POM_LICENSE_NAME"))
+                            url.set(prop("POM_LICENSE_URL"))
                         }
                     }
 
                     developers {
                         developer {
-                            id.set(project.properties["POM_DEVELOPER_ID"]?.toString() ?: "")
-                            name.set(project.properties["POM_DEVELOPER_NAME"]?.toString() ?: "")
-                            email.set(project.properties["POM_DEVELOPER_EMAIL"]?.toString() ?: "")
+                            id.set(prop("POM_DEVELOPER_ID"))
+                            name.set(prop("POM_DEVELOPER_NAME"))
+                            email.set(prop("POM_DEVELOPER_EMAIL"))
                         }
                     }
 
                     scm {
-                        connection.set(project.properties["POM_SCM_CONNECTION"]?.toString() ?: "")
-                        developerConnection.set(project.properties["POM_SCM_DEV_CONNECTION"]?.toString() ?: "")
-                        url.set(project.properties["POM_SCM_URL"]?.toString() ?: "")
+                        connection.set(prop("POM_SCM_CONNECTION"))
+                        developerConnection.set(prop("POM_SCM_DEV_CONNECTION"))
+                        url.set(prop("POM_SCM_URL"))
                     }
                 }
             }
@@ -157,12 +137,11 @@ afterEvaluate {
 }
 
 signing {
-    val signingKeyId = findProperty("signing.keyId")?.toString()
-    val signingPassword = findProperty("signing.password")?.toString()
-    val signingKeyRingFile = findProperty("signing.secretKeyRingFile")?.toString()
+    val keyId = findProperty("signing.keyId")?.toString()
+    val password = findProperty("signing.password")?.toString()
+    val keyRingFile = findProperty("signing.secretKeyRingFile")?.toString()
 
-    // Only sign if all signing properties are configured and the key ring file exists.
-    if (signingKeyId != null && signingPassword != null && signingKeyRingFile != null && File(signingKeyRingFile).exists()) {
+    if (keyId != null && password != null && keyRingFile != null && File(keyRingFile).exists()) {
         sign(publishing.publications)
     }
 }

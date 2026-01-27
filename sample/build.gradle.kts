@@ -20,7 +20,7 @@ android {
     }
 
     namespace = "cc.shinichi.bigimageviewpager"
-    compileSdk = 36
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "cc.shinichi.bigimageviewpager"
@@ -76,8 +76,6 @@ android {
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-
     // AndroidX
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.appcompat)
@@ -86,7 +84,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlin.stdlib)
 
-    // PictureSelector basic (Necessary)
+    // PictureSelector
     implementation(libs.pictureselector)
 
     // Glide
@@ -94,12 +92,12 @@ dependencies {
     annotationProcessor(libs.glide.compiler)
     implementation(libs.glide.okhttp3)
 
-    // ExoPlayer / Media3
+    // Media3 / ExoPlayer
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.exoplayer.dash)
     implementation(libs.media3.ui)
 
     // Library module
-    // implementation("com.gouqinglin:BigImageViewPager:androidx-8.4.7")
+    // implementation(libs.bigimageviewpager)
     implementation(project(":library"))
 }
