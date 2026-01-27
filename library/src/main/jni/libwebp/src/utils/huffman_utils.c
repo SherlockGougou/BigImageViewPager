@@ -43,14 +43,14 @@ void VP8LHtreeGroupsFree(HTreeGroup *const htree_groups) {
 static WEBP_INLINE uint32_t
 GetNextKey(uint32_t
 key,
-int len
+        int len
 ) {
-uint32_t step = 1 << (len - 1);
-while (key & step) {
-step >>= 1;
-}
-return step ? (key & (step - 1)) + step :
-key;
+    uint32_t step = 1 << (len - 1);
+    while (key & step) {
+        step >>= 1;
+    }
+    return step ? (key & (step - 1)) + step :
+            key;
 }
 
 // Stores code in table[0], table[step], table[2*step], ..., table[end].
@@ -191,12 +191,12 @@ static int BuildHuffmanTable(HuffmanCode *const root_table, int root_bits,
                     total_size += table_size;
                     low = key & mask;
                     if (root_table != NULL) {
-                        root_table[low].bits = (uint8_t)(table_bits + root_bits);
-                        root_table[low].value = (uint16_t)((table - root_table) - low);
+                        root_table[low].bits = (uint8_t) (table_bits + root_bits);
+                        root_table[low].value = (uint16_t) ((table - root_table) - low);
                     }
                 }
                 if (root_table != NULL) {
-                    code.bits = (uint8_t)(len - root_bits);
+                    code.bits = (uint8_t) (len - root_bits);
                     code.value = (uint16_t) sorted[symbol++];
                     ReplicateValue(&table[key >> root_bits], step, table_size, code);
                 }

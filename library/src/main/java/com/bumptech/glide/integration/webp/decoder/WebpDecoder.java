@@ -31,25 +31,26 @@ public class WebpDecoder implements GifDecoder {
     private static final String TAG = "WebpDecoder";
     // 缓存最近的Bitmap帧用于渲染当前帧
     private static final int MAX_FRAME_BITMAP_CACHE_SIZE = 5;
-
-    /** Raw WebP data from input source. */
-    private ByteBuffer rawData;
-    /** WebpImage instance */
-    private WebpImage mWebPImage;
     private final BitmapProvider mBitmapProvider;
-    private int mFramePointer = -1;
     private final int[] mFrameDurations;
     private final WebpFrameInfo[] mFrameInfos;
+    private final Paint mTransparentFillPaint;
+    // 动画每一帧渲染后的Bitmap缓存
+    private final LruCache<Integer, Bitmap> mFrameBitmapCache;
+    /**
+     * Raw WebP data from input source.
+     */
+    private ByteBuffer rawData;
+    /**
+     * WebpImage instance
+     */
+    private WebpImage mWebPImage;
+    private int mFramePointer = -1;
     private int sampleSize;
     private int downsampledHeight;
     private int downsampledWidth;
-    private final Paint mTransparentFillPaint;
-
     private WebpFrameCacheStrategy mCacheStrategy;
-
     private Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
-    // 动画每一帧渲染后的Bitmap缓存
-    private final LruCache<Integer, Bitmap> mFrameBitmapCache;
 
     public WebpDecoder(BitmapProvider provider, WebpImage webPImage, ByteBuffer rawData,
                        int sampleSize) {
@@ -180,7 +181,9 @@ public class WebpDecoder implements GifDecoder {
         return mWebPImage.getSizeInBytes();
     }
 
-    /** @Override Added in Glide 4.4.0 */
+    /**
+     * @Override Added in Glide 4.4.0
+     */
     public void setDefaultBitmapConfig(Bitmap.Config config) {
         if (config != Bitmap.Config.ARGB_8888) {
             throw new IllegalArgumentException("Unsupported format: " + config
@@ -385,9 +388,9 @@ public class WebpDecoder implements GifDecoder {
      * @param frameInfo
      */
     private void disposeToBackground(Canvas canvas, WebpFrameInfo frameInfo) {
-        final float left = (float)(frameInfo.xOffset / sampleSize);
-        final float top = (float)(frameInfo.yOffset / sampleSize);
-        final float right = (float)((frameInfo.xOffset + frameInfo.width) / sampleSize);
+        final float left = (float) (frameInfo.xOffset / sampleSize);
+        final float top = (float) (frameInfo.yOffset / sampleSize);
+        final float right = (float) ((frameInfo.xOffset + frameInfo.width) / sampleSize);
         final float bottom = (float) ((frameInfo.yOffset + frameInfo.height) / sampleSize);
         canvas.drawRect(left, top, right, bottom, mTransparentFillPaint);
     }

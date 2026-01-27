@@ -498,24 +498,24 @@ static int GetCoeffsAlt(VP8BitReader *const br,
 extern VP8CPUInfo VP8GetCPUInfo;
 
 WEBP_DSP_INIT_FUNC(InitGetCoeffs) {
-        if (VP8GetCPUInfo != NULL && VP8GetCPUInfo(kSlowSSSE3)) {
-            GetCoeffs = GetCoeffsAlt;
-        } else {
-            GetCoeffs = GetCoeffsFast;
-        }
+    if (VP8GetCPUInfo != NULL && VP8GetCPUInfo(kSlowSSSE3)) {
+        GetCoeffs = GetCoeffsAlt;
+    } else {
+        GetCoeffs = GetCoeffsFast;
+    }
 }
 
 static WEBP_INLINE uint32_t
 NzCodeBits(uint32_t
 nz_coeffs,
-int nz,
-int dc_nz
+        int nz,
+        int dc_nz
 ) {
-nz_coeffs <<= 2;
-nz_coeffs |= (nz > 3) ? 3 : (nz > 1) ? 2 :
-dc_nz;
-return
-nz_coeffs;
+    nz_coeffs <<= 2;
+    nz_coeffs |= (nz > 3) ? 3 : (nz > 1) ? 2 :
+            dc_nz;
+    return
+            nz_coeffs;
 }
 
 static int ParseResiduals(VP8Decoder *const dec,

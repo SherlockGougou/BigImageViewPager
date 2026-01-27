@@ -309,7 +309,7 @@ static int CostManagerInit(CostManager *const manager,
             }
             cur->end_ = i + 1;
         }
-        assert((size_t)(cur - manager->cache_intervals_) + 1 ==
+        assert((size_t) (cur - manager->cache_intervals_) + 1 ==
                 manager->cache_intervals_size_);
     }
 

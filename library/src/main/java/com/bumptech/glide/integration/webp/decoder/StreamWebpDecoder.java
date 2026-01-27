@@ -18,7 +18,7 @@ import java.nio.ByteBuffer;
 
 /**
  * An {@link ResourceDecoder} that decodes {@link
- *  WebpDrawable} from {@link InputStream} data
+ * WebpDrawable} from {@link InputStream} data
  *
  * @author liuchun
  */

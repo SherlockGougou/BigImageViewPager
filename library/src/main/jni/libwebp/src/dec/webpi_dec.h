@@ -25,9 +25,12 @@ extern "C" {
 // WebPDecParams: Decoding output parameters. Transient internal object.
 
 typedef struct WebPDecParams WebPDecParams;
+
 typedef int (*OutputFunc)(const VP8Io *const io, WebPDecParams *const p);
+
 typedef int (*OutputAlphaFunc)(const VP8Io *const io, WebPDecParams *const p,
         int expected_num_out_lines);
+
 typedef int (*OutputRowFunc)(WebPDecParams *const p, int y_pos,
         int max_out_lines);
 

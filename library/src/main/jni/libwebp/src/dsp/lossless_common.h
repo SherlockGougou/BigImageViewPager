@@ -30,28 +30,28 @@ extern "C" {
 // color mapping related functions.
 static WEBP_INLINE uint32_t
 VP8GetARGBIndex(uint32_t
-idx ) {
-return ( idx >> 8 ) & 0xff ;
+idx) {
+    return (idx >> 8) & 0xff;
 }
 
 static WEBP_INLINE uint8_t
 VP8GetAlphaIndex(uint8_t
 idx) {
-return
-idx;
+    return
+            idx;
 }
 
 static WEBP_INLINE uint32_t
 VP8GetARGBValue(uint32_t
 val) {
-return
-val;
+    return
+            val;
 }
 
 static WEBP_INLINE uint8_t
 VP8GetAlphaValue(uint32_t
 val) {
-return (val >> 8) & 0xff;
+    return (val >> 8) & 0xff;
 }
 
 //------------------------------------------------------------------------------
@@ -61,10 +61,10 @@ return (val >> 8) & 0xff;
 static WEBP_INLINE uint32_t
 VP8LSubSampleSize(uint32_t
 size,
-uint32_t sampling_bits
+        uint32_t sampling_bits
 ) {
-return (size + (1 << sampling_bits) - 1) >>
-sampling_bits;
+    return (size + (1 << sampling_bits) - 1) >>
+                                             sampling_bits;
 }
 
 // Converts near lossless quality into max number of bits shaved off.
@@ -91,6 +91,7 @@ static WEBP_INLINE int VP8LNearLosslessBits(int near_lossless_quality) {
 #define LOG_LOOKUP_IDX_MAX 256
 extern const float kLog2Table[LOG_LOOKUP_IDX_MAX];
 extern const float kSLog2Table[LOG_LOOKUP_IDX_MAX];
+
 typedef float (*VP8LFastLog2SlowFunc)(uint32_t
 v);
 
@@ -99,14 +100,15 @@ extern VP8LFastLog2SlowFunc VP8LFastSLog2Slow;
 
 static WEBP_INLINE float VP8LFastLog2(uint32_t
 v) {
-return (v < LOG_LOOKUP_IDX_MAX) ? kLog2Table[v] :
-VP8LFastLog2Slow(v);
+    return (v < LOG_LOOKUP_IDX_MAX) ? kLog2Table[v] :
+            VP8LFastLog2Slow(v);
 }
+
 // Fast calculation of v * log2(v) for integer input.
 static WEBP_INLINE float VP8LFastSLog2(uint32_t
 v) {
-return (v < LOG_LOOKUP_IDX_MAX) ? kSLog2Table[v] :
-VP8LFastSLog2Slow(v);
+    return (v < LOG_LOOKUP_IDX_MAX) ? kSLog2Table[v] :
+            VP8LFastSLog2Slow(v);
 }
 
 // -----------------------------------------------------------------------------
@@ -171,24 +173,24 @@ static WEBP_INLINE void VP8LPrefixEncode(int distance, int *const code,
 static WEBP_UBSAN_IGNORE_UNSIGNED_OVERFLOW WEBP_INLINE
 uint32_t VP8LAddPixels(uint32_t
 a,
-uint32_t b
+        uint32_t b
 ) {
-const uint32_t alpha_and_green = (a & 0xff00ff00u) + (b & 0xff00ff00u);
-const uint32_t red_and_blue = (a & 0x00ff00ffu) + (b & 0x00ff00ffu);
-return (alpha_and_green & 0xff00ff00u) | (red_and_blue & 0x00ff00ffu);
+    const uint32_t alpha_and_green = (a & 0xff00ff00u) + (b & 0xff00ff00u);
+    const uint32_t red_and_blue = (a & 0x00ff00ffu) + (b & 0x00ff00ffu);
+    return (alpha_and_green & 0xff00ff00u) | (red_and_blue & 0x00ff00ffu);
 }
 
 // Difference of each component, mod 256.
 static WEBP_UBSAN_IGNORE_UNSIGNED_OVERFLOW WEBP_INLINE
 uint32_t VP8LSubPixels(uint32_t
 a,
-uint32_t b
+        uint32_t b
 ) {
-const uint32_t alpha_and_green =
-        0x00ff00ffu + (a & 0xff00ff00u) - (b & 0xff00ff00u);
-const uint32_t red_and_blue =
-        0xff00ff00u + (a & 0x00ff00ffu) - (b & 0x00ff00ffu);
-return (alpha_and_green & 0xff00ff00u) | (red_and_blue & 0x00ff00ffu);
+    const uint32_t alpha_and_green =
+            0x00ff00ffu + (a & 0xff00ff00u) - (b & 0xff00ff00u);
+    const uint32_t red_and_blue =
+            0xff00ff00u + (a & 0x00ff00ffu) - (b & 0x00ff00ffu);
+    return (alpha_and_green & 0xff00ff00u) | (red_and_blue & 0x00ff00ffu);
 }
 
 //------------------------------------------------------------------------------

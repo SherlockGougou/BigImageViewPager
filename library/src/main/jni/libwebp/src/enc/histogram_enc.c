@@ -117,7 +117,7 @@ VP8LHistogram *VP8LAllocateHistogram(int cache_bits) {
     if (memory == NULL) return NULL;
     histo = (VP8LHistogram *) memory;
     // literal_ won't necessary be aligned.
-    histo->literal_ = (uint32_t * )(memory + sizeof(VP8LHistogram));
+    histo->literal_ = (uint32_t *) (memory + sizeof(VP8LHistogram));
     VP8LHistogramInit(histo, cache_bits, /*init_arrays=*/ 0);
     return histo;
 }
@@ -127,13 +127,13 @@ static void HistogramSetResetPointers(VP8LHistogramSet *const set,
         int cache_bits) {
     int i;
     const int histo_size = VP8LGetHistogramSize(cache_bits);
-    uint8_t *memory = (uint8_t * )(set->histograms);
+    uint8_t *memory = (uint8_t *) (set->histograms);
     memory += set->max_size * sizeof(*set->histograms);
     for (i = 0; i < set->max_size; ++i) {
         memory = (uint8_t *) WEBP_ALIGN(memory);
         set->histograms[i] = (VP8LHistogram *) memory;
         // literal_ won't necessary be aligned.
-        set->histograms[i]->literal_ = (uint32_t * )(memory + sizeof(VP8LHistogram));
+        set->histograms[i]->literal_ = (uint32_t *) (memory + sizeof(VP8LHistogram));
         memory += histo_size;
     }
 }
@@ -141,7 +141,7 @@ static void HistogramSetResetPointers(VP8LHistogramSet *const set,
 // Returns the total size of the VP8LHistogramSet.
 static size_t HistogramSetTotalSize(int size, int cache_bits) {
     const int histo_size = VP8LGetHistogramSize(cache_bits);
-    return (sizeof(VP8LHistogramSet) + size * (sizeof(VP8LHistogram * ) +
+    return (sizeof(VP8LHistogramSet) + size * (sizeof(VP8LHistogram *) +
             histo_size + WEBP_ALIGN_CST));
 }
 
@@ -574,7 +574,7 @@ static void HistogramBuild(
 }
 
 // Copies the histograms and computes its bit_cost.
-static const uint16_t kInvalidHistogramSymbol = (uint16_t)(-1);
+static const uint16_t kInvalidHistogramSymbol = (uint16_t) (-1);
 
 static void HistogramCopyAndAnalyze(VP8LHistogramSet *const orig_histo,
         VP8LHistogramSet *const image_histo,
@@ -711,7 +711,7 @@ static void HistogramCombineEntropyBin(
 // Implement a Lehmer random number generator with a multiplicative constant of
 // 48271 and a modulo constant of 2^31 - 1.
 static uint32_t MyRand(uint32_t *const seed) {
-    *seed = (uint32_t)(((uint64_t)(*seed) * 48271u) % 2147483647u);
+    *seed = (uint32_t) (((uint64_t) (*seed) * 48271u) % 2147483647u);
     assert(*seed > 0);
     return *seed;
 }

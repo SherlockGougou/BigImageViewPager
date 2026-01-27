@@ -351,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ImageLoader.cleanDiskCache(MainActivity.this);
-                ToastUtil.getInstance().showShort(MainActivity.this, "磁盘缓存已成功清除");
+                ToastUtil.showShort(MainActivity.this, "磁盘缓存已成功清除");
             }
         });
         // ==============================================================================================================
@@ -459,7 +459,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(@NonNull Activity activity, @NonNull View view, int position) {
                         // 可以在此处执行您自己的下载逻辑、埋点统计等信息
-                        SLog.INSTANCE.d(TAG, "onDownloadClick: position = " + position);
+                        SLog.d(TAG, "onDownloadClick: position = " + position);
                     }
 
                     @Override
@@ -503,7 +503,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(@NonNull Activity activity, @NonNull View view, int position) {
                         // ...
-                        SLog.INSTANCE.d(TAG, "点击了: position = " + position);
+                        SLog.d(TAG, "点击了: position = " + position);
                     }
                 })
                 // 长按图片回调
@@ -511,7 +511,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onLongClick(@NonNull Activity activity, @NonNull View view, int position) {
                         // ...请使用该方法提供的activity，否则弹窗会被覆盖
-                        SLog.INSTANCE.d(TAG, "onLongClick: ");
+                        SLog.d(TAG, "onLongClick: ");
                         AlertDialog dialog = new AlertDialog.Builder(activity)
                                 .setTitle("这里是模拟长按的弹窗")
                                 .setMessage("是否删除当前图片？")
@@ -549,14 +549,14 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onPageSelected(int position, @NonNull List<ImageInfo> imageInfoList) {
-                        SLog.INSTANCE.d(TAG, "onPageSelected: position = " + position);
+                        SLog.d(TAG, "onPageSelected: position = " + position);
                         currentPosition = position;
                         tvIndicatorCustom.setText((currentPosition + 1) + " / " + imageInfoList.size());
                     }
 
                     @Override
                     public void onPageScrollStateChanged(int state) {
-                        SLog.INSTANCE.d(TAG, "onPageScrollStateChanged: state = " + state);
+                        SLog.d(TAG, "onPageScrollStateChanged: state = " + state);
                     }
                 })
 
@@ -565,7 +565,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onFinish(@NonNull Activity activity) {
                         // ...
-                        SLog.INSTANCE.d(TAG, "onFinish: ");
+                        SLog.d(TAG, "onFinish: ");
                     }
                 })
 
@@ -573,7 +573,7 @@ public class MainActivity extends AppCompatActivity {
                 .setOnPageDragListener(new OnPageDragListener() {
                     @Override
                     public void onDrag(@NonNull Activity activity, @NonNull View parentView, MotionEvent event, float translationY) {
-                        SLog.INSTANCE.d(TAG, "onDrag: translationY = " + translationY);
+                        SLog.d(TAG, "onDrag: translationY = " + translationY);
                         // 此处可以根据是否拖拽设置自定义的View的逻辑
                         if (customViewContainer != null) {
                             customViewContainer.setVisibility(View.GONE);
@@ -582,7 +582,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onDragEnd(@NonNull Activity activity, @NonNull View parentView) {
-                        SLog.INSTANCE.d(TAG, "onDragEnd: ");
+                        SLog.d(TAG, "onDragEnd: ");
                         if (customViewContainer != null) {
                             customViewContainer.setVisibility(View.VISIBLE);
                         }
@@ -594,7 +594,7 @@ public class MainActivity extends AppCompatActivity {
                 .setProgressLayoutId(ImagePreview.PROGRESS_THEME_CIRCLE_TEXT, new OnOriginProgressListener() {
                     @Override
                     public void progress(@NonNull Activity activity, @NonNull View parentView, int progress) {
-                        SLog.INSTANCE.d(TAG, "原图progress: " + progress);
+                        SLog.d(TAG, "原图progress: " + progress);
                         // 需要找到进度控件并设置百分比，回调中的parentView即传入的布局的根View，可通过parentView找到控件：
                         ProgressBar progressBar = parentView.findViewById(R.id.sh_progress_view);
                         TextView textView = parentView.findViewById(R.id.sh_progress_text);
@@ -605,7 +605,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void finish(@NonNull Activity activity, @NonNull View parentView) {
-                        SLog.INSTANCE.d(TAG, "finish: ");
+                        SLog.d(TAG, "finish: ");
                     }
                 })
 
@@ -619,7 +619,7 @@ public class MainActivity extends AppCompatActivity {
                         imgShare = parentView.findViewById(R.id.img_share_button_custom);
                         tvIndicatorCustom = parentView.findViewById(R.id.tv_indicator_custom);
                         // 业务逻辑处理
-                        int statusBarHeight = PhoneUtil.INSTANCE.getStatusBarHeight();
+                        int statusBarHeight = PhoneUtil.getStatusBarHeight();
                         customViewContainer.setPadding(0, statusBarHeight, 0, 0);
                         tvIndicatorCustom.setText((currentPosition + 1) + " / " + mediaList.size());
                         // 点击事件
@@ -632,7 +632,7 @@ public class MainActivity extends AppCompatActivity {
                         imgShare.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                ToastUtil.getInstance().showShort(MainActivity.this, "点击了分享, 当前 position = " + currentPosition);
+                                ToastUtil.showShort(MainActivity.this, "点击了分享, 当前 position = " + currentPosition);
                             }
                         });
                     }

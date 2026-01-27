@@ -90,7 +90,7 @@ void VP8LoadFinalBytes(VP8BitReader *const br) {
     // Only read 8bits at a time
     if (br->buf_ < br->buf_end_) {
         br->bits_ += 8;
-        br->value_ = (bit_t)(*br->buf_++) | (br->value_ << 8);
+        br->value_ = (bit_t) (*br->buf_++) | (br->value_ << 8);
     } else if (!br->eof_) {
         br->value_ <<= 8;
         br->bits_ += 8;

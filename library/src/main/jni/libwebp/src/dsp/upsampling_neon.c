@@ -281,5 +281,7 @@ WEBP_TSAN_IGNORE_FUNCTION void WebPInitUpsamplersNEON(void) {
 #endif  // WEBP_USE_NEON
 
 #if !(defined(FANCY_UPSAMPLING) && defined(WEBP_USE_NEON))
+
 WEBP_DSP_INIT_STUB(WebPInitUpsamplersNEON)
+
 #endif

@@ -73,6 +73,7 @@ static WEBP_INLINE void GetCPUInfo(int cpu_info[4], int info_type) {
 
 // NaCl has no support for xgetbv or the raw opcode.
 #if !defined(__native_client__) && (defined(__i386__) || defined(__x86_64__))
+
 static WEBP_INLINE uint64_t
 
 xgetbv(void) {
@@ -83,7 +84,7 @@ xgetbv(void) {
             ".byte 0x0f, 0x01, 0xd0\n"
             : "=a"(eax), "=d"(edx) : "c" (ecx));
     return ((uint64_t)
-    edx << 32) | eax;
+            edx << 32) | eax;
 }
 
 #elif (defined(_M_X64) || defined(_M_IX86)) && \
@@ -181,7 +182,7 @@ static int x86CPUInfo(CPUFeature feature) {
 }
 
 WEBP_EXTERN VP8CPUInfo
-VP8GetCPUInfo;
+        VP8GetCPUInfo;
 VP8CPUInfo VP8GetCPUInfo = x86CPUInfo;
 #elif defined(WEBP_ANDROID_NEON)  // NB: needs to be before generic NEON test.
 static int AndroidCPUInfo(CPUFeature feature) {

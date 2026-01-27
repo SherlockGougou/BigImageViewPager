@@ -68,6 +68,7 @@ WEBP_EXTERN void WebPSafeFree(void *const ptr);
                          ~(uintptr_t)WEBP_ALIGN_CST)
 
 #include <string.h>
+
 // memcpy() is the safe way of moving potentially unaligned 32b memory.
 static WEBP_INLINE uint32_t
 WebPMemToUint32(const uint8_t *const ptr) {
@@ -79,7 +80,7 @@ WebPMemToUint32(const uint8_t *const ptr) {
 static WEBP_INLINE int32_t
 WebPMemToInt32(const uint8_t *const ptr) {
     return (int32_t)
-    WebPMemToUint32(ptr);
+            WebPMemToUint32(ptr);
 }
 
 static WEBP_INLINE void WebPUint32ToMem(uint8_t *const ptr, uint32_t val) {
@@ -88,7 +89,7 @@ static WEBP_INLINE void WebPUint32ToMem(uint8_t *const ptr, uint32_t val) {
 
 static WEBP_INLINE void WebPInt32ToMem(uint8_t *const ptr, int val) {
     WebPUint32ToMem(ptr, (uint32_t)
-    val);
+            val);
 }
 
 //------------------------------------------------------------------------------
@@ -106,7 +107,7 @@ static WEBP_INLINE int GetLE24(const uint8_t *const data) {
 static WEBP_INLINE uint32_t
 GetLE32(const uint8_t *const data) {
     return GetLE16(data) | ((uint32_t)
-    GetLE16(data + 2) << 16);
+            GetLE16(data + 2) << 16);
 }
 
 // Store 16, 24 or 32 bits in little-endian order.
@@ -130,17 +131,20 @@ static WEBP_INLINE void PutLE32(uint8_t *const data, uint32_t val) {
 // use GNU builtins where available.
 #if defined(__GNUC__) && \
     ((__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || __GNUC__ >= 4)
+
 // Returns (int)floor(log2(n)). n must be > 0.
 static WEBP_INLINE int BitsLog2Floor(uint32_t
-n ) {
-return 31 ^ __builtin_clz(n);
+n) {
+    return 31 ^ __builtin_clz(n);
 }
+
 // counts the number of trailing zero
 static WEBP_INLINE int BitsCtz(uint32_t
 n) {
-return
-__builtin_ctz(n);
+    return
+            __builtin_ctz(n);
 }
+
 #elif defined(_MSC_VER) && _MSC_VER > 1310 && \
       (defined(_M_X64) || defined(_M_IX86))
 #include <intrin.h>

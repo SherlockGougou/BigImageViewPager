@@ -124,7 +124,7 @@ int QuantizeLevels(uint8_t *const data, int width, int height,
         size_t n;
         for (s = min_s; s <= max_s; ++s) {
             const int slot = q_level[s];
-            map[s] = (uint8_t)(inv_q_level[slot] + .5);
+            map[s] = (uint8_t) (inv_q_level[slot] + .5);
         }
         // Final pass.
         for (n = 0; n < data_size; ++n) {

@@ -604,7 +604,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 // 下载当前图片
                 downloadCurrentImg()
             } else {
-                ToastUtil.instance.showShort(
+                ToastUtil.showShort(
                     this@ImagePreviewActivity,
                     getString(R.string.toast_deny_permission_save_failed)
                 )

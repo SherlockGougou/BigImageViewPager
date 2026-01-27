@@ -104,26 +104,26 @@ WEBP_EXTERN int WebPGetMuxVersion(void);
 // Life of a Mux object
 
 // Internal, version-checked, entry point
-WEBP_EXTERN WebPMux * WebPNewInternal(int);
+WEBP_EXTERN WebPMux *WebPNewInternal(int);
 
 // Creates an empty mux object.
 // Returns:
 //   A pointer to the newly created empty mux object.
 //   Or NULL in case of memory error.
-static WEBP_INLINE WebPMux * WebPMuxNew(void) {
+static WEBP_INLINE WebPMux *WebPMuxNew(void) {
     return WebPNewInternal(WEBP_MUX_ABI_VERSION);
 }
 
 // Deletes the mux object.
 // Parameters:
 //   mux - (in/out) object to be deleted
-WEBP_EXTERN void WebPMuxDelete(WebPMux * mux);
+WEBP_EXTERN void WebPMuxDelete(WebPMux *mux);
 
 //------------------------------------------------------------------------------
 // Mux creation.
 
 // Internal, version-checked, entry point
-WEBP_EXTERN WebPMux * WebPMuxCreateInternal(const WebPData *, int, int);
+WEBP_EXTERN WebPMux *WebPMuxCreateInternal(const WebPData *, int, int);
 
 // Creates a mux object from raw data given in WebP RIFF format.
 // Parameters:
@@ -133,7 +133,7 @@ WEBP_EXTERN WebPMux * WebPMuxCreateInternal(const WebPData *, int, int);
 // Returns:
 //   A pointer to the mux object created from given data - on success.
 //   NULL - In case of invalid data or memory error.
-static WEBP_INLINE WebPMux * WebPMuxCreate(const WebPData *bitstream,
+static WEBP_INLINE WebPMux *WebPMuxCreate(const WebPData *bitstream,
         int copy_data) {
     return WebPMuxCreateInternal(bitstream, copy_data, WEBP_MUX_ABI_VERSION);
 }
@@ -162,9 +162,9 @@ static WEBP_INLINE WebPMux * WebPMuxCreate(const WebPData *bitstream,
 //   WEBP_MUX_OK - on success.
 WEBP_EXTERN WebPMuxError
 WebPMuxSetChunk(
-        WebPMux * mux , const char fourcc[4],
-const WebPData *chunk_data,
-int copy_data ) ;
+        WebPMux *mux, const char fourcc[4],
+        const WebPData *chunk_data,
+        int copy_data);
 
 // Gets a reference to the data of the chunk with id 'fourcc' in the mux object.
 // The caller should NOT free the returned data.
@@ -194,7 +194,7 @@ WebPMuxGetChunk(
 //   WEBP_MUX_OK - on success.
 WEBP_EXTERN WebPMuxError
 WebPMuxDeleteChunk(
-        WebPMux * mux , const char fourcc[4] ) ;
+        WebPMux *mux, const char fourcc[4]);
 
 //------------------------------------------------------------------------------
 // Images.
@@ -228,8 +228,8 @@ struct WebPMuxFrameInfo {
 //   WEBP_MUX_OK - on success.
 WEBP_EXTERN WebPMuxError
 WebPMuxSetImage(
-        WebPMux * mux , const WebPData *bitstream,
-int copy_data ) ;
+        WebPMux *mux, const WebPData *bitstream,
+        int copy_data);
 
 // Adds a frame at the end of the mux object.
 // Notes: (1) frame.id should be WEBP_CHUNK_ANMF
@@ -249,8 +249,8 @@ int copy_data ) ;
 //   WEBP_MUX_OK - on success.
 WEBP_EXTERN WebPMuxError
 WebPMuxPushFrame(
-        WebPMux * mux , const WebPMuxFrameInfo *frame,
-int copy_data ) ;
+        WebPMux *mux, const WebPMuxFrameInfo *frame,
+        int copy_data);
 
 // Gets the nth frame from the mux object.
 // The content of 'frame->bitstream' is allocated using WebPMalloc(), and NOT
@@ -282,7 +282,7 @@ WebPMuxGetFrame(
 //                        before deletion.
 //   WEBP_MUX_OK - on success.
 WEBP_EXTERN WebPMuxError
-WebPMuxDeleteFrame(WebPMux * mux , uint32_t nth ) ;
+WebPMuxDeleteFrame(WebPMux *mux, uint32_t nth);
 
 //------------------------------------------------------------------------------
 // Animation.
@@ -308,7 +308,7 @@ struct WebPMuxAnimParams {
 //   WEBP_MUX_OK - on success.
 WEBP_EXTERN WebPMuxError
 WebPMuxSetAnimationParams(
-        WebPMux * mux , const WebPMuxAnimParams *params ) ;
+        WebPMux *mux, const WebPMuxAnimParams *params);
 
 // Gets the animation parameters from the mux object.
 // Parameters:
@@ -341,9 +341,9 @@ WebPMuxGetAnimationParams(
 //                               width or height are invalid or out of bounds
 //   WEBP_MUX_OK - on success.
 WEBP_EXTERN WebPMuxError
-WebPMuxSetCanvasSize(WebPMux * mux ,
-int width,
-int height ) ;
+WebPMuxSetCanvasSize(WebPMux *mux,
+        int width,
+        int height);
 
 // Gets the canvas size from the mux object.
 // Note: This method assumes that the VP8X chunk, if present, is up-to-date.
@@ -406,8 +406,8 @@ WebPMuxNumChunks(const WebPMux *mux,
 //   WEBP_MUX_MEMORY_ERROR - on memory allocation error.
 //   WEBP_MUX_OK - on success.
 WEBP_EXTERN WebPMuxError
-WebPMuxAssemble(WebPMux * mux ,
-WebPData *assembled_data ) ;
+WebPMuxAssemble(WebPMux *mux,
+        WebPData *assembled_data);
 
 //------------------------------------------------------------------------------
 // WebPAnimEncoder API
@@ -473,7 +473,7 @@ static WEBP_INLINE int WebPAnimEncoderOptionsInit(
 }
 
 // Internal, version-checked, entry point.
-WEBP_EXTERN WebPAnimEncoder * WebPAnimEncoderNewInternal(
+WEBP_EXTERN WebPAnimEncoder *WebPAnimEncoderNewInternal(
         int, int, const WebPAnimEncoderOptions *, int);
 
 // Creates and initializes a WebPAnimEncoder object.
@@ -484,7 +484,7 @@ WEBP_EXTERN WebPAnimEncoder * WebPAnimEncoderNewInternal(
 // Returns:
 //   A pointer to the newly created WebPAnimEncoder object.
 //   Or NULL in case of memory error.
-static WEBP_INLINE WebPAnimEncoder * WebPAnimEncoderNew(
+static WEBP_INLINE WebPAnimEncoder *WebPAnimEncoderNew(
         int width, int height, const WebPAnimEncoderOptions *enc_options) {
     return WebPAnimEncoderNewInternal(width, height, enc_options,
             WEBP_MUX_ABI_VERSION);
@@ -509,10 +509,10 @@ static WEBP_INLINE WebPAnimEncoder * WebPAnimEncoderNew(
 //   On error, returns false and frame->error_code is set appropriately.
 //   Otherwise, returns true.
 WEBP_EXTERN int WebPAnimEncoderAdd(
-        WebPAnimEncoder * enc,
-struct WebPPicture *frame,
-int timestamp_ms,
-const struct WebPConfig *config ) ;
+        WebPAnimEncoder *enc,
+        struct WebPPicture *frame,
+        int timestamp_ms,
+        const struct WebPConfig *config);
 
 // Assemble all frames added so far into a WebP bitstream.
 // This call should be preceded by  a call to 'WebPAnimEncoderAdd' with
@@ -523,8 +523,8 @@ const struct WebPConfig *config ) ;
 //   webp_data - (out) generated WebP bitstream.
 // Returns:
 //   True on success.
-WEBP_EXTERN int WebPAnimEncoderAssemble(WebPAnimEncoder * enc,
-        WebPData * webp_data);
+WEBP_EXTERN int WebPAnimEncoderAssemble(WebPAnimEncoder *enc,
+        WebPData *webp_data);
 
 // Get error string corresponding to the most recent call using 'enc'. The
 // returned string is owned by 'enc' and is valid only until the next call to
@@ -534,12 +534,12 @@ WEBP_EXTERN int WebPAnimEncoderAssemble(WebPAnimEncoder * enc,
 // Returns:
 //   NULL if 'enc' is NULL. Otherwise, returns the error string if the last call
 //   to 'enc' had an error, or an empty string if the last call was a success.
-WEBP_EXTERN const char *WebPAnimEncoderGetError(WebPAnimEncoder * enc);
+WEBP_EXTERN const char *WebPAnimEncoderGetError(WebPAnimEncoder *enc);
 
 // Deletes the WebPAnimEncoder object.
 // Parameters:
 //   enc - (in/out) object to be deleted
-WEBP_EXTERN void WebPAnimEncoderDelete(WebPAnimEncoder * enc);
+WEBP_EXTERN void WebPAnimEncoderDelete(WebPAnimEncoder *enc);
 
 //------------------------------------------------------------------------------
 

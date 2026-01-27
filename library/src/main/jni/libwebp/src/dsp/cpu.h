@@ -175,6 +175,7 @@
 #endif
 
 #if defined(WEBP_USE_THREAD) && !defined(_WIN32)
+
 #include <pthread.h>  // NOLINT
 
 #define WEBP_DSP_INIT(func)                                         \

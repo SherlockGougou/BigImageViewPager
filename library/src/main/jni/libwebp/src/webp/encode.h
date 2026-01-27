@@ -50,14 +50,17 @@ WEBP_EXTERN size_t
 WebPEncodeRGB(const uint8_t *rgb,
         int width, int height, int stride,
         float quality_factor, uint8_t **output);
+
 WEBP_EXTERN size_t
 WebPEncodeBGR(const uint8_t *bgr,
         int width, int height, int stride,
         float quality_factor, uint8_t **output);
+
 WEBP_EXTERN size_t
 WebPEncodeRGBA(const uint8_t *rgba,
         int width, int height, int stride,
         float quality_factor, uint8_t **output);
+
 WEBP_EXTERN size_t
 WebPEncodeBGRA(const uint8_t *bgra,
         int width, int height, int stride,
@@ -74,14 +77,17 @@ WEBP_EXTERN size_t
 WebPEncodeLosslessRGB(const uint8_t *rgb,
         int width, int height, int stride,
         uint8_t **output);
+
 WEBP_EXTERN size_t
 WebPEncodeLosslessBGR(const uint8_t *bgr,
         int width, int height, int stride,
         uint8_t **output);
+
 WEBP_EXTERN size_t
 WebPEncodeLosslessRGBA(const uint8_t *rgba,
         int width, int height, int stride,
         uint8_t **output);
+
 WEBP_EXTERN size_t
 WebPEncodeLosslessBGRA(const uint8_t *bgra,
         int width, int height, int stride,
@@ -483,8 +489,10 @@ WEBP_EXTERN int WebPPictureImportRGBX(
 // Variants of the above, but taking BGR(A|X) input.
 WEBP_EXTERN int WebPPictureImportBGR(
         WebPPicture *picture, const uint8_t *bgr, int bgr_stride);
+
 WEBP_EXTERN int WebPPictureImportBGRA(
         WebPPicture *picture, const uint8_t *bgra, int bgra_stride);
+
 WEBP_EXTERN int WebPPictureImportBGRX(
         WebPPicture *picture, const uint8_t *bgrx, int bgrx_stride);
 

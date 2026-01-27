@@ -301,13 +301,13 @@ void VP8LPutBitsInternal(VP8LBitWriter *const bw, uint32_t bits, int n_bits) {
         // Special case of overflow handling for 32bit accumulator (2-steps flush).
 #if VP8L_WRITER_BITS == 16
         if (used + n_bits >= VP8L_WRITER_MAX_BITS) {
-          // Fill up all the VP8L_WRITER_MAX_BITS so it can be flushed out below.
-          const int shift = VP8L_WRITER_MAX_BITS - used;
-          lbits |= (vp8l_atype_t)bits << used;
-          used = VP8L_WRITER_MAX_BITS;
-          n_bits -= shift;
-          bits >>= shift;
-          assert(n_bits <= VP8L_WRITER_MAX_BITS);
+            // Fill up all the VP8L_WRITER_MAX_BITS so it can be flushed out below.
+            const int shift = VP8L_WRITER_MAX_BITS - used;
+            lbits |= (vp8l_atype_t) bits << used;
+            used = VP8L_WRITER_MAX_BITS;
+            n_bits -= shift;
+            bits >>= shift;
+            assert(n_bits <= VP8L_WRITER_MAX_BITS);
         }
 #endif
         // If needed, make some room by flushing some bits out.

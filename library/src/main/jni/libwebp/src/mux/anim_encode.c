@@ -254,10 +254,10 @@ WebPAnimEncoder *WebPAnimEncoderNewInternal(
     *(int *) &enc->canvas_width_ = width;
     *(int *) &enc->canvas_height_ = height;
     if (enc_options != NULL) {
-        *(WebPAnimEncoderOptions * ) & enc->options_ = *enc_options;
-        SanitizeEncoderOptions((WebPAnimEncoderOptions * ) & enc->options_);
+        *(WebPAnimEncoderOptions *) &enc->options_ = *enc_options;
+        SanitizeEncoderOptions((WebPAnimEncoderOptions *) &enc->options_);
     } else {
-        DefaultEncoderOptions((WebPAnimEncoderOptions * ) & enc->options_);
+        DefaultEncoderOptions((WebPAnimEncoderOptions *) &enc->options_);
     }
 
     // Canvas buffers.

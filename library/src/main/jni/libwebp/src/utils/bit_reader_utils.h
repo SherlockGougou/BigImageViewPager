@@ -107,6 +107,7 @@ struct VP8BitReader {
 // Initialize the bit reader and the boolean decoder.
 void VP8InitBitReader(VP8BitReader *const br,
         const uint8_t *const start, size_t size);
+
 // Sets the working read buffer.
 void VP8BitReaderSetBuffer(VP8BitReader *const br,
         const uint8_t *const start, size_t size);
@@ -165,8 +166,8 @@ uint32_t VP8LReadBits(VP8LBitReader *const br, int n_bits);
 
 // Return the prefetched bits, so they can be looked up.
 static WEBP_INLINE uint32_t
-VP8LPrefetchBits(VP8LBitReader * const br ) {
-return ( uint32_t ) ( br -> val_ >> ( br -> bit_pos_ & ( VP8L_LBITS - 1 ) ) ) ;
+VP8LPrefetchBits(VP8LBitReader *const br) {
+    return (uint32_t) (br->val_ >> (br->bit_pos_ & (VP8L_LBITS - 1)));
 }
 
 // Returns true if there was an attempt at reading bit past the end of

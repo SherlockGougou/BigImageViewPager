@@ -116,11 +116,11 @@ static WEBP_INLINE int VP8GetBit(VP8BitReader *WEBP_RESTRICT const br,
     {
         const int pos = br->bits_;
         const range_t split = (range * prob) >> 8;
-        const range_t value = (range_t)(br->value_ >> pos);
+        const range_t value = (range_t) (br->value_ >> pos);
         const int bit = (value > split);
         if (bit) {
             range -= split;
-            br->value_ -= (bit_t)(split + 1) << pos;
+            br->value_ -= (bit_t) (split + 1) << pos;
         } else {
             range = split + 1;
         }
@@ -145,12 +145,12 @@ int VP8GetSigned(VP8BitReader *WEBP_RESTRICT const br, int v,
     {
         const int pos = br->bits_;
         const range_t split = br->range_ >> 1;
-        const range_t value = (range_t)(br->value_ >> pos);
-        const int32_t mask = (int32_t)(split - value) >> 31;  // -1 or 0
+        const range_t value = (range_t) (br->value_ >> pos);
+        const int32_t mask = (int32_t) (split - value) >> 31;  // -1 or 0
         br->bits_ -= 1;
         br->range_ += (range_t) mask;
         br->range_ |= 1;
-        br->value_ -= (bit_t)((split + 1) & (uint32_t) mask) << pos;
+        br->value_ -= (bit_t) ((split + 1) & (uint32_t) mask) << pos;
         BT_TRACK(br);
         return (v ^ mask) - mask;
     }
@@ -168,11 +168,11 @@ static WEBP_INLINE int VP8GetBitAlt(VP8BitReader *WEBP_RESTRICT const br,
     {
         const int pos = br->bits_;
         const range_t split = (range * prob) >> 8;
-        const range_t value = (range_t)(br->value_ >> pos);
+        const range_t value = (range_t) (br->value_ >> pos);
         int bit;  // Don't use 'const int bit = (value > split);", it's slower.
         if (value > split) {
             range -= split + 1;
-            br->value_ -= (bit_t)(split + 1) << pos;
+            br->value_ -= (bit_t) (split + 1) << pos;
             bit = 1;
         } else {
             range = split;

@@ -765,65 +765,65 @@ extern void VP8EncDspInitMIPSdspR2(void);
 extern void VP8EncDspInitMSA(void);
 
 WEBP_DSP_INIT_FUNC(VP8EncDspInit) {
-        VP8DspInit();  // common inverse transforms
-        InitTables();
+    VP8DspInit();  // common inverse transforms
+    InitTables();
 
-        // default C implementations
+    // default C implementations
 #if !WEBP_NEON_OMIT_C_CODE
-        VP8ITransform = ITransform_C;
-        VP8FTransform = FTransform_C;
-        VP8FTransformWHT = FTransformWHT_C;
-        VP8TDisto4x4 = Disto4x4_C;
-        VP8TDisto16x16 = Disto16x16_C;
-        VP8CollectHistogram = CollectHistogram_C;
-        VP8SSE16x16 = SSE16x16_C;
-        VP8SSE16x8 = SSE16x8_C;
-        VP8SSE8x8 = SSE8x8_C;
-        VP8SSE4x4 = SSE4x4_C;
+    VP8ITransform = ITransform_C;
+    VP8FTransform = FTransform_C;
+    VP8FTransformWHT = FTransformWHT_C;
+    VP8TDisto4x4 = Disto4x4_C;
+    VP8TDisto16x16 = Disto16x16_C;
+    VP8CollectHistogram = CollectHistogram_C;
+    VP8SSE16x16 = SSE16x16_C;
+    VP8SSE16x8 = SSE16x8_C;
+    VP8SSE8x8 = SSE8x8_C;
+    VP8SSE4x4 = SSE4x4_C;
 #endif
 
 #if !WEBP_NEON_OMIT_C_CODE || WEBP_NEON_WORK_AROUND_GCC
-        VP8EncQuantizeBlock = QuantizeBlock_C;
-        VP8EncQuantize2Blocks = Quantize2Blocks_C;
+    VP8EncQuantizeBlock = QuantizeBlock_C;
+    VP8EncQuantize2Blocks = Quantize2Blocks_C;
 #endif
 
-        VP8FTransform2 = FTransform2_C;
-        VP8EncPredLuma4 = Intra4Preds_C;
-        VP8EncPredLuma16 = Intra16Preds_C;
-        VP8EncPredChroma8 = IntraChromaPreds_C;
-        VP8Mean16x4 = Mean16x4_C;
-        VP8EncQuantizeBlockWHT = QuantizeBlock_C;
-        VP8Copy4x4 = Copy4x4_C;
-        VP8Copy16x8 = Copy16x8_C;
+    VP8FTransform2 = FTransform2_C;
+    VP8EncPredLuma4 = Intra4Preds_C;
+    VP8EncPredLuma16 = Intra16Preds_C;
+    VP8EncPredChroma8 = IntraChromaPreds_C;
+    VP8Mean16x4 = Mean16x4_C;
+    VP8EncQuantizeBlockWHT = QuantizeBlock_C;
+    VP8Copy4x4 = Copy4x4_C;
+    VP8Copy16x8 = Copy16x8_C;
 
-        // If defined, use CPUInfo() to overwrite some pointers with faster versions.
-        if (VP8GetCPUInfo != NULL) {
+    // If defined, use CPUInfo() to overwrite some pointers with faster versions.
+    if (VP8GetCPUInfo != NULL) {
 #if defined(WEBP_HAVE_SSE2)
-            if (VP8GetCPUInfo(kSSE2)) {
-              VP8EncDspInitSSE2();
+        if (VP8GetCPUInfo(kSSE2)) {
+            VP8EncDspInitSSE2();
 #if defined(WEBP_HAVE_SSE41)
-              if (VP8GetCPUInfo(kSSE4_1)) {
-                VP8EncDspInitSSE41();
-              }
-#endif
-            }
-#endif
-#if defined(WEBP_USE_MIPS32)
-            if (VP8GetCPUInfo(kMIPS32)) {
-              VP8EncDspInitMIPS32();
-            }
-#endif
-#if defined(WEBP_USE_MIPS_DSP_R2)
-            if (VP8GetCPUInfo(kMIPSdspR2)) {
-              VP8EncDspInitMIPSdspR2();
-            }
-#endif
-#if defined(WEBP_USE_MSA)
-            if (VP8GetCPUInfo(kMSA)) {
-              VP8EncDspInitMSA();
+            if (VP8GetCPUInfo(kSSE4_1)) {
+              VP8EncDspInitSSE41();
             }
 #endif
         }
+#endif
+#if defined(WEBP_USE_MIPS32)
+        if (VP8GetCPUInfo(kMIPS32)) {
+          VP8EncDspInitMIPS32();
+        }
+#endif
+#if defined(WEBP_USE_MIPS_DSP_R2)
+        if (VP8GetCPUInfo(kMIPSdspR2)) {
+          VP8EncDspInitMIPSdspR2();
+        }
+#endif
+#if defined(WEBP_USE_MSA)
+        if (VP8GetCPUInfo(kMSA)) {
+          VP8EncDspInitMSA();
+        }
+#endif
+    }
 
 #if defined(WEBP_HAVE_NEON)
         if (WEBP_NEON_OMIT_C_CODE ||
@@ -832,24 +832,24 @@ WEBP_DSP_INIT_FUNC(VP8EncDspInit) {
         }
 #endif
 
-        assert(VP8ITransform != NULL);
-        assert(VP8FTransform != NULL);
-        assert(VP8FTransformWHT != NULL);
-        assert(VP8TDisto4x4 != NULL);
-        assert(VP8TDisto16x16 != NULL);
-        assert(VP8CollectHistogram != NULL);
-        assert(VP8SSE16x16 != NULL);
-        assert(VP8SSE16x8 != NULL);
-        assert(VP8SSE8x8 != NULL);
-        assert(VP8SSE4x4 != NULL);
-        assert(VP8EncQuantizeBlock != NULL);
-        assert(VP8EncQuantize2Blocks != NULL);
-        assert(VP8FTransform2 != NULL);
-        assert(VP8EncPredLuma4 != NULL);
-        assert(VP8EncPredLuma16 != NULL);
-        assert(VP8EncPredChroma8 != NULL);
-        assert(VP8Mean16x4 != NULL);
-        assert(VP8EncQuantizeBlockWHT != NULL);
-        assert(VP8Copy4x4 != NULL);
-        assert(VP8Copy16x8 != NULL);
+    assert(VP8ITransform != NULL);
+    assert(VP8FTransform != NULL);
+    assert(VP8FTransformWHT != NULL);
+    assert(VP8TDisto4x4 != NULL);
+    assert(VP8TDisto16x16 != NULL);
+    assert(VP8CollectHistogram != NULL);
+    assert(VP8SSE16x16 != NULL);
+    assert(VP8SSE16x8 != NULL);
+    assert(VP8SSE8x8 != NULL);
+    assert(VP8SSE4x4 != NULL);
+    assert(VP8EncQuantizeBlock != NULL);
+    assert(VP8EncQuantize2Blocks != NULL);
+    assert(VP8FTransform2 != NULL);
+    assert(VP8EncPredLuma4 != NULL);
+    assert(VP8EncPredLuma16 != NULL);
+    assert(VP8EncPredChroma8 != NULL);
+    assert(VP8Mean16x4 != NULL);
+    assert(VP8EncQuantizeBlockWHT != NULL);
+    assert(VP8Copy4x4 != NULL);
+    assert(VP8Copy16x8 != NULL);
 }

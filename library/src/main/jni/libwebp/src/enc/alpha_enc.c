@@ -235,7 +235,7 @@ static uint32_t GetFilterMap(const uint8_t *alpha, int width, int height,
 
 static void InitFilterTrial(FilterTrial *const score) {
     score->score = (size_t)
-    ~0U;
+            ~0U;
     VP8BitWriterInit(&score->bw, 0);
 }
 

@@ -20,12 +20,12 @@ namespace glide {
  * @param ... sprintf-style args
  * @return 0 on success; a negative value on failure
  */
-jint throwException(JNIEnv* pEnv, const char* szClassName, const char* szFmt, va_list va_args) {
-    char szMsg[MSG_SIZE];
-    vsnprintf(szMsg, MSG_SIZE, szFmt, va_args);
-    jclass exClass = pEnv->FindClass(szClassName);
-    return pEnv->ThrowNew(exClass, szMsg);
-}
+    jint throwException(JNIEnv *pEnv, const char *szClassName, const char *szFmt, va_list va_args) {
+        char szMsg[MSG_SIZE];
+        vsnprintf(szMsg, MSG_SIZE, szFmt, va_args);
+        jclass exClass = pEnv->FindClass(szClassName);
+        return pEnv->ThrowNew(exClass, szMsg);
+    }
 
 /**
  * Instructs the JNI environment to throw a NoClassDefFoundError.
@@ -35,13 +35,13 @@ jint throwException(JNIEnv* pEnv, const char* szClassName, const char* szFmt, va
  * @param ... sprintf-style args
  * @return 0 on success; a negative value on failure
  */
-jint throwNoClassDefError(JNIEnv* pEnv, const char* szFmt, ...) {
-    va_list va_args;
-    va_start(va_args, szFmt);
-    jint ret = throwException(pEnv, "java/lang/NoClassDefFoundError", szFmt, va_args);
-    va_end(va_args);
-    return ret;
-}
+    jint throwNoClassDefError(JNIEnv *pEnv, const char *szFmt, ...) {
+        va_list va_args;
+        va_start(va_args, szFmt);
+        jint ret = throwException(pEnv, "java/lang/NoClassDefFoundError", szFmt, va_args);
+        va_end(va_args);
+        return ret;
+    }
 
 /**
  * Instructs the JNI environment to throw a RuntimeException.
@@ -51,13 +51,13 @@ jint throwNoClassDefError(JNIEnv* pEnv, const char* szFmt, ...) {
  * @param ... sprintf-style args
  * @return 0 on success; a negative value on failure
  */
-jint throwRuntimeException(JNIEnv* pEnv, const char* szFmt, ...) {
-    va_list va_args;
-    va_start(va_args, szFmt);
-    jint ret = throwException(pEnv, "java/lang/RuntimeException", szFmt, va_args);
-    va_end(va_args);
-    return ret;
-}
+    jint throwRuntimeException(JNIEnv *pEnv, const char *szFmt, ...) {
+        va_list va_args;
+        va_start(va_args, szFmt);
+        jint ret = throwException(pEnv, "java/lang/RuntimeException", szFmt, va_args);
+        va_end(va_args);
+        return ret;
+    }
 
 /**
  * Instructs the JNI environment to throw an IllegalArgumentException.
@@ -67,13 +67,13 @@ jint throwRuntimeException(JNIEnv* pEnv, const char* szFmt, ...) {
  * @param ... sprintf-style args
  * @return 0 on success; a negative value on failure
  */
-jint throwIllegalArgumentException(JNIEnv* pEnv, const char* szFmt, ...) {
-    va_list va_args;
-    va_start(va_args, szFmt);
-    jint ret = throwException(pEnv, "java/lang/IllegalArgumentException", szFmt, va_args);
-    va_end(va_args);
-    return ret;
-}
+    jint throwIllegalArgumentException(JNIEnv *pEnv, const char *szFmt, ...) {
+        va_list va_args;
+        va_start(va_args, szFmt);
+        jint ret = throwException(pEnv, "java/lang/IllegalArgumentException", szFmt, va_args);
+        va_end(va_args);
+        return ret;
+    }
 
 /**
  * Instructs the JNI environment to throw an IllegalStateException.
@@ -83,13 +83,13 @@ jint throwIllegalArgumentException(JNIEnv* pEnv, const char* szFmt, ...) {
  * @param ... sprintf-style args
  * @return 0 on success; a negative value on failure
  */
-jint throwIllegalStateException(JNIEnv* pEnv, const char* szFmt, ...) {
-    va_list va_args;
-    va_start(va_args, szFmt);
-    jint ret = throwException(pEnv, "java/lang/IllegalStateException", szFmt, va_args);
-    va_end(va_args);
-    return ret;
-}
+    jint throwIllegalStateException(JNIEnv *pEnv, const char *szFmt, ...) {
+        va_list va_args;
+        va_start(va_args, szFmt);
+        jint ret = throwException(pEnv, "java/lang/IllegalStateException", szFmt, va_args);
+        va_end(va_args);
+        return ret;
+    }
 
 /**
  * Instructs the JNI environment to throw an OutOfMemoryError.
@@ -99,13 +99,13 @@ jint throwIllegalStateException(JNIEnv* pEnv, const char* szFmt, ...) {
  * @param ... sprintf-style args
  * @return 0 on success; a negative value on failure
  */
-jint throwOutOfMemoryError(JNIEnv* pEnv, const char* szFmt, ...) {
-    va_list va_args;
-    va_start(va_args, szFmt);
-    jint ret = throwException(pEnv, "java/lang/OutOfMemoryError", szFmt, va_args);
-    va_end(va_args);
-    return ret;
-}
+    jint throwOutOfMemoryError(JNIEnv *pEnv, const char *szFmt, ...) {
+        va_list va_args;
+        va_start(va_args, szFmt);
+        jint ret = throwException(pEnv, "java/lang/OutOfMemoryError", szFmt, va_args);
+        va_end(va_args);
+        return ret;
+    }
 
 /**
  * Instructs the JNI environment to throw an AssertionError.
@@ -115,13 +115,13 @@ jint throwOutOfMemoryError(JNIEnv* pEnv, const char* szFmt, ...) {
  * @param ... sprintf-style args
  * @return 0 on success; a negative value on failure
  */
-jint throwAssertionError(JNIEnv* pEnv, const char* szFmt, ...) {
-    va_list va_args;
-    va_start(va_args, szFmt);
-    jint ret = throwException(pEnv, "java/lang/AssertionError", szFmt, va_args);
-    va_end(va_args);
-    return ret;
-}
+    jint throwAssertionError(JNIEnv *pEnv, const char *szFmt, ...) {
+        va_list va_args;
+        va_start(va_args, szFmt);
+        jint ret = throwException(pEnv, "java/lang/AssertionError", szFmt, va_args);
+        va_end(va_args);
+        return ret;
+    }
 
 /**
  * Instructs the JNI environment to throw an IOException.
@@ -131,13 +131,13 @@ jint throwAssertionError(JNIEnv* pEnv, const char* szFmt, ...) {
  * @param ... sprintf-style args
  * @return 0 on success; a negative value on failure
  */
-jint throwIOException(JNIEnv* pEnv, const char* szFmt, ...) {
-    va_list va_args;
-    va_start(va_args, szFmt);
-    jint ret = throwException(pEnv, "java/io/IOException", szFmt, va_args);
-    va_end(va_args);
-    return ret;
-}
+    jint throwIOException(JNIEnv *pEnv, const char *szFmt, ...) {
+        va_list va_args;
+        va_start(va_args, szFmt);
+        jint ret = throwException(pEnv, "java/io/IOException", szFmt, va_args);
+        va_end(va_args);
+        return ret;
+    }
 
 /**
  * Finds the specified class. If it's not found, instructs the JNI environment to throw an
@@ -148,13 +148,13 @@ jint throwIOException(JNIEnv* pEnv, const char* szFmt, ...) {
  * @return the class or NULL if not found (in which case a pending exception will be queued). This
  *     returns a global reference (JNIEnv::NewGlobalRef).
  */
-jclass findClassOrThrow(JNIEnv* pEnv, const char* szClassName) {
-    jclass clazz = pEnv->FindClass(szClassName);
-    if (!clazz) {
-        return NULL;
+    jclass findClassOrThrow(JNIEnv *pEnv, const char *szClassName) {
+        jclass clazz = pEnv->FindClass(szClassName);
+        if (!clazz) {
+            return NULL;
+        }
+        return (jclass) pEnv->NewGlobalRef(clazz);
     }
-    return (jclass) pEnv->NewGlobalRef(clazz);
-}
 
 /**
  * Finds the specified field of the specified class. If it's not found, instructs the JNI
@@ -166,9 +166,9 @@ jclass findClassOrThrow(JNIEnv* pEnv, const char* szClassName) {
  * @param szSig the signature of the field
  * @return the field or NULL if not found (in which case a pending exception will be queued)
  */
-jfieldID getFieldIdOrThrow(JNIEnv* pEnv, jclass clazz, const char* szFieldName, const char* szSig) {
-    return pEnv->GetFieldID(clazz, szFieldName, szSig);
-}
+    jfieldID getFieldIdOrThrow(JNIEnv *pEnv, jclass clazz, const char *szFieldName, const char *szSig) {
+        return pEnv->GetFieldID(clazz, szFieldName, szSig);
+    }
 
 /**
  * Finds the specified field of the specified class. If it's not found, instructs the JNI
@@ -180,9 +180,9 @@ jfieldID getFieldIdOrThrow(JNIEnv* pEnv, jclass clazz, const char* szFieldName, 
  * @param szSig the signature of the field
  * @return the field or NULL if not found (in which case a pending exception will be queued)
  */
-jfieldID getStaticFieldIdOrThrow(JNIEnv* pEnv, jclass clazz, const char* szFieldName, const char* szSig) {
-    return pEnv->GetStaticFieldID(clazz, szFieldName, szSig);
-}
+    jfieldID getStaticFieldIdOrThrow(JNIEnv *pEnv, jclass clazz, const char *szFieldName, const char *szSig) {
+        return pEnv->GetStaticFieldID(clazz, szFieldName, szSig);
+    }
 
 /**
  * Finds the specified method of the specified class. If it's not found, instructs the JNI
@@ -194,13 +194,13 @@ jfieldID getStaticFieldIdOrThrow(JNIEnv* pEnv, jclass clazz, const char* szField
  * @param szSig the signature of the method
  * @return the method or NULL if not found (in which case a pending exception will be queued)
  */
-jmethodID getMethodIdOrThrow(
-        JNIEnv* pEnv,
-        jclass clazz,
-        const char* szMethodName,
-        const char* szSig) {
-    return pEnv->GetMethodID(clazz, szMethodName, szSig);
-}
+    jmethodID getMethodIdOrThrow(
+            JNIEnv *pEnv,
+            jclass clazz,
+            const char *szMethodName,
+            const char *szSig) {
+        return pEnv->GetMethodID(clazz, szMethodName, szSig);
+    }
 
 /**
  * Finds the specified method of the specified class. If it's not found, instructs the JNI
@@ -212,12 +212,12 @@ jmethodID getMethodIdOrThrow(
  * @param szSig the signature of the method
  * @return the method or NULL if not found (in which case a pending exception will be queued)
  */
-jmethodID getStaticMethodIdOrThrow(
-        JNIEnv* pEnv,
-        jclass clazz,
-        const char* szMethodName,
-        const char* szSig) {
-    return pEnv->GetStaticMethodID(clazz, szMethodName, szSig);
-}
+    jmethodID getStaticMethodIdOrThrow(
+            JNIEnv *pEnv,
+            jclass clazz,
+            const char *szMethodName,
+            const char *szSig) {
+        return pEnv->GetStaticMethodID(clazz, szMethodName, szSig);
+    }
 
 } // namespace glide

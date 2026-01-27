@@ -87,41 +87,41 @@ extern void WebPInitSamplersMIPS32(void);
 extern void WebPInitSamplersMIPSdspR2(void);
 
 WEBP_DSP_INIT_FUNC(WebPInitSamplers) {
-        WebPSamplers[MODE_RGB] = YuvToRgbRow;
-        WebPSamplers[MODE_RGBA]      = YuvToRgbaRow;
-        WebPSamplers[MODE_BGR]       = YuvToBgrRow;
-        WebPSamplers[MODE_BGRA]      = YuvToBgraRow;
-        WebPSamplers[MODE_ARGB]      = YuvToArgbRow;
-        WebPSamplers[MODE_RGBA_4444] = YuvToRgba4444Row;
-        WebPSamplers[MODE_RGB_565]   = YuvToRgb565Row;
-        WebPSamplers[MODE_rgbA]      = YuvToRgbaRow;
-        WebPSamplers[MODE_bgrA]      = YuvToBgraRow;
-        WebPSamplers[MODE_Argb]      = YuvToArgbRow;
-        WebPSamplers[MODE_rgbA_4444] = YuvToRgba4444Row;
+    WebPSamplers[MODE_RGB] = YuvToRgbRow;
+    WebPSamplers[MODE_RGBA] = YuvToRgbaRow;
+    WebPSamplers[MODE_BGR] = YuvToBgrRow;
+    WebPSamplers[MODE_BGRA] = YuvToBgraRow;
+    WebPSamplers[MODE_ARGB] = YuvToArgbRow;
+    WebPSamplers[MODE_RGBA_4444] = YuvToRgba4444Row;
+    WebPSamplers[MODE_RGB_565] = YuvToRgb565Row;
+    WebPSamplers[MODE_rgbA] = YuvToRgbaRow;
+    WebPSamplers[MODE_bgrA] = YuvToBgraRow;
+    WebPSamplers[MODE_Argb] = YuvToArgbRow;
+    WebPSamplers[MODE_rgbA_4444] = YuvToRgba4444Row;
 
-        // If defined, use CPUInfo() to overwrite some pointers with faster versions.
-        if (VP8GetCPUInfo != NULL) {
+    // If defined, use CPUInfo() to overwrite some pointers with faster versions.
+    if (VP8GetCPUInfo != NULL) {
 #if defined(WEBP_HAVE_SSE2)
-            if (VP8GetCPUInfo(kSSE2)) {
-              WebPInitSamplersSSE2();
-            }
+        if (VP8GetCPUInfo(kSSE2)) {
+            WebPInitSamplersSSE2();
+        }
 #endif  // WEBP_HAVE_SSE2
 #if defined(WEBP_HAVE_SSE41)
-            if (VP8GetCPUInfo(kSSE4_1)) {
-              WebPInitSamplersSSE41();
-            }
+        if (VP8GetCPUInfo(kSSE4_1)) {
+          WebPInitSamplersSSE41();
+        }
 #endif  // WEBP_HAVE_SSE41
 #if defined(WEBP_USE_MIPS32)
-            if (VP8GetCPUInfo(kMIPS32)) {
-              WebPInitSamplersMIPS32();
-            }
+        if (VP8GetCPUInfo(kMIPS32)) {
+          WebPInitSamplersMIPS32();
+        }
 #endif  // WEBP_USE_MIPS32
 #if defined(WEBP_USE_MIPS_DSP_R2)
-            if (VP8GetCPUInfo(kMIPSdspR2)) {
-              WebPInitSamplersMIPSdspR2();
-            }
-#endif  // WEBP_USE_MIPS_DSP_R2
+        if (VP8GetCPUInfo(kMIPSdspR2)) {
+          WebPInitSamplersMIPSdspR2();
         }
+#endif  // WEBP_USE_MIPS_DSP_R2
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -224,26 +224,26 @@ extern void WebPInitConvertARGBToYUVSSE41(void);
 extern void WebPInitConvertARGBToYUVNEON(void);
 
 WEBP_DSP_INIT_FUNC(WebPInitConvertARGBToYUV) {
-        WebPConvertARGBToY = ConvertARGBToY_C;
-        WebPConvertARGBToUV = WebPConvertARGBToUV_C;
+    WebPConvertARGBToY = ConvertARGBToY_C;
+    WebPConvertARGBToUV = WebPConvertARGBToUV_C;
 
-        WebPConvertRGB24ToY = ConvertRGB24ToY_C;
-        WebPConvertBGR24ToY = ConvertBGR24ToY_C;
+    WebPConvertRGB24ToY = ConvertRGB24ToY_C;
+    WebPConvertBGR24ToY = ConvertBGR24ToY_C;
 
-        WebPConvertRGBA32ToUV = WebPConvertRGBA32ToUV_C;
+    WebPConvertRGBA32ToUV = WebPConvertRGBA32ToUV_C;
 
-        if (VP8GetCPUInfo != NULL) {
+    if (VP8GetCPUInfo != NULL) {
 #if defined(WEBP_HAVE_SSE2)
-            if (VP8GetCPUInfo(kSSE2)) {
-              WebPInitConvertARGBToYUVSSE2();
-            }
+        if (VP8GetCPUInfo(kSSE2)) {
+            WebPInitConvertARGBToYUVSSE2();
+        }
 #endif  // WEBP_HAVE_SSE2
 #if defined(WEBP_HAVE_SSE41)
-            if (VP8GetCPUInfo(kSSE4_1)) {
-              WebPInitConvertARGBToYUVSSE41();
-            }
-#endif  // WEBP_HAVE_SSE41
+        if (VP8GetCPUInfo(kSSE4_1)) {
+          WebPInitConvertARGBToYUVSSE41();
         }
+#endif  // WEBP_HAVE_SSE41
+    }
 
 #if defined(WEBP_HAVE_NEON)
         if (WEBP_NEON_OMIT_C_CODE ||
@@ -252,9 +252,9 @@ WEBP_DSP_INIT_FUNC(WebPInitConvertARGBToYUV) {
         }
 #endif  // WEBP_HAVE_NEON
 
-        assert(WebPConvertARGBToY != NULL);
-        assert(WebPConvertARGBToUV != NULL);
-        assert(WebPConvertRGB24ToY != NULL);
-        assert(WebPConvertBGR24ToY != NULL);
-        assert(WebPConvertRGBA32ToUV != NULL);
+    assert(WebPConvertARGBToY != NULL);
+    assert(WebPConvertARGBToUV != NULL);
+    assert(WebPConvertRGB24ToY != NULL);
+    assert(WebPConvertBGR24ToY != NULL);
+    assert(WebPConvertRGBA32ToUV != NULL);
 }

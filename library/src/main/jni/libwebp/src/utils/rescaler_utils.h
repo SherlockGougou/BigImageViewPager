@@ -81,6 +81,7 @@ static WEBP_INLINE
 int WebPRescalerInputDone(const WebPRescaler *const rescaler) {
     return (rescaler->src_y >= rescaler->src_height);
 }
+
 // Return true if output is finished
 static WEBP_INLINE
 int WebPRescalerOutputDone(const WebPRescaler *const rescaler) {

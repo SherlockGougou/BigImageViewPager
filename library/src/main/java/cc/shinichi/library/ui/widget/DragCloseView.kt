@@ -64,6 +64,7 @@ class DragCloseView @JvmOverloads constructor(
                 downY = ev.rawY
                 false
             }
+
             MotionEvent.ACTION_MOVE -> canInterceptDrag(ev)
             else -> false
         }
@@ -93,7 +94,7 @@ class DragCloseView @JvmOverloads constructor(
             // 动图
             imageAnime?.visibility == View.VISIBLE -> {
                 imageAnime!!.scale <= imageAnime!!.minimumScale + 0.001f &&
-                    (imageAnime!!.maxTouchCount == 0 || imageAnime!!.maxTouchCount == 1)
+                        (imageAnime!!.maxTouchCount == 0 || imageAnime!!.maxTouchCount == 1)
             }
             // 视频
             videoView?.visibility == View.VISIBLE -> true
@@ -108,6 +109,7 @@ class DragCloseView @JvmOverloads constructor(
                 downX = event.rawX
                 downY = event.rawY
             }
+
             MotionEvent.ACTION_MOVE -> {
                 if (ImagePreview.instance.isEnableDragClose) {
                     val hasVisibleContent = listOf(imageAnime, imageStatic, videoView)
@@ -117,6 +119,7 @@ class DragCloseView @JvmOverloads constructor(
                     }
                 }
             }
+
             MotionEvent.ACTION_UP -> onActionUp()
         }
         return true
@@ -178,6 +181,7 @@ class DragCloseView @JvmOverloads constructor(
                 override fun onAnimationEnd(animation: Animator) {
                     (context as? Activity)?.finish()
                 }
+
                 override fun onAnimationCancel(animation: Animator) {}
                 override fun onAnimationRepeat(animation: Animator) {}
             })

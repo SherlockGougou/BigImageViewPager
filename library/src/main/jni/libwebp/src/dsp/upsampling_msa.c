@@ -684,5 +684,7 @@ WEBP_TSAN_IGNORE_FUNCTION void WebPInitUpsamplersMSA(void) {
 #endif  // WEBP_USE_MSA
 
 #if !(defined(FANCY_UPSAMPLING) && defined(WEBP_USE_MSA))
+
 WEBP_DSP_INIT_STUB(WebPInitUpsamplersMSA)
+
 #endif

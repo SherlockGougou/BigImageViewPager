@@ -89,26 +89,26 @@ static int TBufferNewPage(VP8TBuffer *const b) {
 
 static WEBP_INLINE uint32_t
 AddToken(VP8TBuffer
-* const b,
-uint32_t bit,
+*const b,
+        uint32_t bit,
         uint32_t
-proba_idx,
-proba_t *const stats
+        proba_idx,
+        proba_t *const stats
 ) {
-assert (proba_idx<FIXED_PROBA_BIT);
-assert(bit
-<= 1);
-if (b->left_ > 0 ||
-TBufferNewPage(b)
-) {
-const int slot = --b->left_;
-b->tokens_[slot] = (bit << 15) |
-proba_idx;
-}
-VP8RecordStats(bit, stats
-);
-return
-bit;
+    assert (proba_idx < FIXED_PROBA_BIT);
+    assert(bit
+            <= 1);
+    if (b->left_ > 0 ||
+            TBufferNewPage(b)
+            ) {
+        const int slot = --b->left_;
+        b->tokens_[slot] = (bit << 15) |
+                proba_idx;
+    }
+    VP8RecordStats(bit, stats
+    );
+    return
+            bit;
 }
 
 static WEBP_INLINE void AddConstantToken(VP8TBuffer *const b,

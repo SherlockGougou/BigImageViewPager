@@ -7,9 +7,8 @@ import androidx.annotation.Keep;
 /**
  * Inner model class housing metadata for each animated webp frame.
  *
- * @see <a href="https://developers.google.com/speed/webp/docs/riff_container#animation">Container Specification</a>
- *
  * @author liuchun
+ * @see <a href="https://developers.google.com/speed/webp/docs/riff_container#animation">Container Specification</a>
  */
 @Keep
 public class WebpFrame {
@@ -17,10 +16,6 @@ public class WebpFrame {
     // See comment in fixFrameDuration below.
     static final int MIN_FRAME_DURATION_MS = 11;
     static final int FRAME_DURATION_MS_FOR_MIN = 100;
-
-    // Access from Native
-    @Keep
-    private long mNativePtr;
     /**
      * XOffset, YOffset, Frame Width, Frame Height
      */
@@ -39,6 +34,9 @@ public class WebpFrame {
      * displayed (before rendering the next frame) on the canvas:
      */
     boolean disposeBackgroundColor;
+    // Access from Native
+    @Keep
+    private long mNativePtr;
 
     // Called from JNI
     WebpFrame(long nativePtr, int xOffset, int yOffset, int width, int height,
@@ -111,6 +109,8 @@ public class WebpFrame {
     }
 
     private native void nativeRenderFrame(int width, int height, Bitmap bitmap);
+
     private native void nativeDispose();
+
     private native void nativeFinalize();
 }

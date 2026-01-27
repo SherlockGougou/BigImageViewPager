@@ -249,11 +249,11 @@ static WebPChunk **GetChunkListFromId(const WebPMuxImage *const wpi,
     assert(wpi != NULL);
     switch (id) {
         case WEBP_CHUNK_ANMF:
-            return (WebPChunk * *) & wpi->header_;
+            return (WebPChunk **) &wpi->header_;
         case WEBP_CHUNK_ALPHA:
-            return (WebPChunk * *) & wpi->alpha_;
+            return (WebPChunk **) &wpi->alpha_;
         case WEBP_CHUNK_IMAGE:
-            return (WebPChunk * *) & wpi->img_;
+            return (WebPChunk **) &wpi->img_;
         default:
             return NULL;
     }
@@ -352,10 +352,10 @@ WebPMuxError MuxImageGetNth(const WebPMuxImage **wpi_list, uint32_t nth,
     assert(wpi_list);
     assert(wpi);
     if (!SearchImageToGetOrDelete((WebPMuxImage **) wpi_list, nth,
-            (WebPMuxImage * **) & wpi_list)) {
+            (WebPMuxImage ***) &wpi_list)) {
         return WEBP_MUX_NOT_FOUND;
     }
-    *wpi = (WebPMuxImage * ) * wpi_list;
+    *wpi = (WebPMuxImage *) *wpi_list;
     return WEBP_MUX_OK;
 }
 
@@ -426,17 +426,17 @@ WebPChunk **MuxGetChunkListFromId(const WebPMux *mux, WebPChunkId id) {
     assert(mux != NULL);
     switch (id) {
         case WEBP_CHUNK_VP8X:
-            return (WebPChunk * *) & mux->vp8x_;
+            return (WebPChunk **) &mux->vp8x_;
         case WEBP_CHUNK_ICCP:
-            return (WebPChunk * *) & mux->iccp_;
+            return (WebPChunk **) &mux->iccp_;
         case WEBP_CHUNK_ANIM:
-            return (WebPChunk * *) & mux->anim_;
+            return (WebPChunk **) &mux->anim_;
         case WEBP_CHUNK_EXIF:
-            return (WebPChunk * *) & mux->exif_;
+            return (WebPChunk **) &mux->exif_;
         case WEBP_CHUNK_XMP:
-            return (WebPChunk * *) & mux->xmp_;
+            return (WebPChunk **) &mux->xmp_;
         default:
-            return (WebPChunk * *) & mux->unknown_;
+            return (WebPChunk **) &mux->unknown_;
     }
 }
 

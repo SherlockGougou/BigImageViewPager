@@ -691,7 +691,7 @@ class ImagePreviewFragment : Fragment() {
         Thread {
             val fileFullName = System.currentTimeMillis().toString()
             val saveDir = getAvailableCacheDir(imagePreviewActivity!!)?.absolutePath +
-                File.separator + "image/"
+                    File.separator + "image/"
             val downloadFile = downloadFile(url, fileFullName, saveDir)
 
             Handler(Looper.getMainLooper()).post {
@@ -735,7 +735,7 @@ class ImagePreviewFragment : Fragment() {
             if (e != null) {
                 errorMsg = e.localizedMessage as String
             }
-            ToastUtil.instance.showShort(GlobalContext.getContext(), errorMsg)
+            ToastUtil.showShort(GlobalContext.getContext(), errorMsg)
         }
     }
 
@@ -831,7 +831,7 @@ class ImagePreviewFragment : Fragment() {
         imagePhotoView?.visibility = View.VISIBLE
 
         val isAnimWebpOrAvif = ImageUtil.isAnimWebp(imageUrl, imagePath) ||
-            ImageUtil.isAvifImageWithMime(imageUrl, imagePath)
+                ImageUtil.isAvifImageWithMime(imageUrl, imagePath)
         val isResourceImage = ImageUtil.isResourceImage(imageUrl)
 
         if (isAnimWebpOrAvif || isResourceImage) {

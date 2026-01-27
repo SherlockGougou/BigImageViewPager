@@ -62,6 +62,7 @@ public class WebpBitmapFactory {
 
     /**
      * 设置webp的BitmapOptions
+     *
      * @param bitmap
      * @param opts
      */
@@ -74,6 +75,7 @@ public class WebpBitmapFactory {
 
     /**
      * 设置BitmapOptions的宽高
+     *
      * @param options
      * @param imageWidth
      * @param imageHeight
@@ -95,6 +97,7 @@ public class WebpBitmapFactory {
 
     /**
      * 创建Bitmap对象
+     *
      * @param width
      * @param height
      * @param options
@@ -124,6 +127,7 @@ public class WebpBitmapFactory {
 
     /**
      * 设置默认的padding
+     *
      * @param padding
      */
     private static void setDefaultPadding(Rect padding) {
@@ -139,6 +143,7 @@ public class WebpBitmapFactory {
      * 是否需要使用libwebp进行webp解码
      * 1. sUseSystemDecoder=true, 4.2以下系统针对无损和透明webp图片
      * 2. sUseSystemDecoder=false, Android所有版本都使用libwebp解码
+     *
      * @param headers
      * @param offset
      * @param length
@@ -164,6 +169,7 @@ public class WebpBitmapFactory {
 
     /**
      * 读取图片Header字节
+     *
      * @param is
      * @return
      */
@@ -187,6 +193,7 @@ public class WebpBitmapFactory {
 
     /**
      * 包装流
+     *
      * @param inputStream
      * @return
      */
@@ -201,7 +208,7 @@ public class WebpBitmapFactory {
     /**
      * Decode an immutable bitmap from the specified byte array.
      *
-     * @param data byte array of compressed image data
+     * @param data   byte array of compressed image data
      * @param offset offset into imageData for where the decoder should begin
      *               parsing.
      * @param length the number of bytes, beginning at offset, to parse
@@ -215,20 +222,20 @@ public class WebpBitmapFactory {
     /**
      * Decode an immutable bitmap from the specified byte array.
      *
-     * @param data byte array of compressed image data
+     * @param data   byte array of compressed image data
      * @param offset offset into imageData for where the decoder should begin
      *               parsing.
      * @param length the number of bytes, beginning at offset, to parse
-     * @param opts null-ok; Options that control downsampling and whether the
-     *             image should be completely decoded, or just is size returned.
+     * @param opts   null-ok; Options that control downsampling and whether the
+     *               image should be completely decoded, or just is size returned.
      * @return The decoded bitmap, or null if the image data could not be
-     *         decoded, or, if opts is non-null, if opts requested only the
-     *         size be returned (in opts.outWidth and opts.outHeight)
+     * decoded, or, if opts is non-null, if opts requested only the
+     * size be returned (in opts.outWidth and opts.outHeight)
      * @throws IllegalArgumentException if {@link BitmapFactory.Options#inPreferredConfig}
-     *         is {@link Bitmap.Config#HARDWARE}
-     *         and {@link BitmapFactory.Options#inMutable} is set, if the specified color space
-     *         is not {@link ColorSpace.Model#RGB RGB}, or if the specified color space's transfer
-     *         function is not an {@link ColorSpace.Rgb.TransferParameters ICC parametric curve}
+     *                                  is {@link Bitmap.Config#HARDWARE}
+     *                                  and {@link BitmapFactory.Options#inMutable} is set, if the specified color space
+     *                                  is not {@link ColorSpace.Model#RGB RGB}, or if the specified color space's transfer
+     *                                  function is not an {@link ColorSpace.Rgb.TransferParameters ICC parametric curve}
      */
     public static Bitmap decodeByteArray(byte[] data, int offset, int length, BitmapFactory.Options opts) {
         if ((offset | length) < 0 || data.length < offset + length) {
@@ -266,16 +273,16 @@ public class WebpBitmapFactory {
      * or cannot be decoded into a bitmap, the function returns null.
      *
      * @param pathName complete path name for the file to be decoded.
-     * @param opts null-ok; Options that control downsampling and whether the
-     *             image should be completely decoded, or just is size returned.
+     * @param opts     null-ok; Options that control downsampling and whether the
+     *                 image should be completely decoded, or just is size returned.
      * @return The decoded bitmap, or null if the image data could not be
-     *         decoded, or, if opts is non-null, if opts requested only the
-     *         size be returned (in opts.outWidth and opts.outHeight)
+     * decoded, or, if opts is non-null, if opts requested only the
+     * size be returned (in opts.outWidth and opts.outHeight)
      * @throws IllegalArgumentException if {@link BitmapFactory.Options#inPreferredConfig}
-     *         is {@link Bitmap.Config#HARDWARE}
-     *         and {@link BitmapFactory.Options#inMutable} is set, if the specified color space
-     *         is not {@link ColorSpace.Model#RGB RGB}, or if the specified color space's transfer
-     *         function is not an {@link ColorSpace.Rgb.TransferParameters ICC parametric curve}
+     *                                  is {@link Bitmap.Config#HARDWARE}
+     *                                  and {@link BitmapFactory.Options#inMutable} is set, if the specified color space
+     *                                  is not {@link ColorSpace.Model#RGB RGB}, or if the specified color space's transfer
+     *                                  function is not an {@link ColorSpace.Rgb.TransferParameters ICC parametric curve}
      */
     public static Bitmap decodeFile(String pathName, BitmapFactory.Options opts) {
 
@@ -307,7 +314,7 @@ public class WebpBitmapFactory {
      * with null Options.
      *
      * @param res The resources object containing the image data
-     * @param id The resource id of the image data
+     * @param id  The resource id of the image data
      * @return The decoded bitmap, or null if the image could not be decoded.
      */
     public static Bitmap decodeResource(Resources res, int id) {
@@ -319,18 +326,18 @@ public class WebpBitmapFactory {
      * Synonym for opening the given resource and calling
      * {@link #decodeResourceStream}.
      *
-     * @param res   The resources object containing the image data
-     * @param id The resource id of the image data
+     * @param res  The resources object containing the image data
+     * @param id   The resource id of the image data
      * @param opts null-ok; Options that control downsampling and whether the
      *             image should be completely decoded, or just is size returned.
      * @return The decoded bitmap, or null if the image data could not be
-     *         decoded, or, if opts is non-null, if opts requested only the
-     *         size be returned (in opts.outWidth and opts.outHeight)
+     * decoded, or, if opts is non-null, if opts requested only the
+     * size be returned (in opts.outWidth and opts.outHeight)
      * @throws IllegalArgumentException if {@link BitmapFactory.Options#inPreferredConfig}
-     *         is {@link Bitmap.Config#HARDWARE}
-     *         and {@link BitmapFactory.Options#inMutable} is set, if the specified color space
-     *         is not {@link ColorSpace.Model#RGB RGB}, or if the specified color space's transfer
-     *         function is not an {@link ColorSpace.Rgb.TransferParameters ICC parametric curve}
+     *                                  is {@link Bitmap.Config#HARDWARE}
+     *                                  and {@link BitmapFactory.Options#inMutable} is set, if the specified color space
+     *                                  is not {@link ColorSpace.Model#RGB RGB}, or if the specified color space's transfer
+     *                                  function is not an {@link ColorSpace.Rgb.TransferParameters ICC parametric curve}
      */
     public static Bitmap decodeResource(Resources res, int id, BitmapFactory.Options opts) {
 
@@ -365,11 +372,12 @@ public class WebpBitmapFactory {
     /**
      * Decode a new Bitmap from an InputStream. This InputStream was obtained from
      * resources, which we pass to be able to scale the bitmap accordingly.
+     *
      * @throws IllegalArgumentException if {@link BitmapFactory.Options#inPreferredConfig}
-     *         is {@link Bitmap.Config#HARDWARE}
-     *         and {@link BitmapFactory.Options#inMutable} is set, if the specified color space
-     *         is not {@link ColorSpace.Model#RGB RGB}, or if the specified color space's transfer
-     *         function is not an {@link ColorSpace.Rgb.TransferParameters ICC parametric curve}
+     *                                  is {@link Bitmap.Config#HARDWARE}
+     *                                  and {@link BitmapFactory.Options#inMutable} is set, if the specified color space
+     *                                  is not {@link ColorSpace.Model#RGB RGB}, or if the specified color space's transfer
+     *                                  function is not an {@link ColorSpace.Rgb.TransferParameters ICC parametric curve}
      */
     public static Bitmap decodeResourceStream(Resources res, TypedValue value,
                                               InputStream is, Rect pad, BitmapFactory.Options opts) {
@@ -394,7 +402,6 @@ public class WebpBitmapFactory {
     }
 
 
-
     /**
      * Decode a bitmap from the file descriptor. If the bitmap cannot be decoded
      * return null. The position within the descriptor will not be changed when
@@ -413,19 +420,19 @@ public class WebpBitmapFactory {
      * return null. The position within the descriptor will not be changed when
      * this returns, so the descriptor can be used again as-is.
      *
-     * @param fd The file descriptor containing the bitmap data to decode
+     * @param fd         The file descriptor containing the bitmap data to decode
      * @param outPadding If not null, return the padding rect for the bitmap if
      *                   it exists, otherwise set padding to [-1,-1,-1,-1]. If
      *                   no bitmap is returned (null) then padding is
      *                   unchanged.
-     * @param opts null-ok; Options that control downsampling and whether the
-     *             image should be completely decoded, or just its size returned.
+     * @param opts       null-ok; Options that control downsampling and whether the
+     *                   image should be completely decoded, or just its size returned.
      * @return the decoded bitmap, or null
      * @throws IllegalArgumentException if {@link BitmapFactory.Options#inPreferredConfig}
-     *         is {@link Bitmap.Config#HARDWARE}
-     *         and {@link BitmapFactory.Options#inMutable} is set, if the specified color space
-     *         is not {@link ColorSpace.Model#RGB RGB}, or if the specified color space's transfer
-     *         function is not an {@link ColorSpace.Rgb.TransferParameters ICC parametric curve}
+     *                                  is {@link Bitmap.Config#HARDWARE}
+     *                                  and {@link BitmapFactory.Options#inMutable} is set, if the specified color space
+     *                                  is not {@link ColorSpace.Model#RGB RGB}, or if the specified color space's transfer
+     *                                  function is not an {@link ColorSpace.Rgb.TransferParameters ICC parametric curve}
      */
     public static Bitmap decodeFileDescriptor(FileDescriptor fd, Rect outPadding, BitmapFactory.Options opts) {
 
@@ -473,27 +480,27 @@ public class WebpBitmapFactory {
      * The stream's position will be where ever it was after the encoded data
      * was read.
      *
-     * @param is The input stream that holds the raw data to be decoded into a
-     *           bitmap.
+     * @param is         The input stream that holds the raw data to be decoded into a
+     *                   bitmap.
      * @param outPadding If not null, return the padding rect for the bitmap if
      *                   it exists, otherwise set padding to [-1,-1,-1,-1]. If
      *                   no bitmap is returned (null) then padding is
      *                   unchanged.
-     * @param opts null-ok; Options that control downsampling and whether the
-     *             image should be completely decoded, or just is size returned.
+     * @param opts       null-ok; Options that control downsampling and whether the
+     *                   image should be completely decoded, or just is size returned.
      * @return The decoded bitmap, or null if the image data could not be
-     *         decoded, or, if opts is non-null, if opts requested only the
-     *         size be returned (in opts.outWidth and opts.outHeight)
+     * decoded, or, if opts is non-null, if opts requested only the
+     * size be returned (in opts.outWidth and opts.outHeight)
      * @throws IllegalArgumentException if {@link BitmapFactory.Options#inPreferredConfig}
-     *         is {@link Bitmap.Config#HARDWARE}
-     *         and {@link BitmapFactory.Options#inMutable} is set, if the specified color space
-     *         is not {@link ColorSpace.Model#RGB RGB}, or if the specified color space's transfer
-     *         function is not an {@link ColorSpace.Rgb.TransferParameters ICC parametric curve}
+     *                                  is {@link Bitmap.Config#HARDWARE}
+     *                                  and {@link BitmapFactory.Options#inMutable} is set, if the specified color space
+     *                                  is not {@link ColorSpace.Model#RGB RGB}, or if the specified color space's transfer
+     *                                  function is not an {@link ColorSpace.Rgb.TransferParameters ICC parametric curve}
      *
-     * <p class="note">Prior to {@link Build.VERSION_CODES#KITKAT},
-     * if {@link InputStream#markSupported is.markSupported()} returns true,
-     * <code>is.mark(1024)</code> would be called. As of
-     * {@link Build.VERSION_CODES#KITKAT}, this is no longer the case.</p>
+     *                                  <p class="note">Prior to {@link Build.VERSION_CODES#KITKAT},
+     *                                  if {@link InputStream#markSupported is.markSupported()} returns true,
+     *                                  <code>is.mark(1024)</code> would be called. As of
+     *                                  {@link Build.VERSION_CODES#KITKAT}, this is no longer the case.</p>
      */
     public static Bitmap decodeStream(InputStream is, Rect outPadding, BitmapFactory.Options opts) {
         // we don't throw in this case, thus allowing the caller to only check
@@ -554,6 +561,7 @@ public class WebpBitmapFactory {
 
     private static native Bitmap nativeDecodeStream(InputStream is, BitmapFactory.Options opts,
                                                     float scale, byte[] inTempStorage);
+
     private static native Bitmap nativeDecodeByteArray(byte[] data, int offset,
                                                        int length, BitmapFactory.Options opts,
                                                        float scale, byte[] inTempStorage);

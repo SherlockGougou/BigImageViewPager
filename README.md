@@ -38,8 +38,8 @@
 
 - **androidx-8.4.7**：支持32位的16KB page size特性
 - **androidx-8.4.6**：新增支持res资源
-- **androidx-8.4.5**：新增自定义请求头功能  
-- **androidx-8.4.4**：修复本地视频加载存在的问题  
+- **androidx-8.4.5**：新增自定义请求头功能
+- **androidx-8.4.4**：修复本地视频加载存在的问题
 
 ---
 
@@ -92,7 +92,9 @@ allprojects {
 }
 ```
 
-在 `app/build.gradle` 中添加：最新版本 <a href="https://maven.org/"><img src="https://img.shields.io/maven-central/v/com.gouqinglin/BigImageViewPager.svg?label=Maven%20Central&color=blue" alt="Maven"></a>
+在 `app/build.gradle`
+中添加：最新版本 <a href="https://maven.org/"><img src="https://img.shields.io/maven-central/v/com.gouqinglin/BigImageViewPager.svg?label=Maven%20Central&color=blue" alt="Maven"></a>
+
 ```
 dependencies {
     // 必选：框架 
@@ -113,6 +115,7 @@ dependencies {
 ```
 
 ### 2️⃣ 配置 GlideModule
+
 ```
 @GlideModule
 public class MyAppGlideModule extends AppGlideModule {
@@ -127,9 +130,11 @@ public class MyAppGlideModule extends AppGlideModule {
   }
 }
 ```
+
 ⚠️ 必须配置，否则原图加载进度可能卡在 1%！
 
 ### 3️⃣ 调用示例
+
 ```
 ImagePreview
     .getInstance()
@@ -137,24 +142,29 @@ ImagePreview
     .setMediaInfoList(imageInfoList)
     .start();
 ```
+
 ### 详细配置文档：<a href="https://github.com/SherlockGougou/BigImageViewPager/blob/master/doc/DETAIL.md">详细文档</a>。
 
 ### 🙏 致谢
+
 - <a href="https://github.com/davemorrissey/subsampling-scale-image-view">subsampling-scale-image-view</a> —— 提供大图加载核心
 - <a href="https://github.com/sunfusheng/GlideImageView">GlideImageView</a> —— 进度监听实现参考
 
 ### 💬 社区交流
+
 <p align="center">
   <img src="image/qq.png" width="260" alt="QQ群">
 </p>
 
 ### ☕ 支持我
+
 <p align="center">
   <img src="image/pay-wepay.jpg" width="280">
   <img src="image/pay-alipay.jpg" width="280">
 </p>
 
 ### 📄 License
+
 ```
 Copyright (C) 2018 SherlockGougou
 Licensed under the Apache License, Version 2.0

@@ -27,8 +27,8 @@ class WebPDemuxerWrapper {
 
 public:
     WebPDemuxerWrapper(
-            std::unique_ptr<WebPDemuxer, decltype(&WebPDemuxDelete)>&& pDemuxer,
-            std::vector<uint8_t>&& pBuffer) :
+            std::unique_ptr<WebPDemuxer, decltype(&WebPDemuxDelete)> &&pDemuxer,
+            std::vector<uint8_t> &&pBuffer) :
             m_pDemuxer(std::move(pDemuxer)),
             m_pBuffer(std::move(pBuffer)) {
     }
@@ -37,7 +37,7 @@ public:
         //FBLOGD("Deleting Demuxer");
     }
 
-    WebPDemuxer* get() {
+    WebPDemuxer *get() {
         return m_pDemuxer.get();
     }
 
@@ -116,7 +116,7 @@ struct WebPFrame {
     bool blendWithPreviousFrame;
 
     /** Raw encoded bytes for the frame. Points to existing memory managed by WebPDemuxerWrapper */
-    const uint8_t* pPayload;
+    const uint8_t *pPayload;
 
     /** Size of payload in bytes */
     size_t payloadSize;
@@ -126,9 +126,9 @@ struct WebPFrame {
 };
 
 // Class Names
-static const char* const kWebpImageClassName =
+static const char *const kWebpImageClassName =
         "com/bumptech/glide/integration/webp/WebpImage";
-static const char* const kWebpFrameClassName =
+static const char *const kWebpFrameClassName =
         "com/bumptech/glide/integration/webp/WebpFrame";
 
 // Cached fields related to WebPImage
@@ -151,7 +151,7 @@ static jfieldID sWebPFrameFieldNativePtr;
  * @param vBuffer the vector containing the bytes
  * @return a newly allocated WebPImage
  */
-jobject WebPImage_nativeCreateFromByteVector(JNIEnv* pEnv, std::vector<uint8_t>& vBuffer) {
+jobject WebPImage_nativeCreateFromByteVector(JNIEnv *pEnv, std::vector<uint8_t> &vBuffer) {
     std::unique_ptr<WebPImage> spNativeWebpImage(new WebPImage());
     if (!spNativeWebpImage) {
         throwOutOfMemoryError(pEnv, "Unable to allocate native context");
@@ -164,7 +164,7 @@ jobject WebPImage_nativeCreateFromByteVector(JNIEnv* pEnv, std::vector<uint8_t>&
     webPData.size = vBuffer.size();
 
     // Create the WebPDemuxer
-    auto spDemuxer = std::unique_ptr<WebPDemuxer, decltype(&WebPDemuxDelete)> {
+    auto spDemuxer = std::unique_ptr<WebPDemuxer, decltype(&WebPDemuxDelete)>{
             WebPDemux(&webPData),
             WebPDemuxDelete
     };
@@ -212,13 +212,13 @@ jobject WebPImage_nativeCreateFromByteVector(JNIEnv* pEnv, std::vector<uint8_t>&
             sClazzWebPImage,
             sWebPImageConstructor,
             (jlong) spNativeWebpImage.get(),
-            (jint)spNativeWebpImage->pixelWidth,
-            (jint)spNativeWebpImage->pixelHeight,
-            (jint)spNativeWebpImage->numFrames,
-            (jint)spNativeWebpImage->durationMs,
+            (jint) spNativeWebpImage->pixelWidth,
+            (jint) spNativeWebpImage->pixelHeight,
+            (jint) spNativeWebpImage->numFrames,
+            (jint) spNativeWebpImage->durationMs,
             frameDurationsArr,
-            (jint)spNativeWebpImage->loopCount,
-            (jint)spNativeWebpImage->backgroundColor);
+            (jint) spNativeWebpImage->loopCount,
+            (jint) spNativeWebpImage->backgroundColor);
     if (ret != nullptr) {
         // Ownership was transferred.
         spNativeWebpImage->refCount = 1;
@@ -232,7 +232,7 @@ jobject WebPImage_nativeCreateFromByteVector(JNIEnv* pEnv, std::vector<uint8_t>&
  * Releases a reference to the WebPImageNativeContext and deletes it when the reference count
  * reaches 0
  */
-void WebPImageNative_releaseRef(JNIEnv* pEnv, jobject thiz, WebPImage* p) {
+void WebPImageNative_releaseRef(JNIEnv *pEnv, jobject thiz, WebPImage *p) {
     pEnv->MonitorEnter(thiz);
     p->refCount--;
     if (p->refCount == 0) {
@@ -245,13 +245,14 @@ void WebPImageNative_releaseRef(JNIEnv* pEnv, jobject thiz, WebPImage* p) {
  * Functor for getWebPImage that releases the reference.
  */
 struct WebPImageNativeReleaser {
-    JNIEnv* pEnv;
+    JNIEnv *pEnv;
     jobject webpImage;
 
-    WebPImageNativeReleaser(JNIEnv* pEnv, jobject webpImage) :
-            pEnv(pEnv), webpImage(webpImage) {}
+    WebPImageNativeReleaser(JNIEnv *pEnv, jobject webpImage) :
+            pEnv(pEnv), webpImage(webpImage) {
+    }
 
-    void operator()(WebPImage* pNativeContext) {
+    void operator()(WebPImage *pNativeContext) {
         WebPImageNative_releaseRef(pEnv, webpImage, pNativeContext);
     }
 };
@@ -265,14 +266,14 @@ struct WebPImageNativeReleaser {
  *    disposed
  */
 std::unique_ptr<WebPImage, WebPImageNativeReleaser>
-getWebPImageNative(JNIEnv* pEnv, jobject thiz) {
+getWebPImageNative(JNIEnv *pEnv, jobject thiz) {
 
     // A deleter that decrements the reference and possibly deletes the instance.
     WebPImageNativeReleaser releaser(pEnv, thiz);
     std::unique_ptr<WebPImage, WebPImageNativeReleaser> ret(nullptr, releaser);
     pEnv->MonitorEnter(thiz);
-    WebPImage* pNativeContext =
-            (WebPImage*) pEnv->GetLongField(thiz, sWebPImageFieldNativePtr);
+    WebPImage *pNativeContext =
+            (WebPImage *) pEnv->GetLongField(thiz, sWebPImageFieldNativePtr);
     if (pNativeContext != nullptr) {
         pNativeContext->refCount++;
         ret.reset(pNativeContext);
@@ -289,8 +290,8 @@ getWebPImageNative(JNIEnv* pEnv, jobject thiz) {
  *      of the buffer
  * @return a newly allocated WebPImage
  */
-jobject WebPImage_nativeCreateFromDirectByteBuffer(JNIEnv* pEnv, jclass clazz, jobject byteBuffer) {
-    jbyte* bbufInput = (jbyte*) pEnv->GetDirectBufferAddress(byteBuffer);
+jobject WebPImage_nativeCreateFromDirectByteBuffer(JNIEnv *pEnv, jclass clazz, jobject byteBuffer) {
+    jbyte *bbufInput = (jbyte *) pEnv->GetDirectBufferAddress(byteBuffer);
     if (!bbufInput) {
         throwIllegalArgumentException(pEnv, "ByteBuffer must be direct");
         return 0;
@@ -312,7 +313,7 @@ jobject WebPImage_nativeCreateFromDirectByteBuffer(JNIEnv* pEnv, jclass clazz, j
  * @param index the index of the frame
  * @return a newly created WebPFrame for the specified frame
  */
-jobject WebPImage_nativeGetFrame(JNIEnv* pEnv, jobject thiz, jint index) {
+jobject WebPImage_nativeGetFrame(JNIEnv *pEnv, jobject thiz, jint index) {
     auto spNativeWebPImage = getWebPImageNative(pEnv, thiz);
     if (!spNativeWebPImage) {
         throwIllegalStateException(pEnv, "Already disposed");
@@ -373,7 +374,7 @@ jobject WebPImage_nativeGetFrame(JNIEnv* pEnv, jobject thiz, jint index) {
  * Releases a reference to the WebPFrameNativeContext and deletes it when the reference count
  * reaches 0
  */
-void WebPFrameNative_releaseRef(JNIEnv* pEnv, jobject thiz, WebPFrame* p) {
+void WebPFrameNative_releaseRef(JNIEnv *pEnv, jobject thiz, WebPFrame *p) {
     // clear pending exception before call MonitorEnter
     if (pEnv->ExceptionOccurred()) {
         pEnv->ExceptionClear();
@@ -392,13 +393,14 @@ void WebPFrameNative_releaseRef(JNIEnv* pEnv, jobject thiz, WebPFrame* p) {
  * Functor for getWebPFrameNativeContext.
  */
 struct WebPFrameNativeReleaser {
-    JNIEnv* pEnv;
+    JNIEnv *pEnv;
     jobject webpFrame;
 
-    WebPFrameNativeReleaser(JNIEnv* pEnv, jobject webpFrame) :
-            pEnv(pEnv), webpFrame(webpFrame) {}
+    WebPFrameNativeReleaser(JNIEnv *pEnv, jobject webpFrame) :
+            pEnv(pEnv), webpFrame(webpFrame) {
+    }
 
-    void operator()(WebPFrame* pNativeContext) {
+    void operator()(WebPFrame *pNativeContext) {
         WebPFrameNative_releaseRef(pEnv, webpFrame, pNativeContext);
     }
 };
@@ -412,13 +414,13 @@ struct WebPFrameNativeReleaser {
  *    already been disposed
  */
 std::unique_ptr<WebPFrame, WebPFrameNativeReleaser>
-getWebPFrameNative(JNIEnv* pEnv, jobject thiz) {
+getWebPFrameNative(JNIEnv *pEnv, jobject thiz) {
 
     WebPFrameNativeReleaser releaser(pEnv, thiz);
     std::unique_ptr<WebPFrame, WebPFrameNativeReleaser> ret(nullptr, releaser);
     pEnv->MonitorEnter(thiz);
-    WebPFrame* pNativeContext =
-            (WebPFrame*) pEnv->GetLongField(thiz, sWebPFrameFieldNativePtr);
+    WebPFrame *pNativeContext =
+            (WebPFrame *) pEnv->GetLongField(thiz, sWebPFrameFieldNativePtr);
     if (pNativeContext != nullptr) {
         pNativeContext->refCount++;
         ret.reset(pNativeContext);
@@ -433,7 +435,7 @@ getWebPFrameNative(JNIEnv* pEnv, jobject thiz) {
  *
  * @return approximate size in bytes used by the {@link WebPImage}
  */
-jint WebPImage_nativeGetSizeInBytes(JNIEnv* pEnv, jobject thiz) {
+jint WebPImage_nativeGetSizeInBytes(JNIEnv *pEnv, jobject thiz) {
     auto spNativeWebPImage = getWebPImageNative(pEnv, thiz);
     if (!spNativeWebPImage) {
         throwIllegalStateException(pEnv, "Already disposed");
@@ -446,10 +448,10 @@ jint WebPImage_nativeGetSizeInBytes(JNIEnv* pEnv, jobject thiz) {
 /**
  * Disposes the WebImage, freeing native resources.
  */
-void WebImage_nativeDispose(JNIEnv* pEnv, jobject thiz) {
+void WebImage_nativeDispose(JNIEnv *pEnv, jobject thiz) {
     pEnv->MonitorEnter(thiz);
-    WebPImage* pNativeContext =
-            (WebPImage*) pEnv->GetLongField(thiz, sWebPImageFieldNativePtr);
+    WebPImage *pNativeContext =
+            (WebPImage *) pEnv->GetLongField(thiz, sWebPImageFieldNativePtr);
     if (pNativeContext != nullptr) {
         pEnv->SetLongField(thiz, sWebPImageFieldNativePtr, 0);
         WebPImageNative_releaseRef(pEnv, thiz, pNativeContext);
@@ -462,7 +464,7 @@ void WebImage_nativeDispose(JNIEnv* pEnv, jobject thiz) {
 /**
  * Finalizer for WebImage that frees native resources.
  */
-void WebImage_nativeFinalize(JNIEnv* pEnv, jobject thiz) {
+void WebImage_nativeFinalize(JNIEnv *pEnv, jobject thiz) {
     WebImage_nativeDispose(pEnv, thiz);
 }
 
@@ -480,7 +482,7 @@ void WebImage_nativeFinalize(JNIEnv* pEnv, jobject thiz) {
  * @param jPixels the array to render into
  */
 void WebPFrame_nativeRenderFrame(
-        JNIEnv* pEnv,
+        JNIEnv *pEnv,
         jobject thiz,
         jint width,
         jint height,
@@ -520,18 +522,18 @@ void WebPFrame_nativeRenderFrame(
         return;
     }
 
-    const uint8_t* pPayload = spNativeWebPFrame->pPayload;
+    const uint8_t *pPayload = spNativeWebPFrame->pPayload;
     size_t payloadSize = spNativeWebPFrame->payloadSize;
 
-    ret = (WebPGetFeatures(pPayload , payloadSize, &config.input) == VP8_STATUS_OK);
+    ret = (WebPGetFeatures(pPayload, payloadSize, &config.input) == VP8_STATUS_OK);
     if (!ret) {
         spNativeWebPFrame.reset();
         throwIllegalStateException(pEnv, "WebPGetFeatures failed");
         return;
     }
 
-    uint8_t* pixels;
-    if (AndroidBitmap_lockPixels(pEnv, bitmap, (void**) &pixels) != ANDROID_BITMAP_RESULT_SUCCESS) {
+    uint8_t *pixels;
+    if (AndroidBitmap_lockPixels(pEnv, bitmap, (void **) &pixels) != ANDROID_BITMAP_RESULT_SUCCESS) {
         spNativeWebPFrame.reset();
         throwIllegalStateException(pEnv, "Bad bitmap");
         return;
@@ -548,13 +550,13 @@ void WebPFrame_nativeRenderFrame(
     config.output.is_external_memory = 1;
     config.output.u.RGBA.rgba = pixels;
     config.output.u.RGBA.stride = bitmapInfo.stride;
-    config.output.u.RGBA.size   = bitmapInfo.stride * bitmapInfo.height;
+    config.output.u.RGBA.size = bitmapInfo.stride * bitmapInfo.height;
 
     ret = WebPDecode(pPayload, payloadSize, &config);
     AndroidBitmap_unlockPixels(pEnv, bitmap);
     if (ret != VP8_STATUS_OK) {
         __android_log_print(ANDROID_LOG_WARN, "GLIDE_WEBP",
-                        "Failed to decode frame, ret=%d", ret);
+                "Failed to decode frame, ret=%d", ret);
         spNativeWebPFrame.reset();
         throwIllegalStateException(pEnv, "Failed to decode frame. VP8StatusCode: %d", ret);
     }
@@ -564,7 +566,7 @@ void WebPFrame_nativeRenderFrame(
 /**
  * Disposes the WebPFrameIterator, freeing native resources.
  */
-void WebPFrame_nativeDispose(JNIEnv* pEnv, jobject thiz) {
+void WebPFrame_nativeDispose(JNIEnv *pEnv, jobject thiz) {
     // clear pending exception before call MonitorEnter
     if (pEnv->ExceptionOccurred()) {
         pEnv->ExceptionClear();
@@ -572,8 +574,8 @@ void WebPFrame_nativeDispose(JNIEnv* pEnv, jobject thiz) {
 
     //__android_log_print(ANDROID_LOG_DEBUG, "GLIDE_WEBP", "MonitorEnter called in WebPFrame_nativeDispose");
     pEnv->MonitorEnter(thiz);
-    WebPFrame* pNativeContext =
-            (WebPFrame*) pEnv->GetLongField(thiz, sWebPFrameFieldNativePtr);
+    WebPFrame *pNativeContext =
+            (WebPFrame *) pEnv->GetLongField(thiz, sWebPFrameFieldNativePtr);
     if (pNativeContext) {
         pEnv->SetLongField(thiz, sWebPFrameFieldNativePtr, 0);
         WebPFrameNative_releaseRef(pEnv, thiz, pNativeContext);
@@ -584,7 +586,7 @@ void WebPFrame_nativeDispose(JNIEnv* pEnv, jobject thiz) {
 /**
  * Finalizer for WebPFrame that frees native resources.
  */
-void WebPFrame_nativeFinalize(JNIEnv* pEnv, jobject thiz) {
+void WebPFrame_nativeFinalize(JNIEnv *pEnv, jobject thiz) {
     WebPFrame_nativeDispose(pEnv, thiz);
 }
 
@@ -597,7 +599,7 @@ void WebPFrame_nativeFinalize(JNIEnv* pEnv, jobject thiz) {
     return {};\
   }
 
-static constexpr const char* kWebpBitmapFactoryClassName = "com/bumptech/glide/integration/webp/WebpBitmapFactory";
+static constexpr const char *kWebpBitmapFactoryClassName = "com/bumptech/glide/integration/webp/WebpBitmapFactory";
 
 static jclass webpBitmapFactoryClass;
 static jclass runtimeExceptionClass;
@@ -606,7 +608,7 @@ static jmethodID createBitmapFunction;
 static jmethodID setOutDimensionsFunction;
 
 
-std::vector<uint8_t> readStreamFully(JNIEnv* env, jobject is, jbyteArray inTempStorage) {
+std::vector<uint8_t> readStreamFully(JNIEnv *env, jobject is, jbyteArray inTempStorage) {
     // read start
     std::vector<uint8_t> read_buffer;
 
@@ -622,7 +624,7 @@ std::vector<uint8_t> readStreamFully(JNIEnv* env, jobject is, jbyteArray inTempS
         }
 
         if (chunk_size > 0) {
-            jbyte* data = env->GetByteArrayElements(inTempStorage, nullptr);
+            jbyte *data = env->GetByteArrayElements(inTempStorage, nullptr);
             RETURN_NULL_IF_EXCEPTION(env);
 
             read_buffer.insert(read_buffer.end(), data, data + chunk_size);
@@ -632,21 +634,21 @@ std::vector<uint8_t> readStreamFully(JNIEnv* env, jobject is, jbyteArray inTempS
     }
 }
 
-static jboolean setOutDimensions(JNIEnv* env, jobject bitmapOptions, int image_width, int image_height) {
+static jboolean setOutDimensions(JNIEnv *env, jobject bitmapOptions, int image_width, int image_height) {
     jboolean hadDecodeBounds = env->CallStaticBooleanMethod(webpBitmapFactoryClass, setOutDimensionsFunction, bitmapOptions, image_width, image_height);
     return hadDecodeBounds;
 }
 
 
-static jobject createBitmap(JNIEnv* env, int image_width, int image_height, jobject bitmapOptions) {
+static jobject createBitmap(JNIEnv *env, int image_width, int image_height, jobject bitmapOptions) {
     jobject bitmap = env->CallStaticObjectMethod(webpBitmapFactoryClass, createBitmapFunction, image_width, image_height, bitmapOptions);
     return bitmap;
 }
 
 
 jobject doDecode(
-        JNIEnv* env,
-        uint8_t* encoded_image,
+        JNIEnv *env,
+        uint8_t *encoded_image,
         unsigned encoded_image_length,
         jobject bitmapOptions,
         jfloat scale) {
@@ -676,25 +678,25 @@ jobject doDecode(
 //                        features.has_alpha ? "true" : "false",
 //                        features.has_animation ? "true" : "false");
 
-    __android_log_print(ANDROID_LOG_INFO, "GLIDE_WEBP","webp width:%d, height:%d, scale:%f", image_width, image_height, scale);
+    __android_log_print(ANDROID_LOG_INFO, "GLIDE_WEBP", "webp width:%d, height:%d, scale:%f", image_width, image_height, scale);
 
     WebPDecoderConfig config;
     WebPInitDecoderConfig(&config);
 
     if ((bitmapOptions != nullptr) &&
-        (setOutDimensions(env, bitmapOptions, image_width, image_height))) {
+            (setOutDimensions(env, bitmapOptions, image_width, image_height))) {
         return {};
     }
 
     if (scale != 1.0f) {
         image_width = int(image_width * scale + 0.5f);
-        image_height = int(image_height  * scale + 0.5f);
+        image_height = int(image_height * scale + 0.5f);
         config.options.use_scaling = 1;
         config.options.scaled_width = image_width;
         config.options.scaled_height = image_height;
     }
 
-    __android_log_print(ANDROID_LOG_INFO, "GLIDE_WEBP","bitmap width:%d, height:%d, scale:%f", image_width, image_height, scale);
+    __android_log_print(ANDROID_LOG_INFO, "GLIDE_WEBP", "bitmap width:%d, height:%d, scale:%f", image_width, image_height, scale);
     bitmap = createBitmap(env, image_width, image_height, bitmapOptions);
     RETURN_NULL_IF_EXCEPTION(env);
 
@@ -705,16 +707,16 @@ jobject doDecode(
         return JNI_FALSE;
     }
 
-    void* raw_pixels = nullptr;
+    void *raw_pixels = nullptr;
 
-    rc = AndroidBitmap_lockPixels(env, bitmap, (void**) &raw_pixels);
+    rc = AndroidBitmap_lockPixels(env, bitmap, (void **) &raw_pixels);
     if (rc != ANDROID_BITMAP_RESULT_SUCCESS) {
         env->ThrowNew(runtimeExceptionClass, "Decode error locking pixels");
         return JNI_FALSE;
     }
 
     config.output.colorspace = MODE_rgbA;
-    config.output.u.RGBA.rgba = (uint8_t*) raw_pixels;
+    config.output.u.RGBA.rgba = (uint8_t *) raw_pixels;
     config.output.u.RGBA.stride = bitmapInfo.stride;
     config.output.u.RGBA.size = bitmapInfo.height * bitmapInfo.stride;
     config.output.is_external_memory = 1;
@@ -736,7 +738,7 @@ jobject doDecode(
 
 
 static jobject nativeDecodeStream(
-        JNIEnv* env,
+        JNIEnv *env,
         jclass clazz,
         jobject is,
         jobject bitmapOptions,
@@ -751,7 +753,7 @@ static jobject nativeDecodeStream(
 }
 
 static jobject nativeDecodeByteArray(
-        JNIEnv* env,
+        JNIEnv *env,
         jclass clazz,
         jbyteArray array,
         jint offset,
@@ -761,7 +763,7 @@ static jobject nativeDecodeByteArray(
         jbyteArray inTempStorage) {
 
     // get image into decoded heap
-    jbyte* data = env->GetByteArrayElements(array, nullptr);
+    jbyte *data = env->GetByteArrayElements(array, nullptr);
     if (env->ExceptionCheck() == JNI_TRUE) {
         env->ReleaseByteArrayElements(inTempStorage, data, JNI_ABORT);
         RETURN_NULL_IF_EXCEPTION(env);
@@ -770,7 +772,7 @@ static jobject nativeDecodeByteArray(
         env->ReleaseByteArrayElements(array, data, JNI_ABORT);
         RETURN_NULL_IF_EXCEPTION(env);
     }
-    jobject bitmap = doDecode(env, reinterpret_cast<uint8_t*>(data) + offset, length, bitmapOptions, scale);
+    jobject bitmap = doDecode(env, reinterpret_cast<uint8_t *>(data) + offset, length, bitmapOptions, scale);
     env->ReleaseByteArrayElements(array, data, JNI_ABORT);
     RETURN_NULL_IF_EXCEPTION(env);
 
@@ -779,43 +781,43 @@ static jobject nativeDecodeByteArray(
 
 
 static JNINativeMethod sWebPImageMethods[] = {
-        { "nativeCreateFromDirectByteBuffer",
+        {"nativeCreateFromDirectByteBuffer",
                 "(Ljava/nio/ByteBuffer;)Lcom/bumptech/glide/integration/webp/WebpImage;",
-                (void*)WebPImage_nativeCreateFromDirectByteBuffer },
-        { "nativeGetFrame",
+                (void *) WebPImage_nativeCreateFromDirectByteBuffer},
+        {"nativeGetFrame",
                 "(I)Lcom/bumptech/glide/integration/webp/WebpFrame;",
-                (void*)WebPImage_nativeGetFrame },
-        { "nativeGetSizeInBytes",
+                (void *) WebPImage_nativeGetFrame},
+        {"nativeGetSizeInBytes",
                 "()I",
-                (void*)WebPImage_nativeGetSizeInBytes },
-        { "nativeDispose",
+                (void *) WebPImage_nativeGetSizeInBytes},
+        {"nativeDispose",
                 "()V",
-                (void*)WebImage_nativeDispose },
-        { "nativeFinalize",
+                (void *) WebImage_nativeDispose},
+        {"nativeFinalize",
                 "()V",
-                (void*)WebImage_nativeFinalize },
+                (void *) WebImage_nativeFinalize},
 };
 
 static JNINativeMethod sWebPFrameMethods[] = {
-        { "nativeRenderFrame",
+        {"nativeRenderFrame",
                 "(IILandroid/graphics/Bitmap;)V",
-                (void*)WebPFrame_nativeRenderFrame },
-        { "nativeDispose",
+                (void *) WebPFrame_nativeRenderFrame},
+        {"nativeDispose",
                 "()V",
-                (void*)WebPFrame_nativeDispose },
-        { "nativeFinalize",
+                (void *) WebPFrame_nativeDispose},
+        {"nativeFinalize",
                 "()V",
-                (void*)WebPFrame_nativeFinalize },
+                (void *) WebPFrame_nativeFinalize},
 };
 
 static JNINativeMethod sWebpBitmapFactoryMethods[] = {
         {"nativeDecodeStream",
                 "(Ljava/io/InputStream;Landroid/graphics/BitmapFactory$Options;F[B)Landroid/graphics/Bitmap;",
-                (void*)nativeDecodeStream
+                (void *) nativeDecodeStream
         },
         {"nativeDecodeByteArray",
                 "([BIILandroid/graphics/BitmapFactory$Options;F[B)Landroid/graphics/Bitmap;",
-                (void*)nativeDecodeByteArray
+                (void *) nativeDecodeByteArray
         },
 };
 
@@ -823,7 +825,7 @@ static JNINativeMethod sWebpBitmapFactoryMethods[] = {
 /**
  * Called by JNI_OnLoad to initialize the classes.
  */
-int initWebPImage(JNIEnv* pEnv) {
+int initWebPImage(JNIEnv *pEnv) {
     // WebPImage
     sClazzWebPImage = findClassOrThrow(pEnv, kWebpImageClassName);
     if (sClazzWebPImage == NULL) {
@@ -882,7 +884,7 @@ int initWebPImage(JNIEnv* pEnv) {
 /**
  * Called by JNI_OnLoad to initialize the classes.
  */
-int initWebpBitmapFactory(JNIEnv* env) {
+int initWebpBitmapFactory(JNIEnv *env) {
     // find java classes and method
     webpBitmapFactoryClass = findClassOrThrow(env, kWebpBitmapFactoryClassName);
     if (webpBitmapFactoryClass == NULL) {
@@ -913,10 +915,10 @@ int initWebpBitmapFactory(JNIEnv* env) {
 /**
  * Called by VM when so load
  */
-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved) {
-    JNIEnv* env;
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+    JNIEnv *env;
 
-    if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_4) != JNI_OK) {
+    if (vm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_4) != JNI_OK) {
         return -1;
     }
 

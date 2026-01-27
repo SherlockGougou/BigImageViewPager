@@ -36,7 +36,7 @@ void VP8InitRandom(VP8Random *const rg, float dithering) {
     rg->index2_ = 31;
     rg->amp_ = (dithering < 0.0) ? 0
             : (dithering > 1.0) ? (1 << VP8_RANDOM_DITHER_FIX)
-                    : (uint32_t)((1 << VP8_RANDOM_DITHER_FIX) * dithering);
+                    : (uint32_t) ((1 << VP8_RANDOM_DITHER_FIX) * dithering);
 }
 
 //------------------------------------------------------------------------------

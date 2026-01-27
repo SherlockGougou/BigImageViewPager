@@ -11,39 +11,26 @@ import com.bumptech.glide.util.Preconditions;
 import java.nio.ByteBuffer;
 
 /**
- *  A WebpImage container whose encoded data held by native ptr
+ * A WebpImage container whose encoded data held by native ptr
  *
- *  @author liuchun
+ * @author liuchun
  */
 @Keep
 public class WebpImage {
-    // Access by native
-    @Keep
-    private long mNativePtr;
-
-    private int mWidth;
-    private int mHeigth;
-
-    private int mFrameCount;
-    private int mDurationMs;
-    private int[] mFrameDurations;
-    private int mLoopCount;
-
-    private int mBackgroundColor;
-
     static {
         System.loadLibrary("glide-webp");
     }
 
-    public static WebpImage create(byte[] source) {
-        Preconditions.checkNotNull(source);
-
-        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(source.length);
-        byteBuffer.put(source);
-        byteBuffer.rewind();
-
-        return nativeCreateFromDirectByteBuffer(byteBuffer);
-    }
+    // Access by native
+    @Keep
+    private long mNativePtr;
+    private int mWidth;
+    private int mHeigth;
+    private int mFrameCount;
+    private int mDurationMs;
+    private int[] mFrameDurations;
+    private int mLoopCount;
+    private int mBackgroundColor;
 
     /**
      * Private constructor that must received an already allocated native bitmap
@@ -73,6 +60,18 @@ public class WebpImage {
         mNativePtr = nativePtr;
     }
 
+    public static WebpImage create(byte[] source) {
+        Preconditions.checkNotNull(source);
+
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(source.length);
+        byteBuffer.put(source);
+        byteBuffer.rewind();
+
+        return nativeCreateFromDirectByteBuffer(byteBuffer);
+    }
+
+    private static native WebpImage nativeCreateFromDirectByteBuffer(ByteBuffer buffer);
+
     /**
      * Adjust the frame duration to respect logic for minimum frame duration times
      */
@@ -89,7 +88,7 @@ public class WebpImage {
         nativeFinalize();
     }
 
-    public void dispose(){
+    public void dispose() {
         nativeDispose();
     }
 
@@ -139,9 +138,11 @@ public class WebpImage {
         return nativeGetSizeInBytes();
     }
 
-    private static native WebpImage nativeCreateFromDirectByteBuffer(ByteBuffer buffer);
     private native WebpFrame nativeGetFrame(int frameNumber);
+
     private native int nativeGetSizeInBytes();
+
     private native void nativeDispose();
+
     private native void nativeFinalize();
 }

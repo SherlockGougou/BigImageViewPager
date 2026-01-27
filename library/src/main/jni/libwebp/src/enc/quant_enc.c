@@ -894,7 +894,7 @@ static void CorrectDCValues(const VP8EncIterator *WEBP_RESTRICT const it,
         const int8_t *const top = it->top_derr_[it->x_][ch];
         const int8_t *const left = it->left_derr_[ch];
         int16_t(*
-        const c)[16] = &tmp[ch * 4];
+                const c)[16] = &tmp[ch * 4];
         int err0, err1, err2, err3;
         c[0][0] += (C1 * top[0] + C2 * left[0]) >> (DSHIFT - DSCALE);
         err0 = QuantizeSingle(&c[0][0], mtx);
@@ -1276,7 +1276,7 @@ static void RefineUsingDistortion(VP8EncIterator *WEBP_RESTRICT const it,
         for (mode = 0; mode < NUM_PRED_MODES; ++mode) {
             const uint8_t *const ref = it->yuv_p_ + VP8I16ModeOffsets[mode];
             const score_t score = (score_t)
-            VP8SSE16x16(src, ref) * RD_DISTO_MULT
+                    VP8SSE16x16(src, ref) * RD_DISTO_MULT
                     + VP8FixedCostsI16[mode] * lambda_d_i16;
             if (mode > 0 && VP8FixedCostsI16[mode] > bit_limit) {
                 continue;

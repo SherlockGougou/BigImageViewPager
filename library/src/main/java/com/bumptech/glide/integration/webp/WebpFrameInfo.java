@@ -1,7 +1,6 @@
 package com.bumptech.glide.integration.webp;
 
 
-
 public class WebpFrameInfo {
     public final int frameNumber;
     public final int xOffset;

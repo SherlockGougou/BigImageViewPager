@@ -84,7 +84,7 @@ WEBP_EXTERN int WebPSetWorkerInterface(
         const WebPWorkerInterface *const winterface);
 
 // Retrieve the currently set thread worker interface.
-WEBP_EXTERN const WebPWorkerInterface * WebPGetWorkerInterface(void);
+WEBP_EXTERN const WebPWorkerInterface *WebPGetWorkerInterface(void);
 
 //------------------------------------------------------------------------------
 

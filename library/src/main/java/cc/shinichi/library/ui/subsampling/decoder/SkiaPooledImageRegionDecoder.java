@@ -374,7 +374,7 @@ public class SkiaPooledImageRegionDecoder implements ImageRegionDecoder {
 
     private void debug(String message) {
         if (debug) {
-            SLog.INSTANCE.d(TAG, message);
+            SLog.d(TAG, message);
         }
     }
 

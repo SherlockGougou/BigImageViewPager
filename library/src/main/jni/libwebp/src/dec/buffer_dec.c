@@ -156,7 +156,7 @@ VP8StatusCode WebPFlipBuffer(WebPDecBuffer *const buffer) {
     }
     if (WebPIsRGBMode(buffer->colorspace)) {
         WebPRGBABuffer *const buf = &buffer->u.RGBA;
-        buf->rgba += (int64_t)(buffer->height - 1) * buf->stride;
+        buf->rgba += (int64_t) (buffer->height - 1) * buf->stride;
         buf->stride = -buf->stride;
     } else {
         WebPYUVABuffer *const buf = &buffer->u.YUVA;

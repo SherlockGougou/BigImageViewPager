@@ -162,7 +162,7 @@ static PixOrCopyBlock *BackwardRefsNewBlock(VP8LBackwardRefs *const refs) {
             refs->error_ |= 1;
             return NULL;
         }
-        b->start_ = (PixOrCopy * )((uint8_t *) b + sizeof(*b));  // not always aligned
+        b->start_ = (PixOrCopy *) ((uint8_t *) b + sizeof(*b));  // not always aligned
     } else {  // recycle from free-list
         refs->free_blocks_ = b->next_;
     }

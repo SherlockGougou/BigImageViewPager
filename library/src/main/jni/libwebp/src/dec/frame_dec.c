@@ -128,7 +128,7 @@ static void ReconstructRow(const VP8Decoder *const dec,
 
             // predict and add residuals
             if (block->is_i4x4_) {   // 4x4
-                uint32_t *const top_right = (uint32_t * )(y_dst - BPS + 16);
+                uint32_t *const top_right = (uint32_t *) (y_dst - BPS + 16);
 
                 if (mb_y > 0) {
                     if (mb_x >= dec->mb_w_ - 1) {    // on rightmost border

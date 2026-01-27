@@ -72,10 +72,11 @@ typedef struct {
 //------------------------------------------------------------------------------
 
 #define CLIP_8b_MASK (int)(~0U << (8 + DFIX))
+
 static WEBP_INLINE uint8_t
 
 clip_8b(int v) {
-    return (!(v & CLIP_8b_MASK)) ? (uint8_t)(v >> DFIX) : (v < 0) ? 0u : 255u;
+    return (!(v & CLIP_8b_MASK)) ? (uint8_t) (v >> DFIX) : (v < 0) ? 0u : 255u;
 }
 
 #undef CLIP_8b_MASK
@@ -224,8 +225,8 @@ static int InitParams(uint8_t *const data, int width, int height, int stride,
     const size_t size_m = width * sizeof(*p->average_);
     const size_t size_lut = (1 + 2 * LUT_SIZE) * sizeof(*p->correction_);
     const size_t total_size = size_scratch_m + size_m + size_lut;
-    uint8_t * mem = (uint8_t * )
-    WebPSafeMalloc(1U, total_size);
+    uint8_t *mem = (uint8_t *)
+            WebPSafeMalloc(1U, total_size);
 
     if (mem == NULL) return 0;
     p->mem_ = (void *) mem;

@@ -268,12 +268,12 @@ static void BlendPixelRowNonPremult(uint32_t *const src,
 static WEBP_INLINE uint32_t
 ChannelwiseMultiply(uint32_t
 pix,
-uint32_t scale
+        uint32_t scale
 ) {
-uint32_t mask = 0x00FF00FF;
-uint32_t rb = ((pix & mask) * scale) >> 8;
-uint32_t ag = ((pix >> 8) & mask) * scale;
-return (rb & mask) | (ag & ~mask);
+    uint32_t mask = 0x00FF00FF;
+    uint32_t rb = ((pix & mask) * scale) >> 8;
+    uint32_t ag = ((pix >> 8) & mask) * scale;
+    return (rb & mask) | (ag & ~mask);
 }
 
 // Blend 'src' over 'dst' assuming they are pre-multiplied by alpha.
@@ -396,10 +396,10 @@ int WebPAnimDecoderGetNext(WebPAnimDecoder *dec,
             for (y = 0; y < iter.height; ++y) {
                 const size_t offset =
                         (iter.y_offset + y) * width + iter.x_offset;
-                blend_row((uint32_t * )
-                dec->curr_frame_ + offset,
-                        (uint32_t * )
-                dec->prev_frame_disposed_ + offset, iter.width);
+                blend_row((uint32_t *)
+                                dec->curr_frame_ + offset,
+                        (uint32_t *)
+                                dec->prev_frame_disposed_ + offset, iter.width);
             }
         } else {
             int y;
@@ -415,17 +415,17 @@ int WebPAnimDecoderGetNext(WebPAnimDecoder *dec,
                         &left2, &width2);
                 if (width1 > 0) {
                     const size_t offset1 = canvas_y * width + left1;
-                    blend_row((uint32_t * )
-                    dec->curr_frame_ + offset1,
-                            (uint32_t * )
-                    dec->prev_frame_disposed_ + offset1, width1);
+                    blend_row((uint32_t *)
+                                    dec->curr_frame_ + offset1,
+                            (uint32_t *)
+                                    dec->prev_frame_disposed_ + offset1, width1);
                 }
                 if (width2 > 0) {
                     const size_t offset2 = canvas_y * width + left2;
-                    blend_row((uint32_t * )
-                    dec->curr_frame_ + offset2,
-                            (uint32_t * )
-                    dec->prev_frame_disposed_ + offset2, width2);
+                    blend_row((uint32_t *)
+                                    dec->curr_frame_ + offset2,
+                            (uint32_t *)
+                                    dec->prev_frame_disposed_ + offset2, width2);
                 }
             }
         }

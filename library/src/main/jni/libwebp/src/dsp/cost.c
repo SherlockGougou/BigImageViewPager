@@ -385,32 +385,32 @@ extern void VP8EncDspCostInitSSE2(void);
 extern void VP8EncDspCostInitNEON(void);
 
 WEBP_DSP_INIT_FUNC(VP8EncDspCostInit) {
-        VP8GetResidualCost = GetResidualCost_C;
-        VP8SetResidualCoeffs = SetResidualCoeffs_C;
+    VP8GetResidualCost = GetResidualCost_C;
+    VP8SetResidualCoeffs = SetResidualCoeffs_C;
 
-        // If defined, use CPUInfo() to overwrite some pointers with faster versions.
-        if (VP8GetCPUInfo != NULL) {
+    // If defined, use CPUInfo() to overwrite some pointers with faster versions.
+    if (VP8GetCPUInfo != NULL) {
 #if defined(WEBP_USE_MIPS32)
-            if (VP8GetCPUInfo(kMIPS32)) {
-              VP8EncDspCostInitMIPS32();
-            }
+        if (VP8GetCPUInfo(kMIPS32)) {
+          VP8EncDspCostInitMIPS32();
+        }
 #endif
 #if defined(WEBP_USE_MIPS_DSP_R2)
-            if (VP8GetCPUInfo(kMIPSdspR2)) {
-              VP8EncDspCostInitMIPSdspR2();
-            }
+        if (VP8GetCPUInfo(kMIPSdspR2)) {
+          VP8EncDspCostInitMIPSdspR2();
+        }
 #endif
 #if defined(WEBP_HAVE_SSE2)
-            if (VP8GetCPUInfo(kSSE2)) {
-              VP8EncDspCostInitSSE2();
-            }
+        if (VP8GetCPUInfo(kSSE2)) {
+            VP8EncDspCostInitSSE2();
+        }
 #endif
 #if defined(WEBP_HAVE_NEON)
-            if (VP8GetCPUInfo(kNEON)) {
-              VP8EncDspCostInitNEON();
-            }
-#endif
+        if (VP8GetCPUInfo(kNEON)) {
+          VP8EncDspCostInitNEON();
         }
+#endif
+    }
 }
 
 //------------------------------------------------------------------------------

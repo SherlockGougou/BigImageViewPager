@@ -4,20 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <cc.shinichi.library.view.helper.DragCloseView
+    <cc.shinichi.library.ui.widget.DragCloseView
         android:id="@+id/fingerDragHelper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <!--图片-->
-        <cc.shinichi.library.view.subsampling.SubsamplingScaleImageView
+        <cc.shinichi.library.ui.subsampling.SubsamplingScaleImageView
             android:id="@+id/static_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
         <!--动图-->
-        <cc.shinichi.library.view.photoview.PhotoView
+        <cc.shinichi.library.ui.photoview.PhotoView
             android:id="@+id/anim_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -29,10 +29,10 @@
             android:id="@+id/video_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:show_timeout="1500"
-            app:controller_layout_id="@layout/sh_media_controller" />
+            app:controller_layout_id="@layout/sh_media_controller"
+            app:show_timeout="1500" />
 
-    </cc.shinichi.library.view.helper.DragCloseView>
+    </cc.shinichi.library.ui.widget.DragCloseView>
 
     <ProgressBar
         android:id="@+id/progress_view"

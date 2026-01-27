@@ -196,8 +196,8 @@ void *WebPSafeMalloc(uint64_t nmemb, size_t size) {
     Increment(&num_malloc_calls);
     if (!CheckSizeArgumentsOverflow(nmemb, size)) return NULL;
     assert(nmemb * size > 0);
-    ptr = malloc((size_t)(nmemb * size));
-    AddMem(ptr, (size_t)(nmemb * size));
+    ptr = malloc((size_t) (nmemb * size));
+    AddMem(ptr, (size_t) (nmemb * size));
     return ptr;
 }
 
@@ -207,7 +207,7 @@ void *WebPSafeCalloc(uint64_t nmemb, size_t size) {
     if (!CheckSizeArgumentsOverflow(nmemb, size)) return NULL;
     assert(nmemb * size > 0);
     ptr = calloc((size_t) nmemb, size);
-    AddMem(ptr, (size_t)(nmemb * size));
+    AddMem(ptr, (size_t) (nmemb * size));
     return ptr;
 }
 

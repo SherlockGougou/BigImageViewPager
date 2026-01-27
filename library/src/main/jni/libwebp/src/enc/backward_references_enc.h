@@ -45,13 +45,13 @@ typedef struct {
 
 static WEBP_INLINE PixOrCopy
 PixOrCopyCreateCopy(uint32_t
-distance ,
-uint16_t len ) {
-PixOrCopy retval;
-retval . mode = kCopy;
-retval . argb_or_distance = distance;
-retval . len = len;
-return retval;
+distance,
+        uint16_t len) {
+    PixOrCopy retval;
+    retval.mode = kCopy;
+    retval.argb_or_distance = distance;
+    retval.len = len;
+    return retval;
 }
 
 static WEBP_INLINE PixOrCopy
@@ -69,15 +69,15 @@ PixOrCopyCreateCacheIdx(int idx) {
 static WEBP_INLINE PixOrCopy
 PixOrCopyCreateLiteral(uint32_t
 argb) {
-PixOrCopy retval;
-retval.
-mode = kLiteral;
-retval.
-argb_or_distance = argb;
-retval.
-len = 1;
-return
-retval;
+    PixOrCopy retval;
+    retval.
+            mode = kLiteral;
+    retval.
+            argb_or_distance = argb;
+    retval.
+            len = 1;
+    return
+            retval;
 }
 
 static WEBP_INLINE int PixOrCopyIsLiteral(const PixOrCopy *const p) {

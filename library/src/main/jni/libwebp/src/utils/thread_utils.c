@@ -339,8 +339,8 @@ static void End(WebPWorker *const worker) {
         worker->impl_ = NULL;
     }
 #else
-    worker->status_ = NOT_OK;
-    assert(worker->impl_ == NULL);
+        worker->status_ = NOT_OK;
+        assert(worker->impl_ == NULL);
 #endif
     assert(worker->status_ == NOT_OK);
 }

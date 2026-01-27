@@ -84,17 +84,17 @@ public class WebpDrawable extends Drawable implements WebpFrameLoader.FrameCallb
     private List<AnimationCallback> animationCallbacks;
 
     public WebpDrawable(Context context, WebpDecoder webDecoder, BitmapPool bitmapPool,
-           Transformation<Bitmap> frameTransformation, int targetFrameWidth, int targetFrameHeight,
+                        Transformation<Bitmap> frameTransformation, int targetFrameWidth, int targetFrameHeight,
                         Bitmap firstFrame) {
         this(
-            new WebpState(bitmapPool,
-                new WebpFrameLoader(
-                        Glide.get(context),
-                        webDecoder,
-                        targetFrameWidth,
-                        targetFrameHeight,
-                        frameTransformation,
-                        firstFrame)));
+                new WebpState(bitmapPool,
+                        new WebpFrameLoader(
+                                Glide.get(context),
+                                webDecoder,
+                                targetFrameWidth,
+                                targetFrameHeight,
+                                frameTransformation,
+                                firstFrame)));
     }
 
     WebpDrawable(WebpState state) {
@@ -150,7 +150,7 @@ public class WebpDrawable extends Drawable implements WebpFrameLoader.FrameCallb
     public void start() {
         isStarted = true;
         resetLoopCount();
-        if(isVisible) {
+        if (isVisible) {
             startRunning();
         }
 
@@ -163,9 +163,9 @@ public class WebpDrawable extends Drawable implements WebpFrameLoader.FrameCallb
 
     private void startRunning() {
         Preconditions.checkArgument(!isRecycled, "You cannot start a recycled Drawable. Ensure thatyou clear any references to the Drawable when clearing the corresponding request.");
-        if(state.frameLoader.getFrameCount() == 1) {
+        if (state.frameLoader.getFrameCount() == 1) {
             invalidateSelf();
-        } else if(!isRunning) {
+        } else if (!isRunning) {
             isRunning = true;
             state.frameLoader.subscribe(this);
             invalidateSelf();
@@ -181,9 +181,9 @@ public class WebpDrawable extends Drawable implements WebpFrameLoader.FrameCallb
     public boolean setVisible(boolean visible, boolean restart) {
         Preconditions.checkArgument(!isRecycled, "Cannot change the visibility of a recycled resource. Ensure that you unset the Drawable from your View before changing the View\'s visibility.");
         isVisible = visible;
-        if(!visible) {
+        if (!visible) {
             stopRunning();
-        } else if(isStarted) {
+        } else if (isStarted) {
             startRunning();
         }
 
@@ -216,13 +216,13 @@ public class WebpDrawable extends Drawable implements WebpFrameLoader.FrameCallb
             return;
         }
 
-        if(applyGravity) {
+        if (applyGravity) {
             Gravity.apply(GRAVITY, getIntrinsicWidth(), getIntrinsicHeight(), getBounds(), getDestRect());
             applyGravity = false;
         }
 
         Bitmap currentFrame = state.frameLoader.getCurrentFrame();
-        canvas.drawBitmap(currentFrame, (Rect)null, getDestRect(), getPaint());
+        canvas.drawBitmap(currentFrame, (Rect) null, getDestRect(), getPaint());
     }
 
     public void setAlpha(int i) {
@@ -234,7 +234,7 @@ public class WebpDrawable extends Drawable implements WebpFrameLoader.FrameCallb
     }
 
     private Rect getDestRect() {
-        if(destRect == null) {
+        if (destRect == null) {
             destRect = new Rect();
         }
 
@@ -242,7 +242,7 @@ public class WebpDrawable extends Drawable implements WebpFrameLoader.FrameCallb
     }
 
     private Paint getPaint() {
-        if(paint == null) {
+        if (paint == null) {
             paint = new Paint(Paint.FILTER_BITMAP_FLAG);
         }
 
@@ -264,17 +264,17 @@ public class WebpDrawable extends Drawable implements WebpFrameLoader.FrameCallb
     }
 
     public void onFrameReady() {
-        if(findCallback() == null) {
+        if (findCallback() == null) {
             stop();
             invalidateSelf();
             return;
         }
         invalidateSelf();
-        if(getFrameIndex() == getFrameCount() - 1) {
+        if (getFrameIndex() == getFrameCount() - 1) {
             loopCount++;
         }
 
-        if(maxLoopCount != LOOP_FOREVER && loopCount >= maxLoopCount) {
+        if (maxLoopCount != LOOP_FOREVER && loopCount >= maxLoopCount) {
             stop();
             notifyAnimationEndToListeners();
         }
@@ -301,21 +301,21 @@ public class WebpDrawable extends Drawable implements WebpFrameLoader.FrameCallb
         return isRecycled;
     }
 
+    public int getLoopCount() {
+        return maxLoopCount;
+    }
+
     public void setLoopCount(int loopCount) {
-        if(loopCount <= 0 && loopCount != LOOP_FOREVER && loopCount != LOOP_INTRINSIC) {
+        if (loopCount <= 0 && loopCount != LOOP_FOREVER && loopCount != LOOP_INTRINSIC) {
             throw new IllegalArgumentException("Loop count must be greater than 0, or equal to LOOP_FOREVER, or equal to LOOP_INTRINSIC");
         } else {
-            if(loopCount == LOOP_INTRINSIC) {
+            if (loopCount == LOOP_INTRINSIC) {
                 int intrinsicCount = state.frameLoader.getLoopCount();
                 maxLoopCount = intrinsicCount == LOOP_INTRINSIC ? LOOP_FOREVER : intrinsicCount;
             } else {
                 maxLoopCount = loopCount;
             }
         }
-    }
-
-    public int getLoopCount() {
-        return maxLoopCount;
     }
 
     public int getIntrinsicLoopCount() {
@@ -325,12 +325,12 @@ public class WebpDrawable extends Drawable implements WebpFrameLoader.FrameCallb
     /**
      * Register callback to listen to WebpDrawable animation end event after specific loop count
      * set by {@link WebpDrawable#setLoopCount(int)}.
-     *
+     * <p>
      * Note: This will only be called if the Gif stop because it reaches the loop count. Unregister
      * this in onLoadCleared to avoid potential memory leak.
-     * @see WebpDrawable#unregisterAnimationCallback(AnimationCallback).
      *
      * @param animationCallback Animation callback {@link AnimationCallback}.
+     * @see WebpDrawable#unregisterAnimationCallback(AnimationCallback).
      */
     @Override
     public void registerAnimationCallback(@NonNull AnimationCallback animationCallback) {

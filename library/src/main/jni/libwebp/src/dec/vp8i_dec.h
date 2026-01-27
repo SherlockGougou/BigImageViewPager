@@ -273,7 +273,9 @@ int VP8SetError(VP8Decoder *const dec,
 
 // in tree.c
 void VP8ResetProba(VP8Proba *const proba);
+
 void VP8ParseProba(VP8BitReader *const br, VP8Decoder *const dec);
+
 // parses one row of intra mode data in partition 0, returns !eof
 int VP8ParseIntraModeRow(VP8BitReader *const br, VP8Decoder *const dec);
 
@@ -282,26 +284,33 @@ void VP8ParseQuant(VP8Decoder *const dec);
 
 // in frame.c
 int VP8InitFrame(VP8Decoder *const dec, VP8Io *const io);
+
 // Call io->setup() and finish setting up scan parameters.
 // After this call returns, one must always call VP8ExitCritical() with the
 // same parameters. Both functions should be used in pair. Returns VP8_STATUS_OK
 // if ok, otherwise sets and returns the error status on *dec.
 VP8StatusCode VP8EnterCritical(VP8Decoder *const dec, VP8Io *const io);
+
 // Must always be called in pair with VP8EnterCritical().
 // Returns false in case of error.
 int VP8ExitCritical(VP8Decoder *const dec, VP8Io *const io);
+
 // Return the multi-threading method to use (0=off), depending
 // on options and bitstream size. Only for lossy decoding.
 int VP8GetThreadMethod(const WebPDecoderOptions *const options,
         const WebPHeaderStructure *const headers,
         int width, int height);
+
 // Initialize dithering post-process if needed.
 void VP8InitDithering(const WebPDecoderOptions *const options,
         VP8Decoder *const dec);
+
 // Process the last decoded row (filtering + output).
 int VP8ProcessRow(VP8Decoder *const dec, VP8Io *const io);
+
 // To be called at the start of a new scanline, to initialize predictors.
 void VP8InitScanline(VP8Decoder *const dec);
+
 // Decode one macroblock. Returns false if there is not enough data.
 int VP8DecodeMB(VP8Decoder *const dec, VP8BitReader *const token_br);
 

@@ -94,14 +94,23 @@ static void FUNC_NAME(const uint8_t* top_y, const uint8_t* bottom_y,           \
 
 // All variants implemented.
 #if !WEBP_NEON_OMIT_C_CODE
+
 UPSAMPLE_FUNC(UpsampleRgbaLinePair_C, VP8YuvToRgba, 4)
+
 UPSAMPLE_FUNC(UpsampleBgraLinePair_C, VP8YuvToBgra, 4)
+
 #if !defined(WEBP_REDUCE_CSP)
+
 UPSAMPLE_FUNC(UpsampleArgbLinePair_C, VP8YuvToArgb, 4)
-UPSAMPLE_FUNC(UpsampleRgbLinePair_C,  VP8YuvToRgb,  3)
-UPSAMPLE_FUNC(UpsampleBgrLinePair_C,  VP8YuvToBgr,  3)
+
+UPSAMPLE_FUNC(UpsampleRgbLinePair_C, VP8YuvToRgb, 3)
+
+UPSAMPLE_FUNC(UpsampleBgrLinePair_C, VP8YuvToBgr, 3)
+
 UPSAMPLE_FUNC(UpsampleRgba4444LinePair_C, VP8YuvToRgba4444, 2)
-UPSAMPLE_FUNC(UpsampleRgb565LinePair_C,  VP8YuvToRgb565,  2)
+
+UPSAMPLE_FUNC(UpsampleRgb565LinePair_C, VP8YuvToRgb565, 2)
+
 #else
 static void EmptyUpsampleFunc(const uint8_t* top_y, const uint8_t* bottom_y,
                               const uint8_t* top_u, const uint8_t* top_v,
@@ -234,35 +243,35 @@ extern void WebPInitYUV444ConvertersSSE2(void);
 extern void WebPInitYUV444ConvertersSSE41(void);
 
 WEBP_DSP_INIT_FUNC(WebPInitYUV444Converters) {
-        WebPYUV444Converters[MODE_RGBA] = WebPYuv444ToRgba_C;
-        WebPYUV444Converters[MODE_BGRA]      = WebPYuv444ToBgra_C;
-        WebPYUV444Converters[MODE_RGB]       = WebPYuv444ToRgb_C;
-        WebPYUV444Converters[MODE_BGR]       = WebPYuv444ToBgr_C;
-        WebPYUV444Converters[MODE_ARGB]      = WebPYuv444ToArgb_C;
-        WebPYUV444Converters[MODE_RGBA_4444] = WebPYuv444ToRgba4444_C;
-        WebPYUV444Converters[MODE_RGB_565]   = WebPYuv444ToRgb565_C;
-        WebPYUV444Converters[MODE_rgbA]      = WebPYuv444ToRgba_C;
-        WebPYUV444Converters[MODE_bgrA]      = WebPYuv444ToBgra_C;
-        WebPYUV444Converters[MODE_Argb]      = WebPYuv444ToArgb_C;
-        WebPYUV444Converters[MODE_rgbA_4444] = WebPYuv444ToRgba4444_C;
+    WebPYUV444Converters[MODE_RGBA] = WebPYuv444ToRgba_C;
+    WebPYUV444Converters[MODE_BGRA] = WebPYuv444ToBgra_C;
+    WebPYUV444Converters[MODE_RGB] = WebPYuv444ToRgb_C;
+    WebPYUV444Converters[MODE_BGR] = WebPYuv444ToBgr_C;
+    WebPYUV444Converters[MODE_ARGB] = WebPYuv444ToArgb_C;
+    WebPYUV444Converters[MODE_RGBA_4444] = WebPYuv444ToRgba4444_C;
+    WebPYUV444Converters[MODE_RGB_565] = WebPYuv444ToRgb565_C;
+    WebPYUV444Converters[MODE_rgbA] = WebPYuv444ToRgba_C;
+    WebPYUV444Converters[MODE_bgrA] = WebPYuv444ToBgra_C;
+    WebPYUV444Converters[MODE_Argb] = WebPYuv444ToArgb_C;
+    WebPYUV444Converters[MODE_rgbA_4444] = WebPYuv444ToRgba4444_C;
 
-        if (VP8GetCPUInfo != NULL) {
+    if (VP8GetCPUInfo != NULL) {
 #if defined(WEBP_HAVE_SSE2)
-            if (VP8GetCPUInfo(kSSE2)) {
-              WebPInitYUV444ConvertersSSE2();
-            }
+        if (VP8GetCPUInfo(kSSE2)) {
+            WebPInitYUV444ConvertersSSE2();
+        }
 #endif
 #if defined(WEBP_HAVE_SSE41)
-            if (VP8GetCPUInfo(kSSE4_1)) {
-              WebPInitYUV444ConvertersSSE41();
-            }
+        if (VP8GetCPUInfo(kSSE4_1)) {
+          WebPInitYUV444ConvertersSSE41();
+        }
 #endif
 #if defined(WEBP_USE_MIPS_DSP_R2)
-            if (VP8GetCPUInfo(kMIPSdspR2)) {
-              WebPInitYUV444ConvertersMIPSdspR2();
-            }
-#endif
+        if (VP8GetCPUInfo(kMIPSdspR2)) {
+          WebPInitYUV444ConvertersMIPSdspR2();
         }
+#endif
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -281,42 +290,42 @@ extern void WebPInitUpsamplersMSA(void);
 WEBP_DSP_INIT_FUNC(WebPInitUpsamplers) {
 #ifdef FANCY_UPSAMPLING
 #if !WEBP_NEON_OMIT_C_CODE
-        WebPUpsamplers[MODE_RGBA]      = UpsampleRgbaLinePair_C;
-        WebPUpsamplers[MODE_BGRA]      = UpsampleBgraLinePair_C;
-        WebPUpsamplers[MODE_rgbA]      = UpsampleRgbaLinePair_C;
-        WebPUpsamplers[MODE_bgrA]      = UpsampleBgraLinePair_C;
-        WebPUpsamplers[MODE_RGB]       = UpsampleRgbLinePair_C;
-        WebPUpsamplers[MODE_BGR]       = UpsampleBgrLinePair_C;
-        WebPUpsamplers[MODE_ARGB]      = UpsampleArgbLinePair_C;
-        WebPUpsamplers[MODE_RGBA_4444] = UpsampleRgba4444LinePair_C;
-        WebPUpsamplers[MODE_RGB_565]   = UpsampleRgb565LinePair_C;
-        WebPUpsamplers[MODE_Argb]      = UpsampleArgbLinePair_C;
-        WebPUpsamplers[MODE_rgbA_4444] = UpsampleRgba4444LinePair_C;
+    WebPUpsamplers[MODE_RGBA] = UpsampleRgbaLinePair_C;
+    WebPUpsamplers[MODE_BGRA] = UpsampleBgraLinePair_C;
+    WebPUpsamplers[MODE_rgbA] = UpsampleRgbaLinePair_C;
+    WebPUpsamplers[MODE_bgrA] = UpsampleBgraLinePair_C;
+    WebPUpsamplers[MODE_RGB] = UpsampleRgbLinePair_C;
+    WebPUpsamplers[MODE_BGR] = UpsampleBgrLinePair_C;
+    WebPUpsamplers[MODE_ARGB] = UpsampleArgbLinePair_C;
+    WebPUpsamplers[MODE_RGBA_4444] = UpsampleRgba4444LinePair_C;
+    WebPUpsamplers[MODE_RGB_565] = UpsampleRgb565LinePair_C;
+    WebPUpsamplers[MODE_Argb] = UpsampleArgbLinePair_C;
+    WebPUpsamplers[MODE_rgbA_4444] = UpsampleRgba4444LinePair_C;
 #endif
 
-        // If defined, use CPUInfo() to overwrite some pointers with faster versions.
-        if (VP8GetCPUInfo != NULL) {
+    // If defined, use CPUInfo() to overwrite some pointers with faster versions.
+    if (VP8GetCPUInfo != NULL) {
 #if defined(WEBP_HAVE_SSE2)
-          if (VP8GetCPUInfo(kSSE2)) {
+        if (VP8GetCPUInfo(kSSE2)) {
             WebPInitUpsamplersSSE2();
-          }
+        }
 #endif
 #if defined(WEBP_HAVE_SSE41)
-          if (VP8GetCPUInfo(kSSE4_1)) {
-            WebPInitUpsamplersSSE41();
-          }
+        if (VP8GetCPUInfo(kSSE4_1)) {
+          WebPInitUpsamplersSSE41();
+        }
 #endif
 #if defined(WEBP_USE_MIPS_DSP_R2)
-          if (VP8GetCPUInfo(kMIPSdspR2)) {
-            WebPInitUpsamplersMIPSdspR2();
-          }
+        if (VP8GetCPUInfo(kMIPSdspR2)) {
+          WebPInitUpsamplersMIPSdspR2();
+        }
 #endif
 #if defined(WEBP_USE_MSA)
-          if (VP8GetCPUInfo(kMSA)) {
-            WebPInitUpsamplersMSA();
-          }
-#endif
+        if (VP8GetCPUInfo(kMSA)) {
+          WebPInitUpsamplersMSA();
         }
+#endif
+    }
 
 #if defined(WEBP_HAVE_NEON)
         if (WEBP_NEON_OMIT_C_CODE ||
@@ -325,18 +334,18 @@ WEBP_DSP_INIT_FUNC(WebPInitUpsamplers) {
         }
 #endif
 
-        assert(WebPUpsamplers[MODE_RGBA] != NULL);
-        assert(WebPUpsamplers[MODE_BGRA] != NULL);
-        assert(WebPUpsamplers[MODE_rgbA] != NULL);
-        assert(WebPUpsamplers[MODE_bgrA] != NULL);
+    assert(WebPUpsamplers[MODE_RGBA] != NULL);
+    assert(WebPUpsamplers[MODE_BGRA] != NULL);
+    assert(WebPUpsamplers[MODE_rgbA] != NULL);
+    assert(WebPUpsamplers[MODE_bgrA] != NULL);
 #if !defined(WEBP_REDUCE_CSP) || !WEBP_NEON_OMIT_C_CODE
-        assert(WebPUpsamplers[MODE_RGB] != NULL);
-        assert(WebPUpsamplers[MODE_BGR] != NULL);
-        assert(WebPUpsamplers[MODE_ARGB] != NULL);
-        assert(WebPUpsamplers[MODE_RGBA_4444] != NULL);
-        assert(WebPUpsamplers[MODE_RGB_565] != NULL);
-        assert(WebPUpsamplers[MODE_Argb] != NULL);
-        assert(WebPUpsamplers[MODE_rgbA_4444] != NULL);
+    assert(WebPUpsamplers[MODE_RGB] != NULL);
+    assert(WebPUpsamplers[MODE_BGR] != NULL);
+    assert(WebPUpsamplers[MODE_ARGB] != NULL);
+    assert(WebPUpsamplers[MODE_RGBA_4444] != NULL);
+    assert(WebPUpsamplers[MODE_RGB_565] != NULL);
+    assert(WebPUpsamplers[MODE_Argb] != NULL);
+    assert(WebPUpsamplers[MODE_rgbA_4444] != NULL);
 #endif
 
 #endif  // FANCY_UPSAMPLING

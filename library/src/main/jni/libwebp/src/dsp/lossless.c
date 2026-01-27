@@ -29,91 +29,91 @@
 static WEBP_INLINE uint32_t
 Average2(uint32_t
 a0,
-uint32_t a1
+        uint32_t a1
 ) {
-return (((
-a0 ^a1
-) & 0xfefefefeu) >> 1) + (a0 & a1);
+    return (((
+            a0 ^ a1
+    ) & 0xfefefefeu) >> 1) + (a0 & a1);
 }
 
 static WEBP_INLINE uint32_t
 Average3(uint32_t
 a0,
-uint32_t a1, uint32_t
+        uint32_t a1, uint32_t
 a2) {
-return
+    return
 
-Average2(Average2(a0, a2), a1
+            Average2(Average2(a0, a2), a1
 
-);
+            );
 }
 
 static WEBP_INLINE uint32_t
 Average4(uint32_t
 a0,
-uint32_t a1,
+        uint32_t a1,
         uint32_t
-a2,
-uint32_t a3
+        a2,
+        uint32_t a3
 ) {
-return
+    return
 
-Average2(Average2(a0, a1), Average2(a2, a3)
+            Average2(Average2(a0, a1), Average2(a2, a3)
 
-);
+            );
 }
 
 static WEBP_INLINE uint32_t
 Clip255(uint32_t
 a) {
-if (a < 256) {
-return
-a;
-}
+    if (a < 256) {
+        return
+                a;
+    }
 // return 0, when a is a negative integer.
 // return 255, when a is positive.
-return ~a >> 24;
+    return ~a >> 24;
 }
 
 static WEBP_INLINE int AddSubtractComponentFull(int a, int b, int c) {
-    return Clip255((uint32_t)(a + b - c));
+    return Clip255((uint32_t) (a + b - c));
 }
 
 static WEBP_INLINE uint32_t
 ClampedAddSubtractFull(uint32_t
 c0,
-uint32_t c1,
+        uint32_t c1,
         uint32_t
-c2) {
-const int a = AddSubtractComponentFull(c0 >> 24, c1 >> 24, c2 >> 24);
-const int r = AddSubtractComponentFull((c0 >> 16) & 0xff,
-        (c1 >> 16) & 0xff,
-        (c2 >> 16) & 0xff);
-const int g = AddSubtractComponentFull((c0 >> 8) & 0xff,
-        (c1 >> 8) & 0xff,
-        (c2 >> 8) & 0xff);
-const int b = AddSubtractComponentFull(c0 & 0xff, c1 & 0xff, c2 & 0xff);
-return ((uint32_t)a << 24) | (r << 16) | (g << 8) |
-b;
+        c2) {
+    const int a = AddSubtractComponentFull(c0 >> 24, c1 >> 24, c2 >> 24);
+    const int r = AddSubtractComponentFull((c0 >> 16) & 0xff,
+            (c1 >> 16) & 0xff,
+            (c2 >> 16) & 0xff);
+    const int g = AddSubtractComponentFull((c0 >> 8) & 0xff,
+            (c1 >> 8) & 0xff,
+            (c2 >> 8) & 0xff);
+    const int b = AddSubtractComponentFull(c0 & 0xff, c1 & 0xff, c2 & 0xff);
+    return ((uint32_t) a << 24) | (r << 16) | (g << 8) |
+            b;
 }
 
 static WEBP_INLINE int AddSubtractComponentHalf(int a, int b) {
-    return Clip255((uint32_t)(a + (a - b) / 2));
+    return Clip255((uint32_t) (a + (a - b) / 2));
 }
 
 static WEBP_INLINE uint32_t
 ClampedAddSubtractHalf(uint32_t
 c0,
-uint32_t c1,
+        uint32_t c1,
         uint32_t
-c2) {
-const uint32_t ave = Average2(c0, c1);
-const int a = AddSubtractComponentHalf(ave >> 24, c2 >> 24);
-const int r = AddSubtractComponentHalf((ave >> 16) & 0xff, (c2 >> 16) & 0xff);
-const int g = AddSubtractComponentHalf((ave >> 8) & 0xff, (c2 >> 8) & 0xff);
-const int b = AddSubtractComponentHalf((ave >> 0) & 0xff, (c2 >> 0) & 0xff);
-return ((uint32_t)a << 24) | (r << 16) | (g << 8) |
-b;
+        c2) {
+    const uint32_t ave = Average2(c0, c1);
+    const int a = AddSubtractComponentHalf(ave >> 24, c2 >> 24);
+    const int r = AddSubtractComponentHalf((ave >> 16) & 0xff, (c2 >> 16) & 0xff);
+    const int g = AddSubtractComponentHalf((ave >> 8) & 0xff, (c2 >> 8) & 0xff);
+    const int b = AddSubtractComponentHalf((ave >> 0) & 0xff, (c2 >> 0) & 0xff);
+    return ((uint32_t) a << 24) | (r << 16) | (g << 8) |
+            b;
 }
 
 // gcc <= 4.9 on ARM generates incorrect code in Select() when Sub3() is
@@ -135,15 +135,15 @@ static LOCAL_INLINE int Sub3(int a, int b, int c) {
 static WEBP_INLINE uint32_t
 Select(uint32_t
 a,
-uint32_t b, uint32_t
+        uint32_t b, uint32_t
 c) {
-const int pa_minus_pb =
-        Sub3((a >> 24), (b >> 24), (c >> 24)) +
-                Sub3((a >> 16) & 0xff, (b >> 16) & 0xff, (c >> 16) & 0xff) +
-                Sub3((a >> 8) & 0xff, (b >> 8) & 0xff, (c >> 8) & 0xff) +
-                Sub3((a) & 0xff, (b) & 0xff, (c) & 0xff);
-return (pa_minus_pb <= 0) ? a :
-b;
+    const int pa_minus_pb =
+            Sub3((a >> 24), (b >> 24), (c >> 24)) +
+                    Sub3((a >> 16) & 0xff, (b >> 16) & 0xff, (c >> 16) & 0xff) +
+                    Sub3((a >> 8) & 0xff, (b >> 8) & 0xff, (c >> 8) & 0xff) +
+                    Sub3((a) & 0xff, (b) & 0xff, (c) & 0xff);
+    return (pa_minus_pb <= 0) ? a :
+            b;
 }
 
 //------------------------------------------------------------------------------
@@ -255,26 +255,37 @@ static void PredictorAdd1_C(const uint32_t *in, const uint32_t *upper,
 
 GENERATE_PREDICTOR_ADD(VP8LPredictor2_C, PredictorAdd2_C
 )
+
 GENERATE_PREDICTOR_ADD(VP8LPredictor3_C, PredictorAdd3_C
 )
+
 GENERATE_PREDICTOR_ADD(VP8LPredictor4_C, PredictorAdd4_C
 )
+
 GENERATE_PREDICTOR_ADD(VP8LPredictor5_C, PredictorAdd5_C
 )
+
 GENERATE_PREDICTOR_ADD(VP8LPredictor6_C, PredictorAdd6_C
 )
+
 GENERATE_PREDICTOR_ADD(VP8LPredictor7_C, PredictorAdd7_C
 )
+
 GENERATE_PREDICTOR_ADD(VP8LPredictor8_C, PredictorAdd8_C
 )
+
 GENERATE_PREDICTOR_ADD(VP8LPredictor9_C, PredictorAdd9_C
 )
+
 GENERATE_PREDICTOR_ADD(VP8LPredictor10_C, PredictorAdd10_C
 )
+
 GENERATE_PREDICTOR_ADD(VP8LPredictor11_C, PredictorAdd11_C
 )
+
 GENERATE_PREDICTOR_ADD(VP8LPredictor12_C, PredictorAdd12_C
 )
+
 GENERATE_PREDICTOR_ADD(VP8LPredictor13_C, PredictorAdd13_C
 )
 
@@ -358,7 +369,7 @@ void VP8LTransformColorInverse_C(const VP8LMultipliers *const m,
     int i;
     for (i = 0; i < num_pixels; ++i) {
         const uint32_t argb = src[i];
-        const int8_t green = (int8_t)(argb >> 8);
+        const int8_t green = (int8_t) (argb >> 8);
         const uint32_t red = argb >> 16;
         int new_red = red & 0xff;
         int new_blue = argb & 0xff;
@@ -690,49 +701,49 @@ extern void VP8LDspInitMSA(void);
 } while (0);
 
 WEBP_DSP_INIT_FUNC(VP8LDspInit) {
-        COPY_PREDICTOR_ARRAY(VP8LPredictor, VP8LPredictors)
-        COPY_PREDICTOR_ARRAY(PredictorAdd, VP8LPredictorsAdd)
-        COPY_PREDICTOR_ARRAY(PredictorAdd, VP8LPredictorsAdd_C)
+    COPY_PREDICTOR_ARRAY(VP8LPredictor, VP8LPredictors)
+    COPY_PREDICTOR_ARRAY(PredictorAdd, VP8LPredictorsAdd)
+    COPY_PREDICTOR_ARRAY(PredictorAdd, VP8LPredictorsAdd_C)
 
 #if !WEBP_NEON_OMIT_C_CODE
-        VP8LAddGreenToBlueAndRed = VP8LAddGreenToBlueAndRed_C;
+    VP8LAddGreenToBlueAndRed = VP8LAddGreenToBlueAndRed_C;
 
-        VP8LTransformColorInverse = VP8LTransformColorInverse_C;
+    VP8LTransformColorInverse = VP8LTransformColorInverse_C;
 
-        VP8LConvertBGRAToRGBA = VP8LConvertBGRAToRGBA_C;
-        VP8LConvertBGRAToRGB = VP8LConvertBGRAToRGB_C;
-        VP8LConvertBGRAToBGR = VP8LConvertBGRAToBGR_C;
+    VP8LConvertBGRAToRGBA = VP8LConvertBGRAToRGBA_C;
+    VP8LConvertBGRAToRGB = VP8LConvertBGRAToRGB_C;
+    VP8LConvertBGRAToBGR = VP8LConvertBGRAToBGR_C;
 #endif
 
-        VP8LConvertBGRAToRGBA4444 = VP8LConvertBGRAToRGBA4444_C;
-        VP8LConvertBGRAToRGB565 = VP8LConvertBGRAToRGB565_C;
+    VP8LConvertBGRAToRGBA4444 = VP8LConvertBGRAToRGBA4444_C;
+    VP8LConvertBGRAToRGB565 = VP8LConvertBGRAToRGB565_C;
 
-        VP8LMapColor32b = MapARGB_C;
-        VP8LMapColor8b = MapAlpha_C;
+    VP8LMapColor32b = MapARGB_C;
+    VP8LMapColor8b = MapAlpha_C;
 
-        // If defined, use CPUInfo() to overwrite some pointers with faster versions.
-        if (VP8GetCPUInfo != NULL) {
+    // If defined, use CPUInfo() to overwrite some pointers with faster versions.
+    if (VP8GetCPUInfo != NULL) {
 #if defined(WEBP_HAVE_SSE2)
-            if (VP8GetCPUInfo(kSSE2)) {
-              VP8LDspInitSSE2();
+        if (VP8GetCPUInfo(kSSE2)) {
+            VP8LDspInitSSE2();
 #if defined(WEBP_HAVE_SSE41)
-              if (VP8GetCPUInfo(kSSE4_1)) {
-                VP8LDspInitSSE41();
-              }
-#endif
-            }
-#endif
-#if defined(WEBP_USE_MIPS_DSP_R2)
-            if (VP8GetCPUInfo(kMIPSdspR2)) {
-              VP8LDspInitMIPSdspR2();
-            }
-#endif
-#if defined(WEBP_USE_MSA)
-            if (VP8GetCPUInfo(kMSA)) {
-              VP8LDspInitMSA();
+            if (VP8GetCPUInfo(kSSE4_1)) {
+              VP8LDspInitSSE41();
             }
 #endif
         }
+#endif
+#if defined(WEBP_USE_MIPS_DSP_R2)
+        if (VP8GetCPUInfo(kMIPSdspR2)) {
+          VP8LDspInitMIPSdspR2();
+        }
+#endif
+#if defined(WEBP_USE_MSA)
+        if (VP8GetCPUInfo(kMSA)) {
+          VP8LDspInitMSA();
+        }
+#endif
+    }
 
 #if defined(WEBP_HAVE_NEON)
         if (WEBP_NEON_OMIT_C_CODE ||
@@ -741,16 +752,17 @@ WEBP_DSP_INIT_FUNC(VP8LDspInit) {
         }
 #endif
 
-        assert(VP8LAddGreenToBlueAndRed != NULL);
-        assert(VP8LTransformColorInverse != NULL);
-        assert(VP8LConvertBGRAToRGBA != NULL);
-        assert(VP8LConvertBGRAToRGB != NULL);
-        assert(VP8LConvertBGRAToBGR != NULL);
-        assert(VP8LConvertBGRAToRGBA4444 != NULL);
-        assert(VP8LConvertBGRAToRGB565 != NULL);
-        assert(VP8LMapColor32b != NULL);
-        assert(VP8LMapColor8b != NULL);
+    assert(VP8LAddGreenToBlueAndRed != NULL);
+    assert(VP8LTransformColorInverse != NULL);
+    assert(VP8LConvertBGRAToRGBA != NULL);
+    assert(VP8LConvertBGRAToRGB != NULL);
+    assert(VP8LConvertBGRAToBGR != NULL);
+    assert(VP8LConvertBGRAToRGBA4444 != NULL);
+    assert(VP8LConvertBGRAToRGB565 != NULL);
+    assert(VP8LMapColor32b != NULL);
+    assert(VP8LMapColor8b != NULL);
 }
+
 #undef COPY_PREDICTOR_ARRAY
 
 //------------------------------------------------------------------------------

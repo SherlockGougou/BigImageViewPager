@@ -537,7 +537,7 @@ static WEBP_INLINE int ColorTransformDelta(int8_t color_pred, int8_t color) {
 static WEBP_INLINE int8_t
 U32ToS8(uint32_t
 v) {
-return (int8_t)(v & 0xff);
+    return (int8_t) (v & 0xff);
 }
 
 void VP8LTransformColor_C(const VP8LMultipliers *const m, uint32_t *data,
@@ -550,12 +550,12 @@ void VP8LTransformColor_C(const VP8LMultipliers *const m, uint32_t *data,
         int new_red = red & 0xff;
         int new_blue = argb & 0xff;
         new_red -= ColorTransformDelta((int8_t)
-        m->green_to_red_, green);
+                m->green_to_red_, green);
         new_red &= 0xff;
         new_blue -= ColorTransformDelta((int8_t)
-        m->green_to_blue_, green);
+                m->green_to_blue_, green);
         new_blue -= ColorTransformDelta((int8_t)
-        m->red_to_blue_, red);
+                m->red_to_blue_, red);
         new_blue &= 0xff;
         data[i] = (argb & 0xff00ff00u) | (new_red << 16) | (new_blue);
     }
@@ -564,32 +564,32 @@ void VP8LTransformColor_C(const VP8LMultipliers *const m, uint32_t *data,
 static WEBP_INLINE uint8_t
 TransformColorRed(uint8_t
 green_to_red,
-uint32_t argb
+        uint32_t argb
 ) {
-const int8_t green = U32ToS8(argb >> 8);
-int new_red = argb >> 16;
-new_red -=
-ColorTransformDelta((int8_t)
-green_to_red, green);
-return (new_red & 0xff);
+    const int8_t green = U32ToS8(argb >> 8);
+    int new_red = argb >> 16;
+    new_red -=
+            ColorTransformDelta((int8_t)
+                    green_to_red, green);
+    return (new_red & 0xff);
 }
 
 static WEBP_INLINE uint8_t
 TransformColorBlue(uint8_t
 green_to_blue,
-uint8_t red_to_blue,
+        uint8_t red_to_blue,
         uint32_t
-argb) {
-const int8_t green = U32ToS8(argb >> 8);
-const int8_t red = U32ToS8(argb >> 16);
-int new_blue = argb & 0xff;
-new_blue -=
-ColorTransformDelta((int8_t)
-green_to_blue, green);
-new_blue -=
-ColorTransformDelta((int8_t)
-red_to_blue, red);
-return (new_blue & 0xff);
+        argb) {
+    const int8_t green = U32ToS8(argb >> 8);
+    const int8_t red = U32ToS8(argb >> 16);
+    int new_blue = argb & 0xff;
+    new_blue -=
+            ColorTransformDelta((int8_t)
+                    green_to_blue, green);
+    new_blue -=
+            ColorTransformDelta((int8_t)
+                    red_to_blue, red);
+    return (new_blue & 0xff);
 }
 
 void VP8LCollectColorRedTransforms_C(const uint32_t *argb, int stride,
@@ -599,7 +599,7 @@ void VP8LCollectColorRedTransforms_C(const uint32_t *argb, int stride,
         int x;
         for (x = 0; x < tile_width; ++x) {
             ++histo[TransformColorRed((uint8_t)
-            green_to_red, argb[x])];
+                    green_to_red, argb[x])];
         }
         argb += stride;
     }
@@ -613,8 +613,8 @@ void VP8LCollectColorBlueTransforms_C(const uint32_t *argb, int stride,
         int x;
         for (x = 0; x < tile_width; ++x) {
             ++histo[TransformColorBlue((uint8_t)
-            green_to_blue, (uint8_t)
-            red_to_blue,
+                            green_to_blue, (uint8_t)
+                            red_to_blue,
                     argb[x])];
         }
         argb += stride;
@@ -838,95 +838,95 @@ extern void VP8LEncDspInitMIPSdspR2(void);
 extern void VP8LEncDspInitMSA(void);
 
 WEBP_DSP_INIT_FUNC(VP8LEncDspInit) {
-        VP8LDspInit();
+    VP8LDspInit();
 
 #if !WEBP_NEON_OMIT_C_CODE
-        VP8LSubtractGreenFromBlueAndRed = VP8LSubtractGreenFromBlueAndRed_C;
+    VP8LSubtractGreenFromBlueAndRed = VP8LSubtractGreenFromBlueAndRed_C;
 
-        VP8LTransformColor = VP8LTransformColor_C;
+    VP8LTransformColor = VP8LTransformColor_C;
 #endif
 
-        VP8LCollectColorBlueTransforms = VP8LCollectColorBlueTransforms_C;
-        VP8LCollectColorRedTransforms = VP8LCollectColorRedTransforms_C;
+    VP8LCollectColorBlueTransforms = VP8LCollectColorBlueTransforms_C;
+    VP8LCollectColorRedTransforms = VP8LCollectColorRedTransforms_C;
 
-        VP8LFastLog2Slow = FastLog2Slow_C;
-        VP8LFastSLog2Slow = FastSLog2Slow_C;
+    VP8LFastLog2Slow = FastLog2Slow_C;
+    VP8LFastSLog2Slow = FastSLog2Slow_C;
 
-        VP8LExtraCost = ExtraCost_C;
-        VP8LExtraCostCombined = ExtraCostCombined_C;
-        VP8LCombinedShannonEntropy = CombinedShannonEntropy_C;
+    VP8LExtraCost = ExtraCost_C;
+    VP8LExtraCostCombined = ExtraCostCombined_C;
+    VP8LCombinedShannonEntropy = CombinedShannonEntropy_C;
 
-        VP8LGetEntropyUnrefined = GetEntropyUnrefined_C;
-        VP8LGetCombinedEntropyUnrefined = GetCombinedEntropyUnrefined_C;
+    VP8LGetEntropyUnrefined = GetEntropyUnrefined_C;
+    VP8LGetCombinedEntropyUnrefined = GetCombinedEntropyUnrefined_C;
 
-        VP8LAddVector = AddVector_C;
-        VP8LAddVectorEq = AddVectorEq_C;
+    VP8LAddVector = AddVector_C;
+    VP8LAddVectorEq = AddVectorEq_C;
 
-        VP8LVectorMismatch = VectorMismatch_C;
-        VP8LBundleColorMap = VP8LBundleColorMap_C;
+    VP8LVectorMismatch = VectorMismatch_C;
+    VP8LBundleColorMap = VP8LBundleColorMap_C;
 
-        VP8LPredictorsSub[0] = PredictorSub0_C;
-        VP8LPredictorsSub[1] = PredictorSub1_C;
-        VP8LPredictorsSub[2] = PredictorSub2_C;
-        VP8LPredictorsSub[3] = PredictorSub3_C;
-        VP8LPredictorsSub[4] = PredictorSub4_C;
-        VP8LPredictorsSub[5] = PredictorSub5_C;
-        VP8LPredictorsSub[6] = PredictorSub6_C;
-        VP8LPredictorsSub[7] = PredictorSub7_C;
-        VP8LPredictorsSub[8] = PredictorSub8_C;
-        VP8LPredictorsSub[9] = PredictorSub9_C;
-        VP8LPredictorsSub[10] = PredictorSub10_C;
-        VP8LPredictorsSub[11] = PredictorSub11_C;
-        VP8LPredictorsSub[12] = PredictorSub12_C;
-        VP8LPredictorsSub[13] = PredictorSub13_C;
-        VP8LPredictorsSub[14] = PredictorSub0_C;  // <- padding security sentinels
-        VP8LPredictorsSub[15] = PredictorSub0_C;
+    VP8LPredictorsSub[0] = PredictorSub0_C;
+    VP8LPredictorsSub[1] = PredictorSub1_C;
+    VP8LPredictorsSub[2] = PredictorSub2_C;
+    VP8LPredictorsSub[3] = PredictorSub3_C;
+    VP8LPredictorsSub[4] = PredictorSub4_C;
+    VP8LPredictorsSub[5] = PredictorSub5_C;
+    VP8LPredictorsSub[6] = PredictorSub6_C;
+    VP8LPredictorsSub[7] = PredictorSub7_C;
+    VP8LPredictorsSub[8] = PredictorSub8_C;
+    VP8LPredictorsSub[9] = PredictorSub9_C;
+    VP8LPredictorsSub[10] = PredictorSub10_C;
+    VP8LPredictorsSub[11] = PredictorSub11_C;
+    VP8LPredictorsSub[12] = PredictorSub12_C;
+    VP8LPredictorsSub[13] = PredictorSub13_C;
+    VP8LPredictorsSub[14] = PredictorSub0_C;  // <- padding security sentinels
+    VP8LPredictorsSub[15] = PredictorSub0_C;
 
-        VP8LPredictorsSub_C[0] = PredictorSub0_C;
-        VP8LPredictorsSub_C[1] = PredictorSub1_C;
-        VP8LPredictorsSub_C[2] = PredictorSub2_C;
-        VP8LPredictorsSub_C[3] = PredictorSub3_C;
-        VP8LPredictorsSub_C[4] = PredictorSub4_C;
-        VP8LPredictorsSub_C[5] = PredictorSub5_C;
-        VP8LPredictorsSub_C[6] = PredictorSub6_C;
-        VP8LPredictorsSub_C[7] = PredictorSub7_C;
-        VP8LPredictorsSub_C[8] = PredictorSub8_C;
-        VP8LPredictorsSub_C[9] = PredictorSub9_C;
-        VP8LPredictorsSub_C[10] = PredictorSub10_C;
-        VP8LPredictorsSub_C[11] = PredictorSub11_C;
-        VP8LPredictorsSub_C[12] = PredictorSub12_C;
-        VP8LPredictorsSub_C[13] = PredictorSub13_C;
-        VP8LPredictorsSub_C[14] = PredictorSub0_C;  // <- padding security sentinels
-        VP8LPredictorsSub_C[15] = PredictorSub0_C;
+    VP8LPredictorsSub_C[0] = PredictorSub0_C;
+    VP8LPredictorsSub_C[1] = PredictorSub1_C;
+    VP8LPredictorsSub_C[2] = PredictorSub2_C;
+    VP8LPredictorsSub_C[3] = PredictorSub3_C;
+    VP8LPredictorsSub_C[4] = PredictorSub4_C;
+    VP8LPredictorsSub_C[5] = PredictorSub5_C;
+    VP8LPredictorsSub_C[6] = PredictorSub6_C;
+    VP8LPredictorsSub_C[7] = PredictorSub7_C;
+    VP8LPredictorsSub_C[8] = PredictorSub8_C;
+    VP8LPredictorsSub_C[9] = PredictorSub9_C;
+    VP8LPredictorsSub_C[10] = PredictorSub10_C;
+    VP8LPredictorsSub_C[11] = PredictorSub11_C;
+    VP8LPredictorsSub_C[12] = PredictorSub12_C;
+    VP8LPredictorsSub_C[13] = PredictorSub13_C;
+    VP8LPredictorsSub_C[14] = PredictorSub0_C;  // <- padding security sentinels
+    VP8LPredictorsSub_C[15] = PredictorSub0_C;
 
-        // If defined, use CPUInfo() to overwrite some pointers with faster versions.
-        if (VP8GetCPUInfo != NULL) {
+    // If defined, use CPUInfo() to overwrite some pointers with faster versions.
+    if (VP8GetCPUInfo != NULL) {
 #if defined(WEBP_HAVE_SSE2)
-            if (VP8GetCPUInfo(kSSE2)) {
-              VP8LEncDspInitSSE2();
+        if (VP8GetCPUInfo(kSSE2)) {
+            VP8LEncDspInitSSE2();
 #if defined(WEBP_HAVE_SSE41)
-              if (VP8GetCPUInfo(kSSE4_1)) {
-                VP8LEncDspInitSSE41();
-              }
-#endif
-            }
-#endif
-#if defined(WEBP_USE_MIPS32)
-            if (VP8GetCPUInfo(kMIPS32)) {
-              VP8LEncDspInitMIPS32();
-            }
-#endif
-#if defined(WEBP_USE_MIPS_DSP_R2)
-            if (VP8GetCPUInfo(kMIPSdspR2)) {
-              VP8LEncDspInitMIPSdspR2();
-            }
-#endif
-#if defined(WEBP_USE_MSA)
-            if (VP8GetCPUInfo(kMSA)) {
-              VP8LEncDspInitMSA();
+            if (VP8GetCPUInfo(kSSE4_1)) {
+              VP8LEncDspInitSSE41();
             }
 #endif
         }
+#endif
+#if defined(WEBP_USE_MIPS32)
+        if (VP8GetCPUInfo(kMIPS32)) {
+          VP8LEncDspInitMIPS32();
+        }
+#endif
+#if defined(WEBP_USE_MIPS_DSP_R2)
+        if (VP8GetCPUInfo(kMIPSdspR2)) {
+          VP8LEncDspInitMIPSdspR2();
+        }
+#endif
+#if defined(WEBP_USE_MSA)
+        if (VP8GetCPUInfo(kMSA)) {
+          VP8LEncDspInitMSA();
+        }
+#endif
+    }
 
 #if defined(WEBP_HAVE_NEON)
         if (WEBP_NEON_OMIT_C_CODE ||
@@ -935,53 +935,53 @@ WEBP_DSP_INIT_FUNC(VP8LEncDspInit) {
         }
 #endif
 
-        assert(VP8LSubtractGreenFromBlueAndRed != NULL);
-        assert(VP8LTransformColor != NULL);
-        assert(VP8LCollectColorBlueTransforms != NULL);
-        assert(VP8LCollectColorRedTransforms != NULL);
-        assert(VP8LFastLog2Slow != NULL);
-        assert(VP8LFastSLog2Slow != NULL);
-        assert(VP8LExtraCost != NULL);
-        assert(VP8LExtraCostCombined != NULL);
-        assert(VP8LCombinedShannonEntropy != NULL);
-        assert(VP8LGetEntropyUnrefined != NULL);
-        assert(VP8LGetCombinedEntropyUnrefined != NULL);
-        assert(VP8LAddVector != NULL);
-        assert(VP8LAddVectorEq != NULL);
-        assert(VP8LVectorMismatch != NULL);
-        assert(VP8LBundleColorMap != NULL);
-        assert(VP8LPredictorsSub[0] != NULL);
-        assert(VP8LPredictorsSub[1] != NULL);
-        assert(VP8LPredictorsSub[2] != NULL);
-        assert(VP8LPredictorsSub[3] != NULL);
-        assert(VP8LPredictorsSub[4] != NULL);
-        assert(VP8LPredictorsSub[5] != NULL);
-        assert(VP8LPredictorsSub[6] != NULL);
-        assert(VP8LPredictorsSub[7] != NULL);
-        assert(VP8LPredictorsSub[8] != NULL);
-        assert(VP8LPredictorsSub[9] != NULL);
-        assert(VP8LPredictorsSub[10] != NULL);
-        assert(VP8LPredictorsSub[11] != NULL);
-        assert(VP8LPredictorsSub[12] != NULL);
-        assert(VP8LPredictorsSub[13] != NULL);
-        assert(VP8LPredictorsSub[14] != NULL);
-        assert(VP8LPredictorsSub[15] != NULL);
-        assert(VP8LPredictorsSub_C[0] != NULL);
-        assert(VP8LPredictorsSub_C[1] != NULL);
-        assert(VP8LPredictorsSub_C[2] != NULL);
-        assert(VP8LPredictorsSub_C[3] != NULL);
-        assert(VP8LPredictorsSub_C[4] != NULL);
-        assert(VP8LPredictorsSub_C[5] != NULL);
-        assert(VP8LPredictorsSub_C[6] != NULL);
-        assert(VP8LPredictorsSub_C[7] != NULL);
-        assert(VP8LPredictorsSub_C[8] != NULL);
-        assert(VP8LPredictorsSub_C[9] != NULL);
-        assert(VP8LPredictorsSub_C[10] != NULL);
-        assert(VP8LPredictorsSub_C[11] != NULL);
-        assert(VP8LPredictorsSub_C[12] != NULL);
-        assert(VP8LPredictorsSub_C[13] != NULL);
-        assert(VP8LPredictorsSub_C[14] != NULL);
-        assert(VP8LPredictorsSub_C[15] != NULL);
+    assert(VP8LSubtractGreenFromBlueAndRed != NULL);
+    assert(VP8LTransformColor != NULL);
+    assert(VP8LCollectColorBlueTransforms != NULL);
+    assert(VP8LCollectColorRedTransforms != NULL);
+    assert(VP8LFastLog2Slow != NULL);
+    assert(VP8LFastSLog2Slow != NULL);
+    assert(VP8LExtraCost != NULL);
+    assert(VP8LExtraCostCombined != NULL);
+    assert(VP8LCombinedShannonEntropy != NULL);
+    assert(VP8LGetEntropyUnrefined != NULL);
+    assert(VP8LGetCombinedEntropyUnrefined != NULL);
+    assert(VP8LAddVector != NULL);
+    assert(VP8LAddVectorEq != NULL);
+    assert(VP8LVectorMismatch != NULL);
+    assert(VP8LBundleColorMap != NULL);
+    assert(VP8LPredictorsSub[0] != NULL);
+    assert(VP8LPredictorsSub[1] != NULL);
+    assert(VP8LPredictorsSub[2] != NULL);
+    assert(VP8LPredictorsSub[3] != NULL);
+    assert(VP8LPredictorsSub[4] != NULL);
+    assert(VP8LPredictorsSub[5] != NULL);
+    assert(VP8LPredictorsSub[6] != NULL);
+    assert(VP8LPredictorsSub[7] != NULL);
+    assert(VP8LPredictorsSub[8] != NULL);
+    assert(VP8LPredictorsSub[9] != NULL);
+    assert(VP8LPredictorsSub[10] != NULL);
+    assert(VP8LPredictorsSub[11] != NULL);
+    assert(VP8LPredictorsSub[12] != NULL);
+    assert(VP8LPredictorsSub[13] != NULL);
+    assert(VP8LPredictorsSub[14] != NULL);
+    assert(VP8LPredictorsSub[15] != NULL);
+    assert(VP8LPredictorsSub_C[0] != NULL);
+    assert(VP8LPredictorsSub_C[1] != NULL);
+    assert(VP8LPredictorsSub_C[2] != NULL);
+    assert(VP8LPredictorsSub_C[3] != NULL);
+    assert(VP8LPredictorsSub_C[4] != NULL);
+    assert(VP8LPredictorsSub_C[5] != NULL);
+    assert(VP8LPredictorsSub_C[6] != NULL);
+    assert(VP8LPredictorsSub_C[7] != NULL);
+    assert(VP8LPredictorsSub_C[8] != NULL);
+    assert(VP8LPredictorsSub_C[9] != NULL);
+    assert(VP8LPredictorsSub_C[10] != NULL);
+    assert(VP8LPredictorsSub_C[11] != NULL);
+    assert(VP8LPredictorsSub_C[12] != NULL);
+    assert(VP8LPredictorsSub_C[13] != NULL);
+    assert(VP8LPredictorsSub_C[14] != NULL);
+    assert(VP8LPredictorsSub_C[15] != NULL);
 }
 
 //------------------------------------------------------------------------------

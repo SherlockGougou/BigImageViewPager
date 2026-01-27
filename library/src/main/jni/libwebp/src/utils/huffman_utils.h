@@ -64,6 +64,7 @@ typedef struct HuffmanTables {
 // Allocates a HuffmanTables with 'size' contiguous HuffmanCodes. Returns 0 on
 // memory allocation error, 1 otherwise.
 int VP8LHuffmanTablesAllocate(int size, HuffmanTables *huffman_tables);
+
 void VP8LHuffmanTablesDeallocate(HuffmanTables *const huffman_tables);
 
 #define HUFFMAN_PACKED_BITS 6

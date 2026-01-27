@@ -70,7 +70,7 @@ static int SmoothenBlock(const uint8_t *a_ptr, int a_stride, uint8_t *y_ptr,
         luma_ptr += y_stride;
     }
     if (count > 0 && count < width * height) {
-        const uint8_t avg_u8 = (uint8_t)(sum / count);
+        const uint8_t avg_u8 = (uint8_t) (sum / count);
         alpha_ptr = a_ptr;
         luma_ptr = y_ptr;
         for (y = 0; y < height; ++y) {
@@ -247,7 +247,7 @@ void WebPBlendAlpha(WebPPicture *picture, uint32_t background_rgb) {
             y_ptr += picture->y_stride;
         }
     } else {
-        uint32_t * argb = picture->argb;
+        uint32_t *argb = picture->argb;
         const uint32_t background = MakeARGB32(red, green, blue);
         for (y = 0; y < picture->height; ++y) {
             for (x = 0; x < picture->width; ++x) {

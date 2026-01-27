@@ -38,11 +38,10 @@ public class WebpFrameLoader {
 
     public static final Option<WebpFrameCacheStrategy> FRAME_CACHE_STRATEGY = Option.memory(
             "com.bumptech.glide.integration.webp.decoder.WebpFrameLoader.CacheStrategy", WebpFrameCacheStrategy.AUTO);
-
+    final RequestManager requestManager;
     private final WebpDecoder webpDecoder;
     private final Handler handler;
     private final List<FrameCallback> callbacks;
-    final RequestManager requestManager;
     private final BitmapPool bitmapPool;
 
     private boolean isRunning;
@@ -60,10 +59,6 @@ public class WebpFrameLoader {
     private int firstFrameSize;
     private int width;
     private int height;
-
-    public interface FrameCallback {
-        void onFrameReady();
-    }
 
     public WebpFrameLoader(Glide glide, WebpDecoder webpDecoder,
                            int width, int height,
@@ -95,6 +90,15 @@ public class WebpFrameLoader {
         this.requestBuilder = requestBuilder;
         this.webpDecoder = webpDecoder;
         this.setFrameTransformation(transformation, firstFrame);
+    }
+
+    private static RequestBuilder<Bitmap> getRequestBuilder(RequestManager requestManager, int width, int height) {
+        return requestManager
+                .asBitmap()
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE)
+                        .useAnimationPool(true)
+                        .skipMemoryCache(true)
+                        .override(width, height));
     }
 
     void setFrameTransformation(Transformation<Bitmap> transformation, Bitmap firstFrame) {
@@ -309,31 +313,25 @@ public class WebpFrameLoader {
         loadNextFrame();
     }
 
-    private class FrameLoaderCallback implements Handler.Callback {
-        static final int MSG_DELAY = 1;
-        static final int MSG_CLEAR = 2;
-
-        FrameLoaderCallback() {
-        }
-
-        public boolean handleMessage(Message msg) {
-            DelayTarget target;
-            if (msg.what == MSG_DELAY) {
-                target = (DelayTarget) msg.obj;
-                WebpFrameLoader.this.onFrameReady(target);
-                return true;
-            } else if (msg.what == MSG_CLEAR) {
-                target = (DelayTarget) msg.obj;
-                WebpFrameLoader.this.requestManager.clear(target);
-            }
-            return false;
-        }
+    private Key getFrameSignature(int frameIndex) {
+        // Some devices seem to have crypto bugs that throw exceptions when you create a new UUID.
+        // See #1510.
+        //return new ObjectKey(Math.random());
+        return new WebpFrameCacheKey(new ObjectKey(webpDecoder), frameIndex);
     }
 
 
+    public interface FrameCallback {
+        void onFrameReady();
+    }
+
+    interface OnEveryFrameListener {
+        void onFrameReady();
+    }
+
     static class DelayTarget extends CustomTarget<Bitmap> {
-        private final Handler handler;
         final int index;
+        private final Handler handler;
         private final long targetTime;
         private Bitmap resource;
 
@@ -357,22 +355,6 @@ public class WebpFrameLoader {
         public void onLoadCleared(@Nullable Drawable placeholder) {
             this.resource = null;
         }
-    }
-
-    private static RequestBuilder<Bitmap> getRequestBuilder(RequestManager requestManager, int width, int height) {
-        return requestManager
-                .asBitmap()
-                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE)
-                        .useAnimationPool(true)
-                        .skipMemoryCache(true)
-                        .override(width, height));
-    }
-
-    private Key getFrameSignature(int frameIndex) {
-        // Some devices seem to have crypto bugs that throw exceptions when you create a new UUID.
-        // See #1510.
-        //return new ObjectKey(Math.random());
-        return new WebpFrameCacheKey(new ObjectKey(webpDecoder), frameIndex);
     }
 
     private static class WebpFrameCacheKey implements Key {
@@ -408,7 +390,24 @@ public class WebpFrameLoader {
         }
     }
 
-    interface OnEveryFrameListener {
-        void onFrameReady();
+    private class FrameLoaderCallback implements Handler.Callback {
+        static final int MSG_DELAY = 1;
+        static final int MSG_CLEAR = 2;
+
+        FrameLoaderCallback() {
+        }
+
+        public boolean handleMessage(Message msg) {
+            DelayTarget target;
+            if (msg.what == MSG_DELAY) {
+                target = (DelayTarget) msg.obj;
+                WebpFrameLoader.this.onFrameReady(target);
+                return true;
+            } else if (msg.what == MSG_CLEAR) {
+                target = (DelayTarget) msg.obj;
+                WebpFrameLoader.this.requestManager.clear(target);
+            }
+            return false;
+        }
     }
 }

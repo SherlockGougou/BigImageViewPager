@@ -26,8 +26,8 @@ static int EmitYUV(const VP8Io *const io, WebPDecParams *const p) {
     WebPDecBuffer *output = p->output;
     const WebPYUVABuffer *const buf = &output->u.YUVA;
     uint8_t *const y_dst = buf->y + (size_t) io->mb_y * buf->y_stride;
-    uint8_t *const u_dst = buf->u + (size_t)(io->mb_y >> 1) * buf->u_stride;
-    uint8_t *const v_dst = buf->v + (size_t)(io->mb_y >> 1) * buf->v_stride;
+    uint8_t *const u_dst = buf->u + (size_t) (io->mb_y >> 1) * buf->u_stride;
+    uint8_t *const v_dst = buf->v + (size_t) (io->mb_y >> 1) * buf->v_stride;
     const int mb_w = io->mb_w;
     const int mb_h = io->mb_h;
     const int uv_w = (mb_w + 1) / 2;
@@ -54,60 +54,61 @@ static int EmitSampledRGB(const VP8Io *const io, WebPDecParams *const p) {
 // Fancy upsampling
 
 #ifdef FANCY_UPSAMPLING
-static int EmitFancyRGB(const VP8Io* const io, WebPDecParams* const p) {
-  int num_lines_out = io->mb_h;   // a priori guess
-  const WebPRGBABuffer* const buf = &p->output->u.RGBA;
-  uint8_t* dst = buf->rgba + (size_t)io->mb_y * buf->stride;
-  WebPUpsampleLinePairFunc upsample = WebPUpsamplers[p->output->colorspace];
-  const uint8_t* cur_y = io->y;
-  const uint8_t* cur_u = io->u;
-  const uint8_t* cur_v = io->v;
-  const uint8_t* top_u = p->tmp_u;
-  const uint8_t* top_v = p->tmp_v;
-  int y = io->mb_y;
-  const int y_end = io->mb_y + io->mb_h;
-  const int mb_w = io->mb_w;
-  const int uv_w = (mb_w + 1) / 2;
 
-  if (y == 0) {
-    // First line is special cased. We mirror the u/v samples at boundary.
-    upsample(cur_y, NULL, cur_u, cur_v, cur_u, cur_v, dst, NULL, mb_w);
-  } else {
-    // We can finish the left-over line from previous call.
-    upsample(p->tmp_y, cur_y, top_u, top_v, cur_u, cur_v,
-             dst - buf->stride, dst, mb_w);
-    ++num_lines_out;
-  }
-  // Loop over each output pairs of row.
-  for (; y + 2 < y_end; y += 2) {
-    top_u = cur_u;
-    top_v = cur_v;
-    cur_u += io->uv_stride;
-    cur_v += io->uv_stride;
-    dst += 2 * buf->stride;
-    cur_y += 2 * io->y_stride;
-    upsample(cur_y - io->y_stride, cur_y,
-             top_u, top_v, cur_u, cur_v,
-             dst - buf->stride, dst, mb_w);
-  }
-  // move to last row
-  cur_y += io->y_stride;
-  if (io->crop_top + y_end < io->crop_bottom) {
-    // Save the unfinished samples for next call (as we're not done yet).
-    memcpy(p->tmp_y, cur_y, mb_w * sizeof(*p->tmp_y));
-    memcpy(p->tmp_u, cur_u, uv_w * sizeof(*p->tmp_u));
-    memcpy(p->tmp_v, cur_v, uv_w * sizeof(*p->tmp_v));
-    // The fancy upsampler leaves a row unfinished behind
-    // (except for the very last row)
-    num_lines_out--;
-  } else {
-    // Process the very last row of even-sized picture
-    if (!(y_end & 1)) {
-      upsample(cur_y, NULL, cur_u, cur_v, cur_u, cur_v,
-               dst + buf->stride, NULL, mb_w);
+static int EmitFancyRGB(const VP8Io *const io, WebPDecParams *const p) {
+    int num_lines_out = io->mb_h;   // a priori guess
+    const WebPRGBABuffer *const buf = &p->output->u.RGBA;
+    uint8_t *dst = buf->rgba + (size_t) io->mb_y * buf->stride;
+    WebPUpsampleLinePairFunc upsample = WebPUpsamplers[p->output->colorspace];
+    const uint8_t *cur_y = io->y;
+    const uint8_t *cur_u = io->u;
+    const uint8_t *cur_v = io->v;
+    const uint8_t *top_u = p->tmp_u;
+    const uint8_t *top_v = p->tmp_v;
+    int y = io->mb_y;
+    const int y_end = io->mb_y + io->mb_h;
+    const int mb_w = io->mb_w;
+    const int uv_w = (mb_w + 1) / 2;
+
+    if (y == 0) {
+        // First line is special cased. We mirror the u/v samples at boundary.
+        upsample(cur_y, NULL, cur_u, cur_v, cur_u, cur_v, dst, NULL, mb_w);
+    } else {
+        // We can finish the left-over line from previous call.
+        upsample(p->tmp_y, cur_y, top_u, top_v, cur_u, cur_v,
+                dst - buf->stride, dst, mb_w);
+        ++num_lines_out;
     }
-  }
-  return num_lines_out;
+    // Loop over each output pairs of row.
+    for (; y + 2 < y_end; y += 2) {
+        top_u = cur_u;
+        top_v = cur_v;
+        cur_u += io->uv_stride;
+        cur_v += io->uv_stride;
+        dst += 2 * buf->stride;
+        cur_y += 2 * io->y_stride;
+        upsample(cur_y - io->y_stride, cur_y,
+                top_u, top_v, cur_u, cur_v,
+                dst - buf->stride, dst, mb_w);
+    }
+    // move to last row
+    cur_y += io->y_stride;
+    if (io->crop_top + y_end < io->crop_bottom) {
+        // Save the unfinished samples for next call (as we're not done yet).
+        memcpy(p->tmp_y, cur_y, mb_w * sizeof(*p->tmp_y));
+        memcpy(p->tmp_u, cur_u, uv_w * sizeof(*p->tmp_u));
+        memcpy(p->tmp_v, cur_v, uv_w * sizeof(*p->tmp_v));
+        // The fancy upsampler leaves a row unfinished behind
+        // (except for the very last row)
+        num_lines_out--;
+    } else {
+        // Process the very last row of even-sized picture
+        if (!(y_end & 1)) {
+            upsample(cur_y, NULL, cur_u, cur_v, cur_u, cur_v,
+                    dst + buf->stride, NULL, mb_w);
+        }
+    }
+    return num_lines_out;
 }
 
 #endif    /* FANCY_UPSAMPLING */
@@ -515,7 +516,7 @@ static int InitRGBRescaler(const VP8Io *const io, WebPDecParams *const p) {
         return 0;   // memory error
     }
     work = (rescaler_t *) p->memory;
-    tmp = (uint8_t * )(work + tmp_size1);
+    tmp = (uint8_t *) (work + tmp_size1);
 
     scalers = (WebPRescaler *) WEBP_ALIGN(
             (const uint8_t *) work + total_size - rescaler_size);
@@ -593,11 +594,11 @@ static int CustomSetup(VP8Io *io) {
             if (io->fancy_upsampling) {
 #ifdef FANCY_UPSAMPLING
                 const int uv_width = (io->mb_w + 1) >> 1;
-                p->memory = WebPSafeMalloc(1ULL, (size_t)(io->mb_w + 2 * uv_width));
+                p->memory = WebPSafeMalloc(1ULL, (size_t) (io->mb_w + 2 * uv_width));
                 if (p->memory == NULL) {
-                  return 0;   // memory error.
+                    return 0;   // memory error.
                 }
-                p->tmp_y = (uint8_t*)p->memory;
+                p->tmp_y = (uint8_t *) p->memory;
                 p->tmp_u = p->tmp_y + io->mb_w;
                 p->tmp_v = p->tmp_u + uv_width;
                 p->emit = EmitFancyRGB;

@@ -96,10 +96,12 @@ object HttpUtil {
         } finally {
             try {
                 inputStream?.close()
-            } catch (_: Exception) {}
+            } catch (_: Exception) {
+            }
             try {
                 outputStream?.close()
-            } catch (_: Exception) {}
+            } catch (_: Exception) {
+            }
             connection?.disconnect()
         }
     }

@@ -45,11 +45,4 @@ object ToastUtil {
             toast.show()
         }
     }
-
-    /**
-     * 兼容旧代码的 instance 属性
-     */
-    @JvmStatic
-    val instance: ToastUtil
-        get() = this
 }

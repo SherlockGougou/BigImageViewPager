@@ -11,17 +11,8 @@ public final class WebpFrameCacheStrategy {
     public static final WebpFrameCacheStrategy AUTO = new Builder().cacheAuto().build();
 
     public static final WebpFrameCacheStrategy ALL = new Builder().cacheAll().build();
-
-    public enum CacheControl {
-        CACHE_NONE,
-        CACHE_LIMITED,
-        CACHE_AUTO,
-        CACHE_ALL,
-    }
-
     private CacheControl mCacheStrategy;
     private int mCacheSize;
-
     private WebpFrameCacheStrategy(Builder builder) {
         this.mCacheStrategy = builder.cacheControl;
         this.mCacheSize = builder.cacheSize;
@@ -45,6 +36,13 @@ public final class WebpFrameCacheStrategy {
 
     public int getCacheSize() {
         return this.mCacheSize;
+    }
+
+    public enum CacheControl {
+        CACHE_NONE,
+        CACHE_LIMITED,
+        CACHE_AUTO,
+        CACHE_ALL,
     }
 
     public final static class Builder {

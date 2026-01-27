@@ -114,11 +114,11 @@ void WebPRescalerExportRowExpand_C(WebPRescaler *const wrk) {
         }
     } else {
         const uint32_t B = WEBP_RESCALER_FRAC(-wrk->y_accum, wrk->y_sub);
-        const uint32_t A = (uint32_t)(WEBP_RESCALER_ONE - B);
+        const uint32_t A = (uint32_t) (WEBP_RESCALER_ONE - B);
         for (x_out = 0; x_out < x_out_max; ++x_out) {
             const uint64_t I = (uint64_t) A * frow[x_out]
                     + (uint64_t) B * irow[x_out];
-            const uint32_t J = (uint32_t)((I + ROUNDER) >> WEBP_RESCALER_RFIX);
+            const uint32_t J = (uint32_t) ((I + ROUNDER) >> WEBP_RESCALER_RFIX);
             const int v = (int) MULT_FIX(J, wrk->fy_scale);
             dst[x_out] = (v > 255) ? 255u : (uint8_t) v;
         }
@@ -137,7 +137,7 @@ void WebPRescalerExportRowShrink_C(WebPRescaler *const wrk) {
     assert(!wrk->y_expand);
     if (yscale) {
         for (x_out = 0; x_out < x_out_max; ++x_out) {
-            const uint32_t frac = (uint32_t)MULT_FIX_FLOOR(frow[x_out], yscale);
+            const uint32_t frac = (uint32_t) MULT_FIX_FLOOR(frow[x_out], yscale);
             const int v = (int) MULT_FIX(irow[x_out] - frac, wrk->fxy_scale);
             dst[x_out] = (v > 255) ? 255u : (uint8_t) v;
             irow[x_out] = frac;   // new fractional start
@@ -212,35 +212,35 @@ extern void WebPRescalerDspInitNEON(void);
 WEBP_DSP_INIT_FUNC(WebPRescalerDspInit) {
 #if !defined(WEBP_REDUCE_SIZE)
 #if !WEBP_NEON_OMIT_C_CODE
-        WebPRescalerExportRowExpand = WebPRescalerExportRowExpand_C;
-        WebPRescalerExportRowShrink = WebPRescalerExportRowShrink_C;
+    WebPRescalerExportRowExpand = WebPRescalerExportRowExpand_C;
+    WebPRescalerExportRowShrink = WebPRescalerExportRowShrink_C;
 #endif
 
-        WebPRescalerImportRowExpand = WebPRescalerImportRowExpand_C;
-        WebPRescalerImportRowShrink = WebPRescalerImportRowShrink_C;
+    WebPRescalerImportRowExpand = WebPRescalerImportRowExpand_C;
+    WebPRescalerImportRowShrink = WebPRescalerImportRowShrink_C;
 
-        if (VP8GetCPUInfo != NULL) {
+    if (VP8GetCPUInfo != NULL) {
 #if defined(WEBP_HAVE_SSE2)
-            if (VP8GetCPUInfo(kSSE2)) {
-              WebPRescalerDspInitSSE2();
-            }
+        if (VP8GetCPUInfo(kSSE2)) {
+            WebPRescalerDspInitSSE2();
+        }
 #endif
 #if defined(WEBP_USE_MIPS32)
-            if (VP8GetCPUInfo(kMIPS32)) {
-              WebPRescalerDspInitMIPS32();
-            }
+        if (VP8GetCPUInfo(kMIPS32)) {
+          WebPRescalerDspInitMIPS32();
+        }
 #endif
 #if defined(WEBP_USE_MIPS_DSP_R2)
-            if (VP8GetCPUInfo(kMIPSdspR2)) {
-              WebPRescalerDspInitMIPSdspR2();
-            }
+        if (VP8GetCPUInfo(kMIPSdspR2)) {
+          WebPRescalerDspInitMIPSdspR2();
+        }
 #endif
 #if defined(WEBP_USE_MSA)
-            if (VP8GetCPUInfo(kMSA)) {
-              WebPRescalerDspInitMSA();
-            }
-#endif
+        if (VP8GetCPUInfo(kMSA)) {
+          WebPRescalerDspInitMSA();
         }
+#endif
+    }
 
 #if defined(WEBP_HAVE_NEON)
         if (WEBP_NEON_OMIT_C_CODE ||
@@ -249,9 +249,9 @@ WEBP_DSP_INIT_FUNC(WebPRescalerDspInit) {
         }
 #endif
 
-        assert(WebPRescalerExportRowExpand != NULL);
-        assert(WebPRescalerExportRowShrink != NULL);
-        assert(WebPRescalerImportRowExpand != NULL);
-        assert(WebPRescalerImportRowShrink != NULL);
+    assert(WebPRescalerExportRowExpand != NULL);
+    assert(WebPRescalerExportRowShrink != NULL);
+    assert(WebPRescalerImportRowExpand != NULL);
+    assert(WebPRescalerImportRowShrink != NULL);
 #endif   // WEBP_REDUCE_SIZE
 }

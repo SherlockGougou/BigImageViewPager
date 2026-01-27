@@ -41,7 +41,7 @@ static WEBP_INLINE double SSIMCalculation(
         const uint64_t sxx = (uint64_t) stats->xxm * N - xmxm;
         const uint64_t syy = (uint64_t) stats->yym * N - ymym;
         // we descale by 8 to prevent overflow during the fnum/fden multiply.
-        const uint64_t num_S = (2 * (uint64_t)(sxy < 0 ? 0 : sxy) + C2) >> 8;
+        const uint64_t num_S = (2 * (uint64_t) (sxy < 0 ? 0 : sxy) + C2) >> 8;
         const uint64_t den_S = (sxx + syy + C2) >> 8;
         const uint64_t fnum = (2 * xmym + C1) * num_S;
         const uint64_t fden = (xmxm + ymym + C1) * den_S;
@@ -145,19 +145,19 @@ extern void VP8SSIMDspInitSSE2(void);
 
 WEBP_DSP_INIT_FUNC(VP8SSIMDspInit) {
 #if !defined(WEBP_REDUCE_SIZE)
-        VP8SSIMGetClipped = SSIMGetClipped_C;
-        VP8SSIMGet = SSIMGet_C;
+    VP8SSIMGetClipped = SSIMGetClipped_C;
+    VP8SSIMGet = SSIMGet_C;
 #endif
 
 #if !defined(WEBP_DISABLE_STATS)
-        VP8AccumulateSSE = AccumulateSSE_C;
+    VP8AccumulateSSE = AccumulateSSE_C;
 #endif
 
-        if (VP8GetCPUInfo != NULL) {
+    if (VP8GetCPUInfo != NULL) {
 #if defined(WEBP_HAVE_SSE2)
-            if (VP8GetCPUInfo(kSSE2)) {
-              VP8SSIMDspInitSSE2();
-            }
-#endif
+        if (VP8GetCPUInfo(kSSE2)) {
+            VP8SSIMDspInitSSE2();
         }
+#endif
+    }
 }

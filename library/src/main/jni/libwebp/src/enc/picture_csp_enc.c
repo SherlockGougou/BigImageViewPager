@@ -105,25 +105,25 @@ static void InitGammaTables(void);
 extern VP8CPUInfo VP8GetCPUInfo;
 
 WEBP_DSP_INIT_FUNC(InitGammaTables) {
-        if (!kGammaTablesOk) {
-            int v;
-            const double scale = (double) (1 << GAMMA_TAB_FIX) / kGammaScale;
-            const double norm = 1. / 255.;
-            for (v = 0; v <= 255; ++v) {
-                kGammaToLinearTab[v] =
-                        (uint16_t)(pow(norm * v, kGamma) * kGammaScale + .5);
-            }
-            for (v = 0; v <= GAMMA_TAB_SIZE; ++v) {
-                kLinearToGammaTab[v] = (int) (255. * pow(scale * v, 1. / kGamma) + .5);
-            }
-            kGammaTablesOk = 1;
+    if (!kGammaTablesOk) {
+        int v;
+        const double scale = (double) (1 << GAMMA_TAB_FIX) / kGammaScale;
+        const double norm = 1. / 255.;
+        for (v = 0; v <= 255; ++v) {
+            kGammaToLinearTab[v] =
+                    (uint16_t) (pow(norm * v, kGamma) * kGammaScale + .5);
         }
+        for (v = 0; v <= GAMMA_TAB_SIZE; ++v) {
+            kLinearToGammaTab[v] = (int) (255. * pow(scale * v, 1. / kGamma) + .5);
+        }
+        kGammaTablesOk = 1;
+    }
 }
 
 static WEBP_INLINE uint32_t
 GammaToLinear(uint8_t
 v) {
-return kGammaToLinearTab[v];
+    return kGammaToLinearTab[v];
 }
 
 static WEBP_INLINE int Interpolate(int v) {
@@ -526,10 +526,10 @@ static int ImportYUVAFromRGBA(const uint8_t *r_ptr,
         // temporary storage for accumulated R/G/B values during conversion to U/V
         uint16_t *const tmp_rgb =
                 (uint16_t *) WebPSafeMalloc(4 * uv_width, sizeof(*tmp_rgb));
-        uint8_t * dst_y = picture->y;
-        uint8_t * dst_u = picture->u;
-        uint8_t * dst_v = picture->v;
-        uint8_t * dst_a = picture->a;
+        uint8_t *dst_y = picture->y;
+        uint8_t *dst_u = picture->u;
+        uint8_t *dst_v = picture->v;
+        uint8_t *dst_a = picture->a;
 
         VP8Random base_rg;
         VP8Random *rg = NULL;
@@ -640,7 +640,7 @@ static int PictureARGBToYUVA(WebPPicture *picture, WebPEncCSP colorspace,
     } else if ((colorspace & WEBP_CSP_UV_MASK) != WEBP_YUV420) {
         return WebPEncodingSetError(picture, VP8_ENC_ERROR_INVALID_CONFIGURATION);
     } else {
-        const uint8_t *const argb = (const uint8_t*)picture->argb;
+        const uint8_t *const argb = (const uint8_t *) picture->argb;
         const uint8_t *const a = argb + CHANNEL_OFFSET(0);
         const uint8_t *const r = argb + CHANNEL_OFFSET(1);
         const uint8_t *const g = argb + CHANNEL_OFFSET(2);
@@ -694,8 +694,8 @@ int WebPPictureYUVAToARGB(WebPPicture *picture) {
         const int width = picture->width;
         const int height = picture->height;
         const int argb_stride = 4 * picture->argb_stride;
-        uint8_t * dst = (uint8_t * )
-        picture->argb;
+        uint8_t *dst = (uint8_t *)
+                picture->argb;
         const uint8_t *cur_u = picture->u, *cur_v = picture->v, *cur_y = picture->y;
         WebPUpsampleLinePairFunc upsample =
                 WebPGetLinePairConverter(ALPHA_OFFSET > 0);
@@ -727,7 +727,7 @@ int WebPPictureYUVAToARGB(WebPPicture *picture) {
                 int x;
                 for (x = 0; x < width; ++x) {
                     argb_dst[x] = (argb_dst[x] & 0x00ffffffu) | ((uint32_t)
-                    src[x] << 24);
+                            src[x] << 24);
                 }
             }
         }
@@ -763,7 +763,7 @@ static int Import(WebPPicture *const picture,
 
     if (import_alpha) {
         // dst[] byte order is {a,r,g,b} for big-endian, {b,g,r,a} for little endian
-        uint32_t * dst = picture->argb;
+        uint32_t *dst = picture->argb;
         const int do_copy = (ALPHA_OFFSET == 3) && swap_rb;
         assert(step == 4);
         if (do_copy) {
@@ -784,15 +784,15 @@ static int Import(WebPPicture *const picture,
 #else
                 // RGBA input order. Need to swap R and B.
                 VP8LConvertBGRAToRGBA((
-                const uint32_t*)rgb, width, (uint8_t * )
-                dst);
+                        const uint32_t *) rgb, width, (uint8_t *)
+                        dst);
 #endif
                 rgb += rgb_stride;
                 dst += picture->argb_stride;
             }
         }
     } else {
-        uint32_t * dst = picture->argb;
+        uint32_t *dst = picture->argb;
         assert(step >= 3);
         for (y = 0; y < height; ++y) {
             WebPPackRGB(r_ptr, g_ptr, b_ptr, width, step, dst);

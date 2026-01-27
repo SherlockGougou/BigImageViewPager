@@ -149,20 +149,20 @@ static WEBP_INLINE void Rewind(MemBuffer *const mem, size_t size) {
 static WEBP_INLINE const uint8_t
 *
 GetBuffer(MemBuffer
-* const mem) {
-return mem->buf_ + mem->
-start_;
+*const mem) {
+    return mem->buf_ + mem->
+            start_;
 }
 
 // Read from 'mem' and skip the read bytes.
 static WEBP_INLINE uint8_t
 ReadByte(MemBuffer
-* const mem) {
-const uint8_t byte = mem->buf_[mem->start_];
-Skip(mem,
-1);
-return
-byte;
+*const mem) {
+    const uint8_t byte = mem->buf_[mem->start_];
+    Skip(mem,
+            1);
+    return
+            byte;
 }
 
 static WEBP_INLINE int ReadLE16s(MemBuffer *const mem) {
@@ -181,13 +181,13 @@ static WEBP_INLINE int ReadLE24s(MemBuffer *const mem) {
 
 static WEBP_INLINE uint32_t
 ReadLE32(MemBuffer
-* const mem) {
-const uint8_t *const data = mem->buf_ + mem->start_;
-const uint32_t val = GetLE32(data);
-Skip(mem,
-4);
-return
-val;
+*const mem) {
+    const uint8_t *const data = mem->buf_ + mem->start_;
+    const uint32_t val = GetLE32(data);
+    Skip(mem,
+            4);
+    return
+            val;
 }
 
 // -----------------------------------------------------------------------------
@@ -808,18 +808,18 @@ uint32_t WebPDemuxGetI(const WebPDemuxer *dmux, WebPFormatFeature feature) {
             return dmux->feature_flags_;
         case WEBP_FF_CANVAS_WIDTH:
             return (uint32_t)
-            dmux->canvas_width_;
+                    dmux->canvas_width_;
         case WEBP_FF_CANVAS_HEIGHT:
             return (uint32_t)
-            dmux->canvas_height_;
+                    dmux->canvas_height_;
         case WEBP_FF_LOOP_COUNT:
             return (uint32_t)
-            dmux->loop_count_;
+                    dmux->loop_count_;
         case WEBP_FF_BACKGROUND_COLOR:
             return dmux->bgcolor_;
         case WEBP_FF_FRAME_COUNT:
             return (uint32_t)
-            dmux->num_frames_;
+                    dmux->num_frames_;
     }
     return 0;
 }

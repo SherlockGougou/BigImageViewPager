@@ -192,7 +192,7 @@ static int AppendToMemBuffer(WebPIDecoder *const idec,
         WebPSafeFree(mem->buf_);
         mem->buf_ = new_buf;
         mem->buf_size_ = (size_t)
-        extra_size;
+                extra_size;
         mem->start_ = new_mem_start;
         mem->end_ = current_size;
     }

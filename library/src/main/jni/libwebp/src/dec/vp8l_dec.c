@@ -755,16 +755,16 @@ static WEBP_INLINE int GetMetaIndex(
 static WEBP_INLINE HTreeGroup
 *
 GetHtreeGroupForPos(VP8LMetadata
-* const hdr,
-int x,
-int y
+*const hdr,
+        int x,
+        int y
 ) {
-const int meta_index = GetMetaIndex(hdr->huffman_image_, hdr->huffman_xsize_,
-        hdr->huffman_subsample_bits_, x, y);
-assert(meta_index<hdr
-->num_htree_groups_);
-return hdr->htree_groups_ +
-meta_index;
+    const int meta_index = GetMetaIndex(hdr->huffman_image_, hdr->huffman_xsize_,
+            hdr->huffman_subsample_bits_, x, y);
+    assert(meta_index < hdr
+            ->num_htree_groups_);
+    return hdr->htree_groups_ +
+            meta_index;
 }
 
 //------------------------------------------------------------------------------
@@ -906,9 +906,9 @@ static WEBP_INLINE uint32_t
 Rotate8b(uint32_t
 V) {
 #if defined(WORDS_BIGENDIAN)
-return ((V & 0xff000000u) >> 24) | (V << 8);
+    return ((V & 0xff000000u) >> 24) | (V << 8);
 #else
-return ((V & 0xffu) << 24) | (V >> 8);
+    return ((V & 0xffu) << 24) | (V >> 8);
 #endif
 }
 
@@ -924,8 +924,8 @@ static WEBP_INLINE void CopySmallPattern8b(const uint8_t *src, uint8_t *dst,
     }
     // Copy the pattern 4 bytes at a time.
     for (i = 0; i < (length >> 2); ++i) {
-        ((uint32_t * )
-        dst)[i] = pattern;
+        ((uint32_t *)
+                dst)[i] = pattern;
     }
     // Finish with left-overs. 'pattern' is still correctly positioned,
     // so no Rotate8b() call is needed.
@@ -1136,8 +1136,8 @@ static int DecodeImageData(VP8LDecoder *const dec, uint32_t *const data,
     int col = dec->last_pixel_ % width;
     VP8LBitReader *const br = &dec->br_;
     VP8LMetadata *const hdr = &dec->hdr_;
-    uint32_t * src = data + dec->last_pixel_;
-    uint32_t * last_cached = src;
+    uint32_t *src = data + dec->last_pixel_;
+    uint32_t *last_cached = src;
     uint32_t *const src_end = data + width * height;     // End of data
     uint32_t *const src_last = data + width * last_row;  // Last pixel to decode
     const int len_code_limit = NUM_LITERAL_CODES + NUM_LENGTH_CODES;
@@ -1188,7 +1188,7 @@ static int DecodeImageData(VP8LDecoder *const dec, uint32_t *const data,
                 alpha = ReadSymbol(htree_group->htrees[ALPHA], br);
                 if (VP8LIsEndOfStream(br)) break;
                 *src = ((uint32_t)
-                alpha << 24) | (red << 16) | (code << 8) | blue;
+                        alpha << 24) | (red << 16) | (code << 8) | blue;
             }
             AdvanceByOne:
             ++src;
@@ -1291,9 +1291,9 @@ static int ExpandColorMap(int num_colors, VP8LTransform *const transform) {
     int i;
     const int final_num_colors = 1 << (8 >> transform->bits_);
     uint32_t *const new_color_map =
-    (uint32_t * )
-    WebPSafeMalloc((uint64_t) final_num_colors,
-            sizeof(*new_color_map));
+            (uint32_t *)
+                    WebPSafeMalloc((uint64_t) final_num_colors,
+                            sizeof(*new_color_map));
     if (new_color_map == NULL) {
         return 0;
     } else {
@@ -1444,7 +1444,7 @@ static int DecodeImageStream(int xsize, int ysize,
     int transform_ysize = ysize;
     VP8LBitReader *const br = &dec->br_;
     VP8LMetadata *const hdr = &dec->hdr_;
-    uint32_t * data = NULL;
+    uint32_t *data = NULL;
     int color_cache_bits = 0;
 
     // Read the transforms (may recurse).
@@ -1492,8 +1492,8 @@ static int DecodeImageStream(int xsize, int ysize,
 
     {
         const uint64_t total_size = (uint64_t) transform_xsize * transform_ysize;
-        data = (uint32_t * )
-        WebPSafeMalloc(total_size, sizeof(*data));
+        data = (uint32_t *)
+                WebPSafeMalloc(total_size, sizeof(*data));
         if (data == NULL) {
             dec->status_ = VP8_STATUS_OUT_OF_MEMORY;
             ok = 0;
@@ -1538,8 +1538,8 @@ static int AllocateInternalBuffers32b(VP8LDecoder *const dec, int final_width) {
             num_pixels + cache_top_pixels + cache_pixels;
 
     assert(dec->width_ <= final_width);
-    dec->pixels_ = (uint32_t * )
-    WebPSafeMalloc(total_num_pixels, sizeof(uint32_t));
+    dec->pixels_ = (uint32_t *)
+            WebPSafeMalloc(total_num_pixels, sizeof(uint32_t));
     if (dec->pixels_ == NULL) {
         dec->argb_cache_ = NULL;    // for soundness
         dec->status_ = VP8_STATUS_OUT_OF_MEMORY;
@@ -1552,8 +1552,8 @@ static int AllocateInternalBuffers32b(VP8LDecoder *const dec, int final_width) {
 static int AllocateInternalBuffers8b(VP8LDecoder *const dec) {
     const uint64_t total_num_pixels = (uint64_t) dec->width_ * dec->height_;
     dec->argb_cache_ = NULL;    // for soundness
-    dec->pixels_ = (uint32_t * )
-    WebPSafeMalloc(total_num_pixels, sizeof(uint8_t));
+    dec->pixels_ = (uint32_t *)
+            WebPSafeMalloc(total_num_pixels, sizeof(uint8_t));
     if (dec->pixels_ == NULL) {
         dec->status_ = VP8_STATUS_OUT_OF_MEMORY;
         return 0;

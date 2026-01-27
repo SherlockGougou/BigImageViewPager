@@ -130,6 +130,7 @@ WebPMuxError ChunkAssignData(WebPChunk *chunk, const WebPData *const data,
 // Sets 'chunk' as the only element in 'chunk_list' if it is empty.
 // On success ownership is transferred from 'chunk' to the 'chunk_list'.
 WebPMuxError ChunkSetHead(WebPChunk *const chunk, WebPChunk **const chunk_list);
+
 // Sets 'chunk' at last position in the 'chunk_list'.
 // On success ownership is transferred from 'chunk' to the 'chunk_list'.
 // *chunk_list also points towards the last valid element of the initial
@@ -148,9 +149,9 @@ void ChunkListDelete(WebPChunk **const chunk_list);
 // Returns size of the chunk including chunk header and padding byte (if any).
 static WEBP_INLINE size_t
 SizeWithPadding(size_t
-chunk_size ) {
-assert(chunk_size <= MAX_CHUNK_PAYLOAD ) ;
-return CHUNK_HEADER_SIZE + ( ( chunk_size + 1 ) & ~ 1U ) ;
+chunk_size) {
+    assert(chunk_size <= MAX_CHUNK_PAYLOAD);
+    return CHUNK_HEADER_SIZE + ((chunk_size + 1) & ~1U);
 }
 
 // Size of a chunk including header and padding.

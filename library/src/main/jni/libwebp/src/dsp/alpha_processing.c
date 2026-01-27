@@ -134,9 +134,9 @@ static WEBP_INLINE uint32_t GetScale(uint32_t a, int inverse) {
 static WEBP_INLINE uint32_t
 GetScale(uint32_t
 a,
-int inverse
+        int inverse
 ) {
-return inverse ? (255u << MFIX) / a : a * KINV_255;
+    return inverse ? (255u << MFIX) / a : a * KINV_255;
 }
 
 #endif  // USE_TABLES_FOR_ALPHA_MULT
@@ -195,8 +195,8 @@ void WebPMultARGBRows(uint8_t *ptr, int stride, int width, int num_rows,
         int inverse) {
     int n;
     for (n = 0; n < num_rows; ++n) {
-        WebPMultARGBRow((uint32_t * )
-        ptr, width, inverse);
+        WebPMultARGBRow((uint32_t *)
+                ptr, width, inverse);
         ptr += stride;
     }
 }
@@ -260,23 +260,23 @@ static void ApplyAlphaMultiply_C(uint8_t *rgba, int alpha_first,
 static WEBP_INLINE uint8_t
 dither_hi(uint8_t
 x) {
-return (x & 0xf0) | (x >> 4);
+    return (x & 0xf0) | (x >> 4);
 }
 
 static WEBP_INLINE uint8_t
 dither_lo(uint8_t
 x) {
-return (x & 0x0f) | (x << 4);
+    return (x & 0x0f) | (x << 4);
 }
 
 static WEBP_INLINE uint8_t
 multiply(uint8_t
 x,
-uint32_t m
+        uint32_t m
 ) {
-return (
-x *m
-) >> 16;
+    return (
+            x * m
+    ) >> 16;
 }
 
 static WEBP_INLINE void ApplyAlphaMultiply4444_C(uint8_t *rgba4444,
@@ -396,7 +396,7 @@ static WEBP_INLINE uint32_t
 
 MakeARGB32(int a, int r, int g, int b) {
     return (((uint32_t)
-    a << 24) | (r << 16) | (g << 8) | b);
+            a << 24) | (r << 16) | (g << 8) | b);
 }
 
 #ifdef WORDS_BIGENDIAN
@@ -469,44 +469,44 @@ extern void WebPInitAlphaProcessingSSE41(void);
 extern void WebPInitAlphaProcessingNEON(void);
 
 WEBP_DSP_INIT_FUNC(WebPInitAlphaProcessing) {
-        WebPMultARGBRow = WebPMultARGBRow_C;
-        WebPMultRow = WebPMultRow_C;
-        WebPApplyAlphaMultiply4444 = ApplyAlphaMultiply_16b_C;
+    WebPMultARGBRow = WebPMultARGBRow_C;
+    WebPMultRow = WebPMultRow_C;
+    WebPApplyAlphaMultiply4444 = ApplyAlphaMultiply_16b_C;
 
 #ifdef WORDS_BIGENDIAN
-        WebPPackARGB = PackARGB_C;
+    WebPPackARGB = PackARGB_C;
 #endif
-        WebPPackRGB = PackRGB_C;
+    WebPPackRGB = PackRGB_C;
 #if !WEBP_NEON_OMIT_C_CODE
-        WebPApplyAlphaMultiply = ApplyAlphaMultiply_C;
-        WebPDispatchAlpha = DispatchAlpha_C;
-        WebPDispatchAlphaToGreen = DispatchAlphaToGreen_C;
-        WebPExtractAlpha = ExtractAlpha_C;
-        WebPExtractGreen = ExtractGreen_C;
+    WebPApplyAlphaMultiply = ApplyAlphaMultiply_C;
+    WebPDispatchAlpha = DispatchAlpha_C;
+    WebPDispatchAlphaToGreen = DispatchAlphaToGreen_C;
+    WebPExtractAlpha = ExtractAlpha_C;
+    WebPExtractGreen = ExtractGreen_C;
 #endif
 
-        WebPHasAlpha8b = HasAlpha8b_C;
-        WebPHasAlpha32b = HasAlpha32b_C;
-        WebPAlphaReplace = AlphaReplace_C;
+    WebPHasAlpha8b = HasAlpha8b_C;
+    WebPHasAlpha32b = HasAlpha32b_C;
+    WebPAlphaReplace = AlphaReplace_C;
 
-        // If defined, use CPUInfo() to overwrite some pointers with faster versions.
-        if (VP8GetCPUInfo != NULL) {
+    // If defined, use CPUInfo() to overwrite some pointers with faster versions.
+    if (VP8GetCPUInfo != NULL) {
 #if defined(WEBP_HAVE_SSE2)
-            if (VP8GetCPUInfo(kSSE2)) {
-              WebPInitAlphaProcessingSSE2();
+        if (VP8GetCPUInfo(kSSE2)) {
+            WebPInitAlphaProcessingSSE2();
 #if defined(WEBP_HAVE_SSE41)
-              if (VP8GetCPUInfo(kSSE4_1)) {
-                WebPInitAlphaProcessingSSE41();
-              }
-#endif
-            }
-#endif
-#if defined(WEBP_USE_MIPS_DSP_R2)
-            if (VP8GetCPUInfo(kMIPSdspR2)) {
-              WebPInitAlphaProcessingMIPSdspR2();
+            if (VP8GetCPUInfo(kSSE4_1)) {
+              WebPInitAlphaProcessingSSE41();
             }
 #endif
         }
+#endif
+#if defined(WEBP_USE_MIPS_DSP_R2)
+        if (VP8GetCPUInfo(kMIPSdspR2)) {
+          WebPInitAlphaProcessingMIPSdspR2();
+        }
+#endif
+    }
 
 #if defined(WEBP_HAVE_NEON)
         if (WEBP_NEON_OMIT_C_CODE ||
@@ -515,19 +515,19 @@ WEBP_DSP_INIT_FUNC(WebPInitAlphaProcessing) {
         }
 #endif
 
-        assert(WebPMultARGBRow != NULL);
-        assert(WebPMultRow != NULL);
-        assert(WebPApplyAlphaMultiply != NULL);
-        assert(WebPApplyAlphaMultiply4444 != NULL);
-        assert(WebPDispatchAlpha != NULL);
-        assert(WebPDispatchAlphaToGreen != NULL);
-        assert(WebPExtractAlpha != NULL);
-        assert(WebPExtractGreen != NULL);
+    assert(WebPMultARGBRow != NULL);
+    assert(WebPMultRow != NULL);
+    assert(WebPApplyAlphaMultiply != NULL);
+    assert(WebPApplyAlphaMultiply4444 != NULL);
+    assert(WebPDispatchAlpha != NULL);
+    assert(WebPDispatchAlphaToGreen != NULL);
+    assert(WebPExtractAlpha != NULL);
+    assert(WebPExtractGreen != NULL);
 #ifdef WORDS_BIGENDIAN
-        assert(WebPPackARGB != NULL);
+    assert(WebPPackARGB != NULL);
 #endif
-        assert(WebPPackRGB != NULL);
-        assert(WebPHasAlpha8b != NULL);
-        assert(WebPHasAlpha32b != NULL);
-        assert(WebPAlphaReplace != NULL);
+    assert(WebPPackRGB != NULL);
+    assert(WebPHasAlpha8b != NULL);
+    assert(WebPHasAlpha32b != NULL);
+    assert(WebPAlphaReplace != NULL);
 }

@@ -392,7 +392,7 @@ static VP8StatusCode ParseHeadersInternal(const uint8_t *data,
     if (headers != NULL) {
         *headers = hdrs;
         headers->offset = data - headers->data;
-        assert((uint64_t)(data - headers->data) < MAX_CHUNK_PAYLOAD);
+        assert((uint64_t) (data - headers->data) < MAX_CHUNK_PAYLOAD);
         assert(headers->offset == headers->data_size - data_size);
     }
     ReturnWidthHeight:

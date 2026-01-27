@@ -235,5 +235,7 @@ WEBP_DSP_INIT_STUB(WebPInitYUV444ConvertersSSE41)
 #endif  // WEBP_USE_SSE41
 
 #if !(defined(FANCY_UPSAMPLING) && defined(WEBP_USE_SSE41))
+
 WEBP_DSP_INIT_STUB(WebPInitUpsamplersSSE41)
+
 #endif
