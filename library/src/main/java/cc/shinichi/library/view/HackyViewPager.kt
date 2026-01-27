@@ -4,33 +4,59 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.viewpager.widget.ViewPager
+import cc.shinichi.library.tool.common.SLog
 
 /**
- * Hacky fix for Issue #4 and
- * http://code.google.com/p/android/issues/detail?id=18990
+ * 修复 PhotoView 与 ViewPager 手势冲突的 ViewPager
  *
+ * ScaleGestureDetector 可能会导致触摸事件异常，
+ * 引发 IllegalArgumentException: pointerIndex out of range
  *
- * ScaleGestureDetector seems to mess up the touch events, which means that
- * ViewGroups which make use of onInterceptTouchEvent throw a lot of
- * IllegalArgumentException: pointerIndex out of range.
- *
- *
- * There's not much I can do in my code for now, but we can mask the result by
- * just catching the problem and ignoring it.
+ * 此类通过捕获异常来避免崩溃
  *
  * @author 工藤
  * @email qinglingou@gmail.com
  */
-class HackyViewPager : ViewPager {
+class HackyViewPager @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : ViewPager(context, attrs) {
 
-    constructor(context: Context) : super(context)
+    companion object {
+        private const val TAG = "HackyViewPager"
+    }
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    /**
+     * 是否启用滑动
+     */
+    var isScrollEnabled = true
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        if (!isScrollEnabled) {
+            return false
+        }
         return try {
             super.onInterceptTouchEvent(ev)
         } catch (e: IllegalArgumentException) {
+            SLog.w(TAG, "onInterceptTouchEvent: IllegalArgumentException caught")
+            false
+        } catch (e: ArrayIndexOutOfBoundsException) {
+            SLog.w(TAG, "onInterceptTouchEvent: ArrayIndexOutOfBoundsException caught")
+            false
+        }
+    }
+
+    override fun onTouchEvent(ev: MotionEvent): Boolean {
+        if (!isScrollEnabled) {
+            return false
+        }
+        return try {
+            super.onTouchEvent(ev)
+        } catch (e: IllegalArgumentException) {
+            SLog.w(TAG, "onTouchEvent: IllegalArgumentException caught")
+            false
+        } catch (e: ArrayIndexOutOfBoundsException) {
+            SLog.w(TAG, "onTouchEvent: ArrayIndexOutOfBoundsException caught")
             false
         }
     }

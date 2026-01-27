@@ -172,22 +172,24 @@ object ImageUtil {
         return isTablet(context) or isLandscape(context)
     }
 
+    /**
+     * 判断是否为长图（高/宽 >= 3）
+     * 使用缓存避免重复计算
+     */
     fun isLongImage(imagePath: String): Boolean {
-        val wh = getWidthHeight(imagePath)
-        val w = wh[0].toFloat()
-        val h = wh[1].toFloat()
-        val imageRatio = h / w
-        val isLongImage = h > w && imageRatio >= 3
+        val size = ImageSizeCache.getImageSize(imagePath)
+        val isLongImage = size.isLongImage
         SLog.d(TAG, "isLongImage = $isLongImage")
         return isLongImage
     }
 
+    /**
+     * 判断是否为宽图（宽/高 >= 3）
+     * 使用缓存避免重复计算
+     */
     fun isWideImage(imagePath: String): Boolean {
-        val wh = getWidthHeight(imagePath)
-        val w = wh[0].toFloat()
-        val h = wh[1].toFloat()
-        val imageRatio = w / h
-        val isWideImage = w > h && imageRatio >= 3
+        val size = ImageSizeCache.getImageSize(imagePath)
+        val isWideImage = size.isWideImage
         SLog.d(TAG, "isWideImage = $isWideImage")
         return isWideImage
     }

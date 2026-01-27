@@ -1,0 +1,64 @@
+[versions]
+# Kotlin & Gradle
+kotlin = "1.9.22"
+agp = "8.2.2"
+
+# AndroidX
+appcompat = "1.7.0"
+material = "1.12.0"
+core-ktx = "1.13.1"
+constraintlayout = "2.1.4"
+recyclerview = "1.3.2"
+exifinterface = "1.3.7"
+
+# Media3 / ExoPlayer
+media3 = "1.4.1"
+
+# Glide
+glide = "4.16.0"
+
+# AVIF
+avif = "1.1.1.14d8e3c4"
+
+# Picture Selector
+pictureselector = "v3.11.2"
+
+# Publishing
+nexus-publish = "2.0.0"
+dokka = "1.9.20"
+
+[libraries]
+# AndroidX
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-material = { module = "com.google.android.material:material", version.ref = "material" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
+androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifinterface" }
+
+# Media3
+media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
+media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-dash", version.ref = "media3" }
+media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
+
+# Glide
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
+glide-okhttp3 = { module = "com.github.bumptech.glide:okhttp3-integration", version.ref = "glide" }
+glide-avif = { module = "com.github.bumptech.glide:avif-integration", version.ref = "glide" }
+
+# AVIF
+avif = { module = "org.aomedia.avif.android:avif", version.ref = "avif" }
+
+# Kotlin
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+
+# Picture Selector
+pictureselector = { module = "io.github.lucksiege:pictureselector", version.ref = "pictureselector" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-publish" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }

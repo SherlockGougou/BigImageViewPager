@@ -1,6 +1,7 @@
 package cc.shinichi.library.view
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -94,6 +95,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     private var currentItemOriginPathUrl: String? = ""
     private var lastProgress = 0
 
+    @SuppressLint("UnsafeOptInUsageError")
     private var simpleCache: SimpleCache? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -364,6 +366,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         onBackPressed()
     }
 
+    @SuppressLint("MissingSuperCall")
     override fun onBackPressed() {
         finish()
     }

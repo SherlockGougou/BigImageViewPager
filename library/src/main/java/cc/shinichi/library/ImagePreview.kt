@@ -22,13 +22,33 @@ import cc.shinichi.library.view.listener.OnPageFinishListener
 import java.lang.ref.WeakReference
 
 /**
+ * 大图预览入口类
+ *
+ * 使用建造者模式配置预览参数，支持链式调用和 DSL 风格
+ *
+ * 基本用法:
+ * ```kotlin
+ * ImagePreview.instance
+ *     .with(activity)
+ *     .setImageUrlList(urls)
+ *     .setIndex(0)
+ *     .start()
+ * ```
+ *
+ * DSL 用法:
+ * ```kotlin
+ * ImagePreview.show(activity) {
+ *     imageList = urls
+ *     index = 0
+ *     loadStrategy = LoadStrategy.Auto
+ * }
+ * ```
+ *
  * @author 工藤
  * @email qinglingou@gmail.com
- * cc.shinichi.library
- * create at 2018/5/22  09:06
- * description:
  */
-class ImagePreview {
+class ImagePreview private constructor() {
+
     private var contextWeakReference: WeakReference<Activity> = WeakReference(null)
 
     // 图片数据集合
@@ -40,25 +60,20 @@ class ImagePreview {
         private set
 
     // 下载到的文件夹名（根目录中）
-    var folderName = ""
-        get() {
-            if (TextUtils.isEmpty(field)) {
-                field = "Download"
-            }
-            return field
-        }
+    var folderName = DEFAULT_FOLDER_NAME
+        get() = field.ifEmpty { DEFAULT_FOLDER_NAME }
         private set
 
     // 最小缩放倍数
-    var minScale = 1.0f
+    var minScale = DEFAULT_MIN_SCALE
         private set
 
     // 中等缩放倍数
-    var mediumScale = 3.0f
+    var mediumScale = DEFAULT_MEDIUM_SCALE
         private set
 
     // 最大缩放倍数
-    var maxScale = 5.0f
+    var maxScale = DEFAULT_MAX_SCALE
         private set
 
     // 是否显示图片指示器（1/9）
@@ -74,7 +89,7 @@ class ImagePreview {
         private set
 
     // 动画持续时间 单位毫秒 ms
-    var zoomTransitionDuration = 200
+    var zoomTransitionDuration = DEFAULT_ZOOM_DURATION
         private set
 
     // 是否启用下拉关闭，默认启用
@@ -121,7 +136,7 @@ class ImagePreview {
         private set
 
     @DrawableRes
-    var closeIconBackgroundResId = -1
+    var closeIconBackgroundResId = INVALID_RES_ID
         private set
 
     @DrawableRes
@@ -129,15 +144,14 @@ class ImagePreview {
         private set
 
     @DrawableRes
-    var downIconBackgroundResId = -1
+    var downIconBackgroundResId = INVALID_RES_ID
         private set
 
-    // 加载失败时的占位图
     @DrawableRes
     var errorPlaceHolder = R.drawable.load_failed
         private set
 
-    // 点击和长按事件接口
+    // 事件监听器
     var bigImageClickListener: OnBigImageClickListener? = null
         private set
     var bigImageLongClickListener: OnBigImageLongClickListener? = null
@@ -157,99 +171,71 @@ class ImagePreview {
     var finishListener: OnFinishListener? = null
         private set
 
-    // 自定义百分比布局layout id
     @LayoutRes
-    var progressLayoutId = -1
+    var progressLayoutId = INVALID_RES_ID
         private set
 
-    // 是否全部跳过glide缓存
     var isSkipLocalCache = false
         private set
 
-    // 自定义请求头header
     var headers: Map<String, String>? = null
         private set
 
-    // 需要添加请求头的url关键词字符串，比如cdn.xxx.com，可以添加多个，任意一个匹配即可
     var hostKeywordList: List<String>? = null
         private set
 
     // activity实例
     var previewActivity: ImagePreviewActivity? = null
+        internal set
 
     // 防止多次快速点击，记录上次打开的时间戳
+    @Volatile
     private var lastClickTime: Long = 0
+
+    // ==================== 配置方法 ====================
 
     fun with(context: Activity): ImagePreview {
         contextWeakReference = WeakReference(context)
         return this
     }
 
-    @Deprecated("请使用with(Context context)代替")
-    fun setContext(context: Activity): ImagePreview {
-        with(context)
-        return this
-    }
+    @Deprecated("请使用 with(context) 代替", ReplaceWith("with(context)"))
+    fun setContext(context: Activity): ImagePreview = with(context)
 
-    fun getImageInfoList(): MutableList<ImageInfo> {
-        return imageInfoList
-    }
+    fun getImageInfoList(): MutableList<ImageInfo> = imageInfoList
 
-    @Deprecated("请使用setMediaInfoList(List<ImageInfo> imageInfoList)代替")
-    fun setImageInfoList(imageInfoList: MutableList<ImageInfo>): ImagePreview {
-        setMediaInfoList(imageInfoList)
-        return this
-    }
+    @Deprecated("请使用 setMediaInfoList 代替", ReplaceWith("setMediaInfoList(imageInfoList)"))
+    fun setImageInfoList(imageInfoList: MutableList<ImageInfo>): ImagePreview = setMediaInfoList(imageInfoList)
 
     /**
-     * 支持图片视频混合
+     * 设置媒体信息列表，支持图片视频混合
      */
     fun setMediaInfoList(mediaList: MutableList<ImageInfo>): ImagePreview {
-        this.imageInfoList.clear()
-        this.imageInfoList.addAll(mediaList)
+        imageInfoList = ArrayList(mediaList) // 创建副本避免外部修改
         return this
     }
 
     /**
-     * 仅支持图片类型
+     * 设置图片 URL 列表，仅支持图片类型
+     * 使用 map 优化性能
      */
     fun setImageUrlList(imageList: MutableList<String>): ImagePreview {
-        var imageInfo: ImageInfo
-        imageInfoList.clear()
-        for (i in imageList.indices) {
-            imageInfo = ImageInfo()
-            imageInfo.type = Type.IMAGE
-            imageInfo.thumbnailUrl = imageList[i]
-            imageInfo.originUrl = imageList[i]
-            imageInfoList.add(imageInfo)
+        imageInfoList = imageList.mapTo(ArrayList(imageList.size)) { url ->
+            ImageInfo.createImage(url)
         }
         return this
     }
 
+    /**
+     * 设置单张图片
+     */
     fun setImage(image: String): ImagePreview {
-        imageInfoList.clear()
-        val imageInfo = ImageInfo()
-        imageInfo.type = Type.IMAGE
-        imageInfo.thumbnailUrl = image
-        imageInfo.originUrl = image
-        imageInfoList.add(imageInfo)
+        imageInfoList = mutableListOf(ImageInfo.createImage(image))
         return this
     }
 
-//    fun setImageRes(imageResId: Int): ImagePreview {
-//        resImageList.clear()
-//        resImageList.add(imageResId)
-//        return this
-//    }
-//
-//    fun setImageResList(imageResIdList: MutableList<Int>): ImagePreview {
-//        resImageList.clear()
-//        resImageList.addAll(imageResIdList)
-//        return this
-//    }
-
     fun setIndex(index: Int): ImagePreview {
-        this.index = index
+        this.index = index.coerceAtLeast(0)
         return this
     }
 
@@ -263,67 +249,37 @@ class ImagePreview {
         return this
     }
 
-    fun isShowOriginButton(index: Int): Boolean {
-        if (getImageInfoList().isEmpty()) {
-            return false
-        }
-        // 根据不同加载策略，自行判断是否显示查看原图按钮
-        val originUrl = imageInfoList[index].originUrl
-        val thumbUrl = imageInfoList[index].thumbnailUrl
-        // 原图、缩略图url一样，不显示查看原图按钮
-        if (originUrl.equals(thumbUrl, ignoreCase = true)) {
-            return false
-        }
-        return when (loadStrategy) {
-            LoadStrategy.Default -> {
-                true // 手动模式时，根据是否有原图缓存来决定是否显示查看原图按钮
-            }
-
-            LoadStrategy.NetworkAuto -> {
-                false // 强制隐藏查看原图按钮
-            }
-
-            LoadStrategy.AlwaysThumb -> {
-                false // 强制隐藏查看原图按钮
-            }
-
-            LoadStrategy.AlwaysOrigin -> {
-                false // 强制隐藏查看原图按钮
-            }
-
-            LoadStrategy.Auto -> {
-                true // 显示查看原图按钮
-            }
-        }
-    }
-
     /**
-     * 不再有效，是否显示查看原图按钮，取决于加载策略，LoadStrategy，会自行判断是否显示。
+     * 判断是否显示查看原图按钮
+     * 根据加载策略和 URL 差异自动判断
      */
-    @Deprecated("不再支持")
-    fun setShowOriginButton(showOriginButton: Boolean): ImagePreview {
-        //isShowOriginButton = showOriginButton;
-        return this
+    fun isShowOriginButton(index: Int): Boolean {
+        if (imageInfoList.isEmpty() || index !in imageInfoList.indices) {
+            return false
+        }
+
+        val imageInfo = imageInfoList[index]
+        // 原图、缩略图url一样，不显示查看原图按钮
+        if (imageInfo.originUrl.equals(imageInfo.thumbnailUrl, ignoreCase = true)) {
+            return false
+        }
+
+        return when (loadStrategy) {
+            LoadStrategy.Default, LoadStrategy.Auto -> true
+            LoadStrategy.NetworkAuto, LoadStrategy.AlwaysThumb, LoadStrategy.AlwaysOrigin -> false
+        }
     }
+
+    @Deprecated("不再支持，是否显示查看原图按钮取决于加载策略")
+    fun setShowOriginButton(showOriginButton: Boolean): ImagePreview = this
 
     fun setFolderName(folderName: String): ImagePreview {
         this.folderName = folderName
         return this
     }
 
-    /**
-     * 当前版本不再支持本设置，双击会在最小和中等缩放值之间进行切换，可手动放大到最大。
-     */
     @Deprecated("不再支持")
-    fun setScaleMode(scaleMode: Int): ImagePreview {
-        //if (scaleMode != MODE_SCALE_TO_MAX_TO_MIN
-        //	&& scaleMode != MODE_SCALE_TO_MEDIUM_TO_MAX_TO_MIN
-        //	&& scaleMode != MODE_SCALE_TO_MEDIUM_TO_MIN) {
-        //	throw new IllegalArgumentException("only can use one of( MODE_SCALE_TO_MAX_TO_MIN、MODE_SCALE_TO_MEDIUM_TO_MAX_TO_MIN、MODE_SCALE_TO_MEDIUM_TO_MIN )");
-        //}
-        //this.scaleMode = scaleMode;
-        return this
-    }
+    fun setScaleMode(scaleMode: Int): ImagePreview = this
 
     @Deprecated("不再支持，每张图片的缩放由本身的尺寸决定")
     fun setScaleLevel(min: Int, medium: Int, max: Int): ImagePreview {
@@ -332,13 +288,13 @@ class ImagePreview {
             mediumScale = medium.toFloat()
             maxScale = max.toFloat()
         } else {
-            throw IllegalArgumentException("max must greater to medium, medium must greater to min!")
+            throw IllegalArgumentException("max must greater than medium, medium must greater than min!")
         }
         return this
     }
 
     fun setZoomTransitionDuration(zoomTransitionDuration: Int): ImagePreview {
-        require(zoomTransitionDuration >= 0) { "zoomTransitionDuration must greater 0" }
+        require(zoomTransitionDuration >= 0) { "zoomTransitionDuration must be >= 0" }
         this.zoomTransitionDuration = zoomTransitionDuration
         return this
     }
@@ -378,7 +334,7 @@ class ImagePreview {
         return this
     }
 
-    fun setIndicatorShapeResId(indicatorShapeResId: Int): ImagePreview {
+    fun setIndicatorShapeResId(@DrawableRes indicatorShapeResId: Int): ImagePreview {
         this.indicatorShapeResId = indicatorShapeResId
         return this
     }
@@ -408,7 +364,7 @@ class ImagePreview {
         return this
     }
 
-    fun setErrorPlaceHolder(errorPlaceHolderResId: Int): ImagePreview {
+    fun setErrorPlaceHolder(@DrawableRes errorPlaceHolderResId: Int): ImagePreview {
         errorPlaceHolder = errorPlaceHolderResId
         return this
     }
@@ -448,7 +404,7 @@ class ImagePreview {
         return this
     }
 
-    fun setOnFinishListener(finishListener: OnFinishListener): ImagePreview {
+    internal fun setOnFinishListener(finishListener: OnFinishListener): ImagePreview {
         this.finishListener = finishListener
         return this
     }
@@ -459,21 +415,22 @@ class ImagePreview {
     }
 
     fun setProgressLayoutId(
-        progressLayoutId: Int,
+        @LayoutRes progressLayoutId: Int,
         onOriginProgressListener: OnOriginProgressListener
     ): ImagePreview {
-        setOnOriginProgressListener(onOriginProgressListener)
         this.progressLayoutId = progressLayoutId
+        setOnOriginProgressListener(onOriginProgressListener)
         return this
     }
 
     /**
-     * 完全自定义预览界面，请参考：R.layout.sh_layout_preview
-     * 并保持控件类型、id和其中一致，否则会找不到控件而报错
+     * 完全自定义预览界面
+     * 请参考：R.layout.sh_layout_preview
+     * 并保持控件类型、id 一致，否则会找不到控件而报错
      */
     fun setPreviewLayoutResId(
-        previewLayoutResId: Int,
-        onCustomLayoutCallback: OnCustomLayoutCallback?
+        @LayoutRes previewLayoutResId: Int,
+        onCustomLayoutCallback: OnCustomLayoutCallback? = null
     ): ImagePreview {
         this.previewLayoutResId = previewLayoutResId
         this.onCustomLayoutCallback = onCustomLayoutCallback
@@ -486,54 +443,53 @@ class ImagePreview {
     }
 
     fun setHeaders(headers: Map<String, String>?): ImagePreview {
-        this.headers = headers
+        this.headers = headers?.toMap() // 创建不可变副本
         return this
     }
 
     fun setHostKeywordList(hostKeywordList: List<String>?): ImagePreview {
-        this.hostKeywordList = hostKeywordList
+        this.hostKeywordList = hostKeywordList?.toList() // 创建不可变副本
         return this
     }
 
+    /**
+     * 重置所有配置到默认值
+     */
     fun reset() {
-        imageInfoList.clear()
-        resImageList.clear()
-
+        imageInfoList = mutableListOf()
+        resImageList = mutableListOf()
         index = 0
+        folderName = DEFAULT_FOLDER_NAME
 
-        folderName = "Download"
-
-        minScale = 1.0f
-        mediumScale = 3.0f
-        maxScale = 5.0f
+        minScale = DEFAULT_MIN_SCALE
+        mediumScale = DEFAULT_MEDIUM_SCALE
+        maxScale = DEFAULT_MAX_SCALE
 
         isShowIndicator = true
         isShowCloseButton = false
         isShowDownButton = true
-
-        zoomTransitionDuration = 200
+        zoomTransitionDuration = DEFAULT_ZOOM_DURATION
 
         isEnableDragClose = true
         isEnableUpDragClose = true
         isEnableDragCloseIgnoreScale = true
         isEnableClickClose = true
-
         isShowErrorToast = false
 
         loadStrategy = LoadStrategy.Default
         longPicDisplayMode = LongPicDisplayMode.Default
 
         previewLayoutResId = R.layout.sh_layout_preview
-
         onCustomLayoutCallback = null
 
         indicatorShapeResId = R.drawable.shape_indicator_bg
         closeIconResId = R.drawable.ic_action_close
         downIconResId = R.drawable.icon_download_new
-        closeIconBackgroundResId = -1
-        downIconBackgroundResId = -1
+        closeIconBackgroundResId = INVALID_RES_ID
+        downIconBackgroundResId = INVALID_RES_ID
         errorPlaceHolder = R.drawable.load_failed
 
+        // 清空所有监听器
         bigImageClickListener = null
         bigImageLongClickListener = null
         bigImagePageChangeListener = null
@@ -544,90 +500,128 @@ class ImagePreview {
         onPageDragListener = null
         finishListener = null
 
-        progressLayoutId = -1
+        progressLayoutId = INVALID_RES_ID
+        isSkipLocalCache = false
+        headers = null
+        hostKeywordList = null
         lastClickTime = 0
+        previewActivity = null
 
         contextWeakReference.clear()
     }
 
+    /**
+     * 启动预览
+     */
     fun start() {
-        if (System.currentTimeMillis() - lastClickTime <= MIN_DOUBLE_CLICK_TIME) {
-            SLog.e("ImagePreview", "---ignore quick click---")
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastClickTime <= MIN_CLICK_INTERVAL) {
+            SLog.d(TAG, "忽略快速点击")
             return
         }
-        val context = contextWeakReference.get() ?: throw IllegalArgumentException("You must call 'setContext(Context context)' first!")
+
+        val context = contextWeakReference.get()
+            ?: throw IllegalArgumentException("必须先调用 with(context) 设置 Activity!")
+
         if (context.isFinishing || context.isDestroyed) {
+            SLog.w(TAG, "Activity 已销毁，取消预览")
             reset()
             return
         }
+
         require(imageInfoList.isNotEmpty() || resImageList.isNotEmpty()) { "没有数据源!" }
-        require(index < imageInfoList.size || index < resImageList.size) { "index out of bound!" }
-        lastClickTime = System.currentTimeMillis()
+        require(index < imageInfoList.size || index < resImageList.size) { "index 越界!" }
+
+        lastClickTime = currentTime
         ImagePreviewActivity.activityStart(context)
     }
 
     /**
-     * 手动关闭页面
+     * 手动关闭预览页面
      */
     fun finish() {
         finishListener?.onFinish()
     }
 
+    // ==================== 枚举定义 ====================
+
+    /**
+     * 图片加载策略
+     */
     enum class LoadStrategy {
-        /**
-         * 仅加载原图；会强制隐藏查看原图按钮
-         */
+        /** 仅加载原图；会强制隐藏查看原图按钮 */
         AlwaysOrigin,
 
-        /**
-         * 仅加载普清；会强制隐藏查看原图按钮
-         */
+        /** 仅加载普清；会强制隐藏查看原图按钮 */
         AlwaysThumb,
 
-        /**
-         * 根据网络自适应加载，WiFi原图，流量普清；会强制隐藏查看原图按钮
-         */
+        /** 根据网络自适应加载，WiFi原图，流量普清；会强制隐藏查看原图按钮 */
         NetworkAuto,
 
-        /**
-         * 手动模式：默认普清，点击按钮再加载原图；会根据原图、缩略图url是否一样来判断是否显示查看原图按钮
-         */
+        /** 手动模式：默认普清，点击按钮再加载原图 */
         Default,
 
-        /**
-         * 全自动模式：WiFi原图，流量下默认普清，可点击按钮查看原图
-         */
+        /** 全自动模式：WiFi原图，流量下默认普清，可点击按钮查看原图 */
         Auto
     }
 
+    /**
+     * 长图展示模式
+     */
     enum class LongPicDisplayMode {
-        /**
-         * 缩小填充，双击拉满，可手动缩放
-         */
+        /** 缩小填充，双击拉满，可手动缩放 */
         Default,
 
-        /**
-         * 左右拉满，双击缩小，可手动缩放
-         * 一般竖屏手机使用
-         */
-        FillWidth,
+        /** 左右拉满，双击缩小，可手动缩放（适合竖屏手机） */
+        FillWidth
     }
+
+    // ==================== 单例实现 ====================
 
     private object InnerClass {
         @SuppressLint("StaticFieldLeak")
-        val instance = ImagePreview()
+        val INSTANCE = ImagePreview()
     }
 
     companion object {
+        private const val TAG = "ImagePreview"
+
+        // 默认值常量
+        private const val DEFAULT_FOLDER_NAME = "Download"
+        private const val DEFAULT_MIN_SCALE = 1.0f
+        private const val DEFAULT_MEDIUM_SCALE = 3.0f
+        private const val DEFAULT_MAX_SCALE = 5.0f
+        private const val DEFAULT_ZOOM_DURATION = 200
+        private const val INVALID_RES_ID = -1
+        private const val MIN_CLICK_INTERVAL = 1500L
+
         @JvmField
         @LayoutRes
         val PROGRESS_THEME_CIRCLE_TEXT = R.layout.sh_default_progress_layout
 
-        // 触发双击的最短时间，小于这个时间的直接返回
-        private const val MIN_DOUBLE_CLICK_TIME = 1500
-
+        /**
+         * 获取单例实例
+         */
         @JvmStatic
         val instance: ImagePreview
-            get() = InnerClass.instance
+            get() = InnerClass.INSTANCE
+
+        /**
+         * DSL 风格快速启动预览
+         *
+         * ```kotlin
+         * ImagePreview.show(activity) {
+         *     setImageUrlList(urls)
+         *     setIndex(0)
+         * }
+         * ```
+         */
+        @JvmStatic
+        inline fun show(context: Activity, config: ImagePreview.() -> Unit) {
+            instance.reset()
+            instance.with(context)
+            instance.config()
+            instance.start()
+        }
     }
 }

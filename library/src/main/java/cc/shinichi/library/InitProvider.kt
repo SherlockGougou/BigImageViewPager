@@ -3,6 +3,7 @@ package cc.shinichi.library
 import android.app.Application
 import android.content.ContentProvider
 import android.content.ContentValues
+import android.content.pm.ApplicationInfo
 import android.database.Cursor
 import android.net.Uri
 import androidx.media3.common.util.UnstableApi
@@ -12,12 +13,13 @@ import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
+import cc.shinichi.library.tool.common.SLog
 import java.io.File
 
 /**
- * 文件名: InitProvider.java
+ * 文件名: InitProvider.kt
  * 作者: kirito
- * 描述: 初始化
+ * 描述: 自动初始化 Provider，通过 ContentProvider 机制在应用启动时自动初始化库
  * 创建时间: 2024/11/27
  */
 @UnstableApi
@@ -41,6 +43,9 @@ class InitProvider : ContentProvider() {
     }
 
     private fun initializeLibrary(application: Application) {
+        // 初始化日志开关，根据应用的调试标志决定
+        SLog.isDebug = (application.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
+
         // downloadDirectory
         val downloadDirectory = File(application.cacheDir, "media_cache")
         // maxBytes 500MB

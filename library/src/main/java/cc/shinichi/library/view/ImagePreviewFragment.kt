@@ -36,6 +36,7 @@ import cc.shinichi.library.R
 import cc.shinichi.library.bean.ImageInfo
 import cc.shinichi.library.bean.Type
 import cc.shinichi.library.glide.FileTarget
+import cc.shinichi.library.glide.GlideExt
 import cc.shinichi.library.glide.ImageLoader.getGlideCacheFile
 import cc.shinichi.library.tool.common.HttpUtil.downloadFile
 import cc.shinichi.library.tool.common.NetworkUtil.isWiFi
@@ -44,7 +45,7 @@ import cc.shinichi.library.tool.common.PhoneUtil.getPhoneHei
 import cc.shinichi.library.tool.common.SLog
 import cc.shinichi.library.tool.common.ToastUtil
 import cc.shinichi.library.tool.common.UIUtil
-import cc.shinichi.library.tool.file.FileUtil.Companion.getAvailableCacheDir
+import cc.shinichi.library.tool.file.FileUtil.getAvailableCacheDir
 import cc.shinichi.library.tool.image.ImageUtil
 import cc.shinichi.library.tool.image.UtilExt.isLocalFile
 import cc.shinichi.library.view.helper.DragCloseView
@@ -167,7 +168,7 @@ class ImagePreviewFragment : Fragment() {
         val phoneHei = getPhoneHei()
         // 手势拖拽事件
         if (ImagePreview.instance.isEnableDragClose) {
-            dragCloseView?.setOnAlphaChangeListener(object : DragCloseView.onAlphaChangedListener {
+            dragCloseView?.setOnAlphaChangeListener(object : DragCloseView.OnAlphaChangedListener {
                 override fun onTranslationYChanged(event: MotionEvent?, translationY: Float) {
                     imagePreviewActivity?.parentView?.apply {
                         if (translationY > 0) {
@@ -468,88 +469,92 @@ class ImagePreviewFragment : Fragment() {
 
     private fun loadOriginal() {
         val originalUrl = imageInfo?.originUrl.toString()
-        val cacheFile = getGlideCacheFile(imagePreviewActivity!!, imageInfo?.originUrl)
-        if (cacheFile != null && cacheFile.exists()) {
-            val isLoadWithSubsample = ImageUtil.isLoadWithSubsampling(originalUrl, cacheFile.absolutePath)
-            if (isLoadWithSubsample) {
-                SLog.d(TAG, "loadOriginal -> loadImageWithSubsample")
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_4444)
-                } else {
-                    SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
-                }
-                imagePhotoView?.visibility = View.GONE
-                imageSubsample?.visibility = View.VISIBLE
-                imageSubsample?.let {
-                    val thumbnailUrl = imageInfo?.thumbnailUrl.toString()
-                    val smallCacheFile = getGlideCacheFile(imagePreviewActivity!!, thumbnailUrl)
-                    var small: ImageSource? = null
-                    if (smallCacheFile != null && smallCacheFile.exists()) {
-                        val smallImagePath = smallCacheFile.absolutePath
-                        small = ImageUtil.getImageBitmap(
-                            smallImagePath,
-                            ImageUtil.getBitmapDegree(smallImagePath)
-                        )?.let {
-                            ImageSource.bitmap(it)
-                        }
-                        val widSmall = ImageUtil.getWidthHeight(smallImagePath)[0]
-                        val heiSmall = ImageUtil.getWidthHeight(smallImagePath)[1]
-                        if (ImageUtil.isBmpImageWithMime(thumbnailUrl, smallImagePath) || ImageUtil.isAvifImageWithMime(
-                                thumbnailUrl,
-                                smallImagePath
-                            )
-                        ) {
-                            small?.tilingDisabled()
-                        }
-                        small?.dimensions(widSmall, heiSmall)
+        val cacheFile = getGlideCacheFile(imagePreviewActivity!!, imageInfo?.originUrl) ?: return
+        if (!cacheFile.exists()) return
+
+        val imagePath = cacheFile.absolutePath
+        val isLoadWithSubsample = ImageUtil.isLoadWithSubsampling(originalUrl, imagePath)
+
+        if (isLoadWithSubsample) {
+            SLog.d(TAG, "loadOriginal -> loadImageWithSubsample")
+            loadOriginalWithSubsample(originalUrl, cacheFile)
+        } else {
+            SLog.d(TAG, "loadOriginal -> loadImageWithPhotoView")
+            loadOriginalWithPhotoView(originalUrl, cacheFile)
+        }
+    }
+
+    /**
+     * 使用 SubsamplingScaleImageView 加载原图（适用于大图）
+     */
+    private fun loadOriginalWithSubsample(originalUrl: String, cacheFile: File) {
+        SubsamplingScaleImageView.setPreferredBitmapConfig(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Bitmap.Config.ARGB_4444
+            else Bitmap.Config.ARGB_8888
+        )
+
+        imagePhotoView?.visibility = View.GONE
+        imageSubsample?.visibility = View.VISIBLE
+
+        val imagePath = cacheFile.absolutePath
+
+        // 尝试加载缩略图作为预览
+        val thumbnailUrl = imageInfo?.thumbnailUrl.toString()
+        val smallCacheFile = getGlideCacheFile(imagePreviewActivity!!, thumbnailUrl)
+        val smallImageSource = smallCacheFile?.takeIf { it.exists() }?.let { file ->
+            val smallImagePath = file.absolutePath
+            val bitmap = ImageUtil.getImageBitmap(smallImagePath, ImageUtil.getBitmapDegree(smallImagePath))
+            bitmap?.let { bmp ->
+                val wh = ImageUtil.getWidthHeight(smallImagePath)
+                ImageSource.bitmap(bmp).also { source ->
+                    if (ImageUtil.isBmpImageWithMime(thumbnailUrl, smallImagePath) ||
+                        ImageUtil.isAvifImageWithMime(thumbnailUrl, smallImagePath)
+                    ) {
+                        source.tilingDisabled()
                     }
-                    val imagePath = cacheFile.absolutePath
-                    val origin = ImageSource.uri(imagePath)
-                    val widOrigin = ImageUtil.getWidthHeight(imagePath)[0]
-                    val heiOrigin = ImageUtil.getWidthHeight(imagePath)[1]
-                    if (ImageUtil.isBmpImageWithMime(originalUrl, imagePath) || ImageUtil.isAvifImageWithMime(originalUrl, imagePath)) {
-                        origin.tilingDisabled()
-                    }
-                    origin.dimensions(widOrigin, heiOrigin)
-                    imageSubsample?.setImage(origin, small)
-                    // 缩放适配
-                    setImageSubsample(imagePath, imageSubsample)
-                }
-            } else {
-                SLog.d(TAG, "loadOriginal -> loadImageWithPhotoView")
-                imageSubsample?.visibility = View.GONE
-                imagePhotoView?.visibility = View.VISIBLE
-                imagePhotoView?.let {
-                    if (ImageUtil.isAnimImageWithMime(originalUrl, cacheFile.absolutePath)) {
-                        Glide.with(imagePreviewActivity!!)
-                            .asGif()
-                            .load(cacheFile)
-                            .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
-                            .diskCacheStrategy(
-                                if (ImagePreview.instance.isSkipLocalCache) {
-                                    DiskCacheStrategy.NONE
-                                } else {
-                                    DiskCacheStrategy.ALL
-                                }
-                            )
-                            .error(ImagePreview.instance.errorPlaceHolder)
-                            .into(imagePhotoView!!)
-                    } else {
-                        Glide.with(imagePreviewActivity!!)
-                            .load(cacheFile)
-                            .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
-                            .diskCacheStrategy(
-                                if (ImagePreview.instance.isSkipLocalCache) {
-                                    DiskCacheStrategy.NONE
-                                } else {
-                                    DiskCacheStrategy.ALL
-                                }
-                            )
-                            .error(ImagePreview.instance.errorPlaceHolder)
-                            .into(imagePhotoView!!)
-                    }
+                    source.dimensions(wh[0], wh[1])
                 }
             }
+        }
+
+        // 加载原图
+        val originSource = ImageSource.uri(imagePath)
+        val whOrigin = ImageUtil.getWidthHeight(imagePath)
+        if (ImageUtil.isBmpImageWithMime(originalUrl, imagePath) ||
+            ImageUtil.isAvifImageWithMime(originalUrl, imagePath)
+        ) {
+            originSource.tilingDisabled()
+        }
+        originSource.dimensions(whOrigin[0], whOrigin[1])
+
+        imageSubsample?.setImage(originSource, smallImageSource)
+        setImageSubsample(imagePath, imageSubsample)
+    }
+
+    /**
+     * 使用 PhotoView 加载原图（适用于 GIF/动图）
+     */
+    private fun loadOriginalWithPhotoView(originalUrl: String, cacheFile: File) {
+        imageSubsample?.visibility = View.GONE
+        imagePhotoView?.visibility = View.VISIBLE
+
+        val isAnimated = ImageUtil.isAnimImageWithMime(originalUrl, cacheFile.absolutePath)
+
+        if (isAnimated) {
+            Glide.with(imagePreviewActivity!!)
+                .asGif()
+                .load(cacheFile)
+                .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
+                .diskCacheStrategy(GlideExt.getDiskCacheStrategy())
+                .error(ImagePreview.instance.errorPlaceHolder)
+                .into(imagePhotoView!!)
+        } else {
+            Glide.with(imagePreviewActivity!!)
+                .load(cacheFile)
+                .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
+                .diskCacheStrategy(GlideExt.getDiskCacheStrategy())
+                .error(ImagePreview.instance.errorPlaceHolder)
+                .into(imagePhotoView!!)
         }
     }
 
@@ -641,69 +646,63 @@ class ImagePreviewFragment : Fragment() {
         onRelease()
     }
 
-    private fun loadImage(
-        url: String,
-        originPathUrl: String
-    ) {
+    private fun loadImage(url: String, originPathUrl: String) {
         if (url.isLocalFile()) {
             // 本地图片，直接加载
             loadLocalImage(url, File(url))
-        } else {
-            // 远程图片
-            Glide.with(imagePreviewActivity!!)
-                .downloadOnly()
-                .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
-                .diskCacheStrategy(
-                    if (ImagePreview.instance.isSkipLocalCache) {
-                        DiskCacheStrategy.NONE
-                    } else {
-                        DiskCacheStrategy.ALL
-                    }
-                )
-                .load(url)
-                .addListener(object : RequestListener<File> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: Target<File?>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        // glide加载失败，使用http下载后再次加载
-                        Thread {
-                            val fileFullName = System.currentTimeMillis().toString()
-                            val saveDir = getAvailableCacheDir(imagePreviewActivity!!)?.absolutePath + File.separator + "image/"
-                            val downloadFile = downloadFile(url, fileFullName, saveDir)
-                            Handler(Looper.getMainLooper()).post {
-                                if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
-                                    // 通过urlConn下载完成
-                                    loadLocalImage(
-                                        originPathUrl,
-                                        downloadFile
-                                    )
-                                } else {
-                                    loadFailed(e)
-                                }
-                            }
-                        }.start()
-                        return true
-                    }
-
-                    override fun onResourceReady(
-                        resource: File,
-                        model: Any,
-                        target: Target<File>,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        loadLocalImage(
-                            url,
-                            resource
-                        )
-                        return true
-                    }
-                }).into(object : FileTarget() {
-                })
+            return
         }
+
+        // 远程图片
+        Glide.with(imagePreviewActivity!!)
+            .downloadOnly()
+            .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
+            .diskCacheStrategy(GlideExt.getDiskCacheStrategy())
+            .load(url)
+            .addListener(object : RequestListener<File> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<File?>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    // Glide 加载失败，使用 HTTP 下载后再次加载
+                    fallbackDownload(url, originPathUrl, e)
+                    return true
+                }
+
+                override fun onResourceReady(
+                    resource: File,
+                    model: Any,
+                    target: Target<File>,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    loadLocalImage(url, resource)
+                    return true
+                }
+            })
+            .into(object : FileTarget() {})
+    }
+
+    /**
+     * Glide 失败时的降级下载方案
+     */
+    private fun fallbackDownload(url: String, originPathUrl: String, e: GlideException?) {
+        Thread {
+            val fileFullName = System.currentTimeMillis().toString()
+            val saveDir = getAvailableCacheDir(imagePreviewActivity!!)?.absolutePath +
+                File.separator + "image/"
+            val downloadFile = downloadFile(url, fileFullName, saveDir)
+
+            Handler(Looper.getMainLooper()).post {
+                if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
+                    loadLocalImage(originPathUrl, downloadFile)
+                } else {
+                    loadFailed(e)
+                }
+            }
+        }.start()
     }
 
     private fun loadLocalImage(
@@ -831,97 +830,115 @@ class ImagePreviewFragment : Fragment() {
     private fun loadLocalImageWithPhotoView(imageUrl: String, imagePath: String) {
         imageSubsample?.visibility = View.GONE
         imagePhotoView?.visibility = View.VISIBLE
-        if (ImageUtil.isAnimWebp(imageUrl, imagePath) || ImageUtil.isAvifImageWithMime(imageUrl, imagePath) || ImageUtil.isResourceImage(imageUrl)) {
-            // webp animation / avif
-            val fitCenter: Transformation<Bitmap> = FitCenter()
-            Glide.with(imagePreviewActivity!!)
-                .load(
-                    if (ImageUtil.isResourceImage(imageUrl)) {
-                        Uri.parse(imageUrl)
-                    } else {
-                        imagePath
-                    }
-                )
-                .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
-                .diskCacheStrategy(
-                    if (ImagePreview.instance.isSkipLocalCache) {
-                        DiskCacheStrategy.NONE
-                    } else {
-                        DiskCacheStrategy.ALL
-                    }
-                )
-                .error(ImagePreview.instance.errorPlaceHolder)
-                .optionalTransform(fitCenter)
-                .optionalTransform(WebpDrawable::class.java, WebpDrawableTransformation(fitCenter))
-                .addListener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: Target<Drawable?>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        progressBar?.visibility = View.GONE
-                        return false
-                    }
 
-                    override fun onResourceReady(
-                        resource: Drawable,
-                        model: Any,
-                        target: Target<Drawable?>?,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        progressBar?.visibility = View.GONE
-                        return false
-                    }
-                })
-                .into(imagePhotoView!!)
+        val isAnimWebpOrAvif = ImageUtil.isAnimWebp(imageUrl, imagePath) ||
+            ImageUtil.isAvifImageWithMime(imageUrl, imagePath)
+        val isResourceImage = ImageUtil.isResourceImage(imageUrl)
+
+        if (isAnimWebpOrAvif || isResourceImage) {
+            // WebP 动图 / AVIF / 资源图片
+            loadAnimatedImage(imageUrl, imagePath, isResourceImage)
         } else {
-            // gif animation
-            Glide.with(imagePreviewActivity!!)
-                .asGif()
-                .load(imagePath)
-                .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
-                .diskCacheStrategy(
-                    if (ImagePreview.instance.isSkipLocalCache) {
-                        DiskCacheStrategy.NONE
-                    } else {
-                        DiskCacheStrategy.ALL
-                    }
-                )
-                .error(ImagePreview.instance.errorPlaceHolder)
-                .listener(object : RequestListener<GifDrawable?> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: Target<GifDrawable?>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        progressBar?.visibility = View.GONE
-                        imageSubsample?.setImage(ImageSource.resource(ImagePreview.instance.errorPlaceHolder))
-                        return false
-                    }
+            // GIF 动图
+            loadGifImage(imagePath)
+        }
+    }
 
-                    override fun onResourceReady(
-                        resource: GifDrawable,
-                        model: Any,
-                        target: Target<GifDrawable?>?,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        progressBar?.visibility = View.GONE
-                        return false
-                    }
-                })
-                .into(imagePhotoView!!)
+    /**
+     * 加载动画图片（WebP/AVIF）
+     */
+    private fun loadAnimatedImage(imageUrl: String, imagePath: String, isResource: Boolean) {
+        val fitCenter: Transformation<Bitmap> = FitCenter()
+        val loadSource = if (isResource) Uri.parse(imageUrl) else imagePath
+
+        Glide.with(imagePreviewActivity!!)
+            .load(loadSource)
+            .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
+            .diskCacheStrategy(GlideExt.getDiskCacheStrategy())
+            .error(ImagePreview.instance.errorPlaceHolder)
+            .optionalTransform(fitCenter)
+            .optionalTransform(WebpDrawable::class.java, WebpDrawableTransformation(fitCenter))
+            .addListener(createProgressHidingListener<Drawable>())
+            .into(imagePhotoView!!)
+    }
+
+    /**
+     * 加载 GIF 图片
+     */
+    private fun loadGifImage(imagePath: String) {
+        Glide.with(imagePreviewActivity!!)
+            .asGif()
+            .load(imagePath)
+            .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
+            .diskCacheStrategy(GlideExt.getDiskCacheStrategy())
+            .error(ImagePreview.instance.errorPlaceHolder)
+            .listener(object : RequestListener<GifDrawable?> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<GifDrawable?>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    progressBar?.visibility = View.GONE
+                    imageSubsample?.setImage(ImageSource.resource(ImagePreview.instance.errorPlaceHolder))
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: GifDrawable,
+                    model: Any,
+                    target: Target<GifDrawable?>?,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    progressBar?.visibility = View.GONE
+                    return false
+                }
+            })
+            .into(imagePhotoView!!)
+    }
+
+    /**
+     * 创建隐藏进度条的通用监听器
+     */
+    private fun <T> createProgressHidingListener(): RequestListener<T> {
+        return object : RequestListener<T> {
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any?,
+                target: Target<T?>,
+                isFirstResource: Boolean
+            ): Boolean {
+                progressBar?.visibility = View.GONE
+                return false
+            }
+
+            override fun onResourceReady(
+                resource: T & Any,
+                model: Any,
+                target: Target<T?>?,
+                dataSource: DataSource,
+                isFirstResource: Boolean
+            ): Boolean {
+                progressBar?.visibility = View.GONE
+                return false
+            }
         }
     }
 
     fun onRelease() {
-        imageSubsample?.destroyDrawingCache()
+        // 清理 Handler 任务，防止内存泄漏
+        progressHandler?.removeCallbacksAndMessages(null)
+        progressHandler = null
+        progressRunnable = null
+
+        // 释放 SubsamplingScaleImageView
         imageSubsample?.recycle()
-        imagePhotoView?.destroyDrawingCache()
+
+        // 释放 PhotoView
         imagePhotoView?.setImageBitmap(null)
+
+        // 释放 ExoPlayer
         exoPlayer?.release()
         exoPlayer = null
     }
