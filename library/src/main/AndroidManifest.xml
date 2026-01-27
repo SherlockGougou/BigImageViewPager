@@ -5,11 +5,11 @@
 
     <application>
         <activity
-            android:name=".view.ImagePreviewActivity"
+            android:name=".ui.ImagePreviewActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:theme="@style/Theme.ImagePreview" />
         <provider
-            android:name=".InitProvider"
+            android:name=".core.InitProvider"
             android:authorities="${applicationId}.initprovider"
             android:exported="false" />
     </application>
