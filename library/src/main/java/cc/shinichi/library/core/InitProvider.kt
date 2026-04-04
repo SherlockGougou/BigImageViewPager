@@ -8,6 +8,7 @@ import android.database.Cursor
 import android.net.Uri
 import cc.shinichi.library.util.SLog
 import cc.shinichi.library.util.VideoPlayerHelper
+import java.io.File
 
 /**
  * 文件名: InitProvider.kt
@@ -54,7 +55,7 @@ class InitProvider : ContentProvider() {
     @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     private fun initializeVideoCache(application: Application) {
         try {
-            val downloadDirectory = java.io.File(application.cacheDir, "media_cache")
+            val downloadDirectory = File(application.cacheDir, "media_cache")
             val maxBytes = 500 * 1024 * 1024L
             val databaseProvider = androidx.media3.database.StandaloneDatabaseProvider(application)
             val cache = androidx.media3.datasource.cache.SimpleCache(
