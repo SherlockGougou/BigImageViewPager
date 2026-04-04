@@ -18,18 +18,10 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultHttpDataSource
-import androidx.media3.datasource.cache.CacheDataSink
-import androidx.media3.datasource.cache.CacheDataSource
-import androidx.media3.datasource.cache.SimpleCache
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.R
@@ -43,7 +35,7 @@ import cc.shinichi.library.model.Type
 import cc.shinichi.library.ui.widget.HackyViewPager
 import cc.shinichi.library.util.DeviceUtil
 import cc.shinichi.library.util.DownloadUtil
-import cc.shinichi.library.util.ExoCacheManager
+import cc.shinichi.library.util.ExoPlayerChecker
 import cc.shinichi.library.util.HandlerHolder
 import cc.shinichi.library.util.HttpUtil
 import cc.shinichi.library.util.NetworkUtil
@@ -96,8 +88,8 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     private var currentItemOriginPathUrl: String? = ""
     private var lastProgress = 0
 
-    @SuppressLint("UnsafeOptInUsageError")
-    private var simpleCache: SimpleCache? = null
+    // ExoPlayerActivityHelper is only instantiated when ExoPlayer is available
+    private var exoPlayerHelper: Any? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -295,8 +287,10 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             viewPager?.addOnPageChangeListener(this)
         }
 
-        // 创建缓存对象
-        simpleCache = ExoCacheManager.getSimpleCache(this)
+        // 创建缓存对象（仅在 ExoPlayer 可用时）
+        if (ExoPlayerChecker.isAvailable) {
+            exoPlayerHelper = ExoPlayerActivityHelper(this)
+        }
     }
 
     private fun refreshUIMargin() {
@@ -327,29 +321,14 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         consBottomController?.layoutParams = layoutParams
     }
 
-    @OptIn(UnstableApi::class)
-    fun getExoPlayer(context: Context): ExoPlayer {
-        // 5. 构建 HTTP 数据源工厂
-        val httpDataSourceFactory = DefaultHttpDataSource.Factory()
-            .setConnectTimeoutMs(10_000)
-            .setReadTimeoutMs(10_000)
-            .setAllowCrossProtocolRedirects(true)
-            .setDefaultRequestProperties(ImagePreview.instance.headers?.toMap() ?: mapOf())
-
-        // 6. 构建缓存数据源工厂
-        val cacheDataSourceFactory = CacheDataSource.Factory()
-            .setCache(simpleCache!!)
-            .setUpstreamDataSourceFactory(httpDataSourceFactory)
-            .setCacheWriteDataSinkFactory(CacheDataSink.Factory().setCache(simpleCache!!))
-            .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
-
-        // 7. 使用缓存的数据源创建 MediaSourceFactory
-        val mediaSourceFactory = DefaultMediaSourceFactory(cacheDataSourceFactory)
-
-        // 8. 构建并返回 ExoPlayer
-        return ExoPlayer.Builder(context)
-            .setMediaSourceFactory(mediaSourceFactory)
-            .build()
+    /**
+     * 获取 ExoPlayer 实例（由 VideoPlayerHelper 调用）
+     * 仅在 ExoPlayer 可用时调用
+     */
+    fun getExoPlayer(context: Context): Any {
+        val helper = exoPlayerHelper as? ExoPlayerActivityHelper
+            ?: throw IllegalStateException("ExoPlayer is not available")
+        return helper.createExoPlayer(context)
     }
 
     /**
@@ -373,7 +352,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     override fun finish() {
-        ExoCacheManager.release()
+        (exoPlayerHelper as? ExoPlayerActivityHelper)?.release()
         for (fragment in fragmentList) {
             fragment.onRelease()
         }
@@ -411,7 +390,6 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         }
     }
 
-    @UnstableApi
     override fun handleMessage(msg: Message): Boolean {
         if (msg.what == 0) {
             val path = imageInfoList[currentItem].originUrl
@@ -678,17 +656,14 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         decorView.systemUiVisibility = option
     }
 
-    @UnstableApi
     fun updateItem(index: Int, image: String) {
         updateItem(index, image, image)
     }
 
-    @UnstableApi
     fun updateItem(index: Int, thumbnail: String, origin: String) {
         updateItem(index, thumbnail, origin, Type.IMAGE)
     }
 
-    @UnstableApi
     fun updateItem(index: Int, thumbnail: String, origin: String, type: Type) {
         val imageInfo = ImageInfo()
         imageInfo.originUrl = origin
@@ -698,7 +673,6 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     // 更新指定的数据源
-    @UnstableApi
     fun updateItem(index: Int, imageInfo: ImageInfo) {
         imageInfoList[index] = imageInfo
         fragmentList[index].updateItem(imageInfo)

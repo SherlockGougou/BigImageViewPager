@@ -4,31 +4,17 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.PointF
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.MarginLayoutParams
+import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.ProgressBar
-import android.widget.SeekBar
-import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
-import androidx.media3.common.VideoSize
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultDataSource
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
-import androidx.media3.ui.PlayerView
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.ImagePreview.LoadStrategy
 import cc.shinichi.library.R
@@ -43,6 +29,7 @@ import cc.shinichi.library.ui.photoview.PhotoView
 import cc.shinichi.library.ui.subsampling.ImageSource
 import cc.shinichi.library.ui.subsampling.SubsamplingScaleImageView
 import cc.shinichi.library.ui.widget.DragCloseView
+import cc.shinichi.library.util.ExoPlayerChecker
 import cc.shinichi.library.util.FileUtil.getAvailableCacheDir
 import cc.shinichi.library.util.HttpUtil.downloadFile
 import cc.shinichi.library.util.ImageUtil
@@ -52,7 +39,6 @@ import cc.shinichi.library.util.PhoneUtil.getPhoneHei
 import cc.shinichi.library.util.SLog
 import cc.shinichi.library.util.ToastUtil
 import cc.shinichi.library.util.UIUtil
-import cc.shinichi.library.util.UtilExt.isLocalFile
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -64,7 +50,6 @@ import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import java.io.File
-import java.util.Locale
 import kotlin.math.abs
 import androidx.core.net.toUri
 
@@ -88,18 +73,12 @@ class ImagePreviewFragment : Fragment() {
     private var dragCloseView: DragCloseView? = null
     private var imageSubsample: SubsamplingScaleImageView? = null
     private var imagePhotoView: PhotoView? = null
-    private var videoView: PlayerView? = null
+    private var videoViewContainer: FrameLayout? = null
     private var progressBar: ProgressBar? = null
 
-    private var exoPlayer: ExoPlayer? = null
+    // VideoPlayerHelper is only instantiated when ExoPlayer is available
+    private var videoPlayerHelper: Any? = null
 
-    private var ivPlayButton: ImageView? = null
-    private var tvPlayTime: TextView? = null
-    private var seekBar: SeekBar? = null
-
-    private var progressHandler: Handler? = null
-    private var progressRunnable: Runnable? = null
-    private var isDragging = false
     private var onPausePlaying = false
 
     // 用于保存缩略图的缩放状态，以便原图加载成功后恢复
@@ -133,7 +112,6 @@ class ImagePreviewFragment : Fragment() {
         return view
     }
 
-    @UnstableApi
     private fun initData() {
         initParams()
         SLog.d(TAG, "initData: position = $position")
@@ -141,7 +119,12 @@ class ImagePreviewFragment : Fragment() {
         if (type == Type.IMAGE) {
             initImageType()
         } else if (type == Type.VIDEO) {
-            initVideoType()
+            if (ExoPlayerChecker.isAvailable) {
+                initVideoType()
+            } else {
+                SLog.d(TAG, "initData: ExoPlayer not available, showing thumbnail for video")
+                initImageType()
+            }
         }
     }
 
@@ -167,10 +150,7 @@ class ImagePreviewFragment : Fragment() {
         dragCloseView = view.findViewById(R.id.fingerDragHelper)
         imageSubsample = view.findViewById(R.id.static_view)
         imagePhotoView = view.findViewById(R.id.anim_view)
-        videoView = view.findViewById(R.id.video_view)
-        ivPlayButton = videoView?.findViewById(R.id.ivPlayButton)
-        seekBar = videoView?.findViewById(R.id.seekbar)
-        tvPlayTime = videoView?.findViewById(R.id.tvPlayTime)
+        videoViewContainer = view.findViewById(R.id.video_view_container)
         val phoneHei = getPhoneHei()
         // 手势拖拽事件
         if (ImagePreview.instance.isEnableDragClose) {
@@ -203,9 +183,9 @@ class ImagePreviewFragment : Fragment() {
                         imageSubsample?.scaleY = number
                         imageSubsample?.scaleX = number
                     }
-                    if (videoView?.isVisible == true) {
-                        videoView?.scaleY = number
-                        videoView?.scaleX = number
+                    if (videoViewContainer?.isVisible == true) {
+                        videoViewContainer?.scaleY = number
+                        videoViewContainer?.scaleX = number
                     }
                 }
 
@@ -255,21 +235,6 @@ class ImagePreviewFragment : Fragment() {
             }
             ImagePreview.instance.bigImageClickListener?.onClick(imagePreviewActivity!!, v, position)
         }
-        ivPlayButton?.setOnClickListener {
-            // 控制播放和暂停
-            videoView?.player?.let {
-                if (it.isPlaying) {
-                    // 去暂停，显示为播放图标
-                    it.pause()
-                    ivPlayButton?.setImageResource(R.drawable.icon_video_play)
-                } else {
-                    // 去播放，显示为暂停图标
-                    // 如果进度条已经到最后，重新播放
-                    it.play()
-                    ivPlayButton?.setImageResource(R.drawable.icon_video_stop)
-                }
-            }
-        }
         // 长按事件
         ImagePreview.instance.bigImageLongClickListener?.let {
             imageSubsample?.setOnLongClickListener { v ->
@@ -288,20 +253,12 @@ class ImagePreviewFragment : Fragment() {
                 )
                 true
             }
-            videoView?.setOnLongClickListener { v ->
-                ImagePreview.instance.bigImageLongClickListener?.onLongClick(
-                    imagePreviewActivity!!,
-                    v,
-                    position
-                )
-                true
-            }
         }
     }
 
     private fun initImageType() {
         // 图片类型，隐藏视频
-        videoView?.visibility = View.GONE
+        videoViewContainer?.visibility = View.GONE
 
         val originPathUrl = imageInfo?.originUrl
         val thumbPathUrl = imageInfo?.thumbnailUrl
@@ -362,134 +319,25 @@ class ImagePreviewFragment : Fragment() {
         }
     }
 
-    @UnstableApi
     private fun initVideoType() {
         // 视频类型，隐藏图片
         imageSubsample?.visibility = View.GONE
         imagePhotoView?.visibility = View.GONE
-        videoView?.visibility = View.VISIBLE
+        videoViewContainer?.visibility = View.VISIBLE
         progressBar?.visibility = View.GONE
 
-        // 自定义控制
-        refreshUIMargin()
+        val container = videoViewContainer ?: return
+        val info = imageInfo ?: return
+        val previewActivity = imagePreviewActivity ?: return
 
-        // 初始化播放器
-        if (exoPlayer == null) {
-            exoPlayer = imagePreviewActivity?.getExoPlayer(requireActivity())
-            exoPlayer?.addListener(object : Player.Listener {
-                override fun onVideoSizeChanged(videoSize: VideoSize) {
-                    super.onVideoSizeChanged(videoSize)
-                    SLog.d(TAG, "onVideoSizeChanged: videoSize = ${videoSize.width} * ${videoSize.height}")
-                }
-
-                override fun onIsPlayingChanged(isPlaying: Boolean) {
-                    super.onIsPlayingChanged(isPlaying)
-                    SLog.d(TAG, "onIsPlayingChanged: isPlaying = $isPlaying")
-                    if (isPlaying) {
-                        ivPlayButton?.setImageResource(R.drawable.icon_video_stop)
-                    } else {
-                        ivPlayButton?.setImageResource(R.drawable.icon_video_play)
-                    }
-                }
-
-                override fun onPlaybackStateChanged(playbackState: Int) {
-                    super.onPlaybackStateChanged(playbackState)
-                    SLog.d(TAG, "onPlaybackStateChanged: playbackState = $playbackState")
-                    if (playbackState == Player.STATE_READY) {
-                        // 底部控制器处理
-                        setProgress(exoPlayer)
-                        videoView?.hideController()
-                    } else if (playbackState == Player.STATE_ENDED) {
-                        // 播放结束
-                        exoPlayer?.pause()
-                        exoPlayer?.seekTo(0)
-                    }
-                    if (playbackState == Player.STATE_BUFFERING) {
-                        // 缓冲中
-                        progressBar?.visibility = View.VISIBLE
-                    } else {
-                        progressBar?.visibility = View.GONE
-                    }
-                }
-            })
+        // 使用 VideoPlayerHelper（仅在 ExoPlayer 可用时才会到达此处）
+        val helper = (videoPlayerHelper as? VideoPlayerHelper) ?: run {
+            val h = VideoPlayerHelper(container, progressBar, previewActivity)
+            videoPlayerHelper = h
+            h
         }
-        videoView?.player = exoPlayer
-
-        if (imageInfo?.originUrl?.isLocalFile() == true) {
-            // 本地文件
-            val mediaItem = MediaItem.fromUri(Uri.fromFile(File(imageInfo?.originUrl.toString())))
-            val dataSourceFactory = DefaultDataSource.Factory(imagePreviewActivity!!)
-            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
-            exoPlayer?.setMediaSource(mediaSource)
-        } else {
-            // 网络文件
-            val mediaItem = MediaItem.fromUri(imageInfo?.originUrl.toString())
-            exoPlayer?.setMediaItem(mediaItem)
-        }
-
-        exoPlayer?.prepare()
-        exoPlayer?.playWhenReady = false
-
-        if (ImagePreview.instance.index == position) {
-            // 如果是当前选中的，就播放
-            exoPlayer?.play()
-        }
-    }
-
-    private fun setProgress(exoPlayer: ExoPlayer?) {
-        exoPlayer?.apply {
-            // 清除之前的任务
-            progressHandler?.removeCallbacksAndMessages(null)
-            progressHandler = Handler(Looper.getMainLooper())
-
-            // 定义任务
-            progressRunnable = object : Runnable {
-                override fun run() {
-                    if (!isDragging) {
-                        val currentPosition = exoPlayer.currentPosition
-                        val currentTime = formatTimestamp(currentPosition / 1000)
-                        val totalDuration = exoPlayer.duration
-                        val totalTime = formatTimestamp(totalDuration / 1000)
-
-                        seekBar?.max = totalDuration.toInt()
-                        seekBar?.progress = currentPosition.toInt()
-
-                        tvPlayTime?.text = "$currentTime/$totalTime"
-                    }
-                    // 每秒更新一次
-                    progressHandler?.postDelayed(this, 1000)
-                }
-            }
-
-            // 开始任务
-            progressRunnable?.apply {
-                progressHandler?.post(progressRunnable!!)
-            }
-
-            // 设置 SeekBar 的监听器
-            seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                    if (fromUser) {
-                        // 如果是用户拖动的，则更新播放位置。
-                        exoPlayer.seekTo(progress.toLong())
-                    }
-                }
-
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                    isDragging = true
-                }
-
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                    isDragging = false
-                }
-            })
-        }
-    }
-
-    private fun formatTimestamp(timestampInSeconds: Long): String {
-        val minutes = timestampInSeconds / 60
-        val seconds = timestampInSeconds % 60
-        return String.format(locale = Locale.getDefault(), "%02d:%02d", minutes, seconds)
+        helper.refreshUIMargin(requireContext())
+        helper.initVideoType(info, position)
     }
 
     fun onOriginal() {
@@ -625,60 +473,29 @@ class ImagePreviewFragment : Fragment() {
     }
 
     fun onSelected() {
-        if (imageInfo?.type == Type.VIDEO) {
-            exoPlayer?.seekTo(0)
-            exoPlayer?.play()
+        if (imageInfo?.type == Type.VIDEO && ExoPlayerChecker.isAvailable) {
+            (videoPlayerHelper as? VideoPlayerHelper)?.play()
         }
     }
 
     fun onUnSelected() {
-        if (imageInfo?.type == Type.VIDEO) {
-            exoPlayer?.isPlaying?.let {
-                if (it) {
-                    exoPlayer?.pause()
-                }
-            }
+        if (imageInfo?.type == Type.VIDEO && ExoPlayerChecker.isAvailable) {
+            (videoPlayerHelper as? VideoPlayerHelper)?.pause()
         }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        refreshUIMargin()
-    }
-
-    private fun refreshUIMargin() {
-        val llControllerContainer = videoView?.findViewById<LinearLayout>(R.id.llControllerContainer)
-        val layoutParams = llControllerContainer?.layoutParams as MarginLayoutParams
-        // 获取当前屏幕方向
-        val orientation = resources.configuration.orientation
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // 横屏
-            layoutParams.setMargins(
-                0,
-                0,
-                0,
-                UIUtil.dp2px(70f)
-            )
-        } else {
-            // 竖屏
-            layoutParams.setMargins(
-                0,
-                0,
-                0,
-                UIUtil.dp2px(70f) + PhoneUtil.getNavBarHeight(
-                )
-            )
+        if (ExoPlayerChecker.isAvailable) {
+            (videoPlayerHelper as? VideoPlayerHelper)?.refreshUIMargin(requireContext())
         }
-        llControllerContainer.layoutParams = layoutParams
     }
 
-    @UnstableApi
     fun updateItem(imageInfo: ImageInfo) {
         this.imageInfo = imageInfo
         initData()
     }
 
-    @UnstableApi
     override fun onResume() {
         super.onResume()
         if (!mLoading) {
@@ -687,10 +504,11 @@ class ImagePreviewFragment : Fragment() {
             initData()
         } else {
             // 已经初始化过，如果当前是视频，就执行播放
-            if (imageInfo?.type == Type.VIDEO) {
+            if (imageInfo?.type == Type.VIDEO && ExoPlayerChecker.isAvailable) {
                 // 后台前是播放的才恢复播放
-                if (onPausePlaying) {
-                    exoPlayer?.play()
+                val helper = videoPlayerHelper as? VideoPlayerHelper
+                if (helper?.onPausePlaying == true) {
+                    helper.play()
                 }
             }
         }
@@ -699,10 +517,12 @@ class ImagePreviewFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         SLog.d(TAG, "onPause: position = $position")
-        if (imageInfo?.type == Type.VIDEO) {
-            // 只特殊处理视频类型
-            onPausePlaying = exoPlayer?.isPlaying == true
-            onUnSelected()
+        if (imageInfo?.type == Type.VIDEO && ExoPlayerChecker.isAvailable) {
+            val helper = videoPlayerHelper as? VideoPlayerHelper
+            if (helper != null) {
+                helper.onPausePlaying = helper.isPlaying
+                onUnSelected()
+            }
         }
     }
 
@@ -994,11 +814,6 @@ class ImagePreviewFragment : Fragment() {
     }
 
     fun onRelease() {
-        // 清理 Handler 任务，防止内存泄漏
-        progressHandler?.removeCallbacksAndMessages(null)
-        progressHandler = null
-        progressRunnable = null
-
         // 清理保存的缩放状态
         savedScale = null
         savedCenter = null
@@ -1011,8 +826,8 @@ class ImagePreviewFragment : Fragment() {
         // 释放 PhotoView
         imagePhotoView?.setImageBitmap(null)
 
-        // 释放 ExoPlayer
-        exoPlayer?.release()
-        exoPlayer = null
+        // 释放 VideoPlayerHelper（包含 ExoPlayer）
+        (videoPlayerHelper as? VideoPlayerHelper)?.release()
+        videoPlayerHelper = null
     }
 }

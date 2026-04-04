@@ -3,8 +3,6 @@ package cc.shinichi.library.core
 import android.app.Application
 import android.content.Context
 import androidx.annotation.MainThread
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.cache.CacheDataSource
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -19,8 +17,7 @@ object GlobalContext {
     private var application: Application? = null
 
     @Volatile
-    @UnstableApi
-    private var cacheDataSourceFactory: CacheDataSource.Factory? = null
+    private var cacheDataSourceFactory: Any? = null
 
     private val initialized = AtomicBoolean(false)
 
@@ -29,12 +26,11 @@ object GlobalContext {
      * 此方法应在应用启动时调用一次
      *
      * @param app Application 实例
-     * @param cacheDataSourceFactory 视频缓存数据源工厂
+     * @param cacheDataSourceFactory 视频缓存数据源工厂（可选，仅在 ExoPlayer 可用时传入）
      */
-    @UnstableApi
     @MainThread
     @Synchronized
-    fun init(app: Application, cacheDataSourceFactory: CacheDataSource.Factory) {
+    fun init(app: Application, cacheDataSourceFactory: Any? = null) {
         if (initialized.compareAndSet(false, true)) {
             application = app
             this.cacheDataSourceFactory = cacheDataSourceFactory
@@ -57,12 +53,10 @@ object GlobalContext {
 
     /**
      * 获取视频缓存数据源工厂
-     * @throws IllegalStateException 如果未初始化
+     * @return 工厂实例，如果 ExoPlayer 不可用则返回 null
      */
-    @UnstableApi
-    fun getCacheDataSourceFactory(): CacheDataSource.Factory {
+    fun getCacheDataSourceFactory(): Any? {
         return cacheDataSourceFactory
-            ?: throw IllegalStateException("CacheDataSourceFactory is not initialized. Make sure InitProvider is registered in AndroidManifest.xml")
     }
 
     /**

@@ -92,7 +92,7 @@ dependencies {
     annotationProcessor(libs.glide.compiler)
     implementation(libs.glide.okhttp3)
 
-    // Media3 / ExoPlayer
+    // Media3 / ExoPlayer (optional - needed for video playback support)
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.exoplayer.dash)
     implementation(libs.media3.ui)

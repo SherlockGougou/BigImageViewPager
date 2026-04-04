@@ -24,13 +24,12 @@
             android:scaleType="centerInside"
             android:visibility="gone" />
 
-        <!--视频-->
-        <androidx.media3.ui.PlayerView
-            android:id="@+id/video_view"
+        <!--视频（容器，PlayerView 在运行时按需创建）-->
+        <FrameLayout
+            android:id="@+id/video_view_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:controller_layout_id="@layout/sh_media_controller"
-            app:show_timeout="1500" />
+            android:visibility="gone" />
 
     </cc.shinichi.library.ui.widget.DragCloseView>
 

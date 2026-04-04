@@ -75,10 +75,10 @@ dependencies {
         exclude(group = "org.aomedia.avif.android", module = "avif")
     }
 
-    // Media3 / ExoPlayer
-    implementation(libs.media3.exoplayer)
-    implementation(libs.media3.exoplayer.dash)
-    implementation(libs.media3.ui)
+    // Media3 / ExoPlayer (optional - for video playback support)
+    compileOnly(libs.media3.exoplayer)
+    compileOnly(libs.media3.exoplayer.dash)
+    compileOnly(libs.media3.ui)
 }
 
 // =============================================================================
