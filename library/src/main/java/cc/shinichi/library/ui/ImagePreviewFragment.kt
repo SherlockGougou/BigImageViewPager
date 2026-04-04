@@ -14,6 +14,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -21,14 +22,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
-import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultDataSource
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
-import androidx.media3.ui.PlayerView
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.ImagePreview.LoadStrategy
 import cc.shinichi.library.R
@@ -53,6 +47,7 @@ import cc.shinichi.library.util.SLog
 import cc.shinichi.library.util.ToastUtil
 import cc.shinichi.library.util.UIUtil
 import cc.shinichi.library.util.UtilExt.isLocalFile
+import cc.shinichi.library.util.VideoPlayerHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -88,10 +83,11 @@ class ImagePreviewFragment : Fragment() {
     private var dragCloseView: DragCloseView? = null
     private var imageSubsample: SubsamplingScaleImageView? = null
     private var imagePhotoView: PhotoView? = null
-    private var videoView: PlayerView? = null
+    private var videoViewContainer: FrameLayout? = null
+    private var playerView: View? = null
     private var progressBar: ProgressBar? = null
 
-    private var exoPlayer: ExoPlayer? = null
+    private var exoPlayer: Any? = null
 
     private var ivPlayButton: ImageView? = null
     private var tvPlayTime: TextView? = null
@@ -141,7 +137,11 @@ class ImagePreviewFragment : Fragment() {
         if (type == Type.IMAGE) {
             initImageType()
         } else if (type == Type.VIDEO) {
-            initVideoType()
+            if (VideoPlayerHelper.isVideoPlaybackSupported()) {
+                initVideoType()
+            } else {
+                initVideoUnsupported()
+            }
         }
     }
 
@@ -167,10 +167,8 @@ class ImagePreviewFragment : Fragment() {
         dragCloseView = view.findViewById(R.id.fingerDragHelper)
         imageSubsample = view.findViewById(R.id.static_view)
         imagePhotoView = view.findViewById(R.id.anim_view)
-        videoView = view.findViewById(R.id.video_view)
-        ivPlayButton = videoView?.findViewById(R.id.ivPlayButton)
-        seekBar = videoView?.findViewById(R.id.seekbar)
-        tvPlayTime = videoView?.findViewById(R.id.tvPlayTime)
+        videoViewContainer = view.findViewById(R.id.video_view_container)
+        // 视频子控件将在 initVideoType() 中初始化（PlayerView 动态创建时）
         val phoneHei = getPhoneHei()
         // 手势拖拽事件
         if (ImagePreview.instance.isEnableDragClose) {
@@ -203,9 +201,9 @@ class ImagePreviewFragment : Fragment() {
                         imageSubsample?.scaleY = number
                         imageSubsample?.scaleX = number
                     }
-                    if (videoView?.isVisible == true) {
-                        videoView?.scaleY = number
-                        videoView?.scaleX = number
+                    if (videoViewContainer?.isVisible == true) {
+                        videoViewContainer?.scaleY = number
+                        videoViewContainer?.scaleX = number
                     }
                 }
 
@@ -255,21 +253,7 @@ class ImagePreviewFragment : Fragment() {
             }
             ImagePreview.instance.bigImageClickListener?.onClick(imagePreviewActivity!!, v, position)
         }
-        ivPlayButton?.setOnClickListener {
-            // 控制播放和暂停
-            videoView?.player?.let {
-                if (it.isPlaying) {
-                    // 去暂停，显示为播放图标
-                    it.pause()
-                    ivPlayButton?.setImageResource(R.drawable.icon_video_play)
-                } else {
-                    // 去播放，显示为暂停图标
-                    // 如果进度条已经到最后，重新播放
-                    it.play()
-                    ivPlayButton?.setImageResource(R.drawable.icon_video_stop)
-                }
-            }
-        }
+        // 播放按钮的点击事件将在 initVideoType() 中设置
         // 长按事件
         ImagePreview.instance.bigImageLongClickListener?.let {
             imageSubsample?.setOnLongClickListener { v ->
@@ -288,7 +272,7 @@ class ImagePreviewFragment : Fragment() {
                 )
                 true
             }
-            videoView?.setOnLongClickListener { v ->
+            videoViewContainer?.setOnLongClickListener { v ->
                 ImagePreview.instance.bigImageLongClickListener?.onLongClick(
                     imagePreviewActivity!!,
                     v,
@@ -301,7 +285,7 @@ class ImagePreviewFragment : Fragment() {
 
     private fun initImageType() {
         // 图片类型，隐藏视频
-        videoView?.visibility = View.GONE
+        videoViewContainer?.visibility = View.GONE
 
         val originPathUrl = imageInfo?.originUrl
         val thumbPathUrl = imageInfo?.thumbnailUrl
@@ -362,13 +346,53 @@ class ImagePreviewFragment : Fragment() {
         }
     }
 
+    /**
+     * 视频播放不支持时的处理（ExoPlayer 未集成）
+     */
+    private fun initVideoUnsupported() {
+        imageSubsample?.visibility = View.GONE
+        imagePhotoView?.visibility = View.GONE
+        videoViewContainer?.visibility = View.VISIBLE
+        progressBar?.visibility = View.GONE
+
+        // 显示提示信息
+        val textView = TextView(requireContext()).apply {
+            text = context.getString(R.string.video_not_supported)
+            setTextColor(android.graphics.Color.WHITE)
+            textSize = 16f
+            gravity = android.view.Gravity.CENTER
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+        }
+        videoViewContainer?.removeAllViews()
+        videoViewContainer?.addView(textView)
+        SLog.w(TAG, "Video playback not supported: ExoPlayer (Media3) dependency not found")
+    }
+
     @UnstableApi
     private fun initVideoType() {
         // 视频类型，隐藏图片
         imageSubsample?.visibility = View.GONE
         imagePhotoView?.visibility = View.GONE
-        videoView?.visibility = View.VISIBLE
+        videoViewContainer?.visibility = View.VISIBLE
         progressBar?.visibility = View.GONE
+
+        // 动态创建 PlayerView 并添加到容器
+        if (playerView == null) {
+            playerView = createPlayerView()
+            if (playerView != null) {
+                videoViewContainer?.removeAllViews()
+                videoViewContainer?.addView(playerView)
+                // 初始化视频子控件
+                ivPlayButton = playerView?.findViewById(R.id.ivPlayButton)
+                seekBar = playerView?.findViewById(R.id.seekbar)
+                tvPlayTime = playerView?.findViewById(R.id.tvPlayTime)
+                // 设置播放按钮点击事件
+                setupPlayButtonListener()
+            }
+        }
 
         // 自定义控制
         refreshUIMargin()
@@ -376,8 +400,9 @@ class ImagePreviewFragment : Fragment() {
         // 初始化播放器
         if (exoPlayer == null) {
             exoPlayer = imagePreviewActivity?.getExoPlayer(requireActivity())
-            exoPlayer?.addListener(object : Player.Listener {
-                override fun onVideoSizeChanged(videoSize: VideoSize) {
+            val player = exoPlayer as? androidx.media3.exoplayer.ExoPlayer ?: return
+            player.addListener(object : androidx.media3.common.Player.Listener {
+                override fun onVideoSizeChanged(videoSize: androidx.media3.common.VideoSize) {
                     super.onVideoSizeChanged(videoSize)
                     SLog.d(TAG, "onVideoSizeChanged: videoSize = ${videoSize.width} * ${videoSize.height}")
                 }
@@ -395,16 +420,16 @@ class ImagePreviewFragment : Fragment() {
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     super.onPlaybackStateChanged(playbackState)
                     SLog.d(TAG, "onPlaybackStateChanged: playbackState = $playbackState")
-                    if (playbackState == Player.STATE_READY) {
+                    if (playbackState == androidx.media3.common.Player.STATE_READY) {
                         // 底部控制器处理
                         setProgress(exoPlayer)
-                        videoView?.hideController()
-                    } else if (playbackState == Player.STATE_ENDED) {
+                        (playerView as? androidx.media3.ui.PlayerView)?.hideController()
+                    } else if (playbackState == androidx.media3.common.Player.STATE_ENDED) {
                         // 播放结束
-                        exoPlayer?.pause()
-                        exoPlayer?.seekTo(0)
+                        player.pause()
+                        player.seekTo(0)
                     }
-                    if (playbackState == Player.STATE_BUFFERING) {
+                    if (playbackState == androidx.media3.common.Player.STATE_BUFFERING) {
                         // 缓冲中
                         progressBar?.visibility = View.VISIBLE
                     } else {
@@ -413,31 +438,71 @@ class ImagePreviewFragment : Fragment() {
                 }
             })
         }
-        videoView?.player = exoPlayer
+        val player = exoPlayer as? androidx.media3.exoplayer.ExoPlayer ?: return
+        (playerView as? androidx.media3.ui.PlayerView)?.player = player
 
         if (imageInfo?.originUrl?.isLocalFile() == true) {
             // 本地文件
-            val mediaItem = MediaItem.fromUri(Uri.fromFile(File(imageInfo?.originUrl.toString())))
-            val dataSourceFactory = DefaultDataSource.Factory(imagePreviewActivity!!)
-            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
-            exoPlayer?.setMediaSource(mediaSource)
+            val mediaItem = androidx.media3.common.MediaItem.fromUri(Uri.fromFile(File(imageInfo?.originUrl.toString())))
+            val dataSourceFactory = androidx.media3.datasource.DefaultDataSource.Factory(imagePreviewActivity!!)
+            val mediaSource = androidx.media3.exoplayer.source.ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
+            player.setMediaSource(mediaSource)
         } else {
             // 网络文件
-            val mediaItem = MediaItem.fromUri(imageInfo?.originUrl.toString())
-            exoPlayer?.setMediaItem(mediaItem)
+            val mediaItem = androidx.media3.common.MediaItem.fromUri(imageInfo?.originUrl.toString())
+            player.setMediaItem(mediaItem)
         }
 
-        exoPlayer?.prepare()
-        exoPlayer?.playWhenReady = false
+        player.prepare()
+        player.playWhenReady = false
 
         if (ImagePreview.instance.index == position) {
             // 如果是当前选中的，就播放
-            exoPlayer?.play()
+            player.play()
         }
     }
 
-    private fun setProgress(exoPlayer: ExoPlayer?) {
-        exoPlayer?.apply {
+    /**
+     * 动态创建 PlayerView（仅在 ExoPlayer 可用时调用）
+     */
+    @UnstableApi
+    private fun createPlayerView(): View? {
+        return try {
+            androidx.media3.ui.PlayerView(requireContext()).apply {
+                layoutParams = FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+                )
+                setControllerLayoutId(R.layout.sh_media_controller)
+                controllerShowTimeoutMs = 1500
+            }
+        } catch (e: Exception) {
+            SLog.e(TAG, "Failed to create PlayerView", e)
+            null
+        }
+    }
+
+    /**
+     * 设置播放按钮的点击监听器
+     */
+    @UnstableApi
+    private fun setupPlayButtonListener() {
+        ivPlayButton?.setOnClickListener {
+            val player = exoPlayer as? androidx.media3.exoplayer.ExoPlayer ?: return@setOnClickListener
+            if (player.isPlaying) {
+                player.pause()
+                ivPlayButton?.setImageResource(R.drawable.icon_video_play)
+            } else {
+                player.play()
+                ivPlayButton?.setImageResource(R.drawable.icon_video_stop)
+            }
+        }
+    }
+
+    @UnstableApi
+    private fun setProgress(exoPlayer: Any?) {
+        val player = exoPlayer as? androidx.media3.exoplayer.ExoPlayer ?: return
+        player.apply {
             // 清除之前的任务
             progressHandler?.removeCallbacksAndMessages(null)
             progressHandler = Handler(Looper.getMainLooper())
@@ -446,9 +511,9 @@ class ImagePreviewFragment : Fragment() {
             progressRunnable = object : Runnable {
                 override fun run() {
                     if (!isDragging) {
-                        val currentPosition = exoPlayer.currentPosition
+                        val currentPosition = player.currentPosition
                         val currentTime = formatTimestamp(currentPosition / 1000)
-                        val totalDuration = exoPlayer.duration
+                        val totalDuration = player.duration
                         val totalTime = formatTimestamp(totalDuration / 1000)
 
                         seekBar?.max = totalDuration.toInt()
@@ -471,7 +536,7 @@ class ImagePreviewFragment : Fragment() {
                 override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                     if (fromUser) {
                         // 如果是用户拖动的，则更新播放位置。
-                        exoPlayer.seekTo(progress.toLong())
+                        player.seekTo(progress.toLong())
                     }
                 }
 
@@ -625,18 +690,18 @@ class ImagePreviewFragment : Fragment() {
     }
 
     fun onSelected() {
-        if (imageInfo?.type == Type.VIDEO) {
-            exoPlayer?.seekTo(0)
-            exoPlayer?.play()
+        if (imageInfo?.type == Type.VIDEO && VideoPlayerHelper.isVideoPlaybackSupported()) {
+            val player = exoPlayer as? androidx.media3.exoplayer.ExoPlayer ?: return
+            player.seekTo(0)
+            player.play()
         }
     }
 
     fun onUnSelected() {
-        if (imageInfo?.type == Type.VIDEO) {
-            exoPlayer?.isPlaying?.let {
-                if (it) {
-                    exoPlayer?.pause()
-                }
+        if (imageInfo?.type == Type.VIDEO && VideoPlayerHelper.isVideoPlaybackSupported()) {
+            val player = exoPlayer as? androidx.media3.exoplayer.ExoPlayer ?: return
+            if (player.isPlaying) {
+                player.pause()
             }
         }
     }
@@ -647,8 +712,9 @@ class ImagePreviewFragment : Fragment() {
     }
 
     private fun refreshUIMargin() {
-        val llControllerContainer = videoView?.findViewById<LinearLayout>(R.id.llControllerContainer)
-        val layoutParams = llControllerContainer?.layoutParams as MarginLayoutParams
+        val llControllerContainer = playerView?.findViewById<LinearLayout>(R.id.llControllerContainer)
+            ?: return
+        val layoutParams = llControllerContainer.layoutParams as MarginLayoutParams
         // 获取当前屏幕方向
         val orientation = resources.configuration.orientation
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -687,10 +753,10 @@ class ImagePreviewFragment : Fragment() {
             initData()
         } else {
             // 已经初始化过，如果当前是视频，就执行播放
-            if (imageInfo?.type == Type.VIDEO) {
+            if (imageInfo?.type == Type.VIDEO && VideoPlayerHelper.isVideoPlaybackSupported()) {
                 // 后台前是播放的才恢复播放
                 if (onPausePlaying) {
-                    exoPlayer?.play()
+                    (exoPlayer as? androidx.media3.exoplayer.ExoPlayer)?.play()
                 }
             }
         }
@@ -699,9 +765,9 @@ class ImagePreviewFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         SLog.d(TAG, "onPause: position = $position")
-        if (imageInfo?.type == Type.VIDEO) {
+        if (imageInfo?.type == Type.VIDEO && VideoPlayerHelper.isVideoPlaybackSupported()) {
             // 只特殊处理视频类型
-            onPausePlaying = exoPlayer?.isPlaying == true
+            onPausePlaying = (exoPlayer as? androidx.media3.exoplayer.ExoPlayer)?.isPlaying == true
             onUnSelected()
         }
     }
@@ -1012,7 +1078,17 @@ class ImagePreviewFragment : Fragment() {
         imagePhotoView?.setImageBitmap(null)
 
         // 释放 ExoPlayer
-        exoPlayer?.release()
+        if (VideoPlayerHelper.isVideoPlaybackSupported()) {
+            releaseExoPlayer()
+        }
         exoPlayer = null
+    }
+
+    /**
+     * 释放 ExoPlayer 实例（仅在 ExoPlayer 可用时调用）
+     */
+    @UnstableApi
+    private fun releaseExoPlayer() {
+        (exoPlayer as? androidx.media3.exoplayer.ExoPlayer)?.release()
     }
 }

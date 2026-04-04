@@ -7,4 +7,5 @@
     <string name="toast_save_failed">Save failed</string>
     <string name="toast_save_success">Saved to：%1$s</string>
     <string name="toast_deny_permission_save_failed">You denied the storage permission and the download failed!</string>
+    <string name="video_not_supported">Video playback unavailable\nPlease add Media3 (ExoPlayer) dependency to enable video support</string>
 </resources>

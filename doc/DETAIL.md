@@ -28,7 +28,8 @@
         annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
         implementation "com.github.bumptech.glide:okhttp3-integration:$glideVersion"
 
-        // 必选：ExoPlayer (Media3)
+        // 可选：ExoPlayer (Media3) - 仅在需要视频播放功能时添加
+        // 如果不需要视频播放，可以不添加以下依赖，库将自动禁用视频功能
         def media3Version = "1.4.1"
         implementation "androidx.media3:media3-exoplayer:$media3Version"
         implementation "androidx.media3:media3-exoplayer-dash:$media3Version"

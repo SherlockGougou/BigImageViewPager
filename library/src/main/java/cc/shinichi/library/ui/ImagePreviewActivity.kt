@@ -24,12 +24,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultHttpDataSource
-import androidx.media3.datasource.cache.CacheDataSink
-import androidx.media3.datasource.cache.CacheDataSource
-import androidx.media3.datasource.cache.SimpleCache
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.R
@@ -43,7 +37,6 @@ import cc.shinichi.library.model.Type
 import cc.shinichi.library.ui.widget.HackyViewPager
 import cc.shinichi.library.util.DeviceUtil
 import cc.shinichi.library.util.DownloadUtil
-import cc.shinichi.library.util.ExoCacheManager
 import cc.shinichi.library.util.HandlerHolder
 import cc.shinichi.library.util.HttpUtil
 import cc.shinichi.library.util.NetworkUtil
@@ -51,6 +44,7 @@ import cc.shinichi.library.util.PhoneUtil
 import cc.shinichi.library.util.SLog
 import cc.shinichi.library.util.ToastUtil
 import cc.shinichi.library.util.UIUtil
+import cc.shinichi.library.util.VideoPlayerHelper
 import com.bumptech.glide.Glide
 
 /**
@@ -96,8 +90,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     private var currentItemOriginPathUrl: String? = ""
     private var lastProgress = 0
 
-    @SuppressLint("UnsafeOptInUsageError")
-    private var simpleCache: SimpleCache? = null
+    private var simpleCache: Any? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -295,8 +288,10 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
             viewPager?.addOnPageChangeListener(this)
         }
 
-        // 创建缓存对象
-        simpleCache = ExoCacheManager.getSimpleCache(this)
+        // 创建缓存对象（仅在 ExoPlayer 可用时）
+        if (VideoPlayerHelper.isVideoPlaybackSupported()) {
+            initExoCache()
+        }
     }
 
     private fun refreshUIMargin() {
@@ -327,29 +322,53 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
         consBottomController?.layoutParams = layoutParams
     }
 
-    @OptIn(UnstableApi::class)
-    fun getExoPlayer(context: Context): ExoPlayer {
-        // 5. 构建 HTTP 数据源工厂
-        val httpDataSourceFactory = DefaultHttpDataSource.Factory()
-            .setConnectTimeoutMs(10_000)
-            .setReadTimeoutMs(10_000)
-            .setAllowCrossProtocolRedirects(true)
-            .setDefaultRequestProperties(ImagePreview.instance.headers?.toMap() ?: mapOf())
+    /**
+     * 初始化 ExoPlayer 缓存（仅在 ExoPlayer 可用时调用）
+     */
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+    private fun initExoCache() {
+        try {
+            simpleCache = cc.shinichi.library.util.ExoCacheManager.getSimpleCache(this)
+        } catch (e: Exception) {
+            SLog.e("ImagePreviewActivity", "Failed to init ExoPlayer cache", e)
+        }
+    }
 
-        // 6. 构建缓存数据源工厂
-        val cacheDataSourceFactory = CacheDataSource.Factory()
-            .setCache(simpleCache!!)
-            .setUpstreamDataSourceFactory(httpDataSourceFactory)
-            .setCacheWriteDataSinkFactory(CacheDataSink.Factory().setCache(simpleCache!!))
-            .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+    /**
+     * 创建 ExoPlayer 实例（仅在 ExoPlayer 可用时调用）
+     */
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+    fun getExoPlayer(context: Context): Any? {
+        try {
+            val cache = simpleCache as? androidx.media3.datasource.cache.SimpleCache ?: return null
+            // 构建 HTTP 数据源工厂
+            val httpDataSourceFactory = androidx.media3.datasource.DefaultHttpDataSource.Factory()
+                .setConnectTimeoutMs(10_000)
+                .setReadTimeoutMs(10_000)
+                .setAllowCrossProtocolRedirects(true)
+                .setDefaultRequestProperties(ImagePreview.instance.headers?.toMap() ?: mapOf())
 
-        // 7. 使用缓存的数据源创建 MediaSourceFactory
-        val mediaSourceFactory = DefaultMediaSourceFactory(cacheDataSourceFactory)
+            // 构建缓存数据源工厂
+            val cacheDataSourceFactory = androidx.media3.datasource.cache.CacheDataSource.Factory()
+                .setCache(cache)
+                .setUpstreamDataSourceFactory(httpDataSourceFactory)
+                .setCacheWriteDataSinkFactory(
+                    androidx.media3.datasource.cache.CacheDataSink.Factory().setCache(cache)
+                )
+                .setFlags(androidx.media3.datasource.cache.CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
 
-        // 8. 构建并返回 ExoPlayer
-        return ExoPlayer.Builder(context)
-            .setMediaSourceFactory(mediaSourceFactory)
-            .build()
+            // 使用缓存的数据源创建 MediaSourceFactory
+            val mediaSourceFactory =
+                androidx.media3.exoplayer.source.DefaultMediaSourceFactory(cacheDataSourceFactory)
+
+            // 构建并返回 ExoPlayer
+            return androidx.media3.exoplayer.ExoPlayer.Builder(context)
+                .setMediaSourceFactory(mediaSourceFactory)
+                .build()
+        } catch (e: Exception) {
+            SLog.e("ImagePreviewActivity", "Failed to create ExoPlayer", e)
+            return null
+        }
     }
 
     /**
@@ -373,13 +392,27 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
     }
 
     override fun finish() {
-        ExoCacheManager.release()
+        if (VideoPlayerHelper.isVideoPlaybackSupported()) {
+            releaseExoCache()
+        }
         for (fragment in fragmentList) {
             fragment.onRelease()
         }
         ImagePreview.instance.onPageFinishListener?.onFinish(this)
         ImagePreview.instance.reset()
         super.finish()
+    }
+
+    /**
+     * 释放 ExoPlayer 缓存（仅在 ExoPlayer 可用时调用）
+     */
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+    private fun releaseExoCache() {
+        try {
+            cc.shinichi.library.util.ExoCacheManager.release()
+        } catch (e: Exception) {
+            SLog.e("ImagePreviewActivity", "Failed to release ExoPlayer cache", e)
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

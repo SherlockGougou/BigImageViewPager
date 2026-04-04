@@ -7,4 +7,5 @@
     <string name="toast_save_failed">保存失败</string>
     <string name="toast_save_success">成功保存到：%1$s</string>
     <string name="toast_deny_permission_save_failed">您拒绝了存储权限，下载失败！</string>
+    <string name="video_not_supported">视频播放不可用\n请添加 Media3 (ExoPlayer) 依赖以启用视频功能</string>
 </resources>

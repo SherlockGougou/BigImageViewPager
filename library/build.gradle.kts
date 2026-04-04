@@ -75,10 +75,10 @@ dependencies {
         exclude(group = "org.aomedia.avif.android", module = "avif")
     }
 
-    // Media3 / ExoPlayer
-    implementation(libs.media3.exoplayer)
-    implementation(libs.media3.exoplayer.dash)
-    implementation(libs.media3.ui)
+    // Media3 / ExoPlayer (可选依赖，用户可选择是否添加以启用视频播放功能)
+    compileOnly(libs.media3.exoplayer)
+    compileOnly(libs.media3.exoplayer.dash)
+    compileOnly(libs.media3.ui)
 }
 
 // =============================================================================
