@@ -36,6 +36,7 @@
 
 ## 🆕 更新日志
 
+- **androidx-9.1.0**：ExoPlayer (Media3) 依赖改为可选，仅需图片预览的用户无需引入视频相关依赖，减小APK体积
 - **androidx-8.4.7**：支持32位的16KB page size特性
 - **androidx-8.4.6**：新增支持res资源
 - **androidx-8.4.5**：新增自定义请求头功能
