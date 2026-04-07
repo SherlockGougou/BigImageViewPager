@@ -7,8 +7,7 @@ import android.content.pm.ApplicationInfo
 import android.database.Cursor
 import android.net.Uri
 import cc.shinichi.library.util.SLog
-import cc.shinichi.library.util.VideoPlayerHelper
-import java.io.File
+import cc.shinichi.library.video.VideoRuntimeRegistry
 
 /**
  * 文件名: InitProvider.kt
@@ -38,44 +37,7 @@ class InitProvider : ContentProvider() {
     private fun initializeLibrary(application: Application) {
         // 初始化日志开关，根据应用的调试标志决定
         SLog.isDebug = (application.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
-
-        if (VideoPlayerHelper.isVideoPlaybackSupported()) {
-            // ExoPlayer 可用，初始化视频缓存
-            initializeVideoCache(application)
-        } else {
-            // ExoPlayer 不可用，仅初始化基础上下文
-            GlobalContext.init(application, null)
-        }
-    }
-
-    /**
-     * 初始化视频缓存（仅在 ExoPlayer 可用时调用）
-     * 此方法中的 Media3 类引用在运行时才会被解析
-     */
-    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-    private fun initializeVideoCache(application: Application) {
-        try {
-            val downloadDirectory = File(application.cacheDir, "media_cache")
-            val maxBytes = 500 * 1024 * 1024L
-            val databaseProvider = androidx.media3.database.StandaloneDatabaseProvider(application)
-            val cache = androidx.media3.datasource.cache.SimpleCache(
-                downloadDirectory,
-                androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor(maxBytes),
-                databaseProvider
-            )
-            val dataSourceFactory = androidx.media3.datasource.DefaultDataSource.Factory(
-                application,
-                androidx.media3.datasource.DefaultHttpDataSource.Factory()
-            )
-            val cacheDataSourceFactory =
-                androidx.media3.datasource.cache.CacheDataSource.Factory()
-                    .setCache(cache)
-                    .setUpstreamDataSourceFactory(dataSourceFactory)
-            GlobalContext.init(application, cacheDataSourceFactory)
-        } catch (e: Exception) {
-            SLog.e("InitProvider", "Failed to initialize video cache", e)
-            GlobalContext.init(application, null)
-        }
+        VideoRuntimeRegistry.runtime.initialize(application)
     }
 
     override fun query(

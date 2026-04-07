@@ -14,11 +14,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.media3.common.util.UnstableApi;
 
 import com.bumptech.glide.Glide;
 import com.luck.picture.lib.basic.PictureSelector;
@@ -523,7 +521,6 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 })
                                 .setNegativeButton("更新当前", new DialogInterface.OnClickListener() {
-                                    @OptIn(markerClass = UnstableApi.class)
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         // 更新图片

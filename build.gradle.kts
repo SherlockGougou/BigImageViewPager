@@ -19,8 +19,8 @@ nexusPublishing {
             nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
             snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
             packageGroup.set("com.gouqinglin")
-            username.set(findProperty("ossrhUsername")?.toString() ?: System.getenv("OSSRH_USERNAME"))
-            password.set(findProperty("ossrhPassword")?.toString() ?: System.getenv("OSSRH_PASSWORD"))
+            username.set(System.getenv("OSSRH_USERNAME") ?: "")
+            password.set(System.getenv("OSSRH_PASSWORD") ?: "")
         }
     }
 }

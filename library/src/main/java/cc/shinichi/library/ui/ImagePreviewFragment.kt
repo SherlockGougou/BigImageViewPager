@@ -20,9 +20,9 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.media3.common.util.UnstableApi
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.ImagePreview.LoadStrategy
 import cc.shinichi.library.R
@@ -37,6 +37,8 @@ import cc.shinichi.library.ui.photoview.PhotoView
 import cc.shinichi.library.ui.subsampling.ImageSource
 import cc.shinichi.library.ui.subsampling.SubsamplingScaleImageView
 import cc.shinichi.library.ui.widget.DragCloseView
+import cc.shinichi.library.video.VideoPlayerSession
+import cc.shinichi.library.video.VideoRuntimeRegistry
 import cc.shinichi.library.util.FileUtil.getAvailableCacheDir
 import cc.shinichi.library.util.HttpUtil.downloadFile
 import cc.shinichi.library.util.ImageUtil
@@ -61,7 +63,6 @@ import com.bumptech.glide.request.target.Target
 import java.io.File
 import java.util.Locale
 import kotlin.math.abs
-import androidx.core.net.toUri
 
 /**
  * 文件名: ImagePreviewFragment.java
@@ -87,7 +88,7 @@ class ImagePreviewFragment : Fragment() {
     private var playerView: View? = null
     private var progressBar: ProgressBar? = null
 
-    private var exoPlayer: Any? = null
+    private var videoSession: VideoPlayerSession? = null
 
     private var ivPlayButton: ImageView? = null
     private var tvPlayTime: TextView? = null
@@ -129,7 +130,6 @@ class ImagePreviewFragment : Fragment() {
         return view
     }
 
-    @UnstableApi
     private fun initData() {
         initParams()
         SLog.d(TAG, "initData: position = $position")
@@ -257,30 +257,25 @@ class ImagePreviewFragment : Fragment() {
         // 长按事件
         ImagePreview.instance.bigImageLongClickListener?.let {
             imageSubsample?.setOnLongClickListener { v ->
-                ImagePreview.instance.bigImageLongClickListener?.onLongClick(
-                    imagePreviewActivity!!,
-                    v,
-                    position
-                )
-                true
+                dispatchLongClick(v)
             }
             imagePhotoView?.setOnLongClickListener { v ->
-                ImagePreview.instance.bigImageLongClickListener?.onLongClick(
-                    imagePreviewActivity!!,
-                    v,
-                    position
-                )
-                true
+                dispatchLongClick(v)
             }
             videoViewContainer?.setOnLongClickListener { v ->
-                ImagePreview.instance.bigImageLongClickListener?.onLongClick(
-                    imagePreviewActivity!!,
-                    v,
-                    position
-                )
-                true
+                dispatchLongClick(v)
             }
         }
+    }
+
+    private fun dispatchLongClick(v: View): Boolean {
+        val activity = imagePreviewActivity
+        if (activity == null || activity.isFinishing || activity.isDestroyed) {
+            SLog.w(TAG, "dispatchLongClick ignored: activity is not running")
+            return true
+        }
+        ImagePreview.instance.bigImageLongClickListener?.onLongClick(activity, v, position)
+        return true
     }
 
     private fun initImageType() {
@@ -371,7 +366,6 @@ class ImagePreviewFragment : Fragment() {
         SLog.w(TAG, "Video playback not supported: ExoPlayer (Media3) dependency not found")
     }
 
-    @UnstableApi
     private fun initVideoType() {
         // 视频类型，隐藏图片
         imageSubsample?.visibility = View.GONE
@@ -398,17 +392,15 @@ class ImagePreviewFragment : Fragment() {
         refreshUIMargin()
 
         // 初始化播放器
-        if (exoPlayer == null) {
-            exoPlayer = imagePreviewActivity?.getExoPlayer(requireActivity())
-            val player = exoPlayer as? androidx.media3.exoplayer.ExoPlayer ?: return
-            player.addListener(object : androidx.media3.common.Player.Listener {
-                override fun onVideoSizeChanged(videoSize: androidx.media3.common.VideoSize) {
-                    super.onVideoSizeChanged(videoSize)
-                    SLog.d(TAG, "onVideoSizeChanged: videoSize = ${videoSize.width} * ${videoSize.height}")
+        if (videoSession == null) {
+            videoSession = imagePreviewActivity?.createVideoSession()
+            val session = videoSession ?: return
+            session.setListener(object : VideoPlayerSession.Listener {
+                override fun onVideoSizeChanged(width: Int, height: Int) {
+                    SLog.d(TAG, "onVideoSizeChanged: videoSize = $width * $height")
                 }
 
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
-                    super.onIsPlayingChanged(isPlaying)
                     SLog.d(TAG, "onIsPlayingChanged: isPlaying = $isPlaying")
                     if (isPlaying) {
                         ivPlayButton?.setImageResource(R.drawable.icon_video_stop)
@@ -418,18 +410,17 @@ class ImagePreviewFragment : Fragment() {
                 }
 
                 override fun onPlaybackStateChanged(playbackState: Int) {
-                    super.onPlaybackStateChanged(playbackState)
                     SLog.d(TAG, "onPlaybackStateChanged: playbackState = $playbackState")
-                    if (playbackState == androidx.media3.common.Player.STATE_READY) {
+                    if (playbackState == VideoPlayerSession.STATE_READY) {
                         // 底部控制器处理
-                        setProgress(exoPlayer)
-                        (playerView as? androidx.media3.ui.PlayerView)?.hideController()
-                    } else if (playbackState == androidx.media3.common.Player.STATE_ENDED) {
+                        setProgress(videoSession)
+                        VideoRuntimeRegistry.runtime.hideController(playerView)
+                    } else if (playbackState == VideoPlayerSession.STATE_ENDED) {
                         // 播放结束
-                        player.pause()
-                        player.seekTo(0)
+                        session.pause()
+                        session.seekTo(0)
                     }
-                    if (playbackState == androidx.media3.common.Player.STATE_BUFFERING) {
+                    if (playbackState == VideoPlayerSession.STATE_BUFFERING) {
                         // 缓冲中
                         progressBar?.visibility = View.VISIBLE
                     } else {
@@ -438,117 +429,90 @@ class ImagePreviewFragment : Fragment() {
                 }
             })
         }
-        val player = exoPlayer as? androidx.media3.exoplayer.ExoPlayer ?: return
-        (playerView as? androidx.media3.ui.PlayerView)?.player = player
-
-        if (imageInfo?.originUrl?.isLocalFile() == true) {
-            // 本地文件
-            val mediaItem = androidx.media3.common.MediaItem.fromUri(Uri.fromFile(File(imageInfo?.originUrl.toString())))
-            val dataSourceFactory = androidx.media3.datasource.DefaultDataSource.Factory(imagePreviewActivity!!)
-            val mediaSource = androidx.media3.exoplayer.source.ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
-            player.setMediaSource(mediaSource)
-        } else {
-            // 网络文件
-            val mediaItem = androidx.media3.common.MediaItem.fromUri(imageInfo?.originUrl.toString())
-            player.setMediaItem(mediaItem)
-        }
-
-        player.prepare()
-        player.playWhenReady = false
+        val session = videoSession ?: return
+        session.bindPlayerView(playerView)
+        session.setMediaSource(
+            imageInfo?.originUrl.toString(),
+            imageInfo?.originUrl?.isLocalFile() == true
+        )
+        session.prepare()
 
         if (ImagePreview.instance.index == position) {
             // 如果是当前选中的，就播放
-            player.play()
+            session.play()
         }
     }
 
     /**
      * 动态创建 PlayerView（仅在 ExoPlayer 可用时调用）
      */
-    @UnstableApi
     private fun createPlayerView(): View? {
-        return try {
-            androidx.media3.ui.PlayerView(requireContext()).apply {
-                layoutParams = FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT
-                )
-                setControllerLayoutId(R.layout.sh_media_controller)
-                controllerShowTimeoutMs = 1500
-            }
-        } catch (e: Exception) {
-            SLog.e(TAG, "Failed to create PlayerView", e)
-            null
-        }
+        return VideoRuntimeRegistry.runtime.createPlayerView(requireContext())
     }
 
     /**
      * 设置播放按钮的点击监听器
      */
-    @UnstableApi
     private fun setupPlayButtonListener() {
         ivPlayButton?.setOnClickListener {
-            val player = exoPlayer as? androidx.media3.exoplayer.ExoPlayer ?: return@setOnClickListener
-            if (player.isPlaying) {
-                player.pause()
+            val session = videoSession ?: return@setOnClickListener
+            if (session.isPlaying()) {
+                session.pause()
                 ivPlayButton?.setImageResource(R.drawable.icon_video_play)
             } else {
-                player.play()
+                session.play()
                 ivPlayButton?.setImageResource(R.drawable.icon_video_stop)
             }
         }
     }
 
-    @UnstableApi
-    private fun setProgress(exoPlayer: Any?) {
-        val player = exoPlayer as? androidx.media3.exoplayer.ExoPlayer ?: return
-        player.apply {
-            // 清除之前的任务
-            progressHandler?.removeCallbacksAndMessages(null)
-            progressHandler = Handler(Looper.getMainLooper())
+    private fun setProgress(session: VideoPlayerSession?) {
+        val player = session ?: return
+        // 清除之前的任务
+        progressHandler?.removeCallbacksAndMessages(null)
+        progressHandler = Handler(Looper.getMainLooper())
 
-            // 定义任务
-            progressRunnable = object : Runnable {
-                override fun run() {
-                    if (!isDragging) {
-                        val currentPosition = player.currentPosition
-                        val currentTime = formatTimestamp(currentPosition / 1000)
-                        val totalDuration = player.duration
-                        val totalTime = formatTimestamp(totalDuration / 1000)
+        // 定义任务
+        progressRunnable = object : Runnable {
+            override fun run() {
+                if (!isDragging) {
+                    val currentPosition = player.currentPosition()
+                    val currentTime = formatTimestamp(currentPosition / 1000)
+                    val totalDuration = player.duration()
+                    val totalTime = formatTimestamp(totalDuration / 1000)
 
-                        seekBar?.max = totalDuration.toInt()
-                        seekBar?.progress = currentPosition.toInt()
+                    seekBar?.max = totalDuration.toInt()
+                    seekBar?.progress = currentPosition.toInt()
 
-                        tvPlayTime?.text = "$currentTime/$totalTime"
-                    }
-                    // 每秒更新一次
-                    progressHandler?.postDelayed(this, 1000)
+                    tvPlayTime?.text = "$currentTime/$totalTime"
                 }
+                // 每秒更新一次
+                progressHandler?.postDelayed(this, 1000)
             }
-
-            // 开始任务
-            progressRunnable?.apply {
-                progressHandler?.post(progressRunnable!!)
-            }
-
-            // 设置 SeekBar 的监听器
-            seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                    if (fromUser) {
-                        // 如果是用户拖动的，则更新播放位置。
-                        player.seekTo(progress.toLong())
-                    }
-                }
-
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                    isDragging = true
-                }
-
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                    isDragging = false
-                }
-            })
         }
+
+        // 开始任务
+        progressRunnable?.apply {
+            progressHandler?.post(progressRunnable!!)
+        }
+
+        // 设置 SeekBar 的监听器
+        seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    // 如果是用户拖动的，则更新播放位置。
+                    player.seekTo(progress.toLong())
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                isDragging = true
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                isDragging = false
+            }
+        })
     }
 
     private fun formatTimestamp(timestampInSeconds: Long): String {
@@ -691,17 +655,17 @@ class ImagePreviewFragment : Fragment() {
 
     fun onSelected() {
         if (imageInfo?.type == Type.VIDEO && VideoPlayerHelper.isVideoPlaybackSupported()) {
-            val player = exoPlayer as? androidx.media3.exoplayer.ExoPlayer ?: return
-            player.seekTo(0)
-            player.play()
+            val session = videoSession ?: return
+            session.seekTo(0)
+            session.play()
         }
     }
 
     fun onUnSelected() {
         if (imageInfo?.type == Type.VIDEO && VideoPlayerHelper.isVideoPlaybackSupported()) {
-            val player = exoPlayer as? androidx.media3.exoplayer.ExoPlayer ?: return
-            if (player.isPlaying) {
-                player.pause()
+            val session = videoSession ?: return
+            if (session.isPlaying()) {
+                session.pause()
             }
         }
     }
@@ -738,13 +702,11 @@ class ImagePreviewFragment : Fragment() {
         llControllerContainer.layoutParams = layoutParams
     }
 
-    @UnstableApi
     fun updateItem(imageInfo: ImageInfo) {
         this.imageInfo = imageInfo
         initData()
     }
 
-    @UnstableApi
     override fun onResume() {
         super.onResume()
         if (!mLoading) {
@@ -756,7 +718,7 @@ class ImagePreviewFragment : Fragment() {
             if (imageInfo?.type == Type.VIDEO && VideoPlayerHelper.isVideoPlaybackSupported()) {
                 // 后台前是播放的才恢复播放
                 if (onPausePlaying) {
-                    (exoPlayer as? androidx.media3.exoplayer.ExoPlayer)?.play()
+                    videoSession?.play()
                 }
             }
         }
@@ -767,7 +729,7 @@ class ImagePreviewFragment : Fragment() {
         SLog.d(TAG, "onPause: position = $position")
         if (imageInfo?.type == Type.VIDEO && VideoPlayerHelper.isVideoPlaybackSupported()) {
             // 只特殊处理视频类型
-            onPausePlaying = (exoPlayer as? androidx.media3.exoplayer.ExoPlayer)?.isPlaying == true
+            onPausePlaying = videoSession?.isPlaying() == true
             onUnSelected()
         }
     }
@@ -1081,14 +1043,13 @@ class ImagePreviewFragment : Fragment() {
         if (VideoPlayerHelper.isVideoPlaybackSupported()) {
             releaseExoPlayer()
         }
-        exoPlayer = null
+        videoSession = null
     }
 
     /**
      * 释放 ExoPlayer 实例（仅在 ExoPlayer 可用时调用）
      */
-    @UnstableApi
     private fun releaseExoPlayer() {
-        (exoPlayer as? androidx.media3.exoplayer.ExoPlayer)?.release()
+        videoSession?.release()
     }
 }

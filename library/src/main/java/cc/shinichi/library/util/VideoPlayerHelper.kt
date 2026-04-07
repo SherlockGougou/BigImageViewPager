@@ -1,5 +1,7 @@
 package cc.shinichi.library.util
 
+import cc.shinichi.library.video.VideoRuntimeRegistry
+
 /**
  * 视频播放能力检测工具
  *
@@ -12,22 +14,16 @@ object VideoPlayerHelper {
 
     private const val TAG = "VideoPlayerHelper"
 
-    private val isExoPlayerAvailable: Boolean by lazy {
-        try {
-            Class.forName("androidx.media3.exoplayer.ExoPlayer")
-            SLog.d(TAG, "ExoPlayer is available, video playback supported")
-            true
-        } catch (e: ClassNotFoundException) {
-            SLog.d(TAG, "ExoPlayer not found, video playback disabled")
-            false
-        }
-    }
-
     /**
      * 检查是否支持视频播放
      *
      * @return true 如果 ExoPlayer 可用，false 否则
      */
     @JvmStatic
-    fun isVideoPlaybackSupported(): Boolean = isExoPlayerAvailable
+    fun isVideoPlaybackSupported(): Boolean {
+        val runtime = VideoRuntimeRegistry.runtime
+        val supported = runtime.isPlaybackSupported()
+        SLog.d(TAG, "Video runtime=${runtime.id}, supported=$supported")
+        return supported
+    }
 }

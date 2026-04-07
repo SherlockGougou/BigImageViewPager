@@ -92,12 +92,10 @@ dependencies {
     annotationProcessor(libs.glide.compiler)
     implementation(libs.glide.okhttp3)
 
-    // Media3 / ExoPlayer
-    implementation(libs.media3.exoplayer)
-    implementation(libs.media3.exoplayer.dash)
-    implementation(libs.media3.ui)
 
     // Library module
     // implementation(libs.bigimageviewpager)
+    // implementation(libs.bigimageviewpager-media3) // 可选：Media3 / ExoPlayer（sample 默认开启，用于演示视频能力）
     implementation(project(":library"))
+    // implementation(project(":library-video-media3"))
 }

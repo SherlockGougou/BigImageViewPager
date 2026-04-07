@@ -19,8 +19,11 @@
 
 ```
     dependencies {
-        // 必选：框架 
+        // 必选：核心框架（仅图片能力）
         implementation 'com.gouqinglin:BigImageViewPager:版本号'
+
+        // 可选：视频插件（需要视频预览时再添加）
+        implementation 'com.gouqinglin:BigImageViewPager-media3:版本号'
     
         // 必选：Glide
         def glideVersion = "4.16.0"
@@ -28,14 +31,33 @@
         annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
         implementation "com.github.bumptech.glide:okhttp3-integration:$glideVersion"
 
-        // 可选：ExoPlayer (Media3) - 仅在需要视频播放功能时添加
-        // 如果不需要视频播放，可以不添加以下依赖，库将自动禁用视频功能
-        def media3Version = "1.4.1"
-        implementation "androidx.media3:media3-exoplayer:$media3Version"
-        implementation "androidx.media3:media3-exoplayer-dash:$media3Version"
-        implementation "androidx.media3:media3-ui:$media3Version"
+        // 源码集成（本仓库本地调试）
+        // implementation(project(":library"))
+        // implementation(project(":library-video-media3")) // 可选视频插件
     }
 ```
+
+#### Step 2.1. 模块拆分后的依赖迁移说明
+
+- `BigImageViewPager`：核心库（图片能力）
+- `BigImageViewPager-media3`：可选视频插件（Media3 实现）
+
+按需接入：
+
+- 仅图片场景：仅添加 `BigImageViewPager`
+- 图片 + 视频场景：同时添加 `BigImageViewPager` 与 `BigImageViewPager-media3`
+
+发布者（仓库维护者）建议：
+
+- 两个 artifact 使用同一版本号发布
+- 保持 `BigImageViewPager` 兼容历史依赖
+- 将新增能力放在 `BigImageViewPager-media3`，避免核心库体积膨胀
+
+#### Step 2.2. 运行时行为
+
+- 未添加 `BigImageViewPager-media3`：视频自动降级为不支持提示，图片能力不受影响。
+- 已添加 `BigImageViewPager-media3`：视频能力自动启用，无需额外初始化。
+- 预览 Activity 结束时会释放视频运行时资源；下次进入会自动重建缓存与播放会话。
 
 #### Step 3. 在你app中添加AppGlideModule。需要继承AppGlideModule并添加以下代码到对应的重载方法中，例如：
 

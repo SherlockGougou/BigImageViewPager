@@ -36,7 +36,7 @@
 
 ## 🆕 更新日志
 
-- **androidx-9.1.0**：ExoPlayer (Media3) 依赖改为可选，仅需图片预览的用户无需引入视频相关依赖，减小APK体积
+- **androidx-9.2.0**：ExoPlayer (Media3) 依赖改为可选，仅需图片预览的用户无需引入视频相关依赖，减小APK体积
 - **androidx-8.4.7**：支持32位的16KB page size特性
 - **androidx-8.4.6**：新增支持res资源
 - **androidx-8.4.5**：新增自定义请求头功能
@@ -98,8 +98,11 @@ allprojects {
 
 ```
 dependencies {
-    // 必选：框架 
+    // 必选：核心框架（仅图片能力）
     implementation 'com.gouqinglin:BigImageViewPager:版本号'
+
+    // 可选：视频插件（需要视频预览时再添加）
+    implementation 'com.gouqinglin:BigImageViewPager-media3:版本号'
 
     // 必选：Glide
     def glideVersion = "4.16.0"
@@ -107,14 +110,33 @@ dependencies {
     annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
     implementation "com.github.bumptech.glide:okhttp3-integration:$glideVersion"
 
-    // 可选：ExoPlayer (Media3) - 仅在需要视频播放功能时添加
-    // 如果不需要视频播放，可以不添加以下依赖，库将自动禁用视频功能
-    def media3Version = "1.4.1"
-    implementation "androidx.media3:media3-exoplayer:$media3Version"
-    implementation "androidx.media3:media3-exoplayer-dash:$media3Version"
-    implementation "androidx.media3:media3-ui:$media3Version"
+    // 源码集成（本仓库本地调试）
+    // implementation(project(":library"))
+    // implementation(project(":library-video-media3")) // 可选视频插件
 }
 ```
+
+### 1.1️⃣ 版本迁移说明（模块拆分后）
+
+- `BigImageViewPager`：核心库（图片能力）
+- `BigImageViewPager-media3`：可选视频插件（Media3 实现）
+
+升级建议：
+
+- 仅图片预览：只保留 `BigImageViewPager`
+- 需要视频预览：额外添加 `BigImageViewPager-media3`
+
+发布者说明（源码仓库）：
+
+- 核心库 artifactId：`BigImageViewPager`
+- 视频插件 artifactId：`BigImageViewPager-media3`
+- 两个 artifact 建议使用同一版本号发布
+
+### 1.2️⃣ 运行时行为说明
+
+- 未引入 `BigImageViewPager-media3`：视频条目会自动降级为“视频能力不可用”提示，不影响图片预览。
+- 引入 `BigImageViewPager-media3`：视频能力自动启用，无需额外初始化代码。
+- 预览页关闭时会释放视频运行时资源；再次进入预览会自动重建缓存与播放器会话。
 
 ### 2️⃣ 配置 GlideModule
 

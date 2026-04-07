@@ -18,4 +18,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "BigImageViewPager"
 
-include(":sample", ":library")
+include(":sample", ":library", ":library-video-media3")
