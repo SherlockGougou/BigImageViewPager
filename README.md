@@ -1,4 +1,6 @@
-![BigImageViewPager](image/cover.png)
+<p style="text-align: center;">
+  <img src="image/cover.png" alt="BigImageViewPager" style="max-width: 80%; width: 100%; height: auto;" />
+</p>
 
 # BigImageViewPager
 
@@ -151,14 +153,23 @@ ImagePreview
 
 ### 图片展示
 
-![preview-1](image/1.jpg)
-![preview-2](image/2.jpg)
-![preview-3](image/3.jpg)
+<div style="text-align: center; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+  <img src="image/1.jpg" alt="preview-1" style="max-width: 31%; width: 100%; height: auto;" />
+  <img src="image/2.jpg" alt="preview-2" style="max-width: 31%; width: 100%; height: auto;" />
+  <img src="image/3.jpg" alt="preview-3" style="max-width: 31%; width: 100%; height: auto;" />
+</div>
 
-![video-preview](image/4-video-hor.jpg)
+<p style="text-align: center;">
+  <img src="image/4-video-hor.jpg" alt="video-preview" style="max-width: 90%; width: 100%; height: auto;" />
+</p>
 
-![long-vertical](image/5-long-ver.jpg)
-![long-horizontal](image/6-long-hor.jpg)
+<p style="text-align: center;">
+  <img src="image/5-long-ver.jpg" alt="long-vertical" style="max-width: 36%; width: 100%; height: auto;" />
+</p>
+
+<p style="text-align: center;">
+  <img src="image/6-long-hor.jpg" alt="long-horizontal" style="max-width: 72%; width: 100%; height: auto;" />
+</p>
 
 ### 视频展示
 
@@ -176,19 +187,27 @@ ImagePreview
 
 ### 社区交流
 
-![QQ群](image/qq.png)
+<p style="text-align: center;">
+  <img src="image/qq.png" alt="QQ群" style="max-width: 320px; width: 100%; height: auto;" />
+</p>
 
 ### 支持项目
 
-![wechat-pay](image/pay-wepay.jpg)
-![alipay](image/pay-alipay.jpg)
+<div style="text-align: center; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+  <img src="image/pay-wepay.jpg" alt="wechat-pay" style="max-width: 280px; width: 100%; height: auto;" />
+  <img src="image/pay-alipay.jpg" alt="alipay" style="max-width: 280px; width: 100%; height: auto;" />
+</div>
 
 ### 致谢
 
 - [subsampling-scale-image-view](https://github.com/davemorrissey/subsampling-scale-image-view) - 提供大图加载核心能力
 - [GlideImageView](https://github.com/sunfusheng/GlideImageView) - 进度监听实现参考
 
-[![Powered by DartNode - Free VPS for Open Source](image/white_color_full.png)](https://dartnode.com)
+<p style="text-align: center;">
+  <a href="https://dartnode.com" title="Powered by DartNode - Free VPS for Open Source">
+    <img src="image/black_color_full.png" alt="dartnode" style="max-width: 72%; width: 100%; height: auto;" />
+  </a>
+</p>
 
 ---
 
