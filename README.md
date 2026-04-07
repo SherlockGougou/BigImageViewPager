@@ -188,9 +188,11 @@ ImagePreview.getInstance().setContext(MainActivity.this).setMediaInfoList(imageI
 
 ### 社区交流
 
-<p style="text-align: center;">
-  <img src="image/qq.png" alt="QQ群" style="max-width: 160px; width: 100%; height: auto;" />
-</p>
+<table>
+  <tr>
+    <td align="center"><img src="image/qq.png" alt="qq" /></td>
+  </tr>
+</table>
 
 ### 支持项目
 
