@@ -8,6 +8,17 @@ plugins {
     alias(libs.plugins.dokka) apply false
 }
 
+val isPublishingToSonatype = gradle.startParameter.taskNames.any {
+    it.contains("publishToSonatype") || it.contains("closeAndReleaseSonatypeStagingRepository")
+}
+
+val ossrhUsername = System.getenv("OSSRH_USERNAME")
+val ossrhPassword = System.getenv("OSSRH_PASSWORD")
+
+if (isPublishingToSonatype && (ossrhUsername.isNullOrBlank() || ossrhPassword.isNullOrBlank())) {
+    throw GradleException("Missing Sonatype credentials. Please set OSSRH_USERNAME and OSSRH_PASSWORD environment variables.")
+}
+
 
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
@@ -19,8 +30,8 @@ nexusPublishing {
             nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
             snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
             packageGroup.set("com.gouqinglin")
-            username.set(System.getenv("OSSRH_USERNAME") ?: "")
-            password.set(System.getenv("OSSRH_PASSWORD") ?: "")
+            username.set(ossrhUsername ?: "")
+            password.set(ossrhPassword ?: "")
         }
     }
 }

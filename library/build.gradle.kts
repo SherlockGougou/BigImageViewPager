@@ -139,12 +139,40 @@ afterEvaluate {
 }
 
 signing {
-    val keyId = System.getenv("SIGNING_KEY_ID")
-    val password = System.getenv("SIGNING_PASSWORD")
-    val keyRingFile = System.getenv("SIGNING_SECRET_KEY_RING_FILE")
+    val isPublishingToSonatype = gradle.startParameter.taskNames.any {
+        it.contains("publishToSonatype") || it.contains("closeAndReleaseSonatypeStagingRepository")
+    }
 
-    if (keyId != null && password != null && keyRingFile != null && File(keyRingFile).exists()) {
-        sign(publishing.publications)
+    val keyId = System.getenv("SIGNING_KEY_ID")?.trim()
+    val password = System.getenv("SIGNING_PASSWORD")?.trim()
+    val keyRingPathRaw = System.getenv("SIGNING_SECRET_KEY_RING_FILE")?.trim()
+    val keyRingPath = keyRingPathRaw
+        ?.takeIf { it.isNotEmpty() }
+        ?.let { if (it.startsWith("~/")) "${System.getProperty("user.home")}/${it.removePrefix("~/")}" else it }
+
+    val missingVars = buildList {
+        if (keyId.isNullOrBlank()) add("SIGNING_KEY_ID")
+        if (password.isNullOrBlank()) add("SIGNING_PASSWORD")
+        if (keyRingPath.isNullOrBlank()) add("SIGNING_SECRET_KEY_RING_FILE")
+    }
+
+    if (missingVars.isNotEmpty()) {
+        if (isPublishingToSonatype) {
+            throw GradleException("Missing signing environment variables: ${missingVars.joinToString(", ")}")
+        }
+    } else {
+        val resolvedKeyRingPath = keyRingPath!!
+        val keyRingFile = File(resolvedKeyRingPath)
+        if (!keyRingFile.exists()) {
+            if (isPublishingToSonatype) {
+                throw GradleException("SIGNING_SECRET_KEY_RING_FILE does not exist: $resolvedKeyRingPath")
+            }
+        } else {
+            project.extensions.extraProperties["signing.keyId"] = keyId
+            project.extensions.extraProperties["signing.password"] = password
+            project.extensions.extraProperties["signing.secretKeyRingFile"] = resolvedKeyRingPath
+            sign(publishing.publications)
+        }
     }
 }
 

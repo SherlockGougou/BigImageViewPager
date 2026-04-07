@@ -11,6 +11,9 @@ constraintlayout = "2.1.4"
 recyclerview = "1.3.2"
 exifinterface = "1.3.7"
 
+# library
+bigimageviewpager = "androidx-9.2.0"
+
 # Media3 / ExoPlayer
 media3 = "1.4.1"
 
@@ -35,6 +38,10 @@ androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifinterface" }
+
+# library
+bigimageviewpager = { module = "com.gouqinglin:BigImageViewPager", version.ref = "bigimageviewpager" }
+bigimageviewpager-media3 = { module = "com.gouqinglin:BigImageViewPager-media3", version.ref = "bigimageviewpager" }
 
 # Media3
 media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
