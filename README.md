@@ -81,15 +81,16 @@ dependencies {
 ### 1) 配置 GlideModule
 
 ```java
+
 @GlideModule
 public class MyAppGlideModule extends AppGlideModule {
     @Override
     public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
         super.registerComponents(context, glide, registry);
         registry.replace(
-            GlideUrl.class,
-            InputStream.class,
-            new OkHttpUrlLoader.Factory(ProgressManager.getOkHttpClient())
+                GlideUrl.class,
+                InputStream.class,
+                new OkHttpUrlLoader.Factory(ProgressManager.getOkHttpClient())
         );
     }
 }
@@ -101,10 +102,16 @@ public class MyAppGlideModule extends AppGlideModule {
 
 ```java
 ImagePreview
-    .getInstance()
-    .setContext(MainActivity.this)
-    .setMediaInfoList(imageInfoList)
-    .start();
+        .getInstance()
+    .
+
+setContext(MainActivity .this)
+    .
+
+setMediaInfoList(imageInfoList)
+    .
+
+start();
 ```
 
 更多参数配置见：[`doc/DETAIL.md`](doc/DETAIL.md)
@@ -153,29 +160,34 @@ ImagePreview
 
 ### 图片展示
 
-<div style="text-align: center; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-  <img src="image/1.jpg" alt="preview-1" style="max-width: 31%; width: 100%; height: auto;" />
-  <img src="image/2.jpg" alt="preview-2" style="max-width: 31%; width: 100%; height: auto;" />
-  <img src="image/3.jpg" alt="preview-3" style="max-width: 31%; width: 100%; height: auto;" />
-</div>
-
-<p style="text-align: center;">
-  <img src="image/4-video-hor.jpg" alt="video-preview" style="max-width: 90%; width: 100%; height: auto;" />
-</p>
-
-<p style="text-align: center;">
-  <img src="image/5-long-ver.jpg" alt="long-vertical" style="max-width: 36%; width: 100%; height: auto;" />
-</p>
-
-<p style="text-align: center;">
-  <img src="image/6-long-hor.jpg" alt="long-horizontal" style="max-width: 72%; width: 100%; height: auto;" />
-</p>
+<table>
+  <tr>
+    <td align="center"><img src="image/1.jpg" alt="preview-1" /></td>
+    <td align="center"><img src="image/2.jpg" alt="preview-2" /></td>
+    <td align="center"><img src="image/3.jpg" alt="preview-3" /></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="image/4-video-hor.jpg" alt="video-preview" /></td>
+    <td align="center"><img src="image/5-long-ver.jpg" alt="long-vertical" /></td>
+    <td align="center"><img src="image/6-long-hor.jpg" alt="long-horizontal" /></td>
+  </tr>
+</table>
 
 ### 视频展示
 
-- https://github.com/user-attachments/assets/101d706c-d8d0-455b-b38a-6c42282c03e2
-- https://github.com/user-attachments/assets/b7becb07-e6bd-459b-9795-d048d02fb21b
-- https://github.com/user-attachments/assets/070caa63-8e9f-4b11-9240-4cb56440d3c2
+<table>
+  <tr>
+    <td align="center">
+      <video controls preload="metadata" width="100%" src="https://github.com/user-attachments/assets/101d706c-d8d0-455b-b38a-6c42282c03e2"></video>
+    </td>
+    <td align="center">
+      <video controls preload="metadata" width="100%" src="https://github.com/user-attachments/assets/b7becb07-e6bd-459b-9795-d048d02fb21b"></video>
+    </td>
+    <td align="center">
+      <video controls preload="metadata" width="100%" src="https://github.com/user-attachments/assets/070caa63-8e9f-4b11-9240-4cb56440d3c2"></video>
+    </td>
+  </tr>
+</table>
 
 ### Star 曲线
 
@@ -188,20 +200,21 @@ ImagePreview
 ### 社区交流
 
 <p style="text-align: center;">
-  <img src="image/qq.png" alt="QQ群" style="max-width: 320px; width: 100%; height: auto;" />
+  <img src="image/qq.png" alt="QQ群" style="max-width: 160px; width: 100%; height: auto;" />
 </p>
 
 ### 支持项目
 
-<div style="text-align: center; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-  <img src="image/pay-wepay.jpg" alt="wechat-pay" style="max-width: 280px; width: 100%; height: auto;" />
-  <img src="image/pay-alipay.jpg" alt="alipay" style="max-width: 280px; width: 100%; height: auto;" />
-</div>
+<table>
+  <tr>
+    <td align="center"><img src="image/pay-wepay.jpg" alt="wechat-pay" /></td>
+    <td align="center"><img src="image/pay-alipay.jpg" alt="alipay" /></td>
+  </tr>
+</table>
 
 ### 致谢
 
-- [subsampling-scale-image-view](https://github.com/davemorrissey/subsampling-scale-image-view) - 提供大图加载核心能力
-- [GlideImageView](https://github.com/sunfusheng/GlideImageView) - 进度监听实现参考
+- Powered by DartNode - Free VPS for Open Source
 
 <p style="text-align: center;">
   <a href="https://dartnode.com" title="Powered by DartNode - Free VPS for Open Source">
