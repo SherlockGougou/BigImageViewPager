@@ -80,8 +80,7 @@ dependencies {
 
 ### 1) 配置 GlideModule
 
-```java
-
+```
 @GlideModule
 public class MyAppGlideModule extends AppGlideModule {
     @Override
@@ -100,18 +99,8 @@ public class MyAppGlideModule extends AppGlideModule {
 
 ### 2) 发起预览
 
-```java
-ImagePreview
-        .getInstance()
-    .
-
-setContext(MainActivity .this)
-    .
-
-setMediaInfoList(imageInfoList)
-    .
-
-start();
+```
+ImagePreview.getInstance().setContext(MainActivity.this).setMediaInfoList(imageInfoList).start();
 ```
 
 更多参数配置见：[`doc/DETAIL.md`](doc/DETAIL.md)
