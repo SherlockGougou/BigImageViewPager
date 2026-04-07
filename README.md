@@ -188,11 +188,9 @@ ImagePreview.getInstance().setContext(MainActivity.this).setMediaInfoList(imageI
 
 ### 社区交流
 
-<table>
-  <tr>
-    <td align="center"><img src="image/qq.png" alt="qq" /></td>
-  </tr>
-</table>
+<p>
+  <img src="image/qq.png" alt="qq" style="max-width: 30%; width: 100%; height: auto;" />
+</p>
 
 ### 支持项目
 
