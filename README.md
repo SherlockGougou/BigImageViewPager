@@ -197,6 +197,6 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 <p align="center">
   <a href="https://dartnode.com" title="Powered by DartNode - Free VPS for Open Source">
-    <img src="https://dartnode.com/branding/DN-Open-Source-sm.png">
+    <img src="https://dartnode.com/_branding/white_color_full.png">
   </a>
 </p>
