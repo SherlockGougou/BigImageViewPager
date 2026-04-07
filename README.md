@@ -188,16 +188,18 @@ ImagePreview.getInstance().setContext(MainActivity.this).setMediaInfoList(imageI
 
 ### 社区交流
 
-<p>
-  <img src="image/qq.png" alt="qq" style="max-width: 30%; width: 100%; height: auto;" />
+<p style="text-align: center;">
+  <a title="qq">
+    <img src="image/qq.png" alt="qq" style="width: 30%; height: auto;" />
+  </a>
 </p>
 
 ### 支持项目
 
 <table>
   <tr>
-    <td align="center"><img src="image/pay-wepay.jpg" alt="wechat-pay" /></td>
-    <td align="center"><img src="image/pay-alipay.jpg" alt="alipay" /></td>
+    <td align="center"><img src="image/pay-wepay.jpg" alt="wechat-pay" style="width: 40%; height: auto;" /></td>
+    <td align="center"><img src="image/pay-alipay.jpg" alt="alipay" style="width: 40%; height: auto;" /></td>
   </tr>
 </table>
 
@@ -207,7 +209,7 @@ ImagePreview.getInstance().setContext(MainActivity.this).setMediaInfoList(imageI
 
 <p style="text-align: center;">
   <a href="https://dartnode.com" title="Powered by DartNode - Free VPS for Open Source">
-    <img src="image/black_color_full.png" alt="dartnode" style="max-width: 72%; width: 100%; height: auto;" />
+    <img src="image/black_color_full.png" alt="dartnode" style="max-width: 60%; width: 100%; height: auto;" />
   </a>
 </p>
 
