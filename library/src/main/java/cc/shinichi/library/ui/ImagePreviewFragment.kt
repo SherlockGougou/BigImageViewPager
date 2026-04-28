@@ -1045,11 +1045,19 @@ class ImagePreviewFragment : Fragment() {
         }
         videoSession = null
 
-        // 重置播放器视图引用，确保 Fragment 视图重建后能正确创建新的 PlayerView
+        // 移除播放器视图，避免旧的 View 层级被 Fragment 持有
+        (playerView?.parent as? ViewGroup)?.removeView(playerView)
+
+        // 重置所有与 View 层级关联的引用，确保 Fragment 视图销毁后不会继续持有旧 View
         playerView = null
         ivPlayButton = null
         seekBar = null
         tvPlayTime = null
+        videoViewContainer = null
+        imageSubsample = null
+        imagePhotoView = null
+        progressBar = null
+        dragCloseView = null
     }
 
     /**
