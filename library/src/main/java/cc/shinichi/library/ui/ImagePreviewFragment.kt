@@ -1044,6 +1044,12 @@ class ImagePreviewFragment : Fragment() {
             releaseExoPlayer()
         }
         videoSession = null
+
+        // 重置播放器视图引用，确保 Fragment 视图重建后能正确创建新的 PlayerView
+        playerView = null
+        ivPlayButton = null
+        seekBar = null
+        tvPlayTime = null
     }
 
     /**
