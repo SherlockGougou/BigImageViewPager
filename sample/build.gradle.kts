@@ -96,12 +96,12 @@ dependencies {
     // Library module
 
     // maven依赖
-    implementation(libs.bigimageviewpager) // 必选
-    implementation(libs.bigimageviewpager.media3) // 可选：Media3 / ExoPlayer（sample 默认开启，用于演示视频能力）
+    // implementation(libs.bigimageviewpager) // 必选
+    // implementation(libs.bigimageviewpager.media3) // 可选：Media3 / ExoPlayer（sample 默认开启，用于演示视频能力）
 
     // or
 
     // 本地依赖
-    // implementation(project(":library")) // 必选
-    // implementation(project(":library-video-media3")) // 可选：Media3 / ExoPlayer（sample 默认开启，用于演示视频能力）
+    implementation(project(":library")) // 必选
+    implementation(project(":library-video-media3")) // 可选：Media3 / ExoPlayer（sample 默认开启，用于演示视频能力）
 }

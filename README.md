@@ -38,7 +38,7 @@
 
 ## 安装
 
-> 当前版本：`androidx-9.2.0`
+> 当前版本：`androidx-9.2.1`
 
 ### 1) 添加仓库
 
@@ -54,10 +54,10 @@
 ```gradle
 dependencies {
     // 必选：核心库（图片能力）
-    implementation "com.gouqinglin:BigImageViewPager:androidx-9.2.0"
+    implementation "com.gouqinglin:BigImageViewPager:androidx-9.2.1"
 
     // 可选：视频插件（需要视频预览时添加）
-    implementation "com.gouqinglin:BigImageViewPager-media3:androidx-9.2.0"
+    implementation "com.gouqinglin:BigImageViewPager-media3:androidx-9.2.1"
 
     // 必选：Glide
     def glideVersion = "4.16.0"
