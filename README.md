@@ -196,7 +196,7 @@ ImagePreview.getInstance()
 
 ### Star 曲线
 
-[![Star History Chart](https://api.star-history.com/svg?repos=SherlockGougou/BigImageViewPager&type=Date)](https://star-history.com/#SherlockGougou/BigImageViewPager&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=SherlockGougou/BigImageViewPager&type=date&legend=top-left)](https://star-history.dera.page/#SherlockGougou/BigImageViewPager&type=date&legend=top-left)
 
 ---
 
