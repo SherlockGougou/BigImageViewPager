@@ -30,6 +30,7 @@ android {
         versionName = "1000"
         signingConfig = signingConfigs.getByName("debug")
         multiDexEnabled = true
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     splits {
@@ -76,6 +77,10 @@ android {
 }
 
 dependencies {
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.mockwebserver)
+
     // AndroidX
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.appcompat)

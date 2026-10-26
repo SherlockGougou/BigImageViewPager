@@ -8,6 +8,7 @@
 /build
 /captures
 .externalNativeBuild
+.agent-temp/
 .idea/
 /.idea/
 */release/*

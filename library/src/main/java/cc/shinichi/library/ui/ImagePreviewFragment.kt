@@ -31,6 +31,7 @@ import cc.shinichi.library.callback.SimpleOnImageEventListener
 import cc.shinichi.library.core.GlobalContext
 import cc.shinichi.library.loader.FileTarget
 import cc.shinichi.library.loader.GlideExt
+import cc.shinichi.library.loader.ImageLoader
 import cc.shinichi.library.loader.ImageLoader.getGlideCacheFile
 import cc.shinichi.library.model.ImageInfo
 import cc.shinichi.library.model.Type
@@ -784,8 +785,8 @@ class ImagePreviewFragment : Fragment() {
         Glide.with(imagePreviewActivity!!)
             .downloadOnly()
             .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
-            .diskCacheStrategy(GlideExt.getDiskCacheStrategy())
-            .load(url)
+            .diskCacheStrategy(GlideExt.getDownloadDiskCacheStrategy())
+            .load(ImageLoader.getModel(url))
             .addListener(object : RequestListener<File> {
                 override fun onLoadFailed(
                     e: GlideException?,

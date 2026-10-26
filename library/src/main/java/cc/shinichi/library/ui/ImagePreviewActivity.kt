@@ -26,6 +26,7 @@ import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.R
 import cc.shinichi.library.callback.OnFinishListener
 import cc.shinichi.library.loader.FileTarget
+import cc.shinichi.library.loader.GlideExt
 import cc.shinichi.library.loader.ImageLoader
 import cc.shinichi.library.loader.progress.OnProgressListener
 import cc.shinichi.library.loader.progress.ProgressManager.addListener
@@ -43,7 +44,6 @@ import cc.shinichi.library.util.PhoneUtil
 import cc.shinichi.library.util.SLog
 import cc.shinichi.library.util.ToastUtil
 import cc.shinichi.library.util.UIUtil
-import com.bumptech.glide.Glide
 
 /**
  * @author 工藤
@@ -621,8 +621,7 @@ class ImagePreviewActivity : AppCompatActivity(), Handler.Callback, View.OnClick
                 }
             }
         })
-        Glide.with(this@ImagePreviewActivity).downloadOnly().load(path).into(object : FileTarget() {
-        })
+        GlideExt.downloadToCache(this@ImagePreviewActivity, path, object : FileTarget() {})
     }
 
     private fun transparentStatusBar() {

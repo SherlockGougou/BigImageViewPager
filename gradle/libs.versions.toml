@@ -12,7 +12,7 @@ recyclerview = "1.3.2"
 exifinterface = "1.3.7"
 
 # library
-bigimageviewpager = "androidx-9.2.1"
+bigimageviewpager = "androidx-9.2.3"
 
 # Media3 / ExoPlayer
 media3 = "1.4.1"
@@ -29,6 +29,11 @@ pictureselector = "v3.11.2"
 # Publishing
 nexus-publish = "2.0.0"
 dokka = "1.9.20"
+
+# Instrumentation tests（与项目 compileSdk 34 和现有 OkHttp 3 兼容）
+androidx-test-runner = "1.5.2"
+androidx-test-junit = "1.1.5"
+mockwebserver = "3.10.0"
 
 [libraries]
 # AndroidX
@@ -62,6 +67,10 @@ kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "
 
 # Picture Selector
 pictureselector = { module = "io.github.lucksiege:pictureselector", version.ref = "pictureselector" }
+
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
+androidx-test-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-junit" }
+mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockwebserver" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

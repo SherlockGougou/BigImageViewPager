@@ -1,7 +1,9 @@
 package cc.shinichi.library.loader
 
 import android.content.Context
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
+import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.loader.cache.DataCacheKey
 import cc.shinichi.library.loader.cache.SafeKeyGenerator
 import cc.shinichi.library.util.SLog
@@ -23,13 +25,28 @@ object ImageLoader {
 
     private const val TAG = "ImageLoader"
 
+    internal fun getModel(url: String?): Any? {
+        if (url == null) return null
+        val scheme = Uri.parse(url).scheme
+        if (!scheme.equals("http", ignoreCase = true) && !scheme.equals("https", ignoreCase = true)) {
+            return url
+        }
+        val cacheKey = ImagePreview.instance.imageCacheKeyProvider?.getCacheKey(url) ?: return url
+        require(cacheKey.isNotBlank()) { "ImageCacheKeyProvider must return null or a non-blank key" }
+        return CacheKeyImageModel(url, cacheKey)
+    }
+
     /**
      * 获取是否有某张原图的缓存
-     * 缓存模式必须是：DiskCacheStrategy.SOURCE 才能获取到缓存文件
+     * 必须缓存原始数据（DiskCacheStrategy.DATA 或 ALL），且与下载使用相同缓存键。
      */
     fun getGlideCacheFile(context: Context, url: String?): File? {
+        if (ImagePreview.instance.isSkipLocalCache || url.isNullOrBlank()) return null
+        // 提供器配置错误应直接暴露，不能被当作普通缓存未命中。
+        val model = getModel(url)
+        val sourceKey = if (model is CacheKeyImageModel) model.sourceKey else GlideUrl(url)
         try {
-            val dataCacheKey = DataCacheKey(GlideUrl(url), EmptySignature.obtain())
+            val dataCacheKey = DataCacheKey(sourceKey, EmptySignature.obtain())
             val safeKeyGenerator = SafeKeyGenerator()
             val safeKey = safeKeyGenerator.getSafeKey(dataCacheKey)
             SLog.d(TAG, "safeKey = $safeKey")

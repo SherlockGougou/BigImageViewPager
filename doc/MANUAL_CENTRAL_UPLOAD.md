@@ -8,8 +8,8 @@
 
 本仓库当前 publication 为：
 
-- `com.gouqinglin:BigImageViewPager:androidx-9.2.2`
-- `com.gouqinglin:BigImageViewPager-media3:androidx-9.2.2`
+- `com.gouqinglin:BigImageViewPager:androidx-9.2.3`
+- `com.gouqinglin:BigImageViewPager-media3:androidx-9.2.3`
 
 实际值均从 `gradle.properties` 读取。发布前只需修改 `VERSION_NAME`，两个 artifact 会继续使用相同版本。本流程面向 release；Central 的 release 版本不能以 `-SNAPSHOT` 结尾。[Sonatype：坐标和版本要求](https://central.sonatype.org/publish/requirements/#correct-coordinates)
 
@@ -99,25 +99,25 @@ export CENTRAL_PASSWORD='<Portal User Token password>'
 
 ## bundle 结构
 
-以当前 `androidx-9.2.2` 为例，ZIP 解压后应类似：
+以当前 `androidx-9.2.3` 为例，ZIP 解压后应类似：
 
 ```text
 com/
 └── gouqinglin/
     ├── BigImageViewPager/
-    │   └── androidx-9.2.2/
-    │       ├── BigImageViewPager-androidx-9.2.2.aar
-    │       ├── BigImageViewPager-androidx-9.2.2-sources.jar
-    │       ├── BigImageViewPager-androidx-9.2.2-javadoc.jar
-    │       ├── BigImageViewPager-androidx-9.2.2.pom
-    │       └── BigImageViewPager-androidx-9.2.2.module
+    │   └── androidx-9.2.3/
+    │       ├── BigImageViewPager-androidx-9.2.3.aar
+    │       ├── BigImageViewPager-androidx-9.2.3-sources.jar
+    │       ├── BigImageViewPager-androidx-9.2.3-javadoc.jar
+    │       ├── BigImageViewPager-androidx-9.2.3.pom
+    │       └── BigImageViewPager-androidx-9.2.3.module
     └── BigImageViewPager-media3/
-        └── androidx-9.2.2/
-            ├── BigImageViewPager-media3-androidx-9.2.2.aar
-            ├── BigImageViewPager-media3-androidx-9.2.2-sources.jar
-            ├── BigImageViewPager-media3-androidx-9.2.2-javadoc.jar
-            ├── BigImageViewPager-media3-androidx-9.2.2.pom
-            └── BigImageViewPager-media3-androidx-9.2.2.module
+        └── androidx-9.2.3/
+            ├── BigImageViewPager-media3-androidx-9.2.3.aar
+            ├── BigImageViewPager-media3-androidx-9.2.3-sources.jar
+            ├── BigImageViewPager-media3-androidx-9.2.3-javadoc.jar
+            ├── BigImageViewPager-media3-androidx-9.2.3.pom
+            └── BigImageViewPager-media3-androidx-9.2.3.module
 ```
 
 上面每个主文件旁边还必须有：
@@ -136,7 +136,7 @@ com/
 
 1. 登录 [Central Publisher Portal](https://central.sonatype.com/)。
 2. 在 `Namespaces` 中找到已验证的 `com.gouqinglin`，点击 `Publish Component`；也可从右上角 `Publish`，或 `Publishing Settings` → `Deployments` 进入。[Sonatype：网页上传入口](https://central.sonatype.org/publish/publish-portal-upload/)
-3. 填写便于识别的 Deployment Name，例如 `com.gouqinglin:BigImageViewPager:androidx-9.2.2`，可选填 Description。
+3. 填写便于识别的 Deployment Name，例如 `com.gouqinglin:BigImageViewPager:androidx-9.2.3`，可选填 Description。
 4. 点击 `Upload File`，选择上述 `BigImageViewPager-<version>-central-bundle.zip`，再点击 `Publish Component` 开始上传。同一个 ZIP 可以包含这里的两个 component；每次 publishing request 只能上传一个 archive，最大 1 GB。[Sonatype：bundle 数量和大小限制](https://central.sonatype.org/publish/publish-portal-upload/)
 5. 等待 Portal validation，使用 `Refresh` 查看结果。失败项会出现在 deployment 卡片的 `Validation Results`；修复本地 bundle 后需要重新创建并上传新的 deployment。[Sonatype：Component Validation](https://central.sonatype.org/publish/publish-portal-guide/#component-validation)
 6. Validation 全部通过后，再人工点击 `Publish` 同步到 Maven Central；如果发现版本或内容不对，点击 `Drop`，不要发布。

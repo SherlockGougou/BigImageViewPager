@@ -153,6 +153,53 @@ MainActivity.java</a>
 
 注：以上所有方式，如果原图缓存存在，会默认加载原图缓存保证清晰度；且原图缓存只要存在，就不会显示查看原图按钮。
 
+### 鉴权图片的稳定缓存键
+
+当同一图片的 URL 仅鉴权参数变化时，可用 `setImageCacheKeyProvider` 提供稳定缓存键。
+该配置统一作用于图片预览、查看原图、保存图片和原始数据缓存查询。
+网络请求、失败后的 HTTP 下载及进度回调仍使用完整 URL；视频播放缓存不受影响。
+
+推荐直接使用后端资源标识、内容版本和图片规格。下面的 `photos` 表示调用方的业务数据：
+
+```kotlin
+val cacheKeysByUrl = buildMap<String, String> {
+    photos.forEach { photo ->
+        put(photo.originUrl, "$accountId:${photo.id}:${photo.version}:original")
+        put(photo.thumbnailUrl, "$accountId:${photo.id}:${photo.version}:thumb-200")
+    }
+}
+
+ImagePreview.instance
+    .with(activity)
+    .setMediaInfoList(imageInfoList)
+    .setImageCacheKeyProvider { url -> cacheKeysByUrl[url] }
+    .start()
+```
+
+Java 调用同样支持 lambda：
+
+```java
+ImagePreview.getInstance()
+    .with(activity)
+    .setMediaInfoList(imageInfoList)
+    .setImageCacheKeyProvider(url -> cacheKeysByUrl.get(url))
+    .start();
+```
+
+- 未设置提供器或返回 `null` 时，保持完整 URL 缓存键；返回空白字符串会抛出异常。
+- 提供器只接收 HTTP/HTTPS URL。本地文件、`content://` 和资源 URI 保持原有加载方式。
+- 缩略图与原图内容不同、尺寸或版本不同、账号权限范围不同，必须使用不同键。
+- 同一个完整 URL 如果同时作为原图和缩略图，映射中的缓存键必须一致。
+- 若按 URL 删除鉴权参数，应使用 URI 解析器，仅删除业务明确确认不影响内容的参数。
+- 该回调应快速、线程安全、结果稳定。不要发起网络请求，也不要捕获 Activity。
+- 预览关闭和 `reset()` 会清除此配置，下次打开需要重新设置。
+- 缓存命中会直接读取本地文件，不重新向服务器验证签名是否过期。业务若禁止复用，应禁用预览缓存或使用不同的授权范围键。
+- 本库的文件下载使用 `DATA` 保存原始数据。`downloadOnly()` 不应改为 `RESOURCE` 或 `ALL`，否则会尝试编码 File 资源而失败。
+- 宿主仍需按上文配置 `AppGlideModule` 和 Glide 注解处理器，以自动注册库的缓存 model。
+
+回归测试位于 `sample/src/androidTest/`，使用本地 MockWebServer 验证真实 Glide 磁盘缓存和网络请求。
+在指定设备运行：`ANDROID_SERIAL=<设备序列号> ./gradlew :sample:connectedDebugAndroidTest`。
+
 #### 4.5：视频播放策略
 
 `VideoPlayPolicy` 控制视频类型的自动播放行为，不影响手动点击播放按钮：

@@ -12,6 +12,7 @@ import androidx.core.net.toUri
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.R
 import cc.shinichi.library.loader.FileTarget
+import cc.shinichi.library.loader.ImageLoader
 import cc.shinichi.library.util.HttpUtil.downloadFile
 import cc.shinichi.library.util.ImageUtil.refresh
 import cc.shinichi.library.util.UtilExt.isLocalFile
@@ -52,7 +53,7 @@ object DownloadUtil {
 
         Glide.with(context.applicationContext)
             .downloadOnly()
-            .load(url)
+            .load(ImageLoader.getModel(url))
             .into(object : FileTarget() {
                 override fun onLoadFailed(errorDrawable: Drawable?) {
                     super.onLoadFailed(errorDrawable)

@@ -39,7 +39,7 @@
 
 ## 安装
 
-> 当前版本：`androidx-9.2.2`
+> 当前版本：`androidx-9.2.3`
 
 ### 1) 添加仓库
 
@@ -55,10 +55,10 @@
 ```gradle
 dependencies {
     // 必选：核心库（图片能力）
-    implementation "com.gouqinglin:BigImageViewPager:androidx-9.2.2"
+    implementation "com.gouqinglin:BigImageViewPager:androidx-9.2.3"
 
     // 可选：视频插件（需要视频预览时添加）
-    implementation "com.gouqinglin:BigImageViewPager-media3:androidx-9.2.2"
+    implementation "com.gouqinglin:BigImageViewPager-media3:androidx-9.2.3"
 
     // 必选：Glide
     def glideVersion = "4.16.0"
@@ -119,6 +119,24 @@ ImagePreview.getInstance()
 
 三种策略：`WiFiOnly` / `WiFiAndMobile`（默认） / `Manual`
 
+### 4) 鉴权图片的稳定缓存键（可选）
+
+URL 中的签名定期变化时，可通过 `setImageCacheKeyProvider` 提供稳定缓存键。
+实际请求仍使用完整 URL；不配置时继续按完整 URL 缓存。
+
+```kotlin
+ImagePreview.instance
+    .with(activity)
+    .setImageUrlList(urls)
+    .setImageCacheKeyProvider { url -> cacheKeysByUrl[url] }
+    .start()
+```
+
+`cacheKeysByUrl` 是调用方准备的不可变映射，键为本次完整 URL，值为稳定资源标识。
+例如 `accountId:photoId:version:original` 和 `accountId:photoId:version:thumb-200`。
+返回 `null` 的 URL 保持默认规则；不要一律删除查询参数，以免混淆规格和内容版本。
+完整示例及边界见 [详细用法](doc/DETAIL.md#鉴权图片的稳定缓存键)。
+
 ---
 
 ## 模块拆分与迁移
@@ -151,6 +169,7 @@ ImagePreview.getInstance()
 
 ## 更新日志
 
+- `androidx-9.2.3`：新增可配置的图片稳定缓存键，支持鉴权链接签名轮换后复用缓存；统一预览、查看原图和保存图片的缓存键，修复文件下载使用 `ALL` 导致失败及重复请求的问题（#231）
 - `androidx-9.2.2`：新增视频播放策略 `VideoPlayPolicy`，支持 WiFi 自动播放 / 始终自动播放 / 手动播放
 - `androidx-9.2.1`：修复视频 Fragment 回收后只有音频的问题，清理残留 View 引用
 - `androidx-9.2.0`：ExoPlayer (Media3) 改为可选依赖，仅图片场景可减少 APK 体积

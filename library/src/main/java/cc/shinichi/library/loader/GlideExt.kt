@@ -26,6 +26,14 @@ object GlideExt {
     }
 
     /**
+     * downloadOnly 返回 File，没有变换后资源的编码器，只缓存原始数据。
+     */
+    @JvmStatic
+    fun getDownloadDiskCacheStrategy(): DiskCacheStrategy {
+        return if (ImagePreview.instance.isSkipLocalCache) DiskCacheStrategy.NONE else DiskCacheStrategy.DATA
+    }
+
+    /**
      * 获取是否跳过内存缓存
      */
     @JvmStatic
@@ -68,14 +76,14 @@ object GlideExt {
     @JvmStatic
     fun downloadToCache(
         context: Context,
-        url: String,
+        url: String?,
         target: FileTarget
     ) {
         Glide.with(context)
             .downloadOnly()
             .skipMemoryCache(isSkipMemoryCache())
-            .diskCacheStrategy(getDiskCacheStrategy())
-            .load(url)
+            .diskCacheStrategy(getDownloadDiskCacheStrategy())
+            .load(ImageLoader.getModel(url))
             .into(target)
     }
 }

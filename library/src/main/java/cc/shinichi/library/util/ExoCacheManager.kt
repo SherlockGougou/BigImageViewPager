@@ -2,6 +2,8 @@ package cc.shinichi.library.util
 
 import android.content.Context
 import androidx.annotation.IntRange
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
@@ -16,6 +18,7 @@ import java.io.File
  * @author kirito
  * @since 2025/11/13
  */
+@OptIn(UnstableApi::class)
 object ExoCacheManager {
 
     private const val TAG = "ExoCacheManager"

@@ -14,6 +14,7 @@ import cc.shinichi.library.callback.OnFinishListener
 import cc.shinichi.library.callback.OnOriginProgressListener
 import cc.shinichi.library.callback.OnPageDragListener
 import cc.shinichi.library.callback.OnPageFinishListener
+import cc.shinichi.library.loader.ImageCacheKeyProvider
 import cc.shinichi.library.model.ImageInfo
 import cc.shinichi.library.ui.ImagePreviewActivity
 import cc.shinichi.library.util.SLog
@@ -178,6 +179,9 @@ class ImagePreview private constructor() {
         private set
 
     var isSkipLocalCache = false
+        private set
+
+    var imageCacheKeyProvider: ImageCacheKeyProvider? = null
         private set
 
     var headers: Map<String, String>? = null
@@ -449,6 +453,16 @@ class ImagePreview private constructor() {
         return this
     }
 
+    /**
+     * 设置图片缓存键规则；null 保留完整 URL，实际网络请求始终使用完整 URL。
+     * 必须保留决定内容的参数，并按业务需要区分账号和内容版本。
+     * 仅作用于图片下载和缓存查询，不改变视频播放缓存。
+     */
+    fun setImageCacheKeyProvider(provider: ImageCacheKeyProvider?): ImagePreview {
+        imageCacheKeyProvider = provider
+        return this
+    }
+
     fun setHeaders(headers: Map<String, String>?): ImagePreview {
         this.headers = headers?.toMap() // 创建不可变副本
         return this
@@ -510,6 +524,7 @@ class ImagePreview private constructor() {
 
         progressLayoutId = INVALID_RES_ID
         isSkipLocalCache = false
+        imageCacheKeyProvider = null
         headers = null
         hostKeywordList = null
         lastClickTime = 0
