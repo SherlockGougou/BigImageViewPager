@@ -100,6 +100,8 @@ class ImagePreviewFragment : Fragment() {
     private var progressRunnable: Runnable? = null
     private var isDragging = false
     private var onPausePlaying = false
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private var loadGeneration = 0
 
     // 用于保存缩略图的缩放状态，以便原图加载成功后恢复
     private var savedScale: Float? = null
@@ -163,6 +165,16 @@ class ImagePreviewFragment : Fragment() {
         }
     }
 
+    /**
+     * 加载回调可能在 Fragment 销毁后才执行，视图操作前必须确认 Activity 仍可用。
+     */
+    private fun liveActivity(): ImagePreviewActivity? {
+        val activity = imagePreviewActivity ?: return null
+        if (!isAdded || view == null || activity.isFinishing || activity.isDestroyed) {
+            return null
+        }
+        return activity
+    }
 
     private fun initView(view: View) {
         progressBar = view.findViewById(R.id.progress_view)
@@ -556,8 +568,9 @@ class ImagePreviewFragment : Fragment() {
     }
 
     private fun loadOriginal() {
+        val activity = liveActivity() ?: return
         val originalUrl = imageInfo?.originUrl.toString()
-        val cacheFile = getGlideCacheFile(imagePreviewActivity!!, imageInfo?.originUrl) ?: return
+        val cacheFile = getGlideCacheFile(activity, imageInfo?.originUrl) ?: return
         if (!cacheFile.exists()) return
 
         val imagePath = cacheFile.absolutePath
@@ -576,6 +589,7 @@ class ImagePreviewFragment : Fragment() {
      * 使用 SubsamplingScaleImageView 加载原图（适用于大图）
      */
     private fun loadOriginalWithSubsample(originalUrl: String, cacheFile: File) {
+        val activity = liveActivity() ?: return
         SubsamplingScaleImageView.setPreferredBitmapConfig(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Bitmap.Config.ARGB_4444
             else Bitmap.Config.ARGB_8888
@@ -588,7 +602,7 @@ class ImagePreviewFragment : Fragment() {
 
         // 尝试加载缩略图作为预览
         val thumbnailUrl = imageInfo?.thumbnailUrl.toString()
-        val smallCacheFile = getGlideCacheFile(imagePreviewActivity!!, thumbnailUrl)
+        val smallCacheFile = getGlideCacheFile(activity, thumbnailUrl)
         val smallImageSource = smallCacheFile?.takeIf { it.exists() }?.let { file ->
             val smallImagePath = file.absolutePath
             val bitmap = ImageUtil.getImageBitmap(smallImagePath, ImageUtil.getBitmapDegree(smallImagePath))
@@ -655,13 +669,14 @@ class ImagePreviewFragment : Fragment() {
      * 使用 PhotoView 加载原图（适用于 GIF/动图）
      */
     private fun loadOriginalWithPhotoView(originalUrl: String, cacheFile: File) {
+        val activity = liveActivity() ?: return
         imageSubsample?.visibility = View.GONE
         imagePhotoView?.visibility = View.VISIBLE
 
         val isAnimated = ImageUtil.isAnimImageWithMime(originalUrl, cacheFile.absolutePath)
 
         if (isAnimated) {
-            Glide.with(imagePreviewActivity!!)
+            Glide.with(activity)
                 .asGif()
                 .load(cacheFile)
                 .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
@@ -669,7 +684,7 @@ class ImagePreviewFragment : Fragment() {
                 .error(ImagePreview.instance.errorPlaceHolder)
                 .into(imagePhotoView!!)
         } else {
-            Glide.with(imagePreviewActivity!!)
+            Glide.with(activity)
                 .load(cacheFile)
                 .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
                 .diskCacheStrategy(GlideExt.getDiskCacheStrategy())
@@ -775,6 +790,7 @@ class ImagePreviewFragment : Fragment() {
     }
 
     private fun loadImage(url: String, originPathUrl: String) {
+        val activity = liveActivity() ?: return
         if (url.isLocalFile()) {
             // 本地图片，直接加载
             loadLocalImage(url, File(url))
@@ -782,7 +798,7 @@ class ImagePreviewFragment : Fragment() {
         }
 
         // 远程图片
-        Glide.with(imagePreviewActivity!!)
+        Glide.with(activity)
             .downloadOnly()
             .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
             .diskCacheStrategy(GlideExt.getDownloadDiskCacheStrategy())
@@ -817,13 +833,21 @@ class ImagePreviewFragment : Fragment() {
      * Glide 失败时的降级下载方案
      */
     private fun fallbackDownload(url: String, originPathUrl: String, e: GlideException?) {
+        val activity = liveActivity() ?: return
+        val cacheDir = getAvailableCacheDir(activity) ?: run {
+            loadFailed(e)
+            return
+        }
+        val saveDir = File(cacheDir, "image").absolutePath
+        val generation = loadGeneration
         Thread {
             val fileFullName = System.currentTimeMillis().toString()
-            val saveDir = getAvailableCacheDir(imagePreviewActivity!!)?.absolutePath +
-                    File.separator + "image/"
             val downloadFile = downloadFile(url, fileFullName, saveDir)
 
-            Handler(Looper.getMainLooper()).post {
+            mainHandler.post {
+                if (generation != loadGeneration || liveActivity() == null) {
+                    return@post
+                }
                 if (downloadFile != null && downloadFile.exists() && downloadFile.length() > 0) {
                     loadLocalImage(originPathUrl, downloadFile)
                 } else {
@@ -837,6 +861,9 @@ class ImagePreviewFragment : Fragment() {
         imageUrl: String,
         resource: File
     ) {
+        if (liveActivity() == null) {
+            return
+        }
         val imagePath = resource.absolutePath
         val isLoadWithSubsample = ImageUtil.isLoadWithSubsampling(imageUrl, imagePath)
         if (isLoadWithSubsample) {
@@ -854,13 +881,14 @@ class ImagePreviewFragment : Fragment() {
     private fun loadFailed(
         e: GlideException?
     ) {
+        val activity = liveActivity() ?: return
         progressBar?.visibility = View.GONE
         imagePhotoView?.visibility = View.GONE
         imageSubsample?.visibility = View.VISIBLE
         imageSubsample?.isZoomEnabled = false
         imageSubsample?.setImage(ImageSource.resource(ImagePreview.instance.errorPlaceHolder))
         if (ImagePreview.instance.isShowErrorToast) {
-            var errorMsg = imagePreviewActivity?.getString(R.string.toast_load_failed)
+            var errorMsg = activity.getString(R.string.toast_load_failed)
             if (e != null) {
                 errorMsg = e.localizedMessage as String
             }
@@ -939,6 +967,9 @@ class ImagePreviewFragment : Fragment() {
     private fun loadLocalImageWithSubsample(
         imagePath: String
     ) {
+        if (liveActivity() == null) {
+            return
+        }
         imagePhotoView?.visibility = View.GONE
         imageSubsample?.visibility = View.VISIBLE
         val imageSource = ImageSource.uri(Uri.fromFile(File(imagePath)))
@@ -957,6 +988,9 @@ class ImagePreviewFragment : Fragment() {
     }
 
     private fun loadLocalImageWithPhotoView(imageUrl: String, imagePath: String) {
+        if (liveActivity() == null) {
+            return
+        }
         imageSubsample?.visibility = View.GONE
         imagePhotoView?.visibility = View.VISIBLE
 
@@ -977,10 +1011,11 @@ class ImagePreviewFragment : Fragment() {
      * 加载动画图片（WebP/AVIF）
      */
     private fun loadAnimatedImage(imageUrl: String, imagePath: String, isResource: Boolean) {
+        val activity = liveActivity() ?: return
         val fitCenter: Transformation<Bitmap> = FitCenter()
         val loadSource = if (isResource) imageUrl.toUri() else imagePath
 
-        Glide.with(imagePreviewActivity!!)
+        Glide.with(activity)
             .load(loadSource)
             .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
             .diskCacheStrategy(GlideExt.getDiskCacheStrategy())
@@ -995,7 +1030,8 @@ class ImagePreviewFragment : Fragment() {
      * 加载 GIF 图片
      */
     private fun loadGifImage(imagePath: String) {
-        Glide.with(imagePreviewActivity!!)
+        val activity = liveActivity() ?: return
+        Glide.with(activity)
             .asGif()
             .load(imagePath)
             .skipMemoryCache(ImagePreview.instance.isSkipLocalCache)
@@ -1056,6 +1092,9 @@ class ImagePreviewFragment : Fragment() {
     }
 
     fun onRelease() {
+        loadGeneration++
+        mainHandler.removeCallbacksAndMessages(null)
+
         // 清理 Handler 任务，防止内存泄漏
         progressHandler?.removeCallbacksAndMessages(null)
         progressHandler = null

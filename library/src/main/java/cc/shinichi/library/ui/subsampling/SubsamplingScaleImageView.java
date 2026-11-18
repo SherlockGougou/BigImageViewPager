@@ -989,6 +989,11 @@ public class SubsamplingScaleImageView extends View {
 
         // If animating scale, calculate current scale and center with easing equations
         if (anim != null && anim.vFocusStart != null) {
+            // 状态监听器可能在动画绘制过程中重置图片。
+            if (vTranslate == null) {
+                anim = null;
+                return;
+            }
             // Store current values so we can send an event if they change
             float scaleBefore = scale;
             if (vTranslateBefore == null) {
@@ -2732,11 +2737,17 @@ public class SubsamplingScaleImageView extends View {
     }
 
     private void sendStateChanged(float oldScale, PointF oldVTranslate, int origin) {
-        if (onStateChangedListener != null && scale != oldScale) {
-            onStateChangedListener.onScaleChanged(scale, origin);
+        OnStateChangedListener listener = onStateChangedListener;
+        if (listener == null) {
+            return;
         }
-        if (onStateChangedListener != null && !vTranslate.equals(oldVTranslate)) {
-            onStateChangedListener.onCenterChanged(getCenter(), origin);
+        if (scale != oldScale) {
+            listener.onScaleChanged(scale, origin);
+        }
+        // onScaleChanged 回调可能重置视图，因此在回调后重新读取当前值。
+        PointF currentVTranslate = vTranslate;
+        if (currentVTranslate != null && !currentVTranslate.equals(oldVTranslate)) {
+            listener.onCenterChanged(getCenter(), origin);
         }
     }
 

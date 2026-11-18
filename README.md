@@ -39,7 +39,7 @@
 
 ## 安装
 
-> 当前版本：`androidx-9.2.3`
+> 当前版本：`androidx-9.2.4`
 
 ### 1) 添加仓库
 
@@ -55,10 +55,10 @@
 ```gradle
 dependencies {
     // 必选：核心库（图片能力）
-    implementation "com.gouqinglin:BigImageViewPager:androidx-9.2.3"
+    implementation "com.gouqinglin:BigImageViewPager:androidx-9.2.4"
 
     // 可选：视频插件（需要视频预览时添加）
-    implementation "com.gouqinglin:BigImageViewPager-media3:androidx-9.2.3"
+    implementation "com.gouqinglin:BigImageViewPager-media3:androidx-9.2.4"
 
     // 必选：Glide
     def glideVersion = "4.16.0"
@@ -169,6 +169,7 @@ ImagePreview.instance
 
 ## 更新日志
 
+- `androidx-9.2.4`：修复大图触摸时状态监听器重置视图导致的空指针，以及 Glide 降级下载完成后操作已销毁页面导致的崩溃（#232、#227）
 - `androidx-9.2.3`：新增可配置的图片稳定缓存键，支持鉴权链接签名轮换后复用缓存；统一预览、查看原图和保存图片的缓存键，修复文件下载使用 `ALL` 导致失败及重复请求的问题（#231）
 - `androidx-9.2.2`：新增视频播放策略 `VideoPlayPolicy`，支持 WiFi 自动播放 / 始终自动播放 / 手动播放
 - `androidx-9.2.1`：修复视频 Fragment 回收后只有音频的问题，清理残留 View 引用
