@@ -156,6 +156,7 @@ ImagePreview.instance
 - 核心库 artifactId：`BigImageViewPager`
 - 视频插件 artifactId：`BigImageViewPager-media3`
 - 两个 artifact 保持相同版本号发布
+- 完整发布流程见 [版本发布 Runbook](doc/RELEASE.md)
 
 ---
 

@@ -1,5 +1,7 @@
 # Maven Central Bundle 打包上传指南
 
+日常发版优先使用 [版本发布 Runbook](RELEASE.md) 和 `./release.sh`；本文保留 bundle 结构、Portal 页面和底层 API 的详细说明。
+
 ## 结论与适用场景
 
 可以绕过 `publish.sh` 使用的 OSSRH Staging API 和 `initializeSonatypeStagingRepository`：先通过仓库已有的 `maven-publish`、`signing` 配置把两个 publication 发布到一个重定向后的 Maven Local 目录，再补齐 checksum、压缩为 Maven Repository Layout bundle，最后在 Central Publisher Portal 网页上传。
@@ -90,6 +92,16 @@ export CENTRAL_PASSWORD='<Portal User Token password>'
 ### 4. 验证并最终发布
 
 无论网页还是 API 上传，都应在 Portal 查看 Validation Results。全部通过并确认坐标、版本、依赖正确后再点击 `Publish`；发现问题则点击 `Drop`。
+
+API 方式最终发布可执行：
+
+```bash
+./publish-central.sh publish <deployment-id>
+```
+
+该脚本会等待 `VALIDATED`，确认无 validation errors，调用
+`POST https://central.sonatype.com/api/v1/publisher/deployment/<deployment-id>`，
+并轮询到 `PUBLISHED`；随后可用 `./publish-central.sh verify <version>` 校验公开仓库。
 
 这里使用 `publishReleasePublicationToMavenLocal` 是因为 Gradle 会为每个 `MavenPublication` 自动创建此任务，并把 publication 的 POM 与其他 artifact 按 Maven 布局复制到 Maven Local。[Gradle 8.5：Publishing to Maven Local](https://docs.gradle.org/8.5/userguide/publishing_maven.html#publishing_maven:install) Android 官方也推荐用 Maven Publish Plugin 发布 Android library，并说明本地仓库可用于生成 repository/zip。[Android Developers：Upload your library](https://developer.android.com/build/publish-library/upload-library#local-repo)
 
